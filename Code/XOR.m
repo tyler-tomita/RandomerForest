@@ -62,7 +62,7 @@ cumf2err = mean(cumf2err);
 cumf3err = mean(cumf3err);
 Ynames = {'cumberr' 'cumf1err' 'cumf2err' 'cumf3err'};
 Enames = {'bsem' 'f1sem' 'f2sem' 'f3sem'};
-lspec = {'bo','rx','gd','ks'};
+lspec = {'-bo','-rx','-gd','-ks'};
 hold on
 for i = 1:length(Ynames)
     errorbar(Sigmas,eval(Ynames{i}),eval(Enames{i}),lspec{i});
