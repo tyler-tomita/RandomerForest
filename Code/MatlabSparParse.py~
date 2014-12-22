@@ -1,0 +1,35 @@
+#!/usr/bin/python
+
+import argparse
+
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f',type=str,dest='FileName',required=True,help='Spardat file to be converted to a Matlab compatible format')
+    parser.add_argument('-l',dest='Labels',action='store_true',help='Are class labels included as the first entry in each row?')
+    args = parser.parse_args()
+    return args
+
+def main():
+    args = parse_arguments()
+    fin = open(args.FileName,'r')
+    Lines = fin.readlines()
+    fin.close()
+    fout1 = open(args.FileName+'.ml','w')
+    if args.Labels:
+        fout2 = open(args.FileName + '.Labels','w')
+        for LineNum,Line in enumerate(Lines):
+            Elements = Line.split()
+            fout2.write('{}\n'.format(Elements[0]))
+            for Element in Elements[1:]:
+                col,value = Element.split(':')
+                fout1.write('{}\t{}\t{}\n'.format(LineNum+1,int(col),value))
+        fout2.close()
+    else:
+        for LineNum,Line in enumerate(Lines):
+            for Element in Line.split():
+                col,value = Element.split(':')
+                fout1.write('{}\t{}\t{}\n'.format(LineNum+1,int(col),value))
+    fout1.close()
+
+if __name__ == '__main__':
+    main()
