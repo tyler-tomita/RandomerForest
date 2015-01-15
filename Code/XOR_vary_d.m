@@ -2,36 +2,32 @@ clear
 close all
 clc
 
-task.D = 1000;
-task.n=100;
-ntrees = 500;
+dims = round(logspace(log10(2),3,10));
+n=100;
+ntrees = 1000;
 ntrials = 10;
 
-Sigmas = logspace(-1,1,5);
+cumberr = NaN(ntrials,length(dims));
+cumf1err = NaN(ntrials,length(dims));
+cumf2err = NaN(ntrials,length(dims));
+cumf3err = NaN(ntrials,length(dims));
 
-cumberr = NaN(ntrials,length(Sigmas));
-cumf1err = NaN(ntrials,length(Sigmas));
-cumf2err = NaN(ntrials,length(Sigmas));
-cumf3err = NaN(ntrials,length(Sigmas));
-
-embeddims = 4*sqrt(task.D);
 hold on
 for trial = 1:ntrials
     trial
-    for i = 1:length(Sigmas)
+    for i = 1:length(dims)
+        
+        d = dims(i);
+        d = d - mod(d,2);
+        embeddims = ceil(d^(2/3));
 
-        mu0 = zeros(task.D,1);
-        mu1 = repmat([1;0],task.D/2,1);
-        Sigma = Sigmas(i)*ones(1,task.D);
-        gmm = gmdistribution([mu0,mu1]',Sigma);
-        [X0,Y0] = random(gmm,task.n*0.5);
-
-        mu0 = ones(task.D,1);
-        mu1 = repmat([0;1],task.D/2,1);
-        gmm = gmdistribution([mu0,mu1]',Sigma);
-        [X1,Y1] = random(gmm,task.n*0.5);
-        X = [X0;X1];
-        Y = [Y0;Y1];
+        mu1 = transpose(-1*ones(d,1));
+        mu2 = -1*mu1;
+        mu3 = repmat([-1 1],1,d/2);
+        mu4 = repmat([1 -1],1,d/2);
+        sigma = 8*ones(1,d);
+        X = cat(1,mvnrnd(mu1,sigma,n/4),mvnrnd(mu2,sigma,n/4),mvnrnd(mu3,sigma,n/4),mvnrnd(mu4,sigma,n/4));
+        Y = cat(1,zeros(n/2,1),ones(n/2,1));
         Ystr = cellstr(num2str(Y));
 
         b = TreeBagger(ntrees,X,Y,'oobpred','on','NVarToSample',embeddims);
@@ -46,15 +42,9 @@ for trial = 1:ntrials
         f3 = rpclassificationforest2(ntrees,X,Ystr,'s',3,'nvartosample',embeddims,'mdiff','on','sparsemethod','new');
         f3err = oobpredict(f3,X,Ystr,'every');
         cumf3err(trial,i) = f3err(end);
-        %figure(i)
-        %plot(1:ntrees,berr,'b',1:ntrees,f1err,'r',1:ntrees,f2err,'g',1:ntrees,f3err,'k')
-        %xlabel('# of Trees')
-        %ylabel('OOB Error')
-        %legend('RandomForest','TylerForest+','TylerForest','TylerForest+meandiff')
     end
-    plot(Sigmas,cumberr(trial,:),'bo',Sigmas,cumf1err(trial,:),'rx',Sigmas,cumf2err(trial,:),'gd',Sigmas,cumf3err(trial,:),'ks')
 end
-save('xor.mat','cumberr','cumf1err','cumf2err','cumf3err')
+save('xor_vary_d.mat','cumberr','cumf1err','cumf2err','cumf3err')
 bsem = std(cumberr)/sqrt(ntrials);
 f1sem = std(cumf1err)/sqrt(ntrials);
 f2sem  = std(cumf2err)/sqrt(ntrials);
@@ -67,10 +57,15 @@ Ynames = {'cumberr' 'cumf1err' 'cumf2err' 'cumf3err'};
 Enames = {'bsem' 'f1sem' 'f2sem' 'f3sem'};
 lspec = {'-bo','-rx','-gd','-ks'};
 facespec = {'b','r','g','k'};
+set(gcf,'visible','off')
+h = gcf;
 for i = 1:length(Ynames)
-    errorbar(Sigmas,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
+    errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i});
 end
 set(gca,'XScale','log')
-xlabel('variance')
+xlabel('# ambient dimensions')
 ylabel('oob error')
+title('XOR')
 legend('RandomForest','TylerForest+','TylerForest','TylerForest+meandiff')
+F.fname = 'XOR/xor_ooberror_vs_d'
+save_fig(h,F)
