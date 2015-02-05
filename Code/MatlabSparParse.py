@@ -37,7 +37,7 @@ def main():
                     col,value = Element.split(':')
                 else:
                     col,value = (Element,1)
-                fout1.write('{}\t{}\t{}\n'.format(LineNum+1,int(col)+1,value))
+                fout1.write('{}\t{}\t{}\n'.format(LineNum+1,int(col)+offset,value))
     fout1.close()
 
 if __name__ == '__main__':
