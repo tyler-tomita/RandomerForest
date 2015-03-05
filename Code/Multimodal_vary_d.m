@@ -107,3 +107,27 @@ ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
 fname = sprintf('Multimodal_ooberror_vs_d_n%d_var%d_ntrees%d_ntrials%d',n,1,ntrees,ntrials);
 save_fig(gcf,fname)
+
+figure(2)
+rfsem = std(trf)/sqrt(ntrials);
+f1sem = std(tf1)/sqrt(ntrials);
+f2sem  = std(tf2)/sqrt(ntrials);
+f3sem = std(tf3)/sqrt(ntrials);
+trf = mean(trf);
+tf1 = mean(tf1);
+tf2 = mean(tf2);
+tf3 = mean(tf3);
+Ynames = {'trf' 'tf1' 'tf2' 'tf3'};
+Enames = {'rfsem' 'f1sem' 'f2sem' 'f3sem'};
+lspec = {'-bo','-rx','-gd','-ks'};
+hold on
+for i = 1:length(Ynames)
+    errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i});
+end
+set(gca,'XScale','log')
+xlabel('# ambient dimensions')
+ylabel('Training time (sec)')
+title('Trunk')
+legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
+fname = sprintf('Multimodal_time_vs_d_n%d_var%d_embed%d_ntrees%d_ntrials%d',n,1,ntrees,ntrials);
+save_fig(gcf,fname)

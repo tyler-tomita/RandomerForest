@@ -1,15 +1,19 @@
 %Generates 2 noisy spirals for binary classification
+clear
+close all
+clc
+
 n = 1000;
-phi_final = 4*pi;
+d = 3;
+phi_final = (d-1)*pi*rand(1,d-1);
 r_final = 1;
-d = length(phi_final) + 1;
 X0 = zeros(round(n/2),d);
 Y0 = zeros(size(X0,1),1);
 X1 = zeros(round(n/2),d);
 Y1 = ones(size(X1,1),1);
 
 Mu = zeros(1,d);
-Sigma = 0.001*ones(1,d);
+Sigma = 0*ones(1,d);
 for i = 1:length(Y0)
     t0 = rand;
     r = t0*r_final;
@@ -44,6 +48,7 @@ for i = 1:length(Y0)
     X1(i,:) = mvnrnd(Mu,Sigma,1);
 end
 X1 = -X1;
-plot(X0(:,1),X0(:,2),'bo',X1(:,1),X1(:,2),'rx')
+%plot(X0(:,1),X0(:,2),'bo',X1(:,1),X1(:,2),'rx')
+plot3(X0(:,1),X0(:,2),X0(:,3),'bo',X1(:,1),X1(:,2),X1(:,3),'rx')
 X = cat(1,X0,X1);
 Y = cat(1,Y0,Y1);
