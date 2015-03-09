@@ -1,13 +1,20 @@
 %Make Fig1 for LOVEFest (Randomer Forest)
 
-%Outline:
-%Loop over the three existing figures
-%Format the figure properties to make it aesthetically pleasing
-%Copy to 1x3 subplot
-
 close all
 clear
 clc
+
+fpath = mfilename('fullpath');
+findex = strfind(fpath,'/');
+rootDir=fpath(1:findex(end-1));
+p = genpath(rootDir);
+gits=strfind(p,'.git');
+colons=strfind(p,':');
+for i=0:length(gits)-1
+endGit=find(colons>gits(end-i),1);
+p(colons(endGit-1):colons(endGit)-1)=[];
+end
+addpath(p);
 
 Colors = linspecer(5,'sequential');
 Fig_Color = [1 1 1];

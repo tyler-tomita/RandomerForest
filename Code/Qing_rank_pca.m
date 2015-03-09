@@ -2,6 +2,18 @@ clear
 close
 clc
 
+fpath = mfilename('fullpath');
+findex = strfind(fpath,'/');
+rootDir=fpath(1:findex(end-1));
+p = genpath(rootDir);
+gits=strfind(p,'.git');
+colons=strfind(p,':');
+for i=0:length(gits)-1
+endGit=find(colons>gits(end-i),1);
+p(colons(endGit-1):colons(endGit)-1)=[];
+end
+addpath(p);
+
 [data,txt,raw] = xlsread('Qing Dataset 70 Samples Unnormalized (12-16-2014).xlsx');
 Xtrain = data(:,1:46)';
 Xtrain_rank = passtorank(Xtrain);
@@ -17,5 +29,5 @@ Xtest_pca = Xtest_rank*coeff;
 plot3(Xtrain_pca(Ytrain==0,1),Xtrain_pca(Ytrain==0,2),Xtrain_pca(Ytrain==0,3),'bo',Xtrain_pca(Ytrain==1,1),Xtrain_pca(Ytrain==1,2),Xtrain_pca(Ytrain==1,3),'rx',Xtest_pca(:,1),Xtest_pca(:,2),Xtest_pca(:,3),'k.')
 set(gcf,'Visible','On')
 legend('Normal','Cancer','Unknown')
-fname = '~/Documents/MATLAB/CancerAnalysis/Plots/Qing_rank_pca';
-save_fig(gcf,fname)
+%fname = '~/Documents/MATLAB/CancerAnalysis/Plots/Qing_rank_pca';
+%save_fig(gcf,fname)
