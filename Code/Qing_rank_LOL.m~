@@ -51,9 +51,7 @@ plot3(Xtrain_LOL(Ytrain==0,1),Xtrain_LOL(Ytrain==0,2),Xtrain_LOL(Ytrain==0,3),'b
     Xtest_LOL(strcmp(Yhats,'1'),1),Xtest_LOL(strcmp(Yhats,'1'),2),Xtest_LOL(strcmp(Yhats,'1'),3),'kx')
 set(gcf,'Visible','On')
 legend('Normal','Cancer','Unknown (predicted as normal)','Unknown (predicted as cancer)')
-text(Xtest_LOL(strcmp(Yhats,'1'),1),Xtest_LOL(strcmp(Yhats,'1'),2),Xtest_LOL(strcmp(Yhats,'1'),3),...
-    samples(strcmp(Yhats,'1')),'VerticalAlignment','bottom','HorizontalAlignment','left',...
-    'FontSize',9)
+text(Xtest_LOL(:,1),Xtest_LOL(:,2),Xtest_LOL(:,3),samples,'VerticalAlignment','bottom','HorizontalAlignment','center')
 
 L = linclass.Coeffs(1,2).Linear;
 K = linclass.Coeffs(1,2).Const;
