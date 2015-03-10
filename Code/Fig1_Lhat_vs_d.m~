@@ -4,8 +4,8 @@ close all
 clear
 clc
 
-stream = RandStream('mt19937ar','Seed',10);
-RandStream.setGlobalStream(stream);
+stream = RandStream.getGlobalStream;
+stream.Seed = 0;
 
 fpath = mfilename('fullpath');
 findex = strfind(fpath,'/');
