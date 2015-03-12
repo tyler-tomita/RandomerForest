@@ -16,7 +16,7 @@ p(colons(endGit-1):colons(endGit)-1)=[];
 end
 addpath(p);
 
-MarkerSize = 10;
+MarkerSize = 8;
 LineWidth = 2;
 
 [data,txt,raw] = xlsread('Qing Dataset 70 Samples Unnormalized (12-16-2014).xlsx');
@@ -27,9 +27,11 @@ Ytrain = zeros(size(Xtrain_rank,1),1);
 Ytrain(27:46) = 1;
 Xtest_rank = interpolate_rank(Xtrain,Xtest);
 Ystr = cellstr(num2str(Ytrain));
-samples = txt(1,48:end);
+samples = txt(1,2:end);
 for i = 1:length(samples)
-    samples{i} = samples{i}(strfind(samples{i},'_')+1:end);
+    if ~isempty(strfind(samples{i},'UNKNOWN'))
+        samples{i} = samples{i}(strfind(samples{i},'_')+1:end);
+    end
 end
 
 parms.types={'DENL'};
@@ -44,6 +46,13 @@ Mins = min(Xall_LOL);
 
 linclass = fitcdiscr(Xtrain_LOL,Ystr);
 Yhats = predict(linclass,Xtest_LOL);
+gmm = gmdistribution(linclass.Mu,linclass.Sigma);
+post_prob = posterior(gmm,Xall_LOL);
+
+fid = fopen('/Users/Tyler/Documents/MATLAB/CancerAnalysis/Results/Qing_rank_LOL_posteriors.txt','a');
+T = cell2table(cat(2,cat(1,'Sample',samples'),cat(1,'p(Cancer|x)',cellstr(num2str(post_prob(:,2))))));
+writetable(T,'/Users/Tyler/Documents/MATLAB/CancerAnalysis/Results/Qing_rank_LOL_posteriors.txt');
+fclose(fid);
 
 plot3(Xtrain_LOL(Ytrain==0,1),Xtrain_LOL(Ytrain==0,2),Xtrain_LOL(Ytrain==0,3),'bo',...
     Xtrain_LOL(Ytrain==1,1),Xtrain_LOL(Ytrain==1,2),Xtrain_LOL(Ytrain==1,3),'rx',...
@@ -81,7 +90,8 @@ ax.YLim = [ymin ymax];
 ax.ZLim = [zmin zmax];
 sf.FaceColor = 'k';
 sf.FaceAlpha = 0.4;
-sf.EdgeAlpha = 0;
+sf.EdgeAlpha = 1;
+sf.LineWidth = LineWidth;
 ln = findobj(gca,'Type','Line');
 ln(1).MarkerSize = MarkerSize;
 ln(2).MarkerSize = MarkerSize;
