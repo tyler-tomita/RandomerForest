@@ -4,7 +4,7 @@ clear
 close all
 clc
 
-ns = [1000];
+ns = [100];
 dims = [1000];
 for i = 1:length(dims)
     d = dims(i);
@@ -34,7 +34,7 @@ for i = 1:length(dims)
         %legend('class 0','class 1')
         ax = gca;
         ax.YTick = [];
-     %   ax.Position = [l(i) b w h];
+        %ax.Position = [l(i) b w h];
         title(sprintf('n = %0.0f, d = %0.0f',n,d))
     end
 end
@@ -43,7 +43,7 @@ end
 %set(gcf,'NextPlot','add');
 axes;
 %h = title('Trunk');
-set(gca,'Visible','off');
+%set(gca,'Visible','off');
 %set(h,'Visible','on');
-fname = '~/LOVEFest/Figures/Trunk_mean_difference_projection_n1000';
-save_fig(gcf,fname)
+%fname = '~/LOVEFest/Figures/Trunk_mean_difference_projection_n1000';
+%save_fig(gcf,fname)
