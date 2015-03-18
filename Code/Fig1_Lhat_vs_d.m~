@@ -4,8 +4,8 @@ close all
 clear
 clc
 
-stream = RandStream.getGlobalStream;
-stream.Seed = 0;
+stream = RandStream('mt19937ar','Seed',10);
+RandStream.setGlobalStream(stream);
 
 fpath = mfilename('fullpath');
 findex = strfind(fpath,'/');
@@ -45,9 +45,9 @@ Box_Legend = 'off';
 Level_curve = 1;
 
 BasePath = '~/LOVEFest/Figures/fig/';
-Filename = {'trunk_ooberror_vs_d_n100_var1_embed100_ntrees1000_ntrials10.fig'...
- 'Parity_ooberror_vs_d_n100_var1_embed100_ntrees1000_ntrials10.fig'...
- 'Multimodal_ooberror_vs_d_n100_var1_ntrees1000_ntrials10.fig'};
+Filename = {'Trunk_ooberror_vs_d_meandiff_v2_n100_var1_embed1000_ntrees10_ntrials.fig'...
+ 'Parity_ooberror_vs_d_meandiff_v2_n100_mean_var1_embed100_ntrees1000_ntrials10.fig'...
+ 'Multimodal_ooberror_vs_d_meandiff_v2_n100_var1_ntrees1000_ntrials10.fig'};
 BayesFigs = {'Trunk_bayes_error_vs_d.fig' 'Parity_bayes_error.fig' 'Multimodal_bayes_error.fig'};
 
 
@@ -205,5 +205,5 @@ ylabel('X2')
 set(gca,'XLim',[-4 4],'YLim',[-3 3],'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(6) Axis_Bottom(6) Axis_Width Axis_Height])
 hL = legend('Class 1','Class 2','Class 3','Class 4');
 set(hL,'Units',Units,'Position',[Legend_Left(2) Legend_Bottom(2) Legend_Width(2) Legend_Height(2)],'Visible','On','Box',Box_Legend)
-fname = 'Fig1_Lhat';
+fname = '~/LOVEFest/Figures/Fig1_Lhat';
 save_fig(gcf,fname)

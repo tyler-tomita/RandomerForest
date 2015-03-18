@@ -205,5 +205,5 @@ ylabel('X2')
 set(gca,'XLim',[-4 4],'YLim',[-3 3],'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(6) Axis_Bottom(6) Axis_Width Axis_Height])
 hL = legend('Class 1','Class 2','Class 3','Class 4');
 set(hL,'Units',Units,'Position',[Legend_Left(2) Legend_Bottom(2) Legend_Width(2) Legend_Height(2)],'Visible','On','Box',Box_Legend)
-fname = 'Fig1_Lhat';
+fname = '~/LOVEFest/Figures/Fig1_Lhat';
 save_fig(gcf,fname)
