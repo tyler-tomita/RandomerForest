@@ -26,15 +26,15 @@ classdef rpclassificationforest2
                         'qetoler'   'names'   'weights' 'surrogate'...
                         'skipchecks'    'stream'    'fboot'...
                         'SampleWithReplacement' 's' 'mdiff' 'sparsemethod'...
-                        'RandomForest'};
+                        'RandomForest'  'VarImp'};
             defaults = {[]  []  'gdi'   []  []  1   ceil(size(X,2)^(2/3))...
                         'off'    []  'off'    'classification'  1e-6    {}...
                         []  'off'   false  []  1    true   1    'off'   'old'...
-                        false};
+                        false []};
             [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
                 nvartosample,Merge,categ,Prune,Method,qetoler,names,W,...
                 surrogate,skipchecks,Stream,fboot,...
-                SampleWithReplacement,s,mdiff,sparsemethod,RandomForest,~,extra] = ...
+                SampleWithReplacement,s,mdiff,sparsemethod,RandomForest,VarImp,~,extra] = ...
                 internal.stats.parseArgs(okargs,defaults,varargin{:});
             if isnumeric(nvartosample)
                 nvartosample = ceil(nvartosample);
@@ -59,6 +59,15 @@ classdef rpclassificationforest2
                     %for i = 1:npairs
                     %    mu_diff(:,i) = transpose(mean(X(strcmp(Y,Labels_str(pairs(i,2))),:)) - mean(X(strcmp(Y,Labels_str(pairs(i,1))),:)));
                     %end
+                    if isempty(VarImp)
+                        Imp = ones(nvars,npairs);
+                    else
+                        b = TreeBagger(nTrees,X,Y,'NVarToSample',nvartosample,'OOBPred','on','OOBVarImp','on');
+                        Imp = b.OOBPermutedVarDeltaError';
+                        clear b
+                        Imp(Imp<VarImp) = 0;
+                        Imp = repmat(Imp,1,npairs);
+                    end
                     parfor i = 1:nTrees
                         sampleidx = 1:length(Y);
                         ibidx = randsample(sampleidx,nboot,SampleWithReplacement);
@@ -69,6 +78,7 @@ classdef rpclassificationforest2
                         for j = 1:npairs
                             mu_diff(:,j) = transpose(mean(Xib(strcmp(Yib,Labels_str(pairs(j,2))),:)) - mean(Xib(strcmp(Yib,Labels_str(pairs(j,1))),:)));
                         end
+                        mu_diff = mu_diff.*Imp;
                         promat{i} = srpmat(nvars,nvars,sparsemethod,s);    %random projection matrix
                         promat{i} = cat(2,mu_diff,promat{i});
                         Xpro = Xib*promat{i};
@@ -180,6 +190,33 @@ classdef rpclassificationforest2
             end
         end     %function oobpredict
         
+        function Yhats = predict2(forest,X)
+            nrows = size(X,1);
+            predmat = NaN(nrows,forest.nTrees);
+            predcell = cell(nrows,forest.nTrees);
+            trees = forest.Trees;
+            Labels = forest.classname;
+            rpm = forest.rpm;
+            
+            if isempty(rpm)
+                parfor i = 1:forest.nTrees
+                    pred_i = eval(trees{i},X);
+                    predcell(:,i) = pred_i;
+                end
+            else
+                parfor i = 1:forest.nTrees
+                    pred_i = eval(trees{i},X*rpm{i});
+                    predcell(:,i) = pred_i;
+                end
+            end
+            for j = 1:length(Labels)
+                predmat(strcmp(predcell,Labels{j})) = j;
+            end
+            
+            ensemblepredictions = mode(predmat,2);
+            Yhats = Labels(ensemblepredictions);
+        end     %function predict2
+        
         function Y = predict(forest,X)
             predmat = NaN(size(X,1),forest.nTrees);
             YTree = cell(size(X,1),forest.nTrees);
@@ -213,14 +250,25 @@ function M = srpmat(d,k,method,varargin)
     else
         M = sparse(d,k);
         R = poissrnd(1,1,k);
-        R(R==0) = 1;
+        %R(R==0) = 1;
         R(R>d) = d;
         rowidx = arrayfun(@(n) randsample(d,n,false),R,'UniformOutput',false);
         for j = 1:k
             M(rowidx{j},j) = 1;
         end
+        %M(:,all(M==0,1)) = [];
         if strcmp(method,'guassian')
             M(M~=0) = randn(nnz(M),1);
+        elseif strcmp(method,'uniform')
+            syms a x
+            eqn = symsum(x^2,-a,a)/(2*a) == d;
+            a = solve(eqn,a);
+            a = double(a);
+            a = round(a(a>0));
+            binsample = randsample([-1 1],sum(R),true,[0.5 0.5]);
+            M(M==1) = binsample;
+            M(M==1) = unidrnd(a,sum(M(:)==1),1);
+            M(M==-1) = -unidrnd(a,sum(M(:)==-1),1);
         else
             binsample = randsample([-1 1],sum(R),true,[0.5 0.5]);
             M(M==1) = binsample;
