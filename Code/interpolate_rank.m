@@ -1,17 +1,4 @@
 function Xnew_rank = interpolate_rank(X,Xnew)
-
-    fpath = mfilename('fullpath');
-findex = strfind(fpath,'/');
-rootDir=fpath(1:findex(end-1));
-p = genpath(rootDir);
-gits=strfind(p,'.git');
-colons=strfind(p,':');
-for i=0:length(gits)-1
-endGit=find(colons>gits(end-i),1);
-p(colons(endGit-1):colons(endGit)-1)=[];
-end
-addpath(p);
-
     Xnew_rank = zeros(size(Xnew));
     Xrank = passtorank(X);
     for i = 1:size(Xnew,1)

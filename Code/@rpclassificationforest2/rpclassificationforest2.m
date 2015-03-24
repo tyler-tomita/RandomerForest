@@ -7,6 +7,7 @@ classdef rpclassificationforest2
         Trees = {};  %classification trees contained in the ensemble
         nTrees = []; %number of trees in the ensemble
         rpm = {};   %random projection matrices
+        Robust;
         classname;
     end
     
@@ -26,20 +27,26 @@ classdef rpclassificationforest2
                         'qetoler'   'names'   'weights' 'surrogate'...
                         'skipchecks'    'stream'    'fboot'...
                         'SampleWithReplacement' 's' 'mdiff' 'sparsemethod'...
-                        'RandomForest'  'VarImp'};
+                        'RandomForest'  'Robust'  'VarImp'};
             defaults = {[]  []  'gdi'   []  []  1   ceil(size(X,2)^(2/3))...
                         'off'    []  'off'    'classification'  1e-6    {}...
                         []  'off'   false  []  1    true   1    'off'   'old'...
-                        false []};
+                        false false []};
             [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
                 nvartosample,Merge,categ,Prune,Method,qetoler,names,W,...
                 surrogate,skipchecks,Stream,fboot,...
-                SampleWithReplacement,s,mdiff,sparsemethod,RandomForest,VarImp,~,extra] = ...
+                SampleWithReplacement,s,mdiff,sparsemethod,RandomForest,Robust,VarImp,~,extra] = ...
                 internal.stats.parseArgs(okargs,defaults,varargin{:});
             if isnumeric(nvartosample)
                 nvartosample = ceil(nvartosample);
             elseif strcmp(nvartosample,'all')
                 nvartosample = size(X,2);
+            end
+            if Robust
+                X = passtorank(X);
+                forest.Robust = true;
+            else
+                forest.Robust = false;
             end
             nvars = size(X,2);
             nboot = ceil(fboot*length(Y));
@@ -130,11 +137,14 @@ classdef rpclassificationforest2
             if ~RandomForest
                 forest.rpm = promat;
             end
-        end     %function rpclassificationforest
+        end     %function growTrees
         
         function [err,Yhats,varargout] = oobpredict(forest,X,Y,treenum)
             if nargin == 3
                 treenum = 'last';
+            end
+            if forest.Robust
+                X = passtorank(X);
             end
             nrows = size(X,1);
             predmat = NaN(nrows,forest.nTrees);
