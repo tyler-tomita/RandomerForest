@@ -29,6 +29,7 @@ tf1 = NaN(ntrials,length(dims));
 tf2 = NaN(ntrials,length(dims));
 tf3 = NaN(ntrials,length(dims));
 
+parpool;
 for trial = 1:ntrials
     trial
 
@@ -36,8 +37,8 @@ for trial = 1:ntrials
         d = dims(i);
         nvartosample = ceil(d^(2/3));
         X = sparse(n,d);
-        Sigma = ones(1,d);
-        nones = randi(d,n,1);
+        Sigma = 1/8*ones(1,d);
+        nones = randi(d+1,n,1)-1;
         Y = mod(nones,2);
         Ystr = cellstr(num2str(Y));
         Mu = sparse(n,d);
@@ -107,7 +108,7 @@ set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Parity_ooberror_vs_d_n%d_var%d_embed%0.0f_ntrees%d_ntrials%d',n,Sigma(1),nvartosample,ntrees,ntrials);
+fname = sprintf('Parity_ooberror_vs_d_n%d_ntrees%d_ntrials%d',n,ntrees,ntrials);
 save_fig(gcf,fname)
 
 rfsem = std(trf)/sqrt(ntrials);
@@ -129,5 +130,5 @@ set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel('Wall Time (sec)')
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Parity_time_vs_d_n%d_var%d_embed%0.0f_ntrees%d_ntrials%d',n,Sigma(1),nvartosample,ntrees,ntrials);
+fname = sprintf('Parity_time_vs_d_n%d_ntrees%d_ntrials%d',n,ntrees,ntrials);
 save_fig(gcf,fname)
