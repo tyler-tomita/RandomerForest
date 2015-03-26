@@ -98,7 +98,7 @@ cumf2err = mean(cumf2err);
 cumf3err = mean(cumf3err);
 Ynames = {'cumrferr' 'cumf1err' 'cumf2err' 'cumf3err'};
 Enames = {'rfsem' 'f1sem' 'f2sem' 'f3sem'};
-lspec = {'-bo','-rx','-gd','ks'};
+lspec = {'-bo','-rx','-gd','-ks'};
 facespec = {'b','r','g','k'};
 hold on
 for i = 1:length(Ynames)
