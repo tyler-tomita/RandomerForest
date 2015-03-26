@@ -28,6 +28,7 @@ tf2 = NaN(ntrials,length(dims));
 tf3 = NaN(ntrials,length(dims));
 Class = [0;1];
 
+parpool;
 for trial = 1:ntrials
     fprintf('trial %d\n',trial)
     for i = 1:length(dims)
@@ -35,19 +36,19 @@ for trial = 1:ntrials
         fprintf('dimensions = %d\n',dims(i))
         d_idx = 1:d;
         nvartosample = ceil(d^(2/3));
-        mu1 = 1./d_idx;
+        mu1 = 1./sqrt(d_idx);
         mu0 = -1*mu1;
-        mu = cat(1,mu0,mu1);
+        Mu = cat(1,mu0,mu1);
         Sigma = ones(1,d);
-        obj = gmdistribution(mu,Sigma);
+        obj = gmdistribution(Mu,Sigma);
         [X,idx] = random(obj,n);
         Y = cellstr(num2str(Class(idx)));
         
         tic
-        rf = rpclassificationforest2(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','off','RandomForest',true);
+        rf = rpclassificationforest2(ntrees,X,Y,'nvartosample',nvartosample,'RandomForest',true);
         trf(trial,i) = toc;
-        berr = oobpredict(rf,X,Y,'every');
-        cumrferr(trial,i) = berr(end);
+        rferr = oobpredict(rf,X,Y,'every');
+        cumrferr(trial,i) = rferr(end);
         
         fprintf('Random Forest complete\n')
         
@@ -77,7 +78,7 @@ for trial = 1:ntrials
     end
 end
 
-save('Trunk_vary_d.mat','cumberr','cumf1err','cumf2err','cumf3err','tb','tf1','tf2','tf3')
+save('Trunk_vary_d.mat','cumrferr','cumf1err','cumf2err','cumf3err','trf','tf1','tf2','tf3')
 rfsem = std(cumrferr)/sqrt(ntrials);
 f1sem = std(cumf1err)/sqrt(ntrials);
 f2sem  = std(cumf2err)/sqrt(ntrials);
@@ -98,7 +99,7 @@ xlabel('# ambient dimensions')
 ylabel('oob error')
 title('Trunk')
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Trunk/trunk_ooberror_vs_d_n%d_var%d_embed%d_ntrees%d_ntrials%d',n,Sigma(1),nvartosample,ntrees,ntrials);
+fname = sprintf('Trunk_ooberror_vs_d_n%d_var%d_ntrees%d_ntrials%d',n,Sigma(1),ntrees,ntrials);
 save_fig(gcf,fname)
 
 figure(2)
@@ -122,5 +123,5 @@ xlabel('# ambient dimensions')
 ylabel('Training time (sec)')
 title('Trunk')
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Trunk/trunk_time_vs_d_n%d_var%d_embed%d_ntrees%d_ntrials%d',n,Sigma(1),nvartosample,ntrees,ntrials);
+fname = sprintf('Trunk_time_vs_d_n%d_var%d_ntrees%d_ntrials%d',n,Sigma(1),ntrees,ntrials);
 save_fig(gcf,fname)
