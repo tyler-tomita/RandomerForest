@@ -46,9 +46,9 @@ Level_curve = 1;
 
 BasePath = '~/LOVEFest/Figures/fig/';
 Filename = {'Trunk_ooberror_vs_d_n100_var1_ntrees1000_ntrials10_v2.fig'...
- 'Parity_ooberror_vs_d_n100_ntrees1000_ntrials10_v2.fig'...
+ 'Parity_ooberror_vs_d_n100_ntrees1000_ntrials10_v3.fig'...
  'Multimodal_ooberror_vs_d_n100_var1_ntrees1000_ntrials10_v2.fig'};
-BayesFigs = {'Trunk_bayes_error_vs_d_v2.fig' 'Parity_bayes_error_v2.fig' 'Multimodal_bayes_error.fig'};
+BayesFigs = {'Trunk_bayes_error_vs_d_v2.fig' 'Parity_bayes_error_v3.fig' 'Multimodal_bayes_error.fig'};
 
 
 %Copy bayes error line to the axes containing Lhat for the different
