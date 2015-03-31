@@ -287,7 +287,7 @@ function M = srpmat(d,k,method,varargin)
             binsample = randsample([-1 1],sum(R),true,[0.5 0.5]);
             M(M==1) = binsample;
             M(M==1) = sqrt((d-1))*randn(sum(M(:)==1),1) + 1;
-            M(M==-1) = sqrt((d-1))*randn(sum(M(:)==-1),1) - 1;
+            M(M==-1) = sqrt((d-1))*randn(sum(M(:)==1),1) + 1;
         elseif strcmp(method,'uniform')
             syms a x
             eqn = symsum(x^2,-a,a)/(2*a) == d;
