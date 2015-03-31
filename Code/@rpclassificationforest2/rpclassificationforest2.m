@@ -9,6 +9,8 @@ classdef rpclassificationforest2
         rpm = {};   %random projection matrices
         Robust;
         classname;
+        promat_time = [];
+        tree_time = [];
     end
     
     methods
@@ -86,9 +88,12 @@ classdef rpclassificationforest2
                             mu_diff(:,j) = transpose(mean(Xib(strcmp(Yib,Labels_str(pairs(j,2))),:)) - mean(Xib(strcmp(Yib,Labels_str(pairs(j,1))),:)));
                         end
                         mu_diff = mu_diff.*Imp;
+                        tic
                         promat{i} = srpmat(nvars,nvars,sparsemethod,s);    %random projection matrix
                         promat{i} = cat(2,mu_diff,promat{i});
                         Xpro = Xib*promat{i};
+                        p_time(i) = toc;
+                        tic
                         Tree{i} = classregtree2(Xpro,Yib,...
                             'priorprob',Prior,'cost',Cost,'splitcriterion',...
                             Criterion,'splitmin',splitmin,'minparent',...
@@ -97,22 +102,27 @@ classdef rpclassificationforest2
                             categ,'prune',Prune,'method',Method,'qetoler',...
                             qetoler,'names',names,'weights',W,'surrogate',...
                             surrogate,'skipchecks',skipchecks,'stream',Stream);
+                        t_time(i) = toc;
                     end     %parallel loop over i
                 else
                     parfor i = 1:nTrees
-                    sampleidx = 1:length(Y);
-                    ibidx = randsample(sampleidx,nboot,SampleWithReplacement);
-                    oobidx{i} = setdiff(sampleidx,ibidx);
-                    promat{i} = srpmat(nvars,nvars,sparsemethod,s);    %random projection matrix
-                    Xpro = X(ibidx,:)*promat{i};
-                    Tree{i} = classregtree2(Xpro,Y(ibidx),...
-                        'priorprob',Prior,'cost',Cost,'splitcriterion',...
-                        Criterion,'splitmin',splitmin,'minparent',...
-                        minparent,'minleaf',minleaf,'nvartosample',...
-                        nvartosample,'mergeleaves',Merge,'categorical',...
-                        categ,'prune',Prune,'method',Method,'qetoler',...
-                        qetoler,'names',names,'weights',W,'surrogate',...
-                        surrogate,'skipchecks',skipchecks,'stream',Stream);
+                        sampleidx = 1:length(Y);
+                        ibidx = randsample(sampleidx,nboot,SampleWithReplacement);
+                        oobidx{i} = setdiff(sampleidx,ibidx);
+                        tic
+                        promat{i} = srpmat(nvars,nvars,sparsemethod,s);    %random projection matrix
+                        Xpro = X(ibidx,:)*promat{i};
+                        p_time(i) = toc;
+                        tic
+                        Tree{i} = classregtree2(Xpro,Y(ibidx),...
+                            'priorprob',Prior,'cost',Cost,'splitcriterion',...
+                            Criterion,'splitmin',splitmin,'minparent',...
+                            minparent,'minleaf',minleaf,'nvartosample',...
+                            nvartosample,'mergeleaves',Merge,'categorical',...
+                            categ,'prune',Prune,'method',Method,'qetoler',...
+                            qetoler,'names',names,'weights',W,'surrogate',...
+                            surrogate,'skipchecks',skipchecks,'stream',Stream);
+                        t_time(i) = toc;
                     end     %parallel loop over i
                 end
             else
@@ -120,6 +130,7 @@ classdef rpclassificationforest2
                     sampleidx = 1:length(Y);
                     ibidx = randsample(sampleidx,nboot,SampleWithReplacement);
                     oobidx{i} = setdiff(sampleidx,ibidx);
+                    tic
                     Tree{i} = classregtree2(X(ibidx,:),Y(ibidx,:),...
                         'priorprob',Prior,'cost',Cost,'splitcriterion',...
                         Criterion,'splitmin',splitmin,'minparent',...
@@ -128,12 +139,17 @@ classdef rpclassificationforest2
                         categ,'prune',Prune,'method',Method,'qetoler',...
                         qetoler,'names',names,'weights',W,'surrogate',...
                         surrogate,'skipchecks',skipchecks,'stream',Stream);
+                    t_time(i) = toc;
                 end     %parallel loop over i
             end
 
             forest.Trees = Tree;
             forest.oobidx = oobidx;
             forest.nTrees = length(forest.Trees);
+            if ~RandomForest
+                forest.promat_time = p_time;
+            end
+            forest.tree_time = t_time;
             if ~RandomForest
                 forest.rpm = promat;
             end

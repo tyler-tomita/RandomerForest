@@ -1,4 +1,4 @@
-%generates random dxd rotation matrix
+%generates uniformly random dxd rotation matrix
 function R = random_rotation(d)
     [U S R] = svd(randn(d));
     if det(R) < 0
