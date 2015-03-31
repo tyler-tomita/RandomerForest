@@ -59,7 +59,7 @@ for trial = 1:ntrials
         
         R = random_rotation(d);
         T = random_translation(n,d,-1,1);
-        S = random_scaling(n,d,0,10);
+        S = random_scaling(n,d,0,2);
         Sigma_outlier = 4*Sigma;
         X_rot = X*R;
         X_trans = X + T;
@@ -214,7 +214,7 @@ end
 set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
-legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
+legend('Random Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff')
 title('Sparse Randomer Forest w/ Mean Diff')
 
 Ynames = {'mean_f2_err' 'mean_f2_rot_err' 'mean_f2_trans_err' 'mean_f2_scale_err' 'mean_f2_affine_err' 'mean_f2_out_err'};
@@ -227,7 +227,7 @@ end
 set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
-legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
+legend('Random Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff')
 title('Robust Sparse Randomer Forest w/ Mean Diff')
 
 filename = 'Invariance_Trunk_v2';
