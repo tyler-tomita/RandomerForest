@@ -1,6 +1,6 @@
 classdef rpclassregtree
 
-    properties
+    properties(SetAccess='protected',GetAccess='protected')
         method = 'regression';
           node = zeros(0,1);
         parent = zeros(0,1);
@@ -72,6 +72,27 @@ splitcriterion = '';
                 Yhat(noderows{node}) = Tree.classname(Tree.class(node));
             end
         end     %function rptreepredict
+        
+        function Yhat = treepredict(Tree,X)
+            Yhat = cell(size(X,1),1);
+            noderows = cell(0,length(Tree.node));
+            noderows{1} = 1:size(X,1);
+            internalnodes = Tree.node(Tree.var ~= 0);
+            internalnodes = internalnodes';
+            leafnodes = Tree.node(Tree.var == 0);
+            leafnodes = leafnodes';
+            for node = internalnodes
+                var = Tree.var{node};
+                cut = Tree.cut{node};
+                Xpro = X(noderows{node},:)*projection;
+                ch = Tree.children(node,:);
+                noderows{ch(1)} = noderows{node}(Xpro < cut);
+                noderows{ch(2)} = noderows{node}(Xpro >= cut);
+            end
+            for node = leafnodes
+                Yhat(noderows{node}) = Tree.classname(Tree.class(node));
+            end
+        end     %function treepredict
     end     %methods block
     
         methods(Hidden = true)
@@ -950,39 +971,20 @@ end
 
 %----------------------------------------------------
 function M = srpmat(d,k,method,varargin)
-    if strcmp(method,'dense')
+    if strcmp(method,'old')
         s = varargin{1};
         M = sparse(vec2mat(randsample([-sqrt(s) 0 sqrt(s)],d*k,true,[1/(2*s) 1-1/s 1/(2*s)]),k));
-    elseif strcmp(method,'dgaussian')
-        s = varargin{1};
-        M = sparse(vec2mat(randsample([-1 0 1],d*k,true,[1/(2*s) 1-1/s 1/(2*s)]),k));
-        M(M==1) = sqrt((s-1))*randn(sum(M(:)==1),1) + 1;
-        M(M==-1) = sqrt((s-1))*randn(sum(M(:)==-1),1) - 1;
     else
         M = sparse(d,k);
         R = poissrnd(1,1,k);
-        %R(R==0) = 1;
+        R(R==0) = 1;
         R(R>d) = d;
         rowidx = arrayfun(@(n) randsample(d,n,false),R,'UniformOutput',false);
         for j = 1:k
             M(rowidx{j},j) = 1;
         end
-        %M(:,all(M==0,1)) = [];
         if strcmp(method,'gaussian')
-            binsample = randsample([-1 1],sum(R),true,[0.5 0.5]);
-            M(M==1) = binsample;
-            M(M==1) = sqrt((d-1))*randn(sum(M(:)==1),1) + 1;
-            M(M==-1) = sqrt((d-1))*randn(sum(M(:)==-1),1) - 1;
-        elseif strcmp(method,'uniform')
-            syms a x
-            eqn = symsum(x^2,-a,a)/(2*a) == d;
-            a = solve(eqn,a);
-            a = double(a);
-            a = round(a(a>0));
-            binsample = randsample([-1 1],sum(R),true,[0.5 0.5]);
-            M(M==1) = binsample;
-            M(M==1) = unidrnd(a,sum(M(:)==1),1);
-            M(M==-1) = -unidrnd(a,sum(M(:)==-1),1);
+            M(M~=0) = randn(nnz(M),1);
         else
             binsample = randsample([-1 1],sum(R),true,[0.5 0.5]);
             M(M==1) = binsample;
