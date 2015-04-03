@@ -97,7 +97,7 @@ n = 100;
 d = 2;
 Class = [0 1];
 d_idx = 1:d;
-mu1 = 1./d_idx;
+mu1 = 1./sqrt(d_idx);
 mu0 = -1*mu1;
 Mu = cat(1,mu0,mu1);
 Sigma = 1*speye(d);
@@ -120,22 +120,18 @@ for j = 1:size(Mu,1)
 end
 xlabel('X1')
 ylabel('X2')
-set(gca,'XLim',[-4 4],'YLim',[-3 3],'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(4) Axis_Bottom(4) Axis_Width Axis_Height])
+set(gca,'XLim',[-4 4],'YLim',[-4 4],'YTick',-4:2:4,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(4) Axis_Bottom(4) Axis_Width Axis_Height])
 
 X = sparse(n,d);
-Sigma = eye(d);
-nones = randi(d,n,1);
-Y = mod(nones,2);
-Ystr = cellstr(num2str(Y));
+Sigma = 1/8*speye(d);
 Mu = sparse(n,d);
-Class = [0 1];
+
 for j = 1:n
-    onesidx = randsample(1:d,nones(j),false);
-    Mu(j,onesidx) = 1;
-end
-for j = 1:n
+    Mu(j,:) = binornd(1,0.5,1,d);
     X(j,:) = mvnrnd(Mu(j,:),Sigma);
 end
+nones = sum(Mu,2);
+Y = mod(nones,2);
 ax = subplot(2,3,5);
 for j = 1:length(Class)
     plot(X(Y==Class(j),1),X(Y==Class(j),2),'.',...
@@ -154,7 +150,7 @@ for j = 1:length(Mu)
 end
 xlabel('X1')
 ylabel('X2')
-set(gca,'XLim',[-4 4],'YLim',[-3 3],'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(5) Axis_Bottom(5) Axis_Width Axis_Height])
+set(gca,'XLim',[-2 2],'YLim',[-2 2],'YTick',-2:2,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(5) Axis_Bottom(5) Axis_Width Axis_Height])
 
 nclasses = 4;
 Classes = 1:nclasses;
@@ -202,7 +198,7 @@ ylabel('X2')
 %set(ch(6),'MarkerSize',MarkerSize,'Color','b')
 %set(ch(7),'MarkerSize',MarkerSize,'Color','g')
 %set(ch(8),'MarkerSize',MarkerSize,'Color','m')
-set(gca,'XLim',[-4 4],'YLim',[-3 3],'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(6) Axis_Bottom(6) Axis_Width Axis_Height])
+set(gca,'XLim',[-4 4],'YLim',[-4 4],'YTick',-4:2:4,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(6) Axis_Bottom(6) Axis_Width Axis_Height])
 hL = legend('Class 1','Class 2','Class 3','Class 4');
 set(hL,'Units',Units,'Position',[Legend_Left(2) Legend_Bottom(2) Legend_Width(2) Legend_Height(2)],'Visible','On','Box',Box_Legend)
 fname = '~/LOVEFest/Figures/Fig1_Lhat';
