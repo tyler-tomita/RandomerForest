@@ -34,6 +34,7 @@ Legend_Bottom = round(Axis_Bottom+Axis_Height/2-Legend_Height/2);
 MarkerSize = 14;
 Box = 'off';
 Box_Legend = 'off';
+xmax = [2000 2000 200];
 
 Filename = '~/LOVEFest/Figures/fig/ntrees_to_stabilize.fig';
 
@@ -47,20 +48,16 @@ for i = 1:length(h_ax_old)
     h_ax_new = subplot(1,3,i);
     copyobj(allchild(h_ax_old(i)),h_ax_new);
     h_lines = allchild(h_ax_new);
-    xmax = zeros(1,length(h_lines));
     ymax_ln = zeros(1,length(h_lines));
     for j = 1:length(h_lines)
         set(h_lines(j),'Color',Colors(j,:),'linewidth',LineWidth,'Marker',Marker,'MarkerFaceColor',Colors(j,:),'MarkerEdgeColor',Colors(j,:))
-        xmax(j) = max(get(h_lines(j),'XData'));
         ymax_ln(j) = max(get(h_lines(j),'YData'));
     end
-    xmax = max(xmax);
     ymax_ax = max(ymax_ln);
     ymax_idx = find(ymax_ln==ymax_ax);
     ymax_idx = ymax_idx(1);
-    ymax_ax = ymax_ax + h_lines(ymax_idx).UData(find(h_lines(ymax_idx).YData==ymax_ln(ymax_idx)));
-    XTick = cat(2,1,500:xmax:500);
-    set(h_ax_new,'XLim',xmax,'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(i) Axis_Bottom Axis_Width Axis_Height])
+    XTick = cat(2,1,xmax(i)/2:xmax(i)/2:xmax(i));
+    set(h_ax_new,'XLim',[0 xmax(i)],'YLim',[0 ymax_ax],'XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(i) Axis_Bottom Axis_Width Axis_Height])
     title(Title{i})
     xlabel('Number of Trees')
     ylabel('L hat')
