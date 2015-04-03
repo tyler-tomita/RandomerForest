@@ -17,7 +17,7 @@ addpath(p);
 n = 100;
 d = 1000;
 ntrials = 10;
-ntrees = 1000;
+ntrees = 2000;
 nclasses = 4;
 Classes = 1:nclasses;
 ncomponents = 2;    %# of mixture components per class
@@ -42,7 +42,7 @@ for trial = 1:ntrials
     %Trunk
     d_idx = 1:d;
     nvartosample = ceil(d^(2/3));
-    mu1 = 1./d_idx;
+    mu1 = 1./sqrt(d_idx);
     mu0 = -1*mu1;
     Mu = cat(1,mu1,mu0);
     Sigma = ones(1,d);
@@ -78,17 +78,16 @@ for trial = 1:ntrials
     
     %Parity
     X = sparse(n,d);
-    Sigma = ones(1,d);
-    nones = randi(d,n,1);
-    Y = cellstr(num2str(mod(nones,2)));
+    Sigma = 1/8*speye(d);
     Mu = sparse(n,d);
+
     for j = 1:n
-        onesidx = randsample(1:d,nones(j),false);
-        Mu(j,onesidx) = 1;
-    end
-    for j = 1:n
+        Mu(j,:) = binornd(1,0.5,1,d);
         X(j,:) = mvnrnd(Mu(j,:),Sigma);
     end
+    
+    nones = sum(Mu,2);
+    Y = cellstr(num2str(mod(nones,2)));
     
     rf = rpclassificationforest2(ntrees,X,Y,'nvartosample',nvartosample,'RandomForest',true);
     cumrferr(trial,:,2) = transpose(oobpredict(rf,X,Y,'every'));
