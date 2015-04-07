@@ -38,8 +38,8 @@ Box_Legend = 'off';
 
 BasePath = '~/LOVEFest/Figures/fig/';
 Filename = {'Trunk_time_vs_d_n100_var1_ntrees1000_ntrials10_v2.fig'...
- 'Parity_time_vs_d_n100_ntrees1000_ntrials10_v2.fig'...
- 'Multimodal_time_vs_d_n100_var1_embed1000_ntrees10_ntrials_v2.fig'};
+ 'Parity_time_vs_d_n100_ntrees1000_ntrials10_v4.fig'...
+ 'Multimodal_time_vs_d_n100_var1_ntrees10_ntrials10_v2.fig'};
 
 for i = 1:length(Filename)
     h{i} = openfig(strcat(BasePath,Filename{i}),'invisible');

@@ -6,6 +6,7 @@ classdef rpclassificationforest
         nTrees = []; %number of trees in the ensemble
         classname;
         RandomForest;
+        Robust;
     end
     
     methods
@@ -23,15 +24,21 @@ classdef rpclassificationforest
                         'mergeleaves'   'categorical' 'prune' 'method' ...
                         'qetoler'   'names'   'weights' 'surrogate'...
                         'skipchecks'    'stream'    'fboot'...
-                        'SampleWithReplacement' 's' 'mdiff' 'sparsemethod' 'RandomForest'};
+                        'SampleWithReplacement' 's' 'mdiff' 'sparsemethod' 'RandomForest'   'Robust'};
             defaults = {[]  []  'gdi'   []  []  1   ceil(size(X,2)^(2/3))...
                         'off'    []  'off'    'classification'  1e-6    {}...
-                        []  'off'   false  []  1    true   1    'off'   'old' false};
+                        []  'off'   false  []  1    true   1    'off'   'old' false false};
             [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
                 nvartosample,Merge,categ,Prune,Method,qetoler,names,W,...
                 surrogate,skipchecks,Stream,fboot,...
-		  SampleWithReplacement,s,mdiff,sparsemethod,RandomForest,~,extra] = ...
+                SampleWithReplacement,s,mdiff,sparsemethod,RandomForest,Robust,~,extra] = ...
                 internal.stats.parseArgs(okargs,defaults,varargin{:});
+            if Robust
+                X = passtorank(X);
+                forest.Robust = true;
+            else
+                forest.Robust = false;
+            end
             nboot = ceil(fboot*length(Y));
             Tree = cell(nTrees,1);
             oobidx = cell(nTrees,1);
@@ -69,6 +76,9 @@ classdef rpclassificationforest
         function [err,varargout] = oobpredict(forest,X,Y,treenum)
             if nargin == 3
                 treenum = 'last';
+            end
+            if forest.Robust
+                X = passtorank(X);
             end
             nrows = size(X,1);
             predmat = NaN(nrows,forest.nTrees);
