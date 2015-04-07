@@ -17,7 +17,7 @@ end
 addpath(p);
 
 n = 100;
-dims = round(logspace(log10(2),3,5));
+dims = round(logspace(log10(2),3,7));
 ntrials = 10;
 ntrees = 1000;
 cumrferr = NaN(ntrials,length(dims));
@@ -55,7 +55,7 @@ for trial = 1:ntrials
         Ystr = cellstr(num2str(Y));
 
         tic
-        rf = rpclassificationforest2(ntrees,X,Ystr,'nvartosample',nvartosample,'RandomForest',true);
+        rf = rpclassificationforest(ntrees,X,Ystr,'nvartosample',nvartosample,'RandomForest',true);
         trf(trial,i) = toc;
         cumrferr(trial,i) = oobpredict(rf,X,Ystr,'last');
         clear rf
@@ -64,7 +64,7 @@ for trial = 1:ntrials
         fprintf('Random Forest complete\n')
 
         tic
-        f1 = rpclassificationforest2(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','old');
+        f1 = rpclassificationforest(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','old');
         tf1(trial,i) = toc;
         cumf1err(trial,i) = oobpredict(f1,X,Ystr,'last');
         clear f1
@@ -72,7 +72,7 @@ for trial = 1:ntrials
         fprintf('TylerForest complete\n')
 
         tic
-        f2 = rpclassificationforest2(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','new');
+        f2 = rpclassificationforest(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','new');
         tf2(trial,i) = toc;
         cumf2err(trial,i) = oobpredict(f2,X,Ystr,'last');
         clear f2
@@ -80,7 +80,7 @@ for trial = 1:ntrials
         fprintf('TylerForest+ complete\n')
 
         tic
-        f3 = rpclassificationforest2(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','new');
+        f3 = rpclassificationforest(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','new');
         tf3(trial,i) = toc;
         cumf3err(trial,i) = oobpredict(f3,X,Ystr,'last');
         clear f3
@@ -112,7 +112,7 @@ set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Parity_ooberror_vs_d_n%d_ntrees%d_ntrials%d_v3',n,ntrees,ntrials);
+fname = sprintf('Parity_ooberror_vs_d_n%d_ntrees%d_ntrials%d_v4',n,ntrees,ntrials);
 save_fig(gcf,fname)
 
 rfsem = std(trf)/sqrt(ntrials);
@@ -134,5 +134,5 @@ set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel('Wall Time (sec)')
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Parity_time_vs_d_n%d_ntrees%d_ntrials%d_v3',n,ntrees,ntrials);
+fname = sprintf('Parity_time_vs_d_n%d_ntrees%d_ntrials%d_v4',n,ntrees,ntrials);
 save_fig(gcf,fname)

@@ -15,7 +15,7 @@ end
 addpath(p);
 
 n = 100;
-dims = round(logspace(log10(2),3,5));
+dims = round(logspace(log10(2),3,7));
 ntrials = 10;
 ntrees = 1000;
 cumrferr = NaN(ntrials,length(dims));
@@ -45,7 +45,7 @@ for trial = 1:ntrials
         Y = cellstr(num2str(Class(idx)));
         
         tic
-        rf = rpclassificationforest2(ntrees,X,Y,'nvartosample',nvartosample,'RandomForest',true);
+        rf = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'RandomForest',true);
         trf(trial,i) = toc;
         rferr = oobpredict(rf,X,Y,'every');
         cumrferr(trial,i) = rferr(end);
@@ -53,7 +53,7 @@ for trial = 1:ntrials
         fprintf('Random Forest complete\n')
         
         tic
-        f1 = rpclassificationforest2(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','old');
+        f1 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','old');
         tf1(trial,i) = toc;
         f1err = oobpredict(f1,X,Y,'every');
         cumf1err(trial,i) = f1err(end);
@@ -61,7 +61,7 @@ for trial = 1:ntrials
         fprintf('TylerForest complete\n')
         
         tic
-        f2 = rpclassificationforest2(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','new');
+        f2 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','new');
         tf2(trial,i) = toc;
         f2err = oobpredict(f2,X,Y,'every');
         cumf2err(trial,i) = f2err(end);
@@ -69,7 +69,7 @@ for trial = 1:ntrials
         fprintf('TylerForest+ complete\n')
         
         tic
-        f3 = rpclassificationforest2(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','new');
+        f3 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','new');
         tf3(trial,i) = toc;
         f3err = oobpredict(f3,X,Y,'every');
         cumf3err(trial,i) = f3err(end);
@@ -99,7 +99,7 @@ xlabel('# ambient dimensions')
 ylabel('oob error')
 title('Trunk')
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Trunk_ooberror_vs_d_n%d_var%d_ntrees%d_ntrials%d',n,Sigma(1),ntrees,ntrials);
+fname = sprintf('Trunk_ooberror_vs_d_n%d_var%d_ntrees%d_ntrials%d_v2',n,Sigma(1),ntrees,ntrials);
 save_fig(gcf,fname)
 
 figure(2)
@@ -123,5 +123,5 @@ xlabel('# ambient dimensions')
 ylabel('Training time (sec)')
 title('Trunk')
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Trunk_time_vs_d_n%d_var%d_ntrees%d_ntrials%d',n,Sigma(1),ntrees,ntrials);
+fname = sprintf('Trunk_time_vs_d_n%d_var%d_ntrees%d_ntrials%d_v2',n,Sigma(1),ntrees,ntrials);
 save_fig(gcf,fname)

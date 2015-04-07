@@ -4,7 +4,7 @@ clear
 close all
 clc
 
-dims = round(logspace(log10(2),3,5));
+dims = round(logspace(log10(2),3,7));
 bayes_error = zeros(size(dims));
 for i = 1:length(dims)
     d = dims(i);
@@ -19,4 +19,4 @@ plot(dims,bayes_error)
 xlabel('# ambient dimensions')
 ylabel('bayes error')
 set(gca,'XScale','log')
-save_fig(gcf,'Trunk_bayes_error_vs_d')
+save_fig(gcf,'Trunk_bayes_error_vs_d_v2')
