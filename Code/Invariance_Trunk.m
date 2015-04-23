@@ -15,8 +15,8 @@ end
 addpath(p);
 
 n = 100;    %# samples
-dims = round(logspace(log10(2),3,7));
-ntrees = 1000;
+dims = round(logspace(log10(2),3,10));
+ntrees = 1500;
 ntrials = 10;
 Class = [0;1];
 
@@ -60,13 +60,13 @@ for trial = 1:ntrials
         R = random_rotation(d);
         T = random_translation(n,d,-1,1);
         S = random_scaling(n,d,0,10);
-        Sigma_outlier = 4*Sigma;
+        Sigma_outlier = 16*Sigma;
         X_rot = X*R;
         X_trans = X + T;
         X_scale = X.*S;
         X_affine = (X*R).*S;
         outlier_model = gmdistribution(Mu,Sigma_outlier);
-        [X_out,idx_out] = random(outlier_model,0.2*n);
+        [X_out,idx_out] = random(outlier_model,0.05*n);
         X_out = cat(1,X,X_out);
         Y_out = cellstr(num2str(Class(idx_out)));
         Y_out = cat(1,Y,Y_out);
@@ -230,5 +230,5 @@ ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
 title('Robust Sparse Randomer Forest w/ Mean Diff')
 
-filename = 'Invariance_Trunk_v2';
-save_fig(gcf,filename)
+%filename = 'Invariance_Trunk_v2';
+%save_fig(gcf,filename)

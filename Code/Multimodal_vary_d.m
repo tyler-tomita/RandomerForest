@@ -15,7 +15,7 @@ end
 addpath(p);
 
 n = 100;    %# samples
-dims = round(logspace(log10(2),3,7));
+dims = round(logspace(log10(2),3,10));
 ntrees = 1000;
 ntrials = 10;
 nclasses = 4;
@@ -142,5 +142,5 @@ xlabel('# ambient dimensions')
 ylabel('Training time (sec)')
 title('Trunk')
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Multimodal_time_vs_d_n%d_var%d_embed%d_ntrees%d_ntrials%d_v2',n,1,ntrees,ntrials);
+fname = sprintf('Multimodal_time_vs_d_n%d_var%d_ntrees%d_ntrials%d_v2',n,1,ntrees,ntrials);
 save_fig(gcf,fname)

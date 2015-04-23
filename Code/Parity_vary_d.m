@@ -17,7 +17,7 @@ end
 addpath(p);
 
 n = 100;
-dims = round(logspace(log10(2),3,7));
+dims = [2 3 4 5 10];
 ntrials = 10;
 ntrees = 1000;
 cumrferr = NaN(ntrials,length(dims));
@@ -38,7 +38,8 @@ for trial = 1:ntrials
         fprintf('d = %d\n',d)
         nvartosample = ceil(d^(2/3));
         X = sparse(n,d);
-        Sigma = 1/8*ones(1,d);
+        %Sigma = 1/8*ones(1,d);
+        Sigma = 1/32*ones(1,d);
         %nones = randi(d+1,n,1)-1;
         %Y = mod(nones,2);
         %Ystr = cellstr(num2str(Y));
@@ -108,11 +109,11 @@ hold on
 for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
 end
-set(gca,'XScale','log')
+%set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Parity_ooberror_vs_d_n%d_ntrees%d_ntrials%d_v4',n,ntrees,ntrials);
+fname = sprintf('Parity_ooberror_vs_d_n%d_ntrees%d_ntrials%d_v5',n,ntrees,ntrials);
 save_fig(gcf,fname)
 
 rfsem = std(trf)/sqrt(ntrials);
@@ -130,9 +131,9 @@ hold on
 for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
 end
-set(gca,'XScale','log')
+%set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel('Wall Time (sec)')
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Parity_time_vs_d_n%d_ntrees%d_ntrials%d_v4',n,ntrees,ntrials);
+fname = sprintf('Parity_time_vs_d_n%d_ntrees%d_ntrials%d_v5',n,ntrees,ntrials);
 save_fig(gcf,fname)
