@@ -646,7 +646,9 @@ nextunusednode = 2;
 
 % Keep processing nodes until done
 tnode = 1;
-if strcmp(mdiff,'on')
+Labels = unique(Y);
+K = length(Labels);
+if strcmp(mdiff,'on') && K > 1
     %Yneg = min(Y);
     %Ypos = max(Y);
     %mu_diff = transpose(mean(X(Y==Ypos,:)) - mean(X(Y==Yneg,:)));
@@ -710,16 +712,17 @@ while(tnode < nextunusednode)
    % Consider splitting this node
    if (Nt>=minparent) && impure      % split only large impure nodes
       Xnode = X(noderows,:);
-      if strcmp(mdiff,'on')
+      if strcmp(mdiff,'on') && K > 1
           promat = srpmat(nvars,nusevars,sparsemethod,s);    %random projection matrix
           md_ind = rand(size(mu_diff,2),1) <= p;
           promat = cat(2,mu_diff(:,md_ind),promat);
           iscat2 = cat(1,false(sum(md_ind),1),iscat);
-          nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
+          %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
+          nvarsplit = cat(2,zeros(1,sum(md_ind)),nvarsplit);
       else
           promat = srpmat(nvars,nusevars,sparsemethod,s);    %random projection matrix
           iscat2 = iscat;
-          nvarsplit2 = nvarsplit;
+          %nvarsplit2 = nvarsplit;
       end
       Xnode = Xnode*promat; %project Xnode onto random bases of promat
       bestvar = 0;
@@ -778,7 +781,8 @@ while(tnode < nextunusednode)
       % Split this node using the best rule found
       % Note: we have leftside==~rightside in the absence of NaN's
       if bestvar~=0
-         nvarsplit2(bestvar) = nvarsplit2(bestvar)+1;
+         %nvarsplit2(bestvar) = nvarsplit2(bestvar)+1;
+         nvarsplit(bestvar) = nvarsplit(bestvar)+1;
          x = Xnode(:,bestvar);
          
          % Send observations left or right
@@ -900,13 +904,14 @@ Tree.catcols   = categ;
 Tree.names     = names;
 Tree.minleaf   = minleaf;
 Tree.minparent = minparent;
-if strcmp(mdiff,'on')
+if strcmp(mdiff,'on') && K > 1
     Tree.nvartosample = nvartosample + 1;
 else
     Tree.nvartosample = nvartosample;
 end
 Tree.mergeleaves = Merge;
-Tree.nvarsplit = nvarsplit2;
+%Tree.nvarsplit = nvarsplit2;
+Tree.nvarsplit = nvarsplit;
 Tree.rpm = rpm(1:topnode);  %Store proj matrices in a structure field
 
 if doclass

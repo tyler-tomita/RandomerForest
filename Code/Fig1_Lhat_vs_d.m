@@ -46,9 +46,9 @@ Level_curve = 1;
 
 BasePath = '~/LOVEFest/Figures/fig/';
 Filename = {'Trunk_ooberror_vs_d_n100_var1_ntrees1000_ntrials10_v2.fig'...
- 'Parity_ooberror_vs_d_n100_ntrees1000_ntrials10_v4.fig'...
+ 'Parity_ooberror_vs_d_n100_ntrees1000_ntrials10_v5.fig'...
  'Multimodal_ooberror_vs_d_n100_var1_ntrees1000_ntrials10_v2.fig'};
-BayesFigs = {'Trunk_bayes_error_vs_d_v2.fig' 'Parity_bayes_error_v3.fig' 'Multimodal_bayes_error.fig'};
+BayesFigs = {'Trunk_bayes_error_vs_d_v2.fig' 'Parity_bayes_error_v4.fig' 'Multimodal_bayes_error.fig'};
 
 
 %Copy bayes error line to the axes containing Lhat for the different
@@ -123,7 +123,7 @@ ylabel('X2')
 set(gca,'XLim',[-4 4],'YLim',[-4 4],'YTick',-4:2:4,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(4) Axis_Bottom(4) Axis_Width Axis_Height])
 
 X = sparse(n,d);
-Sigma = 1/8*speye(d);
+Sigma = 1/32*speye(d);
 Mu = sparse(n,d);
 
 for j = 1:n

@@ -15,7 +15,8 @@ end
 addpath(p);
 
 n = 100;    %# samples
-dims = round(logspace(log10(2),3,5));
+%dims = round(logspace(log10(2),3,10));
+dims = [2 3 4 5 10];
 ntrees = 1000;
 ntrials = 10;
 Class = [0;1];
@@ -49,13 +50,16 @@ for trial = 1:ntrials
         fprintf('d = %d\n',d)
         nvartosample = ceil(d^(2/3));
         d_idx = 1:d;
-        mu1 = 1./sqrt(d_idx);
-        mu0 = -1*mu1;
-        Mu = cat(1,mu0,mu1);
-        Sigma = 1*speye(d);
-        obj = gmdistribution(Mu,Sigma);
-        [X,idx] = random(obj,n);
-        Y = cellstr(num2str(Class(idx)));
+        X = sparse(n,d);
+        Sigma = 1/32*ones(1,d);
+        Mu = sparse(n,d);
+        for j = 1:n
+            Mu(j,:) = binornd(1,0.5,1,d);
+            X(j,:) = mvnrnd(Mu(j,:),Sigma);
+        end
+        
+        nones = sum(Mu,2);
+        Y = cellstr(num2str(mod(nones,2)));
         
         R = random_rotation(d);
         T = random_translation(n,d,-1,1);
@@ -66,9 +70,16 @@ for trial = 1:ntrials
         X_scale = X.*S;
         X_affine = (X*R).*S;
         outlier_model = gmdistribution(Mu,Sigma_outlier);
-        [X_out,idx_out] = random(outlier_model,0.2*n);
+        n_out = round(0.2*n);
+        X_out = sparse(n_out,d);
+        Mu_out = sparse(n_out,d);
+        for j = 1:n_out
+            Mu_out(j,:) = binornd(1,0.5,1,d);
+            X_out(j,:) = mvnrnd(Mu(j,:),Sigma);
+        end
+        nones_out = sum(Mu_out,2);
+        Y_out = cellstr(num2str(mod(nones_out,2)));
         X_out = cat(1,X,X_out);
-        Y_out = cellstr(num2str(Class(idx_out)));
         Y_out = cat(1,Y,Y_out);
 
         rf = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','off','RandomForest',true);
@@ -146,7 +157,7 @@ for trial = 1:ntrials
     end
 end
 
-save('Invariance_Trunk.mat','R','rf_err','f1_err','f2_err','rf_rot_err',...
+save('Invariance_Parity.mat','R','rf_err','f1_err','f2_err','rf_rot_err',...
     'f1_rot_err','f2_rot_err','rf_trans_err','f1_trans_err','f2_trans_err',...
     'rf_scale_err','f1_scale_err','f2_scale_err','rf_affine_err','f1_affine_err','f2_affine_err',...
     'rf_out_err','f1_out_err','f2_out_err')
@@ -230,5 +241,5 @@ ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
 title('Robust Sparse Randomer Forest w/ Mean Diff')
 
-filename = 'Invariance_Trunk_v2';
+filename = 'Invariance_Parity_v2';
 save_fig(gcf,filename)

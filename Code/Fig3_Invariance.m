@@ -56,25 +56,41 @@ for i = 1:length(h_ax_old)
     h_ax_new = subplot(1,3,i);
     copyobj(allchild(h_ax_old(i)),h_ax_new);
     h_lines = allchild(h_ax_new);
-    xmax = zeros(1,length(h_lines));
-    ymax_ln = zeros(1,length(h_lines));
     for j = 1:length(h_lines)
-        set(h_lines(j),'Color',Colors(j,:),'linewidth',LineWidth,'Marker',Marker,'MarkerFaceColor',Colors(j,:),'MarkerEdgeColor',Colors(j,:))
-        xmax(j) = max(get(h_lines(j),'XData'));
-        ymax_ln(j) = max(get(h_lines(j),'YData'));
+        ln = h_lines(j);
+        if strcmp(ln.DisplayName,'Translated')
+            delete(ln)
+            rm_idx = j;
+        end
     end
-    xmax = max(xmax);
-    ymax_ax = max(ymax_ln);
-    ymax_idx = find(ymax_ln==ymax_ax);
-    ymax_idx = ymax_idx(1);
-    ymax_ax = ymax_ax + h_lines(ymax_idx).UData(find(h_lines(ymax_idx).YData==ymax_ln(ymax_idx)));
+    h_lines(rm_idx) = [];
+    xmax = zeros(1,length(h_lines));
+    if i == 1
+        ymax_ln = zeros(1,length(h_lines));
+        for j = 1:length(h_lines)
+            set(h_lines(j),'Color',Colors(j,:),'linewidth',LineWidth,'Marker',Marker,'MarkerFaceColor',Colors(j,:),'MarkerEdgeColor',Colors(j,:))
+            xmax(j) = max(get(h_lines(j),'XData'));
+            ymax_ln(j) = max(get(h_lines(j),'YData'));
+        end
+        xmax = max(xmax);
+        ymax_ax = max(ymax_ln);
+        ymax_idx = find(ymax_ln==ymax_ax);
+        ymax_idx = ymax_idx(1);
+        ymax_ax = ymax_ax + h_lines(ymax_idx).UData(find(h_lines(ymax_idx).YData==ymax_ln(ymax_idx)));
+    else
+        for j = 1:length(h_lines)
+            set(h_lines(j),'Color',Colors(j,:),'linewidth',LineWidth,'Marker',Marker,'MarkerFaceColor',Colors(j,:),'MarkerEdgeColor',Colors(j,:))
+            xmax(j) = max(get(h_lines(j),'XData'));
+        end
+        xmax = max(xmax);
+    end
     XTick = logspace(0,log10(xmax),log10(xmax)+1);
     set(h_ax_new,'XLim',[0 10^(log10(xmax)+0.1)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(i) Axis_Bottom Axis_Width Axis_Height])
     title(Title{i})
     xlabel('Number of Ambient Dimensions')
     ylabel('L hat')
     %hL = legend(h_ax_new,'Random Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
-    hL = legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
+    hL = legend('Untransformed','Rotated','Scaled','Affine','Outlier');
     legend(h_ax_new,'hide')
     get(h_ax_new,'Position');
 end

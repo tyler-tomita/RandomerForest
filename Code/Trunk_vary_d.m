@@ -15,9 +15,9 @@ end
 addpath(p);
 
 n = 100;
-dims = round(logspace(log10(2),3,7));
+dims = round(logspace(log10(2),3,10));
 ntrials = 10;
-ntrees = 1000;
+ntrees = 1500;
 cumrferr = NaN(ntrials,length(dims));
 cumf1err = NaN(ntrials,length(dims));
 cumf2err = NaN(ntrials,length(dims));
