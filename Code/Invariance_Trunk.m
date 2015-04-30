@@ -230,5 +230,5 @@ ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
 title('Robust Sparse Randomer Forest w/ Mean Diff')
 
-%filename = 'Invariance_Trunk_v2';
-%save_fig(gcf,filename)
+filename = 'Invariance_Trunk_v3';
+save_fig(gcf,filename)

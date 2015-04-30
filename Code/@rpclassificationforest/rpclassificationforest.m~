@@ -47,9 +47,9 @@ classdef rpclassificationforest
             sampleidx = 1:length(Y);
             parfor i = 1:nTrees
                 ibidx{i} = randsample(sampleidx,nboot,SampleWithReplacement);
-                oobidx{i} = setdiff(sampleidx,ibidx{i});
-                Xib = X(ibidx{i},:);
-                Yib = Y(ibidx{i});
+                oobidx{i} = setdiff(sampleidx,ibidx);
+                Xib = X(ibidx,:);
+                Yib = Y(ibidx);
                 if ~RandomForest
                     if Robust
                         Xib = passtorank(Xib);

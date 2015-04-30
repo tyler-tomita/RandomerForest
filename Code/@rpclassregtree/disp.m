@@ -30,7 +30,8 @@ for j=1:maxnode
     if any(t.children(j,:))
         % branch node
         vnum = t.var(j);
-        vname = varnames{abs(vnum)};
+        %vname = varnames{abs(vnum)};
+        vname = strcat('x',num2str(vnum));
         cut = t.cut{j};
         kids = t.children(j,:);
         if     strcmp(type(t),'regression')
