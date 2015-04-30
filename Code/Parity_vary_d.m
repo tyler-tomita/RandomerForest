@@ -73,7 +73,7 @@ for trial = 1:ntrials
         fprintf('TylerForest complete\n')
 
         tic
-        f2 = rpclassificationforest(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','new');
+        f2 = rpclassificationforest(ntrees,X,Ystr,'nvartosample',nvartosample,'mdiff','off','sparsemethod','new');
         tf2(trial,i) = toc;
         cumf2err(trial,i) = oobpredict(f2,X,Ystr,'last');
         clear f2
@@ -81,7 +81,7 @@ for trial = 1:ntrials
         fprintf('TylerForest+ complete\n')
 
         tic
-        f3 = rpclassificationforest(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','new');
+        f3 = rpclassificationforest(ntrees,X,Ystr,'nvartosample',nvartosample,'mdiff','on','sparsemethod','new');
         tf3(trial,i) = toc;
         cumf3err(trial,i) = oobpredict(f3,X,Ystr,'last');
         clear f3
@@ -97,10 +97,10 @@ rfsem = std(cumrferr)/sqrt(ntrials);
 f1sem = std(cumf1err)/sqrt(ntrials);
 f2sem  = std(cumf2err)/sqrt(ntrials);
 f3sem  = std(cumf3err)/sqrt(ntrials);
-cumrferr = mean(cumrferr);
-cumf1err = mean(cumf1err);
-cumf2err = mean(cumf2err);
-cumf3err = mean(cumf3err);
+cumrferr = mean(cumrferr)
+cumf1err = mean(cumf1err)
+cumf2err = mean(cumf2err)
+cumf3err = mean(cumf3err)
 Ynames = {'cumrferr' 'cumf1err' 'cumf2err' 'cumf3err'};
 Enames = {'rfsem' 'f1sem' 'f2sem' 'f3sem'};
 lspec = {'-bo','-rx','-gd','-ks'};

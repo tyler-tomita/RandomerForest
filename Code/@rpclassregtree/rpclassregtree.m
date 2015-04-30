@@ -653,7 +653,6 @@ if strcmp(mdiff,'on') && K > 1
     %Ypos = max(Y);
     %mu_diff = transpose(mean(X(Y==Ypos,:)) - mean(X(Y==Yneg,:)));
     Labels = unique(Y);
-    K = length(Labels);
     pairs = zeros(K-1,2);
     npairs = K-1;
     pairs(:,1) = 1:npairs;

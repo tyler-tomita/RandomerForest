@@ -6,8 +6,7 @@ function Xnew_rank = interpolate_rank(X,Xnew)
         Xcat_rank = passtorank(Xcat);
         for j = 1:size(Xnew(i,:),2)
             if Xcat_rank(end,j) == size(Xcat_rank,1)
-                Xnew_rank(i,j) = Xcat_rank(end,j) - 1;
-            elseif Xcat_rank(end,j) == 1
+                Xcat_rank(end,j) == 1
                 Xnew_rank(i,j) = Xcat_rank(end,j);
             else
                 lower_idx = find(Xrank(:,j)==Xcat_rank(end,j)-1);

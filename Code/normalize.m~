@@ -1,0 +1,6 @@
+function Xnorm = normalize(X)
+    nrows = size(X,1);
+    has_variance = range(X) ~= 0;
+    Xnorm(:,~allzero) = (X(:,has_variance) - repmat(min(X(:,has_variance)),nrows,1))./(repmat(max(X(:,has_variance)),nrows,1) - repmat(min(X(:,has_variance)),nrows,1));
+    Xnorm(:,allzero) = 0;
+end
