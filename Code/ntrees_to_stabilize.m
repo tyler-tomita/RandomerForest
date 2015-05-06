@@ -15,7 +15,6 @@ end
 addpath(p);
 
 n = 100;
-d = 1000;
 ntrials = 10;
 ntrees = 2000;
 nclasses = 4;
@@ -36,15 +35,21 @@ cumf3err = NaN(ntrials,ntrees,3);
 Class_trunk = [0;1];
 Title = {'Trunk' 'Parity' 'Multimodal'};
 
+poolobj = gcp('nocreate');
+if isempty(poolobj)
+    parpool('local',16,'IdleTimeout',120);
+end
+
 for trial = 1:ntrials
     fprintf('trial %d\n',trial)
     
     %Trunk
+    d = 1000;
     d_idx = 1:d;
     nvartosample = ceil(d^(2/3));
     mu1 = 1./sqrt(d_idx);
     mu0 = -1*mu1;
-    Mu = cat(1,mu1,mu0);
+    Mu = cat(1,mu0,mu1);
     Sigma = ones(1,d);
     obj = gmdistribution(Mu,Sigma);
     [X,idx] = random(obj,n);
@@ -77,8 +82,9 @@ for trial = 1:ntrials
     fprintf('Trunk complete\n\n')
     
     %Parity
+    d = 10;
     X = sparse(n,d);
-    Sigma = 1/8*speye(d);
+    Sigma = 1/32*speye(d);
     Mu = sparse(n,d);
 
     for j = 1:n
@@ -116,6 +122,7 @@ for trial = 1:ntrials
     fprintf('Parity complete\n\n')
     
     %Multimodal
+    d = 1000;
     df = 10*d;   %degrees of freedom for inverse wishart
     nvartosample = ceil(d^(2/3));
 

@@ -19,7 +19,7 @@ function Xtest_rank = interpolate_rank(Xtrain,Xtest)
     %than that of all training points, then its rank is equal to the
     %largest rank of the training points. Otherwise, it's rank is linearly
     %interpolated between the points immediately greater than and
-    %immediately less than it.
+    %immediately less than the te
     for i = 1:size(Xtest,1)
         Xcat = cat(1,Xtrain,Xtest(i,:));
         Xcat_rank = passtorank(Xcat);   

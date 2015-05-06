@@ -16,8 +16,8 @@ p(colons(endGit-1):colons(endGit)-1)=[];
 end
 addpath(p);
 
-n = 1000;
-dims = [2 3 4 5 10];
+n = 100;
+dims = [2 3 4];
 ntrials = 10;
 ntrees = 1000;
 cumrferr = NaN(ntrials,length(dims));
