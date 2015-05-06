@@ -97,6 +97,7 @@ classdef rpclassificationforest
             Labels = forest.classname;
             if ~forest.RandomForest
                 for i = 1:forest.nTrees
+                for i = 1:forest.nTrees
                     pred_i = num2cell(NaN(nrows,1));
                     Xoob = X(OOBIndices{i},:);
                     if forest.Robust
@@ -109,11 +110,10 @@ classdef rpclassificationforest
             else
                 parfor i = 1:forest.nTrees
                 %for i = 1:forest.nTrees
-                    pred_i = num2cell(NaN(nrows,1));
-                    pred_i(OOBIndices{i}) = eval(trees{i},X(OOBIndices{i},:));
-                    predcell(:,i) = pred_i;
-                    %idx = OOBIndices{i};
-                    %predcell(idx,i) = eval(trees{i},X(OOBIndices{i},:));
+                    %pred_i = num2cell(NaN(nrows,1));
+                    %pred_i(OOBIndices{i}) = eval(trees{i},X(OOBIndices{i},:));
+                    %predcell(:,i) = pred_i;
+                    predcell(OOBIndices{i},i) = eval(trees{i},X(OOBIndices{i},:));
                 end
             end
             for j = 1:length(forest.classname)
