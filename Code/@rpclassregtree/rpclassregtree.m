@@ -375,8 +375,9 @@ function Tree=rptreefit(Tree,X,Y,varargin)
 
 % Process inputs
 
-if ~issparse(X)
-    X = sparse(X);  %reduce computational load for matrices with many zero elements
+%Reduce computational load for matrices with many zero elements
+if ~issparse(X) && nnz(X)/numel(X) <= 0.02
+    X = sparse(X);
 end
 
 if isnumeric(Y)
