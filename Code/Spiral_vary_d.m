@@ -17,7 +17,7 @@ end
 addpath(p);
 
 n = 100;
-dims = [2 3 4];
+dims = [2 3 4 5];
 ntrials = 10;
 ntrees = 1000;
 cumrferr = NaN(ntrials,length(dims));
@@ -29,7 +29,10 @@ tf1 = NaN(ntrials,length(dims));
 tf2 = NaN(ntrials,length(dims));
 tf3 = NaN(ntrials,length(dims));
 
-parpool;
+poolobj = gcp('nocreate');
+if isempty(poolobj)
+    parpool;
+end
 for trial = 1:ntrials
     fprintf('trial %d\n',trial)
 
@@ -120,5 +123,5 @@ end
 xlabel('# Ambient Dimensions')
 ylabel('Wall Time (sec)')
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Spiral_time_vs_d_n%d_ntrees%d_ntrials%d',n,ntrees,ntrials);
-save_fig(gcf,fname)
+%fname = sprintf('Spiral_time_vs_d_n%d_ntrees%d_ntrials%d',n,ntrees,ntrials);
+%save_fig(gcf,fname)

@@ -17,8 +17,7 @@ function [X,Y] = Spiral_2class(n,d)
     if d == 2
         phi_final = 2*pi;
     else
-        %phi_final = (d-1)*2*pi*linspace(1,2,d-1);
-        phi_final = 2*pi*linspace(1,2,d-1);
+        phi_final = (d-1)*2*pi*linspace(1,,d-1);
     end
     r_final = 1;
     X0 = zeros(round(n/2),d);

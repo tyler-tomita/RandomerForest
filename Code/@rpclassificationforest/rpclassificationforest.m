@@ -1,7 +1,6 @@
 classdef rpclassificationforest
     
     properties
-        ibidx = {}; %indices of in bag samples for each tree
         oobidx = {}; %indices of out of bag samples for each tree
         Tree = {};  %classification trees contained in the ensemble
         nTrees = []; %number of trees in the ensemble
@@ -34,27 +33,27 @@ classdef rpclassificationforest
                 surrogate,skipchecks,Stream,fboot,...
                 SampleWithReplacement,s,mdiff,sparsemethod,RandomForest,Robust,~,extra] = ...
                 internal.stats.parseArgs(okargs,defaults,varargin{:});
-            if Robust && ~RandomForest
-            %    X = passtorank(X);
+            
+            %Convert to double if not already
+            if ~isa(X,'double')
+                X = double(X);
+            end
+            
+            if Robust
+                X = passtorank(X);
                 forest.Robust = true;
             else
                 forest.Robust = false;
             end
             nboot = ceil(fboot*length(Y));
             Tree = cell(nTrees,1);
-            ibidx = cell(nTrees,1);
             oobidx = cell(nTrees,1);
-            sampleidx = 1:length(Y);
             parfor i = 1:nTrees
-                ibidx{i} = randsample(sampleidx,nboot,SampleWithReplacement);
-                oobidx{i} = setdiff(sampleidx,ibidx{i});
-                Xib = X(ibidx{i},:);
-                Yib = Y(ibidx{i});
+                sampleidx = 1:length(Y);
+                ibidx = randsample(sampleidx,nboot,SampleWithReplacement);
+                oobidx{i} = setdiff(sampleidx,ibidx);
                 if ~RandomForest
-                    if Robust
-                        Xib = passtorank(Xib);
-                    end
-                    Tree{i} = rpclassregtree(Xib,Yib,...
+                    Tree{i} = rpclassregtree(X(ibidx,:),Y(ibidx,:),...
                         'priorprob',Prior,'cost',Cost,'splitcriterion',...
                         Criterion,'splitmin',splitmin,'minparent',...
                         minparent,'minleaf',minleaf,'nvartosample',...
@@ -64,7 +63,7 @@ classdef rpclassificationforest
                         surrogate,'skipchecks',skipchecks,'stream',Stream,...
                         's',s,'mdiff',mdiff,'sparsemethod',sparsemethod);
                 else
-                    Tree{i} = classregtree(Xib,Yib,...
+                    Tree{i} = classregtree(X(ibidx,:),Y(ibidx,:),...
                         'priorprob',Prior,'cost',Cost,'splitcriterion',...
                         Criterion,'splitmin',splitmin,'minparent',...
                         minparent,'minleaf',minleaf,'nvartosample',...
@@ -75,7 +74,6 @@ classdef rpclassificationforest
                 end  
             end     %parallel loop over i
             forest.Tree = Tree;
-            forest.ibidx = ibidx;
             forest.oobidx = oobidx;
             forest.nTrees = length(forest.Tree);
             forest.RandomForest = RandomForest;
@@ -85,35 +83,32 @@ classdef rpclassificationforest
             if nargin == 3
                 treenum = 'last';
             end
-            %if forest.Robust
-            %    X = passtorank(X);
-            %end
+            
+            %Convert to double if not already
+            if ~isa(X,'double')
+                X = double(X);
+            end
+            
+            if forest.Robust
+                X = passtorank(X);
+            end
             nrows = size(X,1);
             predmat = NaN(nrows,forest.nTrees);
             predcell = cell(nrows,forest.nTrees);
-            IBIndices = forest.ibidx;
             OOBIndices = forest.oobidx;
             trees = forest.Tree;
             Labels = forest.classname;
             if ~forest.RandomForest
-                for i = 1:forest.nTrees
+                parfor i = 1:forest.nTrees
                     pred_i = num2cell(NaN(nrows,1));
-                    Xoob = X(OOBIndices{i},:);
-                    if forest.Robust
-                        Xib = X(IBIndices{i},:);
-                        Xoob = interpolate_rank(Xib,Xoob);
-                    end
-                    pred_i(OOBIndices{i}) = rptreepredict(trees{i},Xoob);
+                    pred_i(OOBIndices{i}) = rptreepredict(trees{i},X(OOBIndices{i},:));
                     predcell(:,i) = pred_i;
                 end
             else
                 parfor i = 1:forest.nTrees
-                %for i = 1:forest.nTrees
                     pred_i = num2cell(NaN(nrows,1));
                     pred_i(OOBIndices{i}) = eval(trees{i},X(OOBIndices{i},:));
                     predcell(:,i) = pred_i;
-                    %idx = OOBIndices{i};
-                    %predcell(idx,i) = eval(trees{i},X(OOBIndices{i},:));
                 end
             end
             for j = 1:length(forest.classname)
@@ -150,24 +145,50 @@ classdef rpclassificationforest
             end
         end     %function oobpredict
         
-        function Y = predict(forest,X)
-            predmat = NaN(size(X,1),forest.nTrees);
-            YTree = cell(size(X,1),forest.nTrees);
+        function Y = predict(forest,X,varargin)
+            
+            %Convert to double if not already
+            if ~isa(X,'double')
+                X = double(X);
+            end
+            
+            if nargin == 3;
+                Xtrain = varargin{1};
+                if ~isa(Xtrain,'double')
+                    Xtrain = double(Xtrain);
+                end
+            end
+            
+            if forest.Robust
+                if nargin < 3
+                    error('Training data is required as third input argument for predicting')
+                end
+                X = interpolate_rank(Xtrain,X);
+            end
+            n = size(X,1);
+            predmat = NaN(n,forest.nTrees);
+            YTree = cell(n,forest.nTrees);
             Tree = forest.Tree;
-            parfor i = 1:forest.nTrees
-                YTree(:,i) = rptreepredict(Tree{i},X);
+            if ~forest.RandomForest
+                parfor i = 1:forest.nTrees
+                    YTree(:,i) = rptreepredict(Tree{i},X);
+                end
+            else
+                parfor i = 1:forest.nTrees
+                    YTree(:,i) = eval(Tree{i},X);
+                end
             end
-            classname = forest.classname;
-            strcmp(YTree{1},classname{1});
-            YTree{1};
-            classname{1};
-            for j = 1:length(classname)
-                predmat(strcmp(YTree,classname{j})) = j;
+            Labels = forest.classname;
+            for j = 1:length(Labels)
+                predmat(strcmp(YTree,Labels{j})) = j;
             end
-            predmat;
-            ensemblepredictions = mode(predmat,2);
-            missing = isnan(ensemblepredictions);
-            Y = classname(ensemblepredictions(~missing));
+            if length(Labels) > 2
+                ensemblepredictions = mode(predmat,2);
+                missing = isnan(ensemblepredictions);
+                Y = Labels(ensemblepredictions(~missing));
+            else
+                Y = sum(predmat==2,2)./sum(~isnan(predmat),2);  %Y is fraction of trees that votes for positive class
+            end
         end     %function predict
     end     %methods
 end     %classdef
