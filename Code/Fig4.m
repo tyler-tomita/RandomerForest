@@ -23,11 +23,11 @@ LineWidth = 1.5;
 Marker = {'none' 'none' 'none' 'none' 'none' '.' '.' '.' '.' '.'};
 Units = 'pixels';
 %FigPosition = [0 140 1150 650];
-FigPosition = [0 140 725 325];
+FigPosition = [0 140 750 350];
 %left = [50 350 650];
 %bottom = [350 50];
 %Axis_Left = repmat(left,1,2);
-Axis_Left = [75 375];
+Axis_Left = [75 400];
 %Axis_Bottom = cat(2,repmat(bottom(1),1,3),repmat(bottom(2),1,3));
 Axis_Bottom = 50;
 Axis_Width = 250;
@@ -35,7 +35,7 @@ Axis_Height = 250;
 MarkerSize = 14;
 Box = 'off';
 Box_Legend = 'off';
-Colorbar_Left = 650;
+Colorbar_Left = 675;
 Colorbar_Bottom = 50;
 Colorbar_Width = 25;
 Colorbar_Height = 250;
@@ -62,6 +62,7 @@ end
 set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(1) Axis_Bottom Axis_Width Axis_Height])
 xlabel('Training Time (sec)')
 ylabel('Lhat')
+title('A')
 %hL = legend(ax_new,'Random Forest','Dense Randomer Forest','Sparse Randomer Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
 legend(ax_new,'hide')
 get(ax_new,'Position');
@@ -74,6 +75,7 @@ set(h_lines(1),'Color','k','linewidth',LineWidth)
 set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(2) Axis_Bottom Axis_Width Axis_Height])
 xlabel('Training Time (sec)')
 ylabel('Lhat')
+title('B')
 %hL = legend(ax_new,'Random Forest','Dense Randomer Forest','Sparse Randomer Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
 legend(ax_new,'hide')
 get(ax_new,'Position');
