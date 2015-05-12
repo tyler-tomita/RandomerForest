@@ -1,5 +1,7 @@
-function rgb = map2color(x)
-
+function rgb = map2color(x,map)
+    if strcmp(map,'log')
+        x = log(x);
+    end
     x = normalize(x);
     r = zeros(length(x),1);
     g = zeros(length(x),1);
@@ -10,6 +12,5 @@ function rgb = map2color(x)
         g(i) = 1 - abs(x(i)/0.5-1);
         b(i) = max(1-x(i)/0.5,0);
     end
-
     rgb = [r g b];
 end
