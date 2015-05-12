@@ -27,16 +27,16 @@ Marker = 'none';
 Title = {'Trunk' 'Parity' 'Multimodal'};
 Units = 'pixels';
 %FigPosition = [0 140 1150 1150];
-FigPosition = [0 140 1300 650];
-left = [75 400 725];
-bottom = [375 50];
+FigPosition = [0 140 1150 650];
+left = [50 350 650];
+bottom = [350 50];
 Axis_Left = repmat(left,1,2);
 Axis_Bottom = cat(2,repmat(bottom(1),1,3),repmat(bottom(2),1,3));
 Axis_Width = 250;
 Axis_Height = 250;
 Legend_Width = [150 75];
 Legend_Height = [100 round(4/5*100)];
-Legend_Left = [1075 1025];
+Legend_Left = [950 925];
 Legend_Bottom = [round(bottom(1)+Axis_Height/2-Legend_Height(1)/2) round(bottom(2)+Axis_Height/2-Legend_Height(2)/2)];
 MarkerSize = 14;
 Box = 'off';
@@ -64,7 +64,7 @@ for i = 1:length(Filename)
 end
 
 h{4} = figure('Visible','On');
-set(h{4},'Position',FigPosition,'PaperOrientation','landscape','PaperUnits','inches','PaperSize',[8.5*2.1 11*2.1],'PaperPositionMode','auto','Color',Fig_Color)
+set(h{4},'Position',FigPosition,'PaperOrientation','landscape','PaperUnits','inches','PaperSize',[8.5*2 11*2],'PaperPositionMode','auto','Color',Fig_Color)
 
 for i = 1:length(h)-1
     ax_old = get(h{i},'CurrentAxes');
@@ -85,9 +85,9 @@ for i = 1:length(h)-1
     XTick = logspace(0,log10(xmax),log10(xmax)+1);
     set(ax_new,'FontSize',FontSize,'XLim',[0 10^(log10(xmax)+0.1)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(i) Axis_Bottom(i) Axis_Width Axis_Height])
     title(Title{i})
-    xlabel('# of Ambient Dimensions')
+    xlabel('Number of Ambient Dimensions')
     ylabel('L hat')
-    hL = legend(ax_new,'Random Forest','Dense Rmer Forest','Sp. Rmer Forest','Sp. Rmer Forest w/ MD','Bayes Error');
+    hL = legend(ax_new,'Random Forest','Dense Randomer Forest','Sparse Randomer Forest','Sparse Randomer Forest w/ Mean Diff','Bayes Error');
     legend(ax_new,'hide')
     get(ax_new,'Position');
 end
@@ -151,7 +151,7 @@ for j = 1:length(Mu)
 end
 xlabel('X1')
 ylabel('X2')
-set(gca,'FontSize',FontSize,'XLim',[-2 2],'YLim',[-2 2],'YTick',-2:2,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(5) Axis_Bottom(5) Axis_Width Axis_Height])
+set(gca,'XLim',[-2 2],'YLim',[-2 2],'YTick',-2:2,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(5) Axis_Bottom(5) Axis_Width Axis_Height])
 
 nclasses = 4;
 Classes = 1:nclasses;
@@ -199,7 +199,7 @@ ylabel('X2')
 %set(ch(6),'MarkerSize',MarkerSize,'Color','b')
 %set(ch(7),'MarkerSize',MarkerSize,'Color','g')
 %set(ch(8),'MarkerSize',MarkerSize,'Color','m')
-set(gca,'FontSize',FontSize,'XLim',[-4 4],'YLim',[-4 4],'YTick',-4:2:4,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(6) Axis_Bottom(6) Axis_Width Axis_Height])
+set(gca,'XLim',[-4 4],'YLim',[-4 4],'YTick',-4:2:4,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(6) Axis_Bottom(6) Axis_Width Axis_Height])
 hL = legend('Class 1','Class 2','Class 3','Class 4');
 set(hL,'Units',Units,'Position',[Legend_Left(2) Legend_Bottom(2) Legend_Width(2) Legend_Height(2)],'Visible','On','Box',Box_Legend)
 fname = '~/LOVEFest/Figures/Fig1_Lhat';

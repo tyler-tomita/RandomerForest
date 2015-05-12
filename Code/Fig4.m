@@ -27,7 +27,7 @@ FigPosition = [0 140 725 325];
 %left = [50 350 650];
 %bottom = [350 50];
 %Axis_Left = repmat(left,1,2);
-Axis_Left = [50 350];
+Axis_Left = [75 375];
 %Axis_Bottom = cat(2,repmat(bottom(1),1,3),repmat(bottom(2),1,3));
 Axis_Bottom = 50;
 Axis_Width = 250;
@@ -39,6 +39,7 @@ Colorbar_Left = 650;
 Colorbar_Bottom = 50;
 Colorbar_Width = 25;
 Colorbar_Height = 250;
+FontSize = 20;
 
 BasePath = '~/LOVEFest/Figures/fig/';
 Filename = {'Fig4_Real_Data_Panel_A_v2.fig','Fig4_Real_Data_Panel_B_v2.fig'};
@@ -49,7 +50,7 @@ for i = 1:length(Filename)
 end
 
 h{3} = figure('Visible','On');
-set(h{3},'Position',FigPosition,'PaperOrientation','landscape','PaperUnits','inches','PaperSize',[8.5*2 11*2],'PaperPositionMode','auto','Color',Fig_Color)
+set(h{3},'Position',FigPosition,'PaperOrientation','landscape','PaperUnits','inches','PaperSize',[8.5*2.1 11*2.1],'PaperPositionMode','auto','Color',Fig_Color)
 
 ax_old = get(h{1},'CurrentAxes');
 ax_new = subplot(1,2,1);
@@ -58,7 +59,7 @@ h_lines = allchild(ax_new);
 for j = 1:length(h_lines)
     set(h_lines(j),'Color',Colors(j,:),'linewidth',LineWidth,'Marker',Marker{j},'MarkerSize',MarkerSize,'MarkerFaceColor',Colors(j,:),'MarkerEdgeColor',Colors(j,:))
 end
-set(ax_new,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(1) Axis_Bottom Axis_Width Axis_Height])
+set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(1) Axis_Bottom Axis_Width Axis_Height])
 xlabel('Training Time (sec)')
 ylabel('Lhat')
 %hL = legend(ax_new,'Random Forest','Dense Randomer Forest','Sparse Randomer Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
@@ -70,7 +71,7 @@ ax_new = subplot(1,2,2);
 copyobj(allchild(ax_old),ax_new);
 h_lines = allchild(ax_new);
 set(h_lines(1),'Color','k','linewidth',LineWidth)
-set(ax_new,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(2) Axis_Bottom Axis_Width Axis_Height])
+set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(2) Axis_Bottom Axis_Width Axis_Height])
 xlabel('Training Time (sec)')
 ylabel('Lhat')
 %hL = legend(ax_new,'Random Forest','Dense Randomer Forest','Sparse Randomer Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
