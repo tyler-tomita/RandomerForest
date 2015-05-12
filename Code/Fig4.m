@@ -79,7 +79,7 @@ set(h_lines(1),'Color','k','linewidth',LineWidth)
 set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(2) Axis_Bottom Axis_Width Axis_Height])
 xlabel('Random Forest')
 ylabel('R''er F(s+d+r)')
-title('(B) Lhat For Each Datasets')
+title('(B) Lhat For Each Dataset')
 %hL = legend(ax_new,'Random Forest','Dense Randomer Forest','Sparse Randomer Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
 legend(ax_new,'hide')
 get(ax_new,'Position');
