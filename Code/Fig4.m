@@ -41,7 +41,7 @@ Colorbar_Width = 25;
 Colorbar_Height = 250;
 
 BasePath = '~/LOVEFest/Figures/fig/';
-Filename = {'Fig4_Real_Data_Panel_A_v2.fig','Fig4_Real_Data_Panel_B_v2'};
+Filename = {'Fig4_Real_Data_Panel_A_v2.fig','Fig4_Real_Data_Panel_B_v2.fig'};
 
 for i = 1:length(Filename)
     h{i} = openfig(strcat(BasePath,Filename{i}),'invisible');
@@ -76,10 +76,10 @@ ylabel('Lhat')
 %hL = legend(ax_new,'Random Forest','Dense Randomer Forest','Sparse Randomer Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
 legend(ax_new,'hide')
 get(ax_new,'Position');
-r = cat(1,zeros(1000,1),transpose(linspace(0,1,1001)));
-g = cat(1,transpose(linspace(0,1,1001)),transpose(linspace(0.999,0,1000)));
-b = flipud(r);
-colormap([r g b])
+rgb = map2color(transpose(linspace(1,1000,1000)),'log');
+colormap([rgb(:,1) rgb(:,2) rgb(:,3)])
+colorbar
+caxis([4 263])
 h = colorbar('Units',Units,'Position',[Colorbar_Left Colorbar_Bottom Colorbar_Width Colorbar_Height]);
     
 %set(hL,'Units',Units,'Position',[Legend_Left Legend_Bottom Legend_Width Legend_Height],'Visible','On','Box',Box_Legend)
