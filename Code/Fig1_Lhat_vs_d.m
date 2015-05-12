@@ -22,9 +22,9 @@ addpath(p);
 Colors = linspecer(5,'sequential');
 ScatterColors = {'r' 'b' 'g' 'm'};
 Fig_Color = [1 1 1];
-LineWidth = 1.5;
+LineWidth = 3;
 Marker = 'none';
-Title = {'Trunk' 'Parity' 'Multimodal'};
+Title = {'(A) Trunk' '(B) Parity' '(C) Multimodal'};
 Units = 'pixels';
 %FigPosition = [0 140 1150 1150];
 FigPosition = [0 140 1300 650];
@@ -73,7 +73,7 @@ for i = 1:length(h)-1
     h_lines = allchild(ax_new);
     xmax = zeros(1,5);
     ymax_ln = zeros(1,5);
-    for j = 1:5
+    for j = 1:length(h_lines)
         set(h_lines(j),'Color',Colors(j,:),'linewidth',LineWidth,'Marker',Marker,'MarkerFaceColor',Colors(j,:),'MarkerEdgeColor',Colors(j,:))
         xmax(j) = max(get(h_lines(j),'XData'));
         ymax_ln(j) = max(get(h_lines(j),'YData'));
@@ -82,12 +82,19 @@ for i = 1:length(h)-1
     ymax_ax = max(ymax_ln);
     ymax_idx = find(ymax_ln==ymax_ax);
     ymax_ax = ymax_ax + h_lines(ymax_idx).UData(find(h_lines(ymax_idx).YData==ymax_ln(ymax_idx)));
-    XTick = logspace(0,log10(xmax),log10(xmax)+1);
-    set(ax_new,'FontSize',FontSize,'XLim',[0 10^(log10(xmax)+0.1)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(i) Axis_Bottom(i) Axis_Width Axis_Height])
+    if i ~= 2
+        XTick = logspace(0,log10(xmax),log10(xmax)+1);
+        set(ax_new,'FontSize',FontSize,'XLim',[0 10^(log10(xmax)+0.1)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(i) Axis_Bottom(i) Axis_Width Axis_Height])
+    else
+        XTick = 0:2:10;
+        set(ax_new,'FontSize',FontSize,'XLim',[0 11],'YLim',[0 ymax_ax],'XScale','linear','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(i) Axis_Bottom(i) Axis_Width Axis_Height])
+    end
     title(Title{i})
     xlabel('# of Ambient Dimensions')
-    ylabel('L hat')
-    hL = legend(ax_new,'Random Forest','Dense Rmer Forest','Sp. Rmer Forest','Sp. Rmer Forest w/ MD','Bayes Error');
+    if i == 1
+        ylabel('Lhat')
+    end
+    hL = legend(ax_new,'Random Forest','R''er F(d)','R''er F(s)','R''er F(s+d)','Bayes Error');
     legend(ax_new,'hide')
     get(ax_new,'Position');
 end
@@ -119,8 +126,8 @@ for j = 1:size(Mu,1)
         'LineWidth',LineWidth)
     hold on
 end
-xlabel('X1')
-ylabel('X2')
+xlabel('Ambient dimension 1')
+ylabel('Ambient dimension 2')
 set(gca,'FontSize',FontSize,'XLim',[-4 4],'YLim',[-4 4],'YTick',-4:2:4,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(4) Axis_Bottom(4) Axis_Width Axis_Height])
 
 X = sparse(n,d);
@@ -149,8 +156,8 @@ for j = 1:length(Mu)
         'LineWidth',LineWidth)
     hold on
 end
-xlabel('X1')
-ylabel('X2')
+xlabel('Ambient dimension 1')
+ylabel('Ambient dimension 2')
 set(gca,'FontSize',FontSize,'XLim',[-2 2],'YLim',[-2 2],'YTick',-2:2,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(5) Axis_Bottom(5) Axis_Width Axis_Height])
 
 nclasses = 4;
@@ -190,8 +197,8 @@ for j = 1:J
         'LineWidth',LineWidth)
     hold on
 end
-xlabel('X1')
-ylabel('X2')
+xlabel('Ambient dimension 1')
+ylabel('Ambient dimension 2')
 %ch = allchild(gca);
 %for j = 1:J
 %    set(ch(j),'MarkerSize',MarkerSize,'Color',Colors(Class(j)))

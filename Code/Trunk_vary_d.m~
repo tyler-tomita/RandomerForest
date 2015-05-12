@@ -79,15 +79,13 @@ for trial = 1:ntrials
         f3err = oobpredict(f3,X,Y,'every');
         cumf3err(trial,i) = f3err(end);
         
-        fprintf('TylerForest+meandiff complete\n')
-        
         tic
         f4 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','new','Robust',true);
         tf4(trial,i) = toc;
         f4err = oobpredict(f4,X,Y,'every');
         cumf4err(trial,i) = f4err(end);
         
-        fprintf('Robust complete\n')
+        fprintf('TylerForest+meandiff complete\n')
     end
 end
 
@@ -139,6 +137,6 @@ set(gca,'XScale','log')
 xlabel('# ambient dimensions')
 ylabel('Training time (sec)')
 title('Trunk')
-legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff','Robust')
-fname = sprintf('Trunk_time_vs_d_n%d_var%d_ntrees%d_ntrials%d_v3',n,Sigma(1),ntrees,ntrials);
+legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
+fname = sprintf('Trunk_time_vs_d_n%d_var%d_ntrees%d_ntrials%d_v2',n,Sigma(1),ntrees,ntrials);
 save_fig(gcf,fname)

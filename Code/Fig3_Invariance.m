@@ -19,10 +19,10 @@ addpath(p);
 %Colors = linspecer(3,'sequential');
 Colors = linspecer(6,'sequential');
 Fig_Color = [1 1 1];
-LineWidth = 1.5;
+LineWidth = 3;
 Marker = 'none';
 %Title = {'Trunk' 'Rotated' 'Translated' 'Scaled' 'Outliers'};
-Title = {'Random Forest' 'Sp. Rmer Forest w/ MD' 'Rb. Sp. Rmer Forest w/ MD'};
+Title = {'(A) Random Forest' '(B) R''er F(s+d)' '(C) R''er F(s+d+r)'};
 Units = 'pixels';
 %FigPosition = [0 140 1150 650];
 FigPosition = [0 140 1300 350];
@@ -89,7 +89,7 @@ for i = 1:length(h_ax_old)
     set(h_ax_new,'FontSize',FontSize,'XLim',[0 10^(log10(xmax)+0.1)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(i) Axis_Bottom Axis_Width Axis_Height])
     title(Title{i})
     xlabel('# of Ambient Dimensions')
-    ylabel('L hat')
+    ylabel('Lhat')
     %hL = legend(h_ax_new,'Random Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
     hL = legend('Untransformed','Rotated','Scaled','Affine','Outlier');
     legend(h_ax_new,'hide')

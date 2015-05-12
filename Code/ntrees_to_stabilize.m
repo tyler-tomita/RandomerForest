@@ -83,6 +83,7 @@ for trial = 1:ntrials
     
     %Parity
     d = 10;
+    nvartosample = ceil(d^(2/3));
     X = sparse(n,d);
     Sigma = 1/32*speye(d);
     Mu = sparse(n,d);
