@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  12 MAY 2015 05:00
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  12 MAY 2015 05:06
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -366,7 +366,7 @@ exlive/2014/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2
 014/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2014/tex
 mf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/fo
 nts/type1/urw/times/utmr8a.pfb>
-Output written on nips2015_tyler.pdf (2 pages, 130927 bytes).
+Output written on nips2015_tyler.pdf (2 pages, 130930 bytes).
 PDF statistics:
  68 PDF objects out of 1000 (max. 8388607)
  49 compressed objects within 1 object stream
