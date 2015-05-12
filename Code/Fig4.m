@@ -66,7 +66,7 @@ end
 set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(1) Axis_Bottom Axis_Width Axis_Height])
 xlabel('Training Time (sec)')
 ylabel('Lhat')
-title('(A) Average Error')
+title('(A) Average Lhat')
 hL = legend('Random Forest','R''er F(d)','R''er F(s)','R''er F(s+d)','R''er F(s+d+r)');
 set(hL,'Units',Units,'Position',[Legend_Left Legend_Bottom Legend_Width Legend_Height],'Visible','On','Box',Box_Legend)
 get(ax_new,'Position');
@@ -79,7 +79,7 @@ set(h_lines(1),'Color','k','linewidth',LineWidth)
 set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(2) Axis_Bottom Axis_Width Axis_Height])
 xlabel('Random Forest')
 ylabel('R''er F(s+d+r)')
-title('(B) Individual Lhats')
+title('(B) Lhats For Individual Datasets')
 %hL = legend(ax_new,'Random Forest','Dense Randomer Forest','Sparse Randomer Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
 legend(ax_new,'hide')
 get(ax_new,'Position');
