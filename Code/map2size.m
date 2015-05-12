@@ -1,4 +1,8 @@
-function s = map2size(x,size_min,size_max)
+function s = map2size(x,size_min,size_max,map)
+
+    if strcmp(map,'log')
+        x = log(x);
+    end
 
     x = normalize(x);
     s = zeros(length(x),1);
