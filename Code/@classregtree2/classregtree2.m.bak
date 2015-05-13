@@ -90,7 +90,7 @@ classdef classregtree2
 %      t = classregtree2(meas, species,'names',{'SL' 'SW' 'PL' 'PW'});
 %      view(t);
 %
-%   See also CLASSREGTREE2/EVAL, CLASSREGTREE2/TEST, CLASSREGTREE2/VIEW, CLASSREGTREE2/PRUNE.
+%   See also CLASSREGTREE/EVAL, CLASSREGTREE/TEST, CLASSREGTREE/VIEW, CLASSREGTREE/PRUNE.
 
 %   Copyright 2006-2013 The MathWorks, Inc.
 
@@ -135,14 +135,14 @@ splitcriterion = '';
     end
     
     methods
-        function a = classregtree2(x,y,varargin)
+        function a = classregtree(x,y,varargin)
             if nargin==1 && isa(x,'struct')
                 a = struct2tree(a,x);            % convert from struct to tree
             else
                 narginchk(2,Inf);
                 a = treefit(a,x,y,varargin{:});  % calls local version of treefit
             end
-        end % classregtree2 constructor
+        end % classregtree constructor
     end % methods block
 
     methods(Hidden = true)
@@ -163,15 +163,15 @@ splitcriterion = '';
     
     methods(Hidden = true, Static = true)
         function a = empty(varargin)
-            error(message('stats:classregtree2:NoEmptyAllowed', upper( mfilename )));
+            error(message('stats:classregtree:NoEmptyAllowed', upper( mfilename )));
         end
     end
     
     methods
         % Get cuts. This method is here to address the backwards
-        % incompatibility introduced in 9a. Prior to 9a classregtree2 had a
+        % incompatibility introduced in 9a. Prior to 9a classregtree had a
         % numeric array 'cut' and a cell array 'catsplit' for categorical
-        % cuts. As of 9a, classregtree2 has a cell array 'cut' that combines
+        % cuts. As of 9a, classregtree has a cell array 'cut' that combines
         % both.
         function newcut = get.cut(tree)
             if iscell(tree.cut)
@@ -226,20 +226,20 @@ splitcriterion = '';
         
             % Check input type
             if ~isfloat(X)
-                error(message('stats:classregtree2:preparedata:BadXType'));
+                error(message('stats:classregtree:preparedata:BadXType'));
             end
             
             % Check input size
             if isempty(X) || isempty(Y)
-                error(message('stats:classregtree2:preparedata:EmptyXorY'));
+                error(message('stats:classregtree:preparedata:EmptyXorY'));
             end
             if size(X,1)~=length(Y)
-                error(message('stats:classregtree2:preparedata:InputSizeMismatch'));
+                error(message('stats:classregtree:preparedata:InputSizeMismatch'));
             end
  
             % Y must be numeric for regression
             if ~doclass && ~isfloat(Y)
-                error(message('stats:classregtree2:preparedata:BadYType'));
+                error(message('stats:classregtree:preparedata:BadYType'));
             end
             if ~ischar(Y)
                 Y = Y(:);
@@ -247,10 +247,10 @@ splitcriterion = '';
             
             % Check weights
             if ~isfloat(W) || length(W)~=size(X,1) || ~isvector(W)
-                error(message('stats:classregtree2:preparedata:BadW'));
+                error(message('stats:classregtree:preparedata:BadW'));
             end
             if any(W<0) || all(W==0)
-                error(message('stats:classregtree2:preparedata:NegativeWeights'));
+                error(message('stats:classregtree:preparedata:NegativeWeights'));
             end
             W = W(:);
             
@@ -281,7 +281,7 @@ splitcriterion = '';
                     W(t) = [];
                 end
                 if isempty(X)
-                    error(message('stats:classregtree2:preparedata:EmptyXorYafterNaNGroup'));
+                    error(message('stats:classregtree:preparedata:EmptyXorYafterNaNGroup'));
                 end
             end
             
@@ -294,7 +294,7 @@ splitcriterion = '';
                 W(t) = [];
             end
             if isempty(X)
-                error(message('stats:classregtree2:preparedata:EmptyXorYafterNaN'));
+                error(message('stats:classregtree:preparedata:EmptyXorYafterNaN'));
             end
             
             % Get rid of observation with zero weights
@@ -306,7 +306,7 @@ splitcriterion = '';
                 W(t) = [];
             end
             if isempty(X)
-                error(message('stats:classregtree2:preparedata:EmptyXorYafterZeroW'));
+                error(message('stats:classregtree:preparedata:EmptyXorYafterZeroW'));
             end
         end
         
@@ -322,7 +322,7 @@ splitcriterion = '';
                     varnames = cellstr(varnames);
                 end
                 if ~iscellstr(varnames) || numel(varnames)~=nvars
-                    error(message('stats:classregtree2:preparevars:BadNames', nvars));
+                    error(message('stats:classregtree:preparevars:BadNames', nvars));
                 end
             else
                 varnames = nvars;
@@ -344,17 +344,17 @@ splitcriterion = '';
             % Get number of classes
             nclass = length(cnames);
             if ~iscellstr(cnames) || nclass==0
-                error(message('stats:classregtree2:priorandcost:BadClassNames'));
+                error(message('stats:classregtree:priorandcost:BadClassNames'));
             end
             
             % Check class id's
             if isempty(id) || ~isnumeric(id) || max(id)>nclass || min(id)<1
-                error(message('stats:classregtree2:priorandcost:BadClassIndex', nclass));
+                error(message('stats:classregtree:priorandcost:BadClassIndex', nclass));
             end
             
             % Check cumulative weights for classes
             if ~isnumeric(wj) || length(wj)~=nclass
-                error(message('stats:classregtree2:priorandcost:BadClassWeights', nclass));
+                error(message('stats:classregtree:priorandcost:BadClassWeights', nclass));
             end
             
             % Check prior
@@ -364,17 +364,17 @@ splitcriterion = '';
                 prior = ones(1,nclass);
             elseif isstruct(prior)
                 if ~isfield(prior,'group') || ~isfield(prior,'prob')
-                    error(message('stats:classregtree2:priorandcost:PriorStructMissingField'));
+                    error(message('stats:classregtree:priorandcost:PriorStructMissingField'));
                 end
                 idx = getclassindex(cnames,prior.group);
                 if any(idx==0)
                     j = find(idx==0);
-                    error(message('stats:classregtree2:priorandcost:PriorStructMissingGroup', cnames{ j( 1 ) }));
+                    error(message('stats:classregtree:priorandcost:PriorStructMissingGroup', cnames{ j( 1 ) }));
                 end
                 prior = prior.prob(idx);
             end
             if ~isfloat(prior) || length(prior)~=nclass || any(prior<0) || all(prior==0)
-                error(message('stats:classregtree2:priorandcost:BadPrior', nclass));
+                error(message('stats:classregtree:priorandcost:BadPrior', nclass));
             end
 
             % Find observations for classes with zero prior probabilities
@@ -385,7 +385,7 @@ splitcriterion = '';
                 removerows = zeroprior(id);
             end
             if all(prior==0)
-                error(message('stats:classregtree2:priorandcost:ZeroPriorForObservedClasses'));
+                error(message('stats:classregtree:priorandcost:ZeroPriorForObservedClasses'));
             end
             
             % Normalize priors in such a way that the priors in present
@@ -398,23 +398,23 @@ splitcriterion = '';
             else
                 if isstruct(cost)
                     if ~isfield(cost,'group') || ~isfield(cost,'cost')
-                        error(message('stats:classregtree2:priorandcost:CostStructMissingField'));
+                        error(message('stats:classregtree:priorandcost:CostStructMissingField'));
                     end
                     idx = getclassindex(cnames,cost.group);
                     if any(idx==0)
                         j = find(idx==0);
-                        error(message('stats:classregtree2:priorandcost:CostStructMissingGroup', cnames{ j( 1 ) }));
+                        error(message('stats:classregtree:priorandcost:CostStructMissingGroup', cnames{ j( 1 ) }));
                     end
                     cost = cost.cost(idx,idx);
                 end
                 if ~isequal(size(cost),nclass*ones(1,2))
-                    error(message('stats:classregtree2:priorandcost:CostSizeMismatch', nclass, nclass));
+                    error(message('stats:classregtree:priorandcost:CostSizeMismatch', nclass, nclass));
                 elseif any(diag(cost)~=0)
-                    error(message('stats:classregtree2:priorandcost:CostNonzeroDiag'));
+                    error(message('stats:classregtree:priorandcost:CostNonzeroDiag'));
                 elseif any(cost<0)
-                    error(message('stats:classregtree2:priorandcost:CostNegative'));
+                    error(message('stats:classregtree:priorandcost:CostNegative'));
                 elseif ~any(any(cost>0)) && nclass>1
-                    error(message('stats:classregtree2:priorandcost:CostWithoutPositiveValues'));
+                    error(message('stats:classregtree:priorandcost:CostWithoutPositiveValues'));
                 end
             end
         
@@ -425,7 +425,7 @@ splitcriterion = '';
                     removerows = removerows | zerocost(id);
                 end
                 if sum(removerows)==length(id)
-                    error(message('stats:classregtree2:priorandcost:ZeroCostForObservedClasses'));
+                    error(message('stats:classregtree:priorandcost:ZeroCostForObservedClasses'));
                 end
             end
         end
@@ -433,13 +433,13 @@ splitcriterion = '';
 end % classdef
 
 function throwNoCatError()
-error(message('stats:classregtree2:NoCatAllowed', upper( mfilename )));
+error(message('stats:classregtree:NoCatAllowed', upper( mfilename )));
 end
 
 function throwUndefinedError()
 st = dbstack;
 name = regexp(st(2).name,'\.','split');
-error(message('stats:classregtree2:UndefinedFunction', name{ 2 }, mfilename));
+error(message('stats:classregtree:UndefinedFunction', name{ 2 }, mfilename));
 end
 
 
@@ -473,13 +473,13 @@ for j=1:2:length(extra)
     if strncmp(extra{j},'catidx',length(extra{j}))
         categ = extra{j+1};
     else
-        error(message('stats:classregtree2:BadParamNameAndNotCatidx', extra{ j }));
+        error(message('stats:classregtree:BadParamNameAndNotCatidx', extra{ j }));
     end
 end
 
 % Decode method
 if ~ischar(Method) || isempty(Method) || ~(Method(1)=='c' || Method(1)=='r')
-   error(message('stats:classregtree2:BadMethod'));
+   error(message('stats:classregtree:BadMethod'));
 elseif Method(1)=='c'
    Method = 'classification';
 else
@@ -499,13 +499,13 @@ if skipchecks
         [Y,cnames] = grp2idx(Y);
     end
 else
-    [X,Y,W,cnames] = classregtree2.preparedata(X,Y,W,doclass);
+    [X,Y,W,cnames] = classregtree.preparedata(X,Y,W,doclass);
 end
 [N,nvars] = size(X);
 
 % Process variable names
 if ~skipchecks
-    names = classregtree2.preparevars(names,nvars);
+    names = classregtree.preparevars(names,nvars);
 end
 
 % Fill out criterion, class labels and matrix for classification
@@ -516,7 +516,7 @@ if doclass
     case 'gdi',      critfun = @gdi;      isimpurity = true;
     case 'twoing',   critfun = @twoing;   isimpurity = false;
     case 'deviance', critfun = @deviance; isimpurity = true;
-    otherwise,     error(message('stats:classregtree2:BadSplitCriterion'))
+    otherwise,     error(message('stats:classregtree:BadSplitCriterion'))
    end
    
    % Get binary matrix, C(i,j)==1 means point i is in class j
@@ -536,14 +536,14 @@ if doclass
     % Get prior and cost
     if skipchecks
         if ~isstruct(Prior) || ~isstruct(Cost)
-            error(message('stats:classregtree2:BadPriorOrCostForSkipchecks'));
+            error(message('stats:classregtree:BadPriorOrCostForSkipchecks'));
         end
         idx = getclassindex(cnames,Prior.group);
         Prior = Prior.prob(idx);
         idx = getclassindex(cnames,Cost.group);
         Cost = Cost.cost(idx,idx);
     else
-        [Prior,Cost,removerows] = classregtree2.priorandcost(Prior,Cost,cnames,Wj,Y);
+        [Prior,Cost,removerows] = classregtree.priorandcost(Prior,Cost,cnames,Wj,Y);
         if any(removerows)
             X(removerows,:) = [];
             C(removerows,:) = [];
@@ -570,34 +570,34 @@ WC = [];
 
 % Check and adjust node sizes.
 if ~isempty(splitmin) && ~isempty(minparent)
-    error(message('stats:classregtree2:BothSplitminAndMinparentNotAllowed'));
+    error(message('stats:classregtree:BothSplitminAndMinparentNotAllowed'));
 end
 if ~isempty(splitmin)
     if ~isnumeric(splitmin) || ~isscalar(splitmin)
-        error(message('stats:classregtree2:BadSplitmin'));
+        error(message('stats:classregtree:BadSplitmin'));
     end
     minparent = splitmin;
 end
 if ~isempty(minparent) && (~isnumeric(minparent) || ~isscalar(minparent))
-    error(message('stats:classregtree2:BadMinparent'));
+    error(message('stats:classregtree:BadMinparent'));
 end
 if isempty(minparent)
     minparent = 10;
 end
 if ~isempty(minleaf) && (~isnumeric(minleaf) || ~isscalar(minleaf))
-    error(message('stats:classregtree2:BadMinleaf'));
+    error(message('stats:classregtree:BadMinleaf'));
 end
 if minleaf<1
-    error(message('stats:classregtree2:MinleafLessThanOne'));
+    error(message('stats:classregtree:MinleafLessThanOne'));
 end
 if minparent<1
-    error(message('stats:classregtree2:MinparentLessThanOne'));
+    error(message('stats:classregtree:MinparentLessThanOne'));
 end
 minparent = max(minparent,2*minleaf);
 
 % Compute surrogate splits?
 if ~strcmpi(surrogate,'on') && ~strcmpi(surrogate,'off')
-    error(message('stats:classregtree2:BadSurrogate'));
+    error(message('stats:classregtree:BadSurrogate'));
 end
 surrogate = strcmpi(surrogate,'on');
 
@@ -613,18 +613,18 @@ if isnumeric(nvartosample) && nvartosample>0 && nvartosample<=nvars
     success = true;
 end
 if ~success
-    error(message('stats:classregtree2:BadNumberOfRandomFeatures', nvars));
+    error(message('stats:classregtree:BadNumberOfRandomFeatures', nvars));
 end
 nusevars = nvartosample;
 
 % Check prune parameter
 if ~strcmpi(Prune,'on') && ~strcmpi(Prune,'off')
-    error(message('stats:classregtree2:BadPrune'));
+    error(message('stats:classregtree:BadPrune'));
 end
 
 % Check merge parameter
 if ~strcmpi(Merge,'on') && ~strcmpi(Merge,'off')
-    error(message('stats:classregtree2:BadMergeLeaves'));
+    error(message('stats:classregtree:BadMergeLeaves'));
 end
 
 % Tree structure fields ([C] only for classification trees):
@@ -1256,7 +1256,7 @@ fn = fieldnames(S);
 if ~ismember('method',fn) || ...
    (strcmpi(S.method,'classification') && ~all(ismember(allfields,fn))) || ...
    (strcmpi(S.method,'regression')     && ~all(ismember(allfields(1:12),fn)))
-   error(message('stats:classregtree2:BadTree'));
+   error(message('stats:classregtree:BadTree'));
 end
 if strcmpi(S.method,'regression')
     nrequired = 12;

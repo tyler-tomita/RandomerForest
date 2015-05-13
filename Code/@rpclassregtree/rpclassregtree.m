@@ -47,7 +47,7 @@ splitcriterion = '';
                 a = struct2tree(a,X);            % convert from struct to tree
             else
                 narginchk(2,Inf);
-                a = rptreefit(a,X,Y,varargin{:});  % calls local version of treefit
+                a = rptreefit(a,X,Y,varargin{:});  % calls local version of rptreefit
                 a.prunelist = zeros(0,1);
             end
         end % rpclassregtree constructor

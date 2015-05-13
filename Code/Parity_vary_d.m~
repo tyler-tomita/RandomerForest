@@ -31,10 +31,7 @@ tf2 = NaN(ntrials,length(dims));
 tf3 = NaN(ntrials,length(dims));
 tf4 = NaN(ntrials,length(dims));
 
-poolobj = gcp('nocreate');
-if isempty(poolobj)
-    parpool('local',24)
-end
+parpool;
 for trial = 1:ntrials
     fprintf('trial %d\n',trial)
 
@@ -42,7 +39,7 @@ for trial = 1:ntrials
         d = dims(i);
         fprintf('d = %d\n',d)
         nvartosample = ceil(d^(2/3));
-        X = zeros(n,d);
+        X = sparse(n,d);
         %Sigma = 1/8*ones(1,d);
         Sigma = 1/32*ones(1,d);
         %nones = randi(d+1,n,1)-1;
