@@ -24,18 +24,18 @@ Marker = 'none';
 Title = {'(A) Trunk' '(B) Parity' '(C) Multimodal'};
 Units = 'pixels';
 FigPosition = [0 140 1300 350];
-Axis_Left = [60 385 710];
+Axis_Left = [75 400 725];
 Axis_Bottom = 63;
 Axis_Width = 250;
 Axis_Height = 250;
-Legend_Width = 150;
+Legend_Width = 75;
 Legend_Height = 80;
 Legend_Left = 1075;
 Legend_Bottom = round(Axis_Bottom+Axis_Height/2-Legend_Height/2);
-MarkerSize = 14;
+MarkerSize = 24;
 Box = 'off';
 Box_Legend = 'off';
-FontSize = 20;
+FontSize = 24;
 
 BasePath = '~/LOVEFest/Figures/fig/';
 Filename = {'Trunk_time_vs_d_n100_var1_ntrees1000_ntrials10_v2.fig'...
@@ -78,7 +78,7 @@ for i = 1:length(h)-1
     if i == 1
         ylabel('Training Time (sec)')
     end
-    hL = legend(ax_new,'Random Forest','R''er F(d)','R''er F(s)','R''er F(s+d)','Bayes Error');
+    hL = legend(ax_new,'Random Forest','R''er F(d)','R''er F(s)','R''er F(s+d)');
     legend(ax_new,'hide')
     get(ax_new,'Position');
 end

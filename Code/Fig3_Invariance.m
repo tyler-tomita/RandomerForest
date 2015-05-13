@@ -29,7 +29,7 @@ FigPosition = [0 140 1300 350];
 %left = [50 350 650];
 %bottom = [350 50];
 %Axis_Left = repmat(left,1,2);
-Axis_Left = [75 425 775];
+Axis_Left = [85 410 735];
 %Axis_Bottom = cat(2,repmat(bottom(1),1,3),repmat(bottom(2),1,3));
 Axis_Bottom = 63;
 Axis_Width = 250;
@@ -39,10 +39,10 @@ Legend_Height = 160;
 Legend_Left = 1075;
 %Legend_Bottom = round(bottom(1)+Axis_Height/2-Legend_Height(1)/2);
 Legend_Bottom = round(Axis_Bottom+Axis_Height/2-Legend_Height/2);
-MarkerSize = 14;
+MarkerSize = 24;
 Box = 'off';
 Box_Legend = 'off';
-FontSize = 20;
+FontSize = 24;
 
 Filename = '~/LOVEFest/Figures/fig/Invariance_Trunk_v2.fig';
 
@@ -89,7 +89,9 @@ for i = 1:length(h_ax_old)
     set(h_ax_new,'FontSize',FontSize,'XLim',[0 10^(log10(xmax)+0.1)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(i) Axis_Bottom Axis_Width Axis_Height])
     title(Title{i})
     xlabel('# of Ambient Dimensions')
-    ylabel('Lhat')
+    if i == 1
+        ylabel('Error Rate')
+    end
     %hL = legend(h_ax_new,'Random Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
     hL = legend('Untransformed','Rotated','Scaled','Affine','Outlier');
     legend(h_ax_new,'hide')
