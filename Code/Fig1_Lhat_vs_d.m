@@ -26,22 +26,23 @@ LineWidth = 3;
 Marker = 'none';
 Title = {'(A) Trunk' '(B) Parity' '(C) Multimodal'};
 Units = 'pixels';
+sf = 0.8;
 %FigPosition = [0 140 1150 1150];
 FigPosition = [0 140 1300 650];
-left = [75 400 725];
+left = [85 410 735];
 bottom = [375 50];
 Axis_Left = repmat(left,1,2);
 Axis_Bottom = cat(2,repmat(bottom(1),1,3),repmat(bottom(2),1,3));
 Axis_Width = 250;
 Axis_Height = 250;
-Legend_Width = [150 75];
+Legend_Width = [75 75];
 Legend_Height = [100 round(4/5*100)];
 Legend_Left = [1075 1025];
 Legend_Bottom = [round(bottom(1)+Axis_Height/2-Legend_Height(1)/2) round(bottom(2)+Axis_Height/2-Legend_Height(2)/2)];
-MarkerSize = 14;
+MarkerSize = 24;
 Box = 'off';
 Box_Legend = 'off';
-FontSize = 20;
+FontSize = 24;
 
 Level_curve = 1;
 
@@ -92,7 +93,7 @@ for i = 1:length(h)-1
     title(Title{i})
     xlabel('# of Ambient Dimensions')
     if i == 1
-        ylabel('Lhat')
+        ylabel('Error Rate')
     end
     hL = legend(ax_new,'Random Forest','R''er F(d)','R''er F(s)','R''er F(s+d)','Bayes Error');
     legend(ax_new,'hide')
@@ -158,7 +159,7 @@ for j = 1:length(Mu)
 end
 xlabel('Ambient dimension 1')
 ylabel('Ambient dimension 2')
-set(gca,'FontSize',FontSize,'XLim',[-2 2],'YLim',[-2 2],'YTick',-2:2,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(5) Axis_Bottom(5) Axis_Width Axis_Height])
+set(gca,'FontSize',FontSize,'XLim',[-1 2],'YLim',[-1 2],'YTick',-2:2,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(5) Axis_Bottom(5) Axis_Width Axis_Height])
 
 nclasses = 4;
 Classes = 1:nclasses;
@@ -208,6 +209,6 @@ ylabel('Ambient dimension 2')
 %set(ch(8),'MarkerSize',MarkerSize,'Color','m')
 set(gca,'FontSize',FontSize,'XLim',[-4 4],'YLim',[-4 4],'YTick',-4:2:4,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(6) Axis_Bottom(6) Axis_Width Axis_Height])
 hL = legend('Class 1','Class 2','Class 3','Class 4');
-set(hL,'Units',Units,'Position',[Legend_Left(2) Legend_Bottom(2) Legend_Width(2) Legend_Height(2)],'Visible','On','Box',Box_Legend)
+set(hL,'FontSize',FontSize,'Units',Units,'Position',[Legend_Left(2) Legend_Bottom(2) Legend_Width(2) Legend_Height(2)],'Visible','On','Box',Box_Legend)
 fname = '~/LOVEFest/Figures/Fig1_Lhat';
 save_fig(gcf,fname)

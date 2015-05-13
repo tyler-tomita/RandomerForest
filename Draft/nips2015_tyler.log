@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  12 MAY 2015 10:00
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  12 MAY 2015 16:38
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -305,7 +305,7 @@ File: /Users/Tyler/LOVEFest/Figures/pdf/Fig1_Lhat.pdf Graphic file (type pdf)
  <use /Users/Tyler/LOVEFest/Figures/pdf/Fig1_Lhat.pdf>
 Package pdftex.def Info: /Users/Tyler/LOVEFest/Figures/pdf/Fig1_Lhat.pdf used o
 n input line 70.
-(pdftex.def)             Requested size: 317.9892pt x 162.08641pt.
+(pdftex.def)             Requested size: 317.9892pt x 174.44643pt.
 
 </Users/Tyler/LOVEFest/Figures/pdf/Fig2_Time.pdf, id=6, 1289.81876pt x 1669.236
 25pt>
@@ -313,7 +313,11 @@ File: /Users/Tyler/LOVEFest/Figures/pdf/Fig2_Time.pdf Graphic file (type pdf)
  <use /Users/Tyler/LOVEFest/Figures/pdf/Fig2_Time.pdf>
 Package pdftex.def Info: /Users/Tyler/LOVEFest/Figures/pdf/Fig2_Time.pdf used o
 n input line 78.
-(pdftex.def)             Requested size: 317.9892pt x 99.72644pt.
+(pdftex.def)             Requested size: 317.9892pt x 90.01163pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
 
 </Users/Tyler/LOVEFest/Figures/pdf/Fig3_Invariance_v2.pdf, id=8, 1289.81876pt x
  1669.23625pt>
@@ -322,7 +326,7 @@ pe pdf)
  <use /Users/Tyler/LOVEFest/Figures/pdf/Fig3_Invariance_v2.pdf>
 Package pdftex.def Info: /Users/Tyler/LOVEFest/Figures/pdf/Fig3_Invariance_v2.p
 df used on input line 86.
-(pdftex.def)             Requested size: 317.9892pt x 99.72644pt.
+(pdftex.def)             Requested size: 317.9892pt x 87.93788pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -334,7 +338,7 @@ File: /Users/Tyler/LOVEFest/Figures/pdf/Fig4.pdf Graphic file (type pdf)
  <use /Users/Tyler/LOVEFest/Figures/pdf/Fig4.pdf>
 Package pdftex.def Info: /Users/Tyler/LOVEFest/Figures/pdf/Fig4.pdf used on inp
 ut line 94.
-(pdftex.def)             Requested size: 317.9892pt x 99.72644pt.
+(pdftex.def)             Requested size: 278.23827pt x 91.75208pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -342,8 +346,8 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 99.
 [1{/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
- </Users/Tyler/LOVEFest/Figures/pdf/Fig1_Lhat.pdf> </Users/Tyler/LOVEFest/Figur
-es/pdf/Fig2_Time.pdf>] [2 </Users/Tyler/LOVEFest/Figures/pdf/Fig3_Invariance_v2
+ </Users/Tyler/LOVEFest/Figures/pdf/Fig1_Lhat.pdf>] [2 </Users/Tyler/LOVEFest/F
+igures/pdf/Fig2_Time.pdf> </Users/Tyler/LOVEFest/Figures/pdf/Fig3_Invariance_v2
 .pdf> </Users/Tyler/LOVEFest/Figures/pdf/Fig4.pdf>]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 99.
  (./nips2015_tyler.aux)
@@ -356,17 +360,17 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 99.
 Here is how much of TeX's memory you used:
  5714 strings out of 493117
  84710 string characters out of 6135433
- 173010 words of memory out of 5000000
+ 174010 words of memory out of 5000000
  9123 multiletter control sequences out of 15000+600000
  13280 words of font info for 28 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 37i,11n,39p,579b,318s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 37i,11n,39p,836b,318s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2014/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2014/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2
 014/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2014/tex
 mf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/fo
 nts/type1/urw/times/utmr8a.pfb>
-Output written on nips2015_tyler.pdf (2 pages, 136179 bytes).
+Output written on nips2015_tyler.pdf (2 pages, 157824 bytes).
 PDF statistics:
  68 PDF objects out of 1000 (max. 8388607)
  49 compressed objects within 1 object stream
