@@ -67,7 +67,7 @@ Insert abstract
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 7in .9in 6.8in, clip=true, width=0.8\linewidth]{Fig1_Lhat}
+\includegraphics[trim=0in 0.4in 0in 0.4in, clip=true, width=\linewidth]{Fig1_Lhat}
 \end{center}
 \caption{Classification performance comparing Random Forest (RF) to several variants of Randomer Forest (R'er F), and Bayes optimal performance, on three distinct simulation settings: (A) Trunk, (B) Parity, and (C) Multimodal (see Methods for details).  For all settings, the top panel depicts misclassification rate vs. the number of ambient (coordinate) dimensions, and the bottom panel shows a 2D scatter plot of the first 2 coordinates (dashed circles denote the standard deviation level set).  Note that in all settings, for all number of dimensions, R'er F outperforms RF, even Trunk and Parity, which were designed specifically for RF because the discriminant boundary naturally lies along the coordinate basis.}
 \end{figure}
@@ -75,7 +75,7 @@ Insert abstract
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 9.1in .9in 9.2in, clip=true, width=0.8\linewidth]{Fig2_Time}
+\includegraphics[trim=0in 3in 0in 3in, clip=true, width=\linewidth]{Fig2_Time}
 \end{center}
 \caption{Classifier training time comparing RF to several variants of R'er F, same setting as the top row of Figure 1. The only difference is that the y-axis here labels training time (in seconds). Although R'er F requires slightly more time than RF (largely due to random sampling of projection matrices), they scale similarly.}
 \end{figure}
@@ -83,7 +83,7 @@ Insert abstract
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 9.1in .5in 9.2in, clip=true, width=0.8\linewidth]{Fig3_Invariance_v2}
+\includegraphics[trim=0in 0.9in 0in .09in, clip=true, width=\linewidth]{Fig3_Invariance_v2}
 \end{center}
 \caption{The effect of various transformations applied to the Trunk simulation (see Methods for details) on classification performance of (A) Random Forest, (B) Randomer Forest (sparse+delta) and (C) Randomer Forest (sparse+delta+robust). Except for scaling, classification performance of RF is compromised by all transformations. R'er F (s+d) is invariant to rotation, and R'er F (s+d+r) is invariant to rotation, scaling, and affine transformations.}
 \end{figure}
@@ -91,7 +91,7 @@ Insert abstract
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
-\includegraphics[trim=1.8in 9.1in 1.5in 9.2in, clip=true, width=0.7\linewidth]{Fig4}
+\includegraphics[trim=0in 2.3in 0in 2.3in, clip=true, width=\linewidth]{Fig4}
 \end{center}
 \caption{(A) Classification error and training time of Random Forest and Randomer Forests averaged over 121 real datasets. Dashed lines represent a 0.1 SD level curve. (B) Classification error of Randomer Forest (sparse+delta+robust) vs. that of Random Forest for each of the 121 datasets. The black line indicates equal classification error of the two algorithms. Color indicates dimensionality of the datasets and size of points indicates number of samples.}
 \end{figure}

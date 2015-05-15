@@ -119,7 +119,7 @@ cumf4err = mean(cumf4err);
 Ynames = {'cumrferr' 'cumf1err' 'cumf2err' 'cumf3err' 'cumf4err'};
 Enames = {'rfsem' 'f1sem' 'f2sem' 'f3sem' 'f4sem'};
 lspec = {'-bo','-rx','-gd','-ks' '-m.'};
-facespec = {'b','r','g','k' 'm'};
+facespec = {'b','r','g','k','m'};
 hold on
 for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
@@ -135,10 +135,12 @@ rfsem = std(trf)/sqrt(ntrials);
 f1sem = std(tf1)/sqrt(ntrials);
 f2sem = std(tf2)/sqrt(ntrials);
 f3sem = std(tf3)/sqrt(ntrials);
+f4sem = std(tf4)/sqrt(ntrials);
 trf = mean(trf);
 tf1 = mean(tf1);
 tf2 = mean(tf2);
 tf3 = mean(tf3);
+tf4 = mean(tf4);
 Ynames = {'trf' 'tf1' 'tf2' 'tf3' 'tf4'};
 
 figure(2)
