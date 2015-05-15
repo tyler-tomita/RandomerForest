@@ -19,7 +19,7 @@ p(colons(endGit-1):colons(endGit)-1)=[];
 end
 addpath(p);
 
-Colors = linspecer(5,'sequential');
+Colors = linspecer(6,'sequential');
 ScatterColors = {'r' 'b' 'g' 'm'};
 Fig_Color = [1 1 1];
 LineWidth = 3;
@@ -28,18 +28,18 @@ Title = {'(A) Trunk' '(B) Parity' '(C) Multimodal'};
 Units = 'pixels';
 sf = 0.8;
 %FigPosition = [0 140 1150 1150];
-FigPosition = [0 140 1325 650];
+FigPosition = [0 140 1300 650];
 left = [85 410 735];
-bottom = [400 50];
+bottom = [375 50];
 Axis_Left = repmat(left,1,2);
 Axis_Bottom = cat(2,repmat(bottom(1),1,3),repmat(bottom(2),1,3));
 Axis_Width = 250;
 Axis_Height = 250;
-Legend_Width = [150 75];
+Legend_Width = [75 75];
 Legend_Height = [100 round(4/5*100)];
 Legend_Left = [1075 1025];
 Legend_Bottom = [round(bottom(1)+Axis_Height/2-Legend_Height(1)/2) round(bottom(2)+Axis_Height/2-Legend_Height(2)/2)];
-MarkerSize = 14;
+MarkerSize = 24;
 Box = 'off';
 Box_Legend = 'off';
 FontSize = 24;
@@ -47,9 +47,9 @@ FontSize = 24;
 Level_curve = 1;
 
 BasePath = '~/LOVEFest/Figures/fig/';
-Filename = {'Trunk_ooberror_vs_d_n100_var1_ntrees1000_ntrials10_v2.fig'...
- 'Parity_ooberror_vs_d_n100_ntrees1000_ntrials10_v5.fig'...
- 'Multimodal_ooberror_vs_d_n100_var1_ntrees1000_ntrials10_v2.fig'};
+Filename = {'Trunk_ooberror_vs_d_n100_var1_ntrees1500_ntrials10_v3.fig'...
+ 'Parity_ooberror_vs_d_n100_ntrees1000_ntrials10_v6.fig'...
+ 'Multimodal_ooberror_vs_d_n100_var1_ntrees500_ntrials10_v3.fig'};
 BayesFigs = {'Trunk_bayes_error_vs_d_v2.fig' 'Parity_bayes_error_v4.fig' 'Multimodal_bayes_error.fig'};
 
 
@@ -65,14 +65,20 @@ for i = 1:length(Filename)
 end
 
 h{4} = figure('Visible','On');
-set(h{4},'Position',FigPosition,'PaperOrientation','landscape','PaperUnits','inches','PaperSize',[8.5*2.1 11*2.1],'PaperPositionMode','auto','Color',Fig_Color)
+set(h{4},'Units','normalized','position',[0 0 1 1]);
+set(h{4},'Units','inches');
+screenposition = get(h{4},'Position');
+set(h{4},...
+    'PaperPosition',[0 0 screenposition(3:4)],...
+    'PaperSize',screenposition(3:4));
 
 for i = 1:length(h)-1
     ax_old = get(h{i},'CurrentAxes');
     ax_new = subplot(2,3,i);
+    axis square
     copyobj(allchild(ax_old),ax_new);
     h_lines = allchild(ax_new);
-    xmax = zeros(1,5);
+    xmax = zeros(1,length(h_lines));
     ymax_ln = zeros(1,5);
     for j = 1:length(h_lines)
         set(h_lines(j),'Color',Colors(j,:),'linewidth',LineWidth,'Marker',Marker,'MarkerFaceColor',Colors(j,:),'MarkerEdgeColor',Colors(j,:))
@@ -85,21 +91,23 @@ for i = 1:length(h)-1
     ymax_ax = ymax_ax + h_lines(ymax_idx).UData(find(h_lines(ymax_idx).YData==ymax_ln(ymax_idx)));
     if i ~= 2
         XTick = logspace(0,log10(xmax),log10(xmax)+1);
-        set(ax_new,'FontSize',FontSize,'XLim',[0 10^(log10(xmax)+0.1)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(i) Axis_Bottom(i) Axis_Width Axis_Height])
+        set(ax_new,'FontSize',FontSize,'XLim',[0 10^(log10(xmax)+0.1)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
     else
         XTick = 0:2:10;
-        set(ax_new,'FontSize',FontSize,'XLim',[0 11],'YLim',[0 ymax_ax],'XScale','linear','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(i) Axis_Bottom(i) Axis_Width Axis_Height])
+        set(ax_new,'FontSize',FontSize,'XLim',[0 11],'YLim',[0 ymax_ax],'XScale','linear','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
     end
     title(Title{i})
-    xlabel('# of Ambient Dimensions')
+    xlabel('# Ambient Dim')
     if i == 1
         ylabel('Error Rate')
     end
-    hL = legend(ax_new,'Random Forest','R''er F(d)','R''er F(s)','R''er F(s+d)','Bayes Error');
-    legend(ax_new,'hide')
-    get(ax_new,'Position');
+    a(i) = ax_new;
 end
-set(hL,'FontSize',FontSize,'Units',Units,'Position',[Legend_Left(1) Legend_Bottom(1) Legend_Width(1) Legend_Height(1)],'Visible','On','Box',Box_Legend)
+axpos = get(a(end),'Position');
+ax_edge = axpos(1) + axpos(3);
+hL = legend(a(end),'RF','RerF(d)','RerF(s)','RerF(s+d)','RerF(s+d+r)','Bayes Error');
+lpos = get(hL,'Position');
+set(hL, 'position',[ax_edge axpos(2)+axpos(4)/2-lpos(4)/2 lpos(3:4)],'Box',Box_Legend,'FontSize',FontSize)
 
 %Scatter Plots
 n = 100;
@@ -113,7 +121,7 @@ Sigma = 1*speye(d);
 obj = gmdistribution(Mu,Sigma);
 [X,idx] = random(obj,n);
 Y = Class(idx);
-ax = subplot(2,3,4);
+a(4) = subplot(2,3,4);
 for j = 1:length(Class)
     plot(X(Y==Class(j),1),X(Y==Class(j),2),'.',...
         'MarkerSize',MarkerSize,...
@@ -127,9 +135,9 @@ for j = 1:size(Mu,1)
         'LineWidth',LineWidth)
     hold on
 end
-xlabel('Ambient dimension 1')
-ylabel('Ambient dimension 2')
-set(gca,'FontSize',FontSize,'XLim',[-4 4],'YLim',[-4 4],'YTick',-4:2:4,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(4) Axis_Bottom(4) Axis_Width Axis_Height])
+xlabel('Ambient Dimension 1')
+ylabel('Ambient Dimension 2')
+set(gca,'FontSize',FontSize,'XLim',[-4 4],'YLim',[-4 4],'YTick',-4:2:4,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
 
 X = sparse(n,d);
 Sigma = 1/32*speye(d);
@@ -141,7 +149,7 @@ for j = 1:n
 end
 nones = sum(Mu,2);
 Y = mod(nones,2);
-ax = subplot(2,3,5);
+a(5) = subplot(2,3,5);
 for j = 1:length(Class)
     plot(X(Y==Class(j),1),X(Y==Class(j),2),'.',...
         'MarkerSize',MarkerSize,...
@@ -157,9 +165,9 @@ for j = 1:length(Mu)
         'LineWidth',LineWidth)
     hold on
 end
-xlabel('Ambient dimension 1')
-ylabel('Ambient dimension 2')
-set(gca,'FontSize',FontSize,'XLim',[-2 2],'YLim',[-2 2],'YTick',-2:2,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(5) Axis_Bottom(5) Axis_Width Axis_Height])
+xlabel('Ambient Dimension 1')
+ylabel('Ambient Dimension 2')
+set(gca,'FontSize',FontSize,'XLim',[-1 2],'YLim',[-1 2],'YTick',-2:2,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
 
 nclasses = 4;
 Classes = 1:nclasses;
@@ -181,7 +189,7 @@ end
 obj = gmdistribution(Mu,Sigma,p);
 [X,idx] = random(obj,n);
 Y = Class(idx);
-ax = subplot(2,3,6);
+a(6) = subplot(2,3,6);
 for c = 1:nclasses
     plot(X(Y==c,1),X(Y==c,2),'.',...
         'MarkerSize',MarkerSize,...
@@ -198,8 +206,8 @@ for j = 1:J
         'LineWidth',LineWidth)
     hold on
 end
-xlabel('Ambient dimension 1')
-ylabel('Ambient dimension 2')
+xlabel('Ambient Dimension 1')
+ylabel('Ambient Dimension 2')
 %ch = allchild(gca);
 %for j = 1:J
 %    set(ch(j),'MarkerSize',MarkerSize,'Color',Colors(Class(j)))
@@ -207,8 +215,32 @@ ylabel('Ambient dimension 2')
 %set(ch(6),'MarkerSize',MarkerSize,'Color','b')
 %set(ch(7),'MarkerSize',MarkerSize,'Color','g')
 %set(ch(8),'MarkerSize',MarkerSize,'Color','m')
-set(gca,'FontSize',FontSize,'XLim',[-4 4],'YLim',[-4 4],'YTick',-4:2:4,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(6) Axis_Bottom(6) Axis_Width Axis_Height])
-hL = legend('Class 1','Class 2','Class 3','Class 4');
-set(hL,'Units',Units,'Position',[Legend_Left(2) Legend_Bottom(2) Legend_Width(2) Legend_Height(2)],'Visible','On','Box',Box_Legend)
+set(gca,'FontSize',FontSize,'XLim',[-4 4],'YLim',[-4 4],'YTick',-4:2:4,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
+
+axpos = get(a(end),'Position');
+ax_edge = axpos(1) + axpos(3);
+hL(2) = legend('Class 1','Class 2','Class 3','Class 4');
+lpos = get(hL(2),'Position');
+set(hL(2), 'position',[ax_edge axpos(2)+axpos(4)/2-lpos(4)/2 lpos(3:4)],'Box',Box_Legend,'FontSize',FontSize)
+
+%set(hL,'FontSize',FontSize,'Units',Units,'Position',[Legend_Left(2) Legend_Bottom(2) Legend_Width(2) Legend_Height(2)],'Visible','On','Box',Box_Legend)
+
+pos_l = get(hL(1),'Position');
+left_adjust = 1 - (pos_l(1) + pos_l(3));
+%overall_width = pos_l(1) + pos_l(3) - pos_a(1);
+%if overall_width <= 1
+%    left = (1 - overall_width)/2;
+%    left_adjust = left - pos_a(1);
+%end
+for i = 1:length(a)
+    pos = get(a(i),'Position');
+    set(a(i),'Position',[pos(1)+left_adjust pos(2) pos(3) pos(4)])
+end
+pos = get(hL(1),'Position');
+set(hL(1),'Position',[pos(1)+left_adjust pos(2) pos(3) pos(4)])
+
+pos = get(hL(2),'Position');
+set(hL(2),'Position',[pos(1)+left_adjust pos(2) pos(3) pos(4)])
+
 fname = '~/LOVEFest/Figures/Fig1_Lhat';
 save_fig(gcf,fname)

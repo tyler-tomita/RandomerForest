@@ -16,7 +16,7 @@ addpath(p);
 
 n = 100;    %# samples
 dims = round(logspace(log10(2),3,10));
-ntrees = 1000;
+ntrees = 500;
 ntrials = 10;
 nclasses = 4;
 Classes = 1:nclasses;
@@ -33,10 +33,12 @@ cumrferr = NaN(ntrials,length(dims));
 cumf1err = NaN(ntrials,length(dims));
 cumf2err = NaN(ntrials,length(dims));
 cumf3err = NaN(ntrials,length(dims));
+cumf4err = NaN(ntrials,length(dims));
 trf = NaN(ntrials,length(dims));
 tf1 = NaN(ntrials,length(dims));
 tf2 = NaN(ntrials,length(dims));
 tf3 = NaN(ntrials,length(dims));
+tf4 = NaN(ntrials,length(dims));
 
 parpool;
 for trial = 1:ntrials
@@ -94,22 +96,32 @@ for trial = 1:ntrials
         clear f3
         
         fprintf('TylerForest+meandiff complete\n')
+        
+        tic
+        f4 = rpclassificationforest(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','new','Robust',true);
+        tf4(trial,i) = toc;
+        cumf4err(trial,i) = oobpredict(f4,X,Ystr,'last');
+        clear f4
+        
+        fprintf('Robust complete\n')
     end
 end
 
-save('Multimodal_vary_d.mat','cumrferr','cumf1err','cumf2err','cumf3err','trf','tf1','tf2','tf3')
+save('Multimodal_vary_d.mat','cumrferr','cumf1err','cumf2err','cumf3err','cumf4err','trf','tf1','tf2','tf3','tf4')
 rfsem = std(cumrferr)/sqrt(ntrials);
 f1sem = std(cumf1err)/sqrt(ntrials);
 f2sem  = std(cumf2err)/sqrt(ntrials);
 f3sem  = std(cumf3err)/sqrt(ntrials);
+f4sem  = std(cumf4err)/sqrt(ntrials);
 cumrferr = mean(cumrferr);
 cumf1err = mean(cumf1err);
 cumf2err = mean(cumf2err);
 cumf3err = mean(cumf3err);
-Ynames = {'cumrferr' 'cumf1err' 'cumf2err' 'cumf3err'};
-Enames = {'rfsem' 'f1sem' 'f2sem' 'f3sem'};
-lspec = {'-bo','-rx','-gd','-ks'};
-facespec = {'b','r','g','k'};
+cumf4err = mean(cumf4err);
+Ynames = {'cumrferr' 'cumf1err' 'cumf2err' 'cumf3err' 'cumf4err'};
+Enames = {'rfsem' 'f1sem' 'f2sem' 'f3sem' 'f4sem'};
+lspec = {'-bo','-rx','-gd','-ks','-m.'};
+facespec = {'b','r','g','k','m'};
 hold on
 for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
@@ -118,21 +130,22 @@ set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Multimodal_ooberror_vs_d_n%d_var%d_ntrees%d_ntrials%d_v2',n,1,ntrees,ntrials);
+fname = sprintf('Multimodal_ooberror_vs_d_n%d_var%d_ntrees%d_ntrials%d_v3',n,1,ntrees,ntrials);
 save_fig(gcf,fname)
 
-figure(2)
 rfsem = std(trf)/sqrt(ntrials);
 f1sem = std(tf1)/sqrt(ntrials);
-f2sem  = std(tf2)/sqrt(ntrials);
+f2sem = std(tf2)/sqrt(ntrials);
 f3sem = std(tf3)/sqrt(ntrials);
+f4sem = std(tf4)/sqrt(ntrials);
 trf = mean(trf);
 tf1 = mean(tf1);
 tf2 = mean(tf2);
 tf3 = mean(tf3);
-Ynames = {'trf' 'tf1' 'tf2' 'tf3'};
-Enames = {'rfsem' 'f1sem' 'f2sem' 'f3sem'};
-lspec = {'-bo','-rx','-gd','-ks'};
+tf4 = mean(tf4);
+Ynames = {'trf' 'tf1' 'tf2' 'tf3' 'tf4'};
+
+figure(2)
 hold on
 for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i});
@@ -142,5 +155,5 @@ xlabel('# ambient dimensions')
 ylabel('Training time (sec)')
 title('Trunk')
 legend('RandomForest','TylerForest','TylerForest+','TylerForest+meandiff')
-fname = sprintf('Multimodal_time_vs_d_n%d_var%d_ntrees%d_ntrials%d_v2',n,1,ntrees,ntrials);
+fname = sprintf('Multimodal_time_vs_d_n%d_var%d_ntrees%d_ntrials%d_v3',n,1,ntrees,ntrials);
 save_fig(gcf,fname)

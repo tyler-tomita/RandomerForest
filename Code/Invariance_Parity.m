@@ -39,6 +39,12 @@ f2_affine_err = NaN(ntrials,length(dims));
 rf_out_err = NaN(ntrials,length(dims));
 f1_out_err = NaN(ntrials,length(dims));
 f2_out_err = NaN(ntrials,length(dims));
+ff_err = NaN(ntrials,length(dims));
+ff_rot_err = NaN(ntrials,length(dims));
+ff_trans_err = NaN(ntrials,length(dims));
+ff_scale_err = NaN(ntrials,length(dims));
+ff_affine_err = NaN(ntrials,length(dims));
+ff_out_err = NaN(ntrials,length(dims));
 
 for trial = 1:ntrials
     
@@ -50,9 +56,9 @@ for trial = 1:ntrials
         fprintf('d = %d\n',d)
         nvartosample = ceil(d^(2/3));
         d_idx = 1:d;
-        X = sparse(n,d);
+        X = zeros(n,d);
         Sigma = 1/32*ones(1,d);
-        Mu = sparse(n,d);
+        Mu = zeros(n,d);
         for j = 1:n
             Mu(j,:) = binornd(1,0.5,1,d);
             X(j,:) = mvnrnd(Mu(j,:),Sigma);
@@ -71,8 +77,8 @@ for trial = 1:ntrials
         X_affine = (X*R).*S;
         outlier_model = gmdistribution(Mu,Sigma_outlier);
         n_out = round(0.2*n);
-        X_out = sparse(n_out,d);
-        Mu_out = sparse(n_out,d);
+        X_out = zeros(n_out,d);
+        Mu_out = zeros(n_out,d);
         for j = 1:n_out
             Mu_out(j,:) = binornd(1,0.5,1,d);
             X_out(j,:) = mvnrnd(Mu(j,:),Sigma);
@@ -154,13 +160,20 @@ for trial = 1:ntrials
         f2_out = rpclassificationforest(ntrees,X_out,Y_out,'nvartosample',nvartosample,'mdiff','on','sparsemethod','new','Robust',true);
         f2_out_err(trial,i) = oobpredict(f2_out,X_out,Y_out,'last');
         clear f2_out
+        
+        ff_err(trial,i) = fisherface_loocv(X,Y);
+        ff_rot_err(trial,i) = fisherface_loocv(X_rot,Y);
+        ff_trans_err(trial,i) = fisherface_loocv(X_trans,Y);
+        ff_scale_err(trial,i) = fisherface_loocv(X_scale,Y);
+        ff_affine_err(trial,i) = fisherface_loocv(X_affine,Y);
+        ff_out_err(trial,i) = fisherface_loocv(X_out,Y_out);
     end
 end
 
 save('Invariance_Parity.mat','R','rf_err','f1_err','f2_err','rf_rot_err',...
     'f1_rot_err','f2_rot_err','rf_trans_err','f1_trans_err','f2_trans_err',...
     'rf_scale_err','f1_scale_err','f2_scale_err','rf_affine_err','f1_affine_err','f2_affine_err',...
-    'rf_out_err','f1_out_err','f2_out_err')
+    'rf_out_err','f1_out_err','f2_out_err','ff_err','ff_rot_err','ff_trans_err','ff_scale_err','ff_affine_err','ff_out_err')
 
 mean_rf_err = mean(rf_err);
 mean_f1_err = mean(f1_err);
@@ -200,16 +213,30 @@ sem_rf_out = std(rf_out_err)/sqrt(ntrials);
 sem_f1_out = std(f1_out_err)/sqrt(ntrials);
 sem_f2_out = std(f2_out_err)/sqrt(ntrials);
 
+mean_ff_err = mean(ff_err);
+mean_ff_rot_err = mean(ff_rot_err);
+mean_ff_trans_err = mean(ff_trans_err);
+mean_ff_scale_err = mean(ff_scale_err);
+mean_ff_affine_err = mean(ff_affine_err);
+mean_ff_out_err = mean(ff_out_err);
+
+sem_ff = std(ff_err)/sqrt(ntrials);
+sem_ff_rot = std(ff_rot_err)/sqrt(ntrials);
+sem_ff_trans = std(ff_trans_err)/sqrt(ntrials);
+sem_ff_scale = std(ff_scale_err)/sqrt(ntrials);
+sem_ff_affine = std(ff_affine_err)/sqrt(ntrials);
+sem_ff_out = std(ff_out_err)/sqrt(ntrials);
+
+
 Ynames = {'mean_rf_err' 'mean_rf_rot_err' 'mean_rf_trans_err' 'mean_rf_scale_err' 'mean_rf_affine_err' 'mean_rf_out_err'};
 Enames = {'sem_rf' 'sem_rf_rot' 'sem_rf_trans' 'sem_rf_scale' 'sem_rf_affine' 'sem_rf_out'};
 lspec = {'-bs','-rs','-gs' '-cs' '-ms' '-ks'};
 facespec = {'b','r','g' 'c' 'm' 'k'};
-subplot(1,3,1)
+subplot(1,4,1)
 for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
     hold on
 end
-set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
@@ -217,12 +244,11 @@ title('Random Forest')
 
 Ynames = {'mean_f1_err' 'mean_f1_rot_err' 'mean_f1_trans_err' 'mean_f1_scale_err' 'mean_f1_affine_err' 'mean_f1_out_err'};
 Enames = {'sem_f1' 'sem_f1_rot' 'sem_f1_trans' 'sem_f1_scale' 'sem_f1_affine' 'sem_f1_out'};
-subplot(1,3,2)
+subplot(1,4,2)
 for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
     hold on
 end
-set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
@@ -230,16 +256,27 @@ title('Sparse Randomer Forest w/ Mean Diff')
 
 Ynames = {'mean_f2_err' 'mean_f2_rot_err' 'mean_f2_trans_err' 'mean_f2_scale_err' 'mean_f2_affine_err' 'mean_f2_out_err'};
 Enames = {'sem_f2' 'sem_f2_rot' 'sem_f2_trans' 'sem_f2_scale' 'sem_f2_affine' 'sem_f2_out'};
-subplot(1,3,3)
+subplot(1,4,3)
 for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
     hold on
 end
-set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
 title('Robust Sparse Randomer Forest w/ Mean Diff')
 
-filename = 'Invariance_Parity_v2';
+Ynames = {'mean_ff_err' 'mean_ff_rot_err' 'mean_ff_trans_err' 'mean_ff_scale_err' 'mean_ff_affine_err' 'mean_ff_out_err'};
+Enames = {'sem_ff' 'sem_ff_rot' 'sem_ff_trans' 'sem_ff_scale' 'sem_ff_affine' 'sem_ff_out'};
+subplot(1,4,4)
+for i = 1:length(Ynames)
+    errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
+    hold on
+end
+xlabel('# Ambient Dimensions')
+ylabel('Lhat')
+legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
+title('Fisherfaces')
+
+filename = 'Invariance_Parity_v3';
 save_fig(gcf,filename)
