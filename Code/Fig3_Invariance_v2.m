@@ -100,7 +100,7 @@ for i = 1:length(ax_old)
         xmax = max(xmax);
     end
     XTick = logspace(0,log10(xmax),log10(xmax)+1);
-    set(ax_new(i),'FontSize',FontSize,'XLim',[0 10^(log10(xmax)+0.2)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
+    set(ax_new(i),'FontSize',FontSize,'XLim',[0 10^(log10(xmax)+0.2)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','On','YGrid','On','Box',Box,'LineWidth',LineWidth)
     title(Title{i})
     xlabel('# Ambient Dim')
     if i == 1
@@ -130,7 +130,7 @@ for j = 1:length(h_lines)
 end
 xmax = max(xmax);
 XTick = logspace(0,log10(xmax),log10(xmax)+1);
-set(ax_new(4),'FontSize',FontSize,'XLim',[0 10^(log10(xmax)+0.2)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
+set(ax_new(4),'FontSize',FontSize,'XLim',[0 10^(log10(xmax)+0.2)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','On','YGrid','On','Box',Box,'LineWidth',LineWidth)
 title(Title{4})
 xlabel('# Ambient Dim')
 if i == 1
@@ -179,8 +179,9 @@ for i = 1:length(ax_old)
         end
         xmax = max(xmax);
     end
-    XTick = linspace(2,xmax,5);
-    set(ax_new(i+4),'FontSize',FontSize,'XLim',[2 xmax+.2],'YLim',[0 ymax_ax],'XTick',XTick,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
+    XTick = linspace(2,xmax,9);
+    YTick = 0:0.1:round(ymax_ax*10)/10;
+    set(ax_new(i+4),'FontSize',FontSize,'XLim',[2 xmax+.2],'YLim',[0 ymax_ax],'XTick',XTick,'YTick',YTick,'XGrid','On','YGrid','On','Box',Box,'LineWidth',LineWidth)
     title(Title(i+4))
     xlabel('# Ambient Dim')
     if i == 1
