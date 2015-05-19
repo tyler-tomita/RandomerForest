@@ -28,9 +28,9 @@ classdef rpclassificationforest
                 %projection
                 
                 %sparsemethod: string specifying the method for sampling
-                %the random projection matrix. Options are 'dense' (dense 1s and 0s),
-                %'dgaussian' (dense gaussian), 'uniform' (sparse 1s and
-                %0s), and 'gaussian' (sparse gaussian)
+                %the random projection matrix. Options are 'dense' (dense
+                %1s and 0s), 'sparse' (sparse 1s and 0s)
+                %'dgaussian' (dense gaussian), 'uniform' (sparse uniform), and 'gaussian' (sparse gaussian)
                 
                 %RandomForest: logical true or false (default). Setting to
                 %true performs regular random forest
