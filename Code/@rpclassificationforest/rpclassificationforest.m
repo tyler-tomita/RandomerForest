@@ -52,14 +52,17 @@ classdef rpclassificationforest
                         'mergeleaves'   'categorical' 'prune' 'method' ...
                         'qetoler'   'names'   'weights' 'surrogate'...
                         'skipchecks'    'stream'    'fboot'...
-                        'SampleWithReplacement' 's' 'mdiff' 'sparsemethod' 'RandomForest'   'Robust'};
+                        'SampleWithReplacement' 's' 'mdiff' 'sparsemethod'...
+                        'RandomForest'   'Robust'   'NWorkers'};
             defaults = {[]  []  'gdi'   []  []  1   ceil(size(X,2)^(2/3))...
                         'off'    []  'off'    'classification'  1e-6    {}...
-                        []  'off'   false  []  1    true   1    'off'   'dense' false false};
+                        []  'off'   false  []  1    true   3    'off'   'dense'...
+                        false false 2};
             [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
                 nvartosample,Merge,categ,Prune,Method,qetoler,names,W,...
                 surrogate,skipchecks,Stream,fboot,...
-                SampleWithReplacement,s,mdiff,sparsemethod,RandomForest,Robust,~,extra] = ...
+                SampleWithReplacement,s,mdiff,sparsemethod,RandomForest,...
+                Robust,NWorkers,~,extra] = ...
                 internal.stats.parseArgs(okargs,defaults,varargin{:});
             
             %Convert to double if not already
@@ -68,7 +71,8 @@ classdef rpclassificationforest
             end
             
             if Robust
-                X = passtorank(X);
+                %X = passtorank(X);
+                X = tiedrank(X);
                 forest.Robust = true;
             else
                 forest.Robust = false;
@@ -76,6 +80,10 @@ classdef rpclassificationforest
             nboot = ceil(fboot*length(Y));
             Tree = cell(nTrees,1);
             oobidx = cell(nTrees,1);
+            poolobj = gcp('nocreate');
+            if isempty(poolobj);
+                parpool('local',NWorkers,'IdleTimeout',360);
+            end
             parfor i = 1:nTrees
                 sampleidx = 1:length(Y);
                 ibidx = randsample(sampleidx,nboot,SampleWithReplacement);
@@ -118,7 +126,8 @@ classdef rpclassificationforest
             end
             
             if forest.Robust
-                X = passtorank(X);
+                %X = passtorank(X);
+                X = tiedrank(X);
             end
             nrows = size(X,1);
             predmat = NaN(nrows,forest.nTrees);
@@ -218,5 +227,23 @@ classdef rpclassificationforest
                 Y = sum(predmat==2,2)./sum(~isnan(predmat),2);  %Y is fraction of trees that votes for positive class
             end
         end     %function predict
+        
+        function sp = db_sparsity(forest)
+            %sparsity of decision boundary computed as sum #variables used
+            %over all nodes
+            
+            sp = 0;
+            for i = 1:forest.nTrees
+                Tree = forest.Tree{i};
+                if ~forest.RandomForest
+                    internalnodes = Tree.node(Tree.var~=0);
+                    for node = internalnodes'
+                        sp = sp + sum(Tree.rpm{node}~=0);
+                    end
+                else
+                    sp = sp + sum(Tree.var~=0);
+                end
+            end
+        end
     end     %methods
 end     %classdef

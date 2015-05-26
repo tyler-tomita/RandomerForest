@@ -18,6 +18,7 @@ n = 100;    %# samples
 dims = round(logspace(log10(2),3,10));
 ntrees = 500;
 ntrials = 10;
+NWorkers = 16;
 nclasses = 4;
 Classes = 1:nclasses;
 ncomponents = 2;    %# of mixture components per class
@@ -61,47 +62,49 @@ for trial = 1:ntrials
 
         obj = gmdistribution(Mu,Sigma,p);
         [X,idx] = random(obj,n);
-        Y = Class(idx);
-        Ystr = cellstr(num2str(Y));
+        Y = cellstr(num2str(Class(idx)));
 
         tic
-        rf = rpclassificationforest(ntrees,X,Ystr,'nvartosample',nvartosample,'RandomForest',true);
+        rf = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'RandomForest',true);
         trf(trial,i) = toc;
-        cumrferr(trial,i) = oobpredict(rf,X,Ystr,'last');
+        cumrferr(trial,i) = oobpredict(rf,X,Y,'last');
         clear rf
         
 
         fprintf('Random Forest complete\n')
         
         tic
-        f1 = rpclassificationforest(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','old');
+        rf = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'RandomForest',true,'NWorkers',NWorkers);
+        trf(trial,i) = toc;
+        cumrferr(trial,i) = oobpredict(rf,X,Y,'last');
+        
+        fprintf('Random Forest complete\n')
+        
+        tic
+        f1 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','dense','NWorkers',NWorkers);
         tf1(trial,i) = toc;
-        cumf1err(trial,i) = oobpredict(f1,X,Ystr,'last');
-        clear f1
+        cumf1err(trial,i) = oobpredict(f1,X,Y,'last');
         
         fprintf('TylerForest complete\n')
         
         tic
-        f2 = rpclassificationforest(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','new');
+        f2 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','off','sparsemethod','sparse','NWorkers',NWorkers);
         tf2(trial,i) = toc;
-        cumf2err(trial,i) = oobpredict(f2,X,Ystr,'last');
-        clear f2
+        cumf2err(trial,i) = oobpredict(f2,X,Y,'last');
         
         fprintf('TylerForest+ complete\n')
         
         tic
-        f3 = rpclassificationforest(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','new');
+        f3 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse','NWorkers',NWorkers);
         tf3(trial,i) = toc;
-        cumf3err(trial,i) = oobpredict(f3,X,Ystr,'last');
-        clear f3
+        cumf3err(trial,i) = oobpredict(f3,X,Y,'last');
         
         fprintf('TylerForest+meandiff complete\n')
         
         tic
-        f4 = rpclassificationforest(ntrees,X,Ystr,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','new','Robust',true);
+        f4 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse','Robust',true,'NWorkers',NWorkers);
         tf4(trial,i) = toc;
-        cumf4err(trial,i) = oobpredict(f4,X,Ystr,'last');
-        clear f4
+        cumf4err(trial,i) = oobpredict(f4,X,Y,'last');
         
         fprintf('Robust complete\n')
     end
