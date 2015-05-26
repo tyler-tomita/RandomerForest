@@ -44,14 +44,10 @@ Box = 'off';
 Box_Legend = 'off';
 FontSize = 24;
 
-Filename = '~/LOVEFest/Figures/fig/Invariance_Trunk_v2.fig';
+Filename = '~/LOVEFest/Figures/fig/Invariance_Trunk_v3.fig';
 
 h_fig_old = openfig(Filename,'invisible');
 ax_old = flipud(findobj(h_fig_old,'Type','axes'));
-
-Filename = '~/LOVEFest/Figures/fig/Invariance_Trunk_Fisherfaces.fig';
-
-h_fig_old2 = openfig(Filename,'invisible');
 
 Filename = '~/LOVEFest/Figures/fig/Invariance_Parity_v3.fig';
 
@@ -106,35 +102,6 @@ for i = 1:length(ax_old)
     if i == 1
         ylabel('Error Rate')
     end
-end
-
-ax_old = findobj(h_fig_old2,'Type','axes');
-
-%h_ax_new = subplot(2,3,i);
-ax_new(4) = subplot(2,4,4);
-axis square
-copyobj(allchild(ax_old),ax_new(4));
-h_lines = allchild(ax_new(4));
-for j = 1:length(h_lines)
-    ln = h_lines(j);
-    if strcmp(ln.DisplayName,'Translated')
-        delete(ln)
-        rm_idx = j;
-    end
-end
-h_lines(rm_idx) = [];
-xmax = zeros(1,length(h_lines));
-for j = 1:length(h_lines)
-    set(h_lines(j),'Color',Colors(j,:),'linewidth',LineWidth,'Marker',Marker,'MarkerFaceColor',Colors(j,:),'MarkerEdgeColor',Colors(j,:))
-    xmax(j) = max(get(h_lines(j),'XData'));
-end
-xmax = max(xmax);
-XTick = logspace(0,log10(xmax),log10(xmax)+1);
-set(ax_new(4),'FontSize',FontSize,'XLim',[0 10^(log10(xmax)+0.2)],'YLim',[0 ymax_ax],'XScale','log','XTick',XTick,'XGrid','On','YGrid','On','Box',Box,'LineWidth',LineWidth)
-title(Title{4})
-xlabel('# Ambient Dim')
-if i == 1
-    ylabel('Error Rate')
 end
 
 axpos = get(ax_new(end),'Position');

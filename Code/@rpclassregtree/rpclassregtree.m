@@ -395,7 +395,7 @@ defaults = {[]            []      'gdi'                        ...
             []         []          1                          ...
             'all'          'on'          []            'off'    Method      ...
             1e-6      {}       []        'off'      false ...
-            []  1   'off'   'dense'};
+            []  3   'off'   'dense'};
 
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
@@ -957,10 +957,10 @@ end
 function M = srpmat(d,k,method,varargin)
     if strcmp(method,'dense')
         s = varargin{1};
-        M = sparse(vec2mat(randsample([-sqrt(s) 0 sqrt(s)],d*k,true,[1/(2*s) 1-1/s 1/(2*s)]),k));
+        M = vec2mat(randsample([-1 0 1],d*k,true,[1/(2*s) 1-1/s 1/(2*s)]),k);
     elseif strcmp(method,'dgaussian')
         s = varargin{1};
-        M = sparse(vec2mat(randsample([-1 0 1],d*k,true,[1/(2*s) 1-1/s 1/(2*s)]),k));
+        M = vec2mat(randsample([-1 0 1],d*k,true,[1/(2*s) 1-1/s 1/(2*s)]),k);
         M(M==1) = sqrt((s-1))*randn(sum(M(:)==1),1) + 1;
         M(M==-1) = sqrt((s-1))*randn(sum(M(:)==-1),1) - 1;
     else
