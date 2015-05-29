@@ -39,6 +39,7 @@ splitcriterion = '';
       surrflip = {};
       catsplit = []; % for backwards compatibility with version prior to 9a
            rpm = {};
+       isdelta = [];
     end
     
     methods
@@ -615,6 +616,7 @@ nodeprob = zeros(M,1);
 resuberr = zeros(M,1);
 nodesize = zeros(M,1);
 rpm = cell(M,1);    %initialize cell array for storing proj matrices
+isdelta = false(M,1);
 if doclass
    classprob = zeros(M,nclasses);
    classcount = zeros(M,nclasses);
@@ -716,6 +718,7 @@ while(tnode < nextunusednode)
           promat = srpmat(nvars,nusevars,sparsemethod,s);    %random projection matrix
           md_ind = rand(size(mu_diff,2),1) <= p;
           promat = cat(2,mu_diff(:,md_ind),promat);
+          md_idx = 1:sum(md_ind);   %Indices of where the mean difference vectors are in the matrix
           iscat2 = cat(1,false(sum(md_ind),1),iscat);
           %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
           nvarsplit = cat(2,zeros(1,sum(md_ind)),nvarsplit);
@@ -802,6 +805,11 @@ while(tnode < nextunusednode)
          nodenumber(nextunusednode+(0:1)) = nextunusednode+(0:1)';
          parent(nextunusednode+(0:1)) = tnode;
          rpm{tnode} = promat(:,bestvar);
+         if strcmp(mdiff,'on') && K > 1
+             if ~isempty(md_idx)
+                isdelta(tnode) = bestvar <= max(md_idx);
+             end
+         end
          
          %
          % Find surrogate splits
@@ -913,6 +921,7 @@ Tree.mergeleaves = Merge;
 %Tree.nvarsplit = nvarsplit2;
 Tree.nvarsplit = nvarsplit;
 Tree.rpm = rpm(1:topnode);  %Store proj matrices in a structure field
+Tree.isdelta = isdelta(1:topnode);
 
 if doclass
    Tree.prior     = Prior;
@@ -963,6 +972,10 @@ function M = srpmat(d,k,method,varargin)
         M = vec2mat(randsample([-1 0 1],d*k,true,[1/(2*s) 1-1/s 1/(2*s)]),k);
         M(M==1) = sqrt((s-1))*randn(sum(M(:)==1),1) + 1;
         M(M==-1) = sqrt((s-1))*randn(sum(M(:)==-1),1) - 1;
+    elseif strcmp(method,'fast')
+        M = sparse(d,k);
+        M(randsample(d*k,k,false)) = randsample([-1 1],k,true,[0.5 0.5]);
+        M = M(:,any(M));
     else
         M = sparse(d,k);
         R = poissrnd(1,1,k);
