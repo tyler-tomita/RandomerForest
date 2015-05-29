@@ -44,12 +44,12 @@ Box = 'off';
 Box_Legend = 'off';
 FontSize = 24;
 
-Filename = '~/LOVEFest/Figures/fig/Invariance_Trunk_v3.fig';
+Filename = '~/LOVEFest/Figures/fig/Invariance_Trunk_fast.fig';
 
 h_fig_old = openfig(Filename,'invisible');
 ax_old = flipud(findobj(h_fig_old,'Type','axes'));
 
-Filename = '~/LOVEFest/Figures/fig/Invariance_Parity_v3.fig';
+Filename = '~/LOVEFest/Figures/fig/Invariance_Parity_fast.fig';
 
 h_fig_old3 = openfig(Filename,'invisible');
 

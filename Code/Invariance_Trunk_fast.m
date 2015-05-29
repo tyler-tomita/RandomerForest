@@ -15,9 +15,8 @@ end
 addpath(p);
 
 n = 100;    %# samples
-%dims = round(logspace(log10(2),3,10));
-dims = [2 3 4 5 10];
-ntrees = 1000;
+dims = round(logspace(log10(2),3,10));
+ntrees = 1500;
 ntrials = 10;
 NWorkers = 16;
 Class = [0;1];
@@ -57,108 +56,97 @@ for trial = 1:ntrials
         fprintf('d = %d\n',d)
         nvartosample = ceil(d^(2/3));
         d_idx = 1:d;
-        X = zeros(n,d);
-        Sigma = 1/32*ones(1,d);
-        Mu = zeros(n,d);
-        for j = 1:n
-            Mu(j,:) = binornd(1,0.5,1,d);
-            X(j,:) = mvnrnd(Mu(j,:),Sigma);
-        end
-        
-        nones = sum(Mu,2);
-        Y = cellstr(num2str(mod(nones,2)));
+        mu1 = 1./sqrt(d_idx);
+        mu0 = -1*mu1;
+        Mu = cat(1,mu0,mu1);
+        Sigma = 1*speye(d);
+        obj = gmdistribution(Mu,Sigma);
+        [X,idx] = random(obj,n);
+        Y = cellstr(num2str(Class(idx)));
         
         R = random_rotation(d);
         T = random_translation(n,d,-1,1);
         S = random_scaling(n,d,0,10);
-        Sigma_outlier = 4*Sigma;
+        Sigma_outlier = 16*Sigma;
         X_rot = X*R;
         X_trans = X + T;
         X_scale = X.*S;
         X_affine = (X*R).*S;
         outlier_model = gmdistribution(Mu,Sigma_outlier);
-        n_out = round(0.2*n);
-        X_out = zeros(n_out,d);
-        Mu_out = zeros(n_out,d);
-        for j = 1:n_out
-            Mu_out(j,:) = binornd(1,0.5,1,d);
-            X_out(j,:) = mvnrnd(Mu(j,:),Sigma);
-        end
-        nones_out = sum(Mu_out,2);
-        Y_out = cellstr(num2str(mod(nones_out,2)));
+        [X_out,idx_out] = random(outlier_model,0.05*n);
         X_out = cat(1,X,X_out);
+        Y_out = cellstr(num2str(Class(idx_out)));
         Y_out = cat(1,Y,Y_out);
 
         rf = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','off','RandomForest',true,'NWorkers',NWorkers);
         rf_err(trial,i) = oobpredict(rf,X,Y,'last');
         clear rf
 
-        f1 = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse');
+        f1 = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','NWorkers',NWorkers);
         f1_err(trial,i) = oobpredict(f1,X,Y,'last');
         clear f1
         
-        f2 = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse','Robust',true);
+        f2 = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','Robust',true,'NWorkers',NWorkers);
         f2_err(trial,i) = oobpredict(f2,X,Y,'last');
         clear f2
 
-        rf_rot = rpclassificationforest(ntrees,X_rot,Y,'nvartosample',nvartosample,'mdiff','off','RandomForest',true);
+        rf_rot = rpclassificationforest(ntrees,X_rot,Y,'nvartosample',nvartosample,'mdiff','off','RandomForest',true,'NWorkers',NWorkers);
         rf_rot_err(trial,i) = oobpredict(rf_rot,X_rot,Y,'last');
         clear rf_rot
 
-        f1_rot = rpclassificationforest(ntrees,X_rot,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse');
+        f1_rot = rpclassificationforest(ntrees,X_rot,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','NWorkers',NWorkers);
         f1_rot_err(trial,i) = oobpredict(f1_rot,X_rot,Y,'last');
         clear f1_rot
         
-        f2_rot = rpclassificationforest(ntrees,X_rot,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse','Robust',true);
+        f2_rot = rpclassificationforest(ntrees,X_rot,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','Robust',true,'NWorkers',NWorkers);
         f2_rot_err(trial,i) = oobpredict(f2_rot,X_rot,Y,'last');
         clear f2_rot
 
-        rf_trans = rpclassificationforest(ntrees,X_trans,Y,'nvartosample',nvartosample,'mdiff','off','RandomForest',true);
+        rf_trans = rpclassificationforest(ntrees,X_trans,Y,'nvartosample',nvartosample,'mdiff','off','RandomForest',true,'NWorkers',NWorkers);
         rf_trans_err(trial,i) = oobpredict(rf_trans,X_trans,Y,'last');
         clear rf_trans
 
-        f1_trans = rpclassificationforest(ntrees,X_trans,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse');
+        f1_trans = rpclassificationforest(ntrees,X_trans,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','NWorkers',NWorkers);
         f1_trans_err(trial,i) = oobpredict(f1_trans,X_trans,Y,'last');
         clear f1_trans
         
-        f2_trans = rpclassificationforest(ntrees,X_trans,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse','Robust',true);
+        f2_trans = rpclassificationforest(ntrees,X_trans,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','Robust',true,'NWorkers',NWorkers);
         f2_trans_err(trial,i) = oobpredict(f2_trans,X_trans,Y,'last');
         clear f2_trans
 
-        rf_scale = rpclassificationforest(ntrees,X_scale,Y,'nvartosample',nvartosample,'mdiff','off','RandomForest',true);
+        rf_scale = rpclassificationforest(ntrees,X_scale,Y,'nvartosample',nvartosample,'mdiff','off','RandomForest',true,'NWorkers',NWorkers);
         rf_scale_err(trial,i) = oobpredict(rf_scale,X_scale,Y,'last');
         clear rf_scale
 
-        f1_scale = rpclassificationforest(ntrees,X_scale,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse');
+        f1_scale = rpclassificationforest(ntrees,X_scale,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','NWorkers',NWorkers);
         f1_scale_err(trial,i) = oobpredict(f1_scale,X_scale,Y,'last');
         clear f1_scale
         
-        f2_scale = rpclassificationforest(ntrees,X_scale,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse','Robust',true);
+        f2_scale = rpclassificationforest(ntrees,X_scale,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','Robust',true,'NWorkers',NWorkers);
         f2_scale_err(trial,i) = oobpredict(f2_scale,X_scale,Y,'last');
         clear f2_scale
         
-        rf_affine = rpclassificationforest(ntrees,X_affine,Y,'nvartosample',nvartosample,'mdiff','off','RandomForest',true);
+        rf_affine = rpclassificationforest(ntrees,X_affine,Y,'nvartosample',nvartosample,'mdiff','off','RandomForest',true,'NWorkers',NWorkers);
         rf_affine_err(trial,i) = oobpredict(rf_affine,X_affine,Y,'last');
         clear rf_affine
 
-        f1_affine = rpclassificationforest(ntrees,X_affine,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse');
+        f1_affine = rpclassificationforest(ntrees,X_affine,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','NWorkers',NWorkers);
         f1_affine_err(trial,i) = oobpredict(f1_affine,X_affine,Y,'last');
         clear f1_affine
         
-        f2_affine = rpclassificationforest(ntrees,X_affine,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse','Robust',true);
+        f2_affine = rpclassificationforest(ntrees,X_affine,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','Robust',true,'NWorkers',NWorkers);
         f2_affine_err(trial,i) = oobpredict(f2_affine,X_affine,Y,'last');
         clear f2_affine
 
-        
-        rf_out = rpclassificationforest(ntrees,X_out,Y_out,'nvartosample',nvartosample,'mdiff','off','RandomForest',true);
+        rf_out = rpclassificationforest(ntrees,X_out,Y_out,'nvartosample',nvartosample,'mdiff','off','RandomForest',true,'NWorkers',NWorkers);
         rf_out_err(trial,i) = oobpredict(rf_out,X_out,Y_out,'last');
         clear rf_out
 
-        f1_out = rpclassificationforest(ntrees,X_out,Y_out,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse');
+        f1_out = rpclassificationforest(ntrees,X_out,Y_out,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','NWorkers',NWorkers);
         f1_out_err(trial,i) = oobpredict(f1_out,X_out,Y_out,'last');
         clear f1_out
         
-        f2_out = rpclassificationforest(ntrees,X_out,Y_out,'nvartosample',nvartosample,'mdiff','on','sparsemethod','sparse','Robust',true);
+        f2_out = rpclassificationforest(ntrees,X_out,Y_out,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','Robust',true,'NWorkers',NWorkers);
         f2_out_err(trial,i) = oobpredict(f2_out,X_out,Y_out,'last');
         clear f2_out
         
@@ -171,7 +159,7 @@ for trial = 1:ntrials
     end
 end
 
-save('Invariance_Parity.mat','R','rf_err','f1_err','f2_err','rf_rot_err',...
+save('Invariance_Trunk.mat','R','rf_err','f1_err','f2_err','rf_rot_err',...
     'f1_rot_err','f2_rot_err','rf_trans_err','f1_trans_err','f2_trans_err',...
     'rf_scale_err','f1_scale_err','f2_scale_err','rf_affine_err','f1_affine_err','f2_affine_err',...
     'rf_out_err','f1_out_err','f2_out_err','ff_err','ff_rot_err','ff_trans_err','ff_scale_err','ff_affine_err','ff_out_err')
@@ -194,6 +182,12 @@ mean_f2_affine_err = mean(f2_affine_err);
 mean_rf_out_err = mean(rf_out_err);
 mean_f1_out_err = mean(f1_out_err);
 mean_f2_out_err = mean(f2_out_err);
+mean_ff_err = mean(ff_err);
+mean_ff_rot_err = mean(ff_rot_err);
+mean_ff_trans_err = mean(ff_trans_err);
+mean_ff_scale_err = mean(ff_scale_err);
+mean_ff_affine_err = mean(ff_affine_err);
+mean_ff_out_err = mean(ff_out_err);
 
 sem_rf = std(rf_err)/sqrt(ntrials);
 sem_f1 = std(f1_err)/sqrt(ntrials);
@@ -213,21 +207,12 @@ sem_f2_affine = std(f2_affine_err)/sqrt(ntrials);
 sem_rf_out = std(rf_out_err)/sqrt(ntrials);
 sem_f1_out = std(f1_out_err)/sqrt(ntrials);
 sem_f2_out = std(f2_out_err)/sqrt(ntrials);
-
-mean_ff_err = mean(ff_err);
-mean_ff_rot_err = mean(ff_rot_err);
-mean_ff_trans_err = mean(ff_trans_err);
-mean_ff_scale_err = mean(ff_scale_err);
-mean_ff_affine_err = mean(ff_affine_err);
-mean_ff_out_err = mean(ff_out_err);
-
 sem_ff = std(ff_err)/sqrt(ntrials);
 sem_ff_rot = std(ff_rot_err)/sqrt(ntrials);
 sem_ff_trans = std(ff_trans_err)/sqrt(ntrials);
 sem_ff_scale = std(ff_scale_err)/sqrt(ntrials);
 sem_ff_affine = std(ff_affine_err)/sqrt(ntrials);
 sem_ff_out = std(ff_out_err)/sqrt(ntrials);
-
 
 Ynames = {'mean_rf_err' 'mean_rf_rot_err' 'mean_rf_trans_err' 'mean_rf_scale_err' 'mean_rf_affine_err' 'mean_rf_out_err'};
 Enames = {'sem_rf' 'sem_rf_rot' 'sem_rf_trans' 'sem_rf_scale' 'sem_rf_affine' 'sem_rf_out'};
@@ -238,6 +223,7 @@ for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
     hold on
 end
+set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
@@ -250,6 +236,7 @@ for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
     hold on
 end
+set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
@@ -262,6 +249,7 @@ for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
     hold on
 end
+set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
 legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
@@ -274,10 +262,11 @@ for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
     hold on
 end
+set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel('Lhat')
 legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
 title('Fisherfaces')
 
-filename = 'Invariance_Parity_v3';
+filename = 'Invariance_Trunk_fast';
 save_fig(gcf,filename)

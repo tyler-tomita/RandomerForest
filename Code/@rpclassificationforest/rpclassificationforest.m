@@ -7,6 +7,7 @@ classdef rpclassificationforest
         classname;
         RandomForest;
         Robust;
+        NumVars = [];
     end
     
     methods
@@ -109,10 +110,30 @@ classdef rpclassificationforest
                         surrogate,'skipchecks',skipchecks,'stream',Stream);
                 end  
             end     %parallel loop over i
+            
+            %Compute interpretability as total number of variables split on
+            NumVars = NaN(1,nTrees);
+            if RandomForest
+                for i = 1:nTrees
+                    NumVars(i) = sum(Tree{i}.var~=0);
+                end
+            else
+                for i = 1:nTrees
+                    internalnodes = transpose(Tree{i}.node(Tree{i}.var ~= 0));
+                    TreeVars = zeros(1,length(Tree{i}.node));
+                    for nd = internalnodes
+                        if ~Tree{i}.isdelta(nd)
+                            TreeVars(nd) = nnz(Tree{i}.rpm{nd});
+                        end
+                    end
+                    NumVars(i) = sum(TreeVars);
+                end
+            end                        
             forest.Tree = Tree;
             forest.oobidx = oobidx;
             forest.nTrees = length(forest.Tree);
             forest.RandomForest = RandomForest;
+            forest.NumVars = NumVars;
         end     %function rpclassificationforest
         
         function [err,varargout] = oobpredict(forest,X,Y,treenum)
