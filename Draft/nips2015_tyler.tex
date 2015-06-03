@@ -5,13 +5,24 @@
 \usepackage{graphicx}
 \graphicspath{ {/Users/Tyler/LOVEFest/Figures/pdf/} }
 %\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
-\usepackage{amsfonts}
-\usepackage{amsmath}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
 \usepackage{color}
 \usepackage{paralist}
 
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
 \providecommand{\tt}[1]{\textcolor{blue}{\it tt says: #1}}
 \newcommand{\jovo}[1]{{\color{magenta}{\it jovo says: #1}}}
+
+\floatname{algorithm}{Procedure}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\newcommand{\Real}{\mathbb{R}}
+\providecommand{\mc}[1]{\mathcal{#1}}
+\providecommand{\mt}[1]{\widetilde{#1}}
+\newcommand{\T}{^{\ensuremath{\mathsf{T}}}}           % transpose
 
 
 \title{Randomer Forests}
@@ -100,6 +111,30 @@ To bridge this gap, we first state a generalized forest building scheme, linear 
 \section{Linear Threshold Tree Ensembles}
 
 
+\begin{algorithm}
+\begin{algorithmic}
+\Require \\ 
+\begin{compactitem}
+\item \textbf{Data}: $\mc{D}_n = (X_i,y_i) \in (\Real^p \times \mc{Y})$ for $i \in [n]$
+\item \textbf{Number of trees}: $L$ 
+\item \textbf{Data sampling strategy}: a rule for how to obtain $\mc{S}_l$, the subset of $[n]$ per tree $l$ 
+\item \textbf{Subspace}: $\mc{A}^{p \times d}$
+\item \textbf{Distribution on $k \times d$ matrices}: $f_A(\mc{D}_n)$, where $k=|\mc{S}_l|$
+\item \textbf{Stoppping criteria}: e.g., a maximal tree depth or minimum number of elements per tree 
+\end{compactitem}
+\Ensure trees, predictions, out of bag errors, etc. 
+\State Preprocess
+\For{$l \in [L]$}
+\State Sample $\mathcal{S}_l$
+\State Construct $X^{(l)}=\{X_i\}_{\mc{S}_l}$
+\For{Each leaf node in tree}
+\State Sample $A_{i,j} \sim f_A(\mc{D}_n)$
+\State Let $\mt{X} = A_{i,j}\T X^{(l)} \in \Real^{d \times |\mt{S}_l|}$
+\State variable selection rule
+\EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 
 
