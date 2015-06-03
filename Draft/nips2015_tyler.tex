@@ -8,13 +8,13 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{color}
-
+\usepackage{paralist}
 
 \providecommand{\tt}[1]{\textcolor{blue}{\it tt says: #1}}
 \newcommand{\jovo}[1]{{\color{magenta}{\it jovo says: #1}}}
 
 
-\title{Randomer Forest}
+\title{Randomer Forests}
 
 
 \author{
@@ -25,6 +25,12 @@ Department of Biomedical Engineering\\
 Johns Hopkins University\\
 Baltimore, MD \\
 \texttt{ttomita@jhu.edu} \\
+\And
+Mauro Maggioni \\
+Department of Mathematics \\
+Duke University \\
+Durham, NC \\
+\texttt{mauro@math.duke.edu} \\
 \And
 Joshua T. Vogelstein \\
 Department of Biomedical Engineering \\
@@ -51,19 +57,53 @@ Baltimore, MD \\
 \maketitle
 
 \begin{abstract}
-Insert abstract
+\jovo{please make this submittable asap.  this means include bib, put figures in the right place, anonymize, etc.}
 \end{abstract}
 
 \section{Introduction}
-Ensemble classification methods have demonstrated much success in recent years (cite). One reason ensembles work well is because averaging the votes of many weak classifiers can substantially reduce the variance. Another reason is that the ensemble may provide a better approximation to the true function $f$ when the hypothesis space of individual classifiers does not contain a good approximation (Dietterich 2002). Two factors that have a significant impact in the performance of an ensemble method are \textit{diversity} and \textit{accuracy} (Margineantu and Dietterich 1997). Accuracy describes the ability of each individual classifier to generalize to new points, while diversity quantifies the amount of correlation between generalization errors of individual classifiers. It is easy to see that if all individual classifiers are completely accurate, then no benefit is gained using an ensemble. However, if individual classifiers are weak but diverse, the ensemble can have marked improvement in performance over any of the individual ones.
 
-One ensemble method in particular that has been shown to work well in a variety of settings is random forests (Breiman 2001). Recent studies evaluating many different classifiers on a wide range of datasets have shown random forest classifiers to exhibit the overall best performance across all classifiers examined (Caruana;Delgado). A random forest is a diverse ensemble of decision trees, where diversity is introduced through a combination of bagging (cite) and random subsampling of predictors at each split node of each tree. While random forests has demonstrated marked success, decision boundaries associated with each split node are restricted to alignment with the coordinate axes. We believe that such a restriction limits both the accuracy as well as the diversity of the resulting ensemble classifier. In this paper, we propose a new method, called randomer forests, which removes the restriction of axis-aligned partitions. The main heuristic is in replacing random subsampling of predictors in random forests with sparse random projections. 
+% \paragraph{Opportunity} 
+Data science is becoming increasingly important as our ability of a society to collect and process data continues to increase.  Supervised learning---the act of using predictors to make a prediction about some target data---is of special interest to many applications, ranging from science to government to industry.  Classification, a special case of supervised learning, in which the target data is categorical, is one of the most fundamental learning problems that has been the subject of much study.  A simple pubmed search for the term ``classifier'' reveals nearly 9,000 publications, and a similar arxiv search reports that the number of hits is $>$1000.  Of all the classifiers, random forests (RFs) \cite{Breiman2001}, is generally considered to be best, with good reason.  Several recent benchmark papers assess the performance of many different classifiers on many different datasets \cite{Delgado2014,Caruana2008}, and both concluded the same thing: random forest are the best classifier.
 
-\jovo{outlines of the paper are verbose, and it should be clear from the introductory content what you will be doing. i removed yours}
+The reasons for the popularity and utility of random forests are many. Below, we list some of the primary reasons, in order of approximate importance (as assessed subjectively and qualitatively by us):
+\begin{compactitem}
+\item \textbf{empirical performance}: doing well in a wide variety of contexts
+\item \textbf{scale invariant}: this means that different predictor variables can have totally different units, millimeters and kilometers and milligrams and kilograms, for example, and RF does not care.
+\item \textbf{robust to outliers}: certain data points could be outliers, either because some or all of the values of their feature vector are far from the others
+\item \textbf{computational efficiency}: it is reasonably efficient, moreso than an exhaustive search to find the globally optimal tree, which is NP-hard \cite{Heath1993}
+\item \textbf{storage efficiency}: when training on lots of data, storage of the classifier can become problematic
+\item \textbf{interpretability}: it is reasonably interpretable, as each variable can be assigned an importance score (such as the ``gini'' score)
+\end{compactitem}
+
+
+% \paragraph{Challenge}
+Although the benefits of RF are many, as with everything, there is room to improve. The main drawback of using RFs, in our opinion, is its sensitivity to rotations.  Because when people refer to RFs they often mean Breiman's Forest-IC, which uses axis-parallel \cite{Heath1993}, or othogonal trees \cite{Menze2011}, Breiman also characterized Forest-RC, which used linear combinations of coordinates rather than indivudal coordinates, to split along.  Others have studied several different variants ``oblique'' random forests, including efforts to learn good projections \cite{Heath1993,Tan2004}, or using principal components analysis to find the directions of maximal variance \cite{Ho1998,Rodriguez2006}, or directly learn good discriminant directions \cite{Menze2011}.  While each of these approaches deal with rotational invariance, they all also lose at least one of the above benefits of RF, namely scale invariance.  The scale invariance property of RF is one of its most important and special properties, distinguishing it from most other classifiers, and making it appropriate in a wider variety of contexts.  
+Moreover, all of the above approaches become outlier sensitive, and lose computational and storage efficiency.
+Therefore, in the literature, there remains a gap to build a classifier that has excellent empirical performance, while maintaining scale invariance, as well as robustness and computational and storage efficiency.
+
+% \paragraph{Action}
+To bridge this gap, we first state a generalized forest building scheme, linear threshold trees, which includes all of the above algorithms as special cases.  This enables us to formally state our objective, and provides a lens that enables us to propose a few novel special cases, which we refer to as ``Randomer Forests''  (or RerFs for short), for reasons that will become clear in the sequel.  We both theoretically and empirically demonstrate that our methods have the same time and space complexity as random forests, while matching or exceeding their performance even on axis aligned data.  Moreover, we demonstrate that a variant of RerF is approximately is both affine invariant and robust to outliers, two properties that are relatively easy to obtain independently, though difficult to obtain jointly (though see recent work on robust PCA, for example \cite{Candes2009}). Finally, we demonstrate on a suite of benchmark datasets, that RerF outperforms RF in terms of both accuracy and interpretability.  We conclude that RerF should be the new reference classifier.
+
+
+% \paragraph{Resolution}
+
+% \paragraph{Future}
+
+% Ensemble classification methods have demonstrated much success in recent years (cite). One reason ensembles work well is because averaging the votes of many weak classifiers can substantially reduce the variance. Another reason is that the ensemble may provide a better approximation to the true function $f$ when the hypothesis space of individual classifiers does not contain a good approximation (Dietterich 2002). Two factors that have a significant impact in the performance of an ensemble method are \textit{diversity} and \textit{accuracy} (Margineantu and Dietterich 1997). Accuracy describes the ability of each individual classifier to generalize to new points, while diversity quantifies the amount of correlation between generalization errors of individual classifiers. It is easy to see that if all individual classifiers are completely accurate, then no benefit is gained using an ensemble. However, if individual classifiers are weak but diverse, the ensemble can have marked improvement in performance over any of the individual ones.
+
+% One ensemble method in particular that has been shown to work well in a variety of settings is random forests (Breiman 2001). Recent studies evaluating many different classifiers on a wide range of datasets have shown random forest classifiers to exhibit the overall best performance across all classifiers examined (Caruana;Delgado). A random forest is a diverse ensemble of decision trees, where diversity is introduced through a combination of bagging (cite) and random subsampling of predictors at each split node of each tree. While random forests has demonstrated marked success, decision boundaries associated with each split node are restricted to alignment with the coordinate axes. We believe that such a restriction limits both the accuracy as well as the diversity of the resulting ensemble classifier. In this paper, we propose a new method, called randomer forests, which removes the restriction of axis-aligned partitions. The main heuristic is in replacing random subsampling of predictors in random forests with sparse random projections. 
+
+% \jovo{outlines of the paper are verbose, and it should be clear from the introductory content what you will be doing. i removed yours}
 
 % Details of the implementation of our method are described in section 2. In section 3, we evaluate the performance of our method on both simulated and real datasets. Furthermore, we explore robustness of our method against various transformations and outliers.
 
-\section{Randomer Forest}
+\section{Linear Threshold Tree Ensembles}
+
+
+
+
+
+\section{Randomer Forests}
 A random forest is an ensemble of randomized decision trees, where each decision tree consists of internal (split) and terminal (leaf) nodes. At each internal node, a random subset of the ambient (coordinate) dimensions is sampled and subsequent optimization of a split function selects the single best dimension and split point contained in this subset. Therefore, each tree within a random forest can be viewed as a hierarchical series of axis-aligned decision boundaries. Here, we introduce a new method for constructing randomized decision trees, where instead of random subsampling the dimensions, we randomly project to a lower dimensional subspace. By randomly projecting, decision boundaries are not restricted to alignment with the coordinate axes. Specifically, let $X_i \in \mathbb{R}^{n\times p}$ be a set of $n$ points in $p$ dimensional Euclidean space associated with the ith split node of a decision tree, and let $R_i \in \mathbb{R}^{p\times k}$ be a randomly chosen projection matrix at the ith node. Then for every split node, we compute the projection $X_{proj} = X_iR_i$ and select the optimal split dimension and split point in this randomly chosen k-dimensional subspace.
 
 There exists various choices for the random projection matrix $R$. If one cares about preserving pairwise distances between points, then $R$ must be chosen carefully. A variety of methods have been established recently for generating random projection matrices that preserve distances. The most common one is to sample each element $r_{ij}$ from a standard normal (Indyk and Motwani, 1998; Dasgupta and Gupta, 2003). Another method generates sparse matrices by setting each element equal to +1 or -1 with probability $1/2\sqrt(p)$ and 0 with probability $1 - 1/\sqrt(p)$ (Li 2006). In this work, we are not concerned with preserving pairwise distances. Rather, we are simply concerned with constructing features at each split node of a tree using linear combinations of the ambient dimensions. We construct random matrices by first, sampling the indices of the k nonzero elements uniformly at random. Next, each nonzero element is randomly assigned -1 or +1 with equal probability. Columns containing all zeros are removed. This results in a matrix with many columns having one nonzero element and a few columns having more than one nonzero element.
@@ -149,5 +189,10 @@ Much work is still to be done with our proposed method. In this work, we only ex
 \end{center}
 \caption{Classification performance comparing Random Forest (RF) to several variants of Randomer Forest (RerF) on the modified Trunk simulation setting. Here, the ith diagonal of the covariance matrices of both classes is equal to the inverse of the difference in means of the ith dimension between the two classes. For small values of p, all variants of RerF perform marginally better than RF. For large values of p, all variants of RerF perform worse than RF.}
 \end{figure}
+
+
+\bibliography{nips2015_tyler}
+\bibliographystyle{IEEEtran}
+
 
 \end{document}
