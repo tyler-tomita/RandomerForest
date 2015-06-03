@@ -1,7 +1,8 @@
 \BOOKMARK [1][-]{section.1}{Introduction}{}% 1
-\BOOKMARK [1][-]{section.2}{Randomer Forests}{}% 2
-\BOOKMARK [1][-]{section.3}{Experimental Evaluation}{}% 3
-\BOOKMARK [2][-]{subsection.3.1}{Simulated Data}{section.3}% 4
-\BOOKMARK [2][-]{subsection.3.2}{Effects of Transformations and Outliers on Classifier Performance}{section.3}% 5
-\BOOKMARK [2][-]{subsection.3.3}{Real Data}{section.3}% 6
-\BOOKMARK [1][-]{section.4}{Conclusion}{}% 7
+\BOOKMARK [1][-]{section.2}{Linear Threshold Tree Ensembles}{}% 2
+\BOOKMARK [1][-]{section.3}{Randomer Forests}{}% 3
+\BOOKMARK [1][-]{section.4}{Experimental Evaluation}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{Simulated Data}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{Effects of Transformations and Outliers on Classifier Performance}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.3}{Real Data}{section.4}% 7
+\BOOKMARK [1][-]{section.5}{Conclusion}{}% 8

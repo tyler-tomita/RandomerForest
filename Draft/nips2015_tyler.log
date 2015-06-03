@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  3 JUN 2015 16:09
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  3 JUN 2015 16:27
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -278,56 +278,116 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
 LaTeX Info: Redefining \[ on input line 2665.
 LaTeX Info: Redefining \] on input line 2666.
 )
-(./nips2015_tyler.aux)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/amscls/amsthm.sty
+Package: amsthm 2004/08/06 v2.20
+\thm@style=\toks21
+\thm@bodyfont=\toks22
+\thm@headfont=\toks23
+\thm@notefont=\toks24
+\thm@headpunct=\toks25
+\thm@preskip=\skip47
+\thm@postskip=\skip48
+\thm@headsep=\skip49
+\dth@everypar=\toks26
+)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/paralist/paralist.sty
+Package: paralist 2013/06/09 v2.4 Extended list environments
+\pltopsep=\skip50
+\plpartopsep=\skip51
+\plitemsep=\skip52
+\plparsep=\skip53
+\pl@lab=\toks27
+)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/algorithms/algorithm.sty
+Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
+nment
+
+(/usr/local/texlive/2014/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count115
+\float@exts=\toks28
+\float@box=\box30
+\@float@everytoks=\toks29
+\@floatcapt=\box31
+)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+\@float@every@algorithm=\toks30
+\c@algorithm=\count116
+)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/algorithmicx/algpseudocode.sty
+Package: algpseudocode 
+
+(/usr/local/texlive/2014/texmf-dist/tex/latex/algorithmicx/algorithmicx.sty
+Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
+
+Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
+\c@ALG@line=\count117
+\c@ALG@rem=\count118
+\c@ALG@nested=\count119
+\ALG@tlm=\skip54
+\ALG@thistlm=\skip55
+\c@ALG@Lnr=\count120
+\c@ALG@blocknr=\count121
+\c@ALG@storecount=\count122
+\c@ALG@tmpcounter=\count123
+\ALG@tmplength=\skip56
+)
+Document Style - pseudocode environments for use with the `algorithmicx' style
+) (./nips2015_tyler.aux)
 \openout1 = `nips2015_tyler.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 44.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 66.
+LaTeX Font Info:    ... okay on input line 66.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 66.
+LaTeX Font Info:    ... okay on input line 66.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 66.
+LaTeX Font Info:    ... okay on input line 66.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 66.
+LaTeX Font Info:    ... okay on input line 66.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 66.
+LaTeX Font Info:    ... okay on input line 66.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 66.
+LaTeX Font Info:    ... okay on input line 66.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 66.
+LaTeX Font Info:    ... okay on input line 66.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 66.
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
-\AtBeginShipoutBox=\box30
+\AtBeginShipoutBox=\box32
 
 (/usr/local/texlive/2014/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count115
+\scratchcounter=\count124
 \scratchdimen=\dimen121
-\scratchbox=\box31
-\nofMPsegments=\count116
-\nofMParguments=\count117
-\everyMPshowfont=\toks21
-\MPscratchCnt=\count118
+\scratchbox=\box33
+\nofMPsegments=\count125
+\nofMParguments=\count126
+\everyMPshowfont=\toks31
+\MPscratchCnt=\count127
 \MPscratchDim=\dimen122
-\MPnumerator=\count119
-\makeMPintoPDFobject=\count120
-\everyMPtoPDFconversion=\toks22
+\MPnumerator=\count128
+\makeMPintoPDFobject=\count129
+\everyMPtoPDFconversion=\toks32
 )
-Package hyperref Info: Link coloring OFF on input line 44.
+Package hyperref Info: Link coloring OFF on input line 66.
  (/usr/local/texlive/2014/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 
 (/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
-\c@section@level=\count121
+\c@section@level=\count130
 )
-LaTeX Info: Redefining \ref on input line 44.
-LaTeX Info: Redefining \pageref on input line 44.
-LaTeX Info: Redefining \nameref on input line 44.
+LaTeX Info: Redefining \ref on input line 66.
+LaTeX Info: Redefining \pageref on input line 66.
+LaTeX Info: Redefining \nameref on input line 66.
 
 (./nips2015_tyler.out) (./nips2015_tyler.out)
 \@outlinefile=\write3
@@ -350,186 +410,263 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <17.28> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 47.
-LaTeX Font Info:    Try loading font information for U+msa on input line 47.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 69.
+LaTeX Font Info:    Try loading font information for U+msa on input line 69.
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 47.
+LaTeX Font Info:    Try loading font information for U+msb on input line 69.
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 47.
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 47.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 69.
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 69.
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 48.
- [1
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 70.
 
-{/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
 
-</Users/Tyler/LOVEFest/Figures/pdf/Fig1_Lhat.pdf, id=39, 1284.8pt x 803.0pt>
-File: /Users/Tyler/LOVEFest/Figures/pdf/Fig1_Lhat.pdf Graphic file (type pdf)
+LaTeX Warning: Citation `Breiman2001' on page 1 undefined on input line 77.
 
-<use /Users/Tyler/LOVEFest/Figures/pdf/Fig1_Lhat.pdf>
-Package pdftex.def Info: /Users/Tyler/LOVEFest/Figures/pdf/Fig1_Lhat.pdf used o
-n input line 95.
+
+LaTeX Warning: Citation `Delgado2014' on page 1 undefined on input line 77.
+
+
+LaTeX Warning: Citation `Caruana2008' on page 1 undefined on input line 77.
+
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 81.
+(/usr/local/texlive/2014/texmf-dist/tex/latex/psnfss/omsptm.fd
+File: omsptm.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 81.
+
+
+LaTeX Warning: Citation `Heath1993' on page 1 undefined on input line 84.
+
+
+LaTeX Warning: Citation `Heath1993' on page 1 undefined on input line 91.
+
+
+LaTeX Warning: Citation `Menze2011' on page 1 undefined on input line 91.
+
+
+LaTeX Warning: Citation `Heath1993' on page 1 undefined on input line 91.
+
+
+LaTeX Warning: Citation `Tan2004' on page 1 undefined on input line 91.
+
+
+LaTeX Warning: Citation `Ho1998' on page 1 undefined on input line 91.
+
+
+LaTeX Warning: Citation `Rodriguez2006' on page 1 undefined on input line 91.
+
+
+LaTeX Warning: Citation `Menze2011' on page 1 undefined on input line 91.
+
+[1
+
+{/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+
+LaTeX Warning: Citation `Candes2009' on page 2 undefined on input line 96.
+
+[2] [3]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [4]
+<../Figures/pdf/Fig1_Lhat.pdf, id=72, 1284.8pt x 803.0pt>
+File: ../Figures/pdf/Fig1_Lhat.pdf Graphic file (type pdf)
+
+<use ../Figures/pdf/Fig1_Lhat.pdf>
+Package pdftex.def Info: ../Figures/pdf/Fig1_Lhat.pdf used on input line 181.
 (pdftex.def)             Requested size: 397.48499pt x 230.53874pt.
 
-</Users/Tyler/LOVEFest/Figures/pdf/Fig2_Time.pdf, id=41, 1284.8pt x 803.0pt>
-File: /Users/Tyler/LOVEFest/Figures/pdf/Fig2_Time.pdf Graphic file (type pdf)
+<../Figures/pdf/Fig2_Time.pdf, id=74, 1284.8pt x 803.0pt>
+File: ../Figures/pdf/Fig2_Time.pdf Graphic file (type pdf)
 
-<use /Users/Tyler/LOVEFest/Figures/pdf/Fig2_Time.pdf>
-Package pdftex.def Info: /Users/Tyler/LOVEFest/Figures/pdf/Fig2_Time.pdf used o
-n input line 103.
+<use ../Figures/pdf/Fig2_Time.pdf>
+Package pdftex.def Info: ../Figures/pdf/Fig2_Time.pdf used on input line 189.
 (pdftex.def)             Requested size: 397.48499pt x 114.27553pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
+<../Figures/pdf/Fig3_Invariance_v2.pdf, id=76, 1284.8pt x 803.0pt>
+File: ../Figures/pdf/Fig3_Invariance_v2.pdf Graphic file (type pdf)
 
-</Users/Tyler/LOVEFest/Figures/pdf/Fig3_Invariance_v2.pdf, id=43, 1284.8pt x 80
-3.0pt>
-File: /Users/Tyler/LOVEFest/Figures/pdf/Fig3_Invariance_v2.pdf Graphic file (ty
-pe pdf)
- <use /Users/Tyler/LOVEFest/Figures/pdf/Fig3_Invariance_v2.pdf>
-Package pdftex.def Info: /Users/Tyler/LOVEFest/Figures/pdf/Fig3_Invariance_v2.p
-df used on input line 111.
+<use ../Figures/pdf/Fig3_Invariance_v2.pdf>
+Package pdftex.def Info: ../Figures/pdf/Fig3_Invariance_v2.pdf used on input li
+ne 197.
 (pdftex.def)             Requested size: 397.48499pt x 226.29062pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-</Users/Tyler/LOVEFest/Figures/pdf/Fig4.pdf, id=45, 1284.8pt x 803.0pt>
-File: /Users/Tyler/LOVEFest/Figures/pdf/Fig4.pdf Graphic file (type pdf)
+<../Figures/pdf/Fig4.pdf, id=78, 1284.8pt x 803.0pt>
+File: ../Figures/pdf/Fig4.pdf Graphic file (type pdf)
 
-<use /Users/Tyler/LOVEFest/Figures/pdf/Fig4.pdf>
-Package pdftex.def Info: /Users/Tyler/LOVEFest/Figures/pdf/Fig4.pdf used on inp
-ut line 119.
+<use ../Figures/pdf/Fig4.pdf>
+Package pdftex.def Info: ../Figures/pdf/Fig4.pdf used on input line 205.
 (pdftex.def)             Requested size: 397.48499pt x 145.57697pt.
 
 
-LaTeX Warning: Citation `???' on page 4 undefined on input line 121.
+LaTeX Warning: Citation `???' on page 5 undefined on input line 207.
 
 
-LaTeX Warning: Citation `???' on page 4 undefined on input line 121.
+LaTeX Warning: Citation `???' on page 5 undefined on input line 207.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
+<../Figures/pdf/Fig0_nTrees.pdf, id=80, 1228.59pt x 1589.94pt>
+File: ../Figures/pdf/Fig0_nTrees.pdf Graphic file (type pdf)
 
-</Users/Tyler/LOVEFest/Figures/pdf/Fig0_nTrees.pdf, id=47, 1228.59pt x 1589.94p
-t>
-File: /Users/Tyler/LOVEFest/Figures/pdf/Fig0_nTrees.pdf Graphic file (type pdf)
+<use ../Figures/pdf/Fig0_nTrees.pdf>
+Package pdftex.def Info: ../Figures/pdf/Fig0_nTrees.pdf used on input line 216.
 
- <use /Users/Tyler/LOVEFest/Figures/pdf/Fig0_nTrees.pdf>
-Package pdftex.def Info: /Users/Tyler/LOVEFest/Figures/pdf/Fig0_nTrees.pdf used
- on input line 130.
 (pdftex.def)             Requested size: 397.48499pt x 140.28966pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-</Users/Tyler/LOVEFest/Figures/pdf/Trunk_hard.pdf, id=49, 1284.8pt x 803.0pt>
-File: /Users/Tyler/LOVEFest/Figures/pdf/Trunk_hard.pdf Graphic file (type pdf)
+<../Figures/pdf/Trunk_hard.pdf, id=82, 1284.8pt x 803.0pt>
+File: ../Figures/pdf/Trunk_hard.pdf Graphic file (type pdf)
 
-<use /Users/Tyler/LOVEFest/Figures/pdf/Trunk_hard.pdf>
-Package pdftex.def Info: /Users/Tyler/LOVEFest/Figures/pdf/Trunk_hard.pdf used 
-on input line 137.
+<use ../Figures/pdf/Trunk_hard.pdf>
+Package pdftex.def Info: ../Figures/pdf/Trunk_hard.pdf used on input line 223.
 (pdftex.def)             Requested size: 397.48499pt x 248.42506pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-</Users/Tyler/LOVEFest/Figures/pdf/Cigars.pdf, id=51, 1284.8pt x 803.0pt>
-File: /Users/Tyler/LOVEFest/Figures/pdf/Cigars.pdf Graphic file (type pdf)
+<../Figures/pdf/Cigars.pdf, id=84, 1284.8pt x 803.0pt>
+File: ../Figures/pdf/Cigars.pdf Graphic file (type pdf)
 
-<use /Users/Tyler/LOVEFest/Figures/pdf/Cigars.pdf>
-Package pdftex.def Info: /Users/Tyler/LOVEFest/Figures/pdf/Cigars.pdf used on i
-nput line 144.
+<use ../Figures/pdf/Cigars.pdf>
+Package pdftex.def Info: ../Figures/pdf/Cigars.pdf used on input line 230.
 (pdftex.def)             Requested size: 397.48499pt x 248.42506pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 149.
-[4 </Users/Tyler/LOVEFest/Figures/pdf/Fig1_Lhat.pdf>] [5 </Users/Tyler/LOVEFest
-/Figures/pdf/Fig2_Time.pdf> </Users/Tyler/LOVEFest/Figures/pdf/Fig3_Invariance_
-v2.pdf>] [6pdfTeX warning (ext4): destination with the same identifier (name{fi
-gure.1}) has been already used, duplicate ignored
+No file nips2015_tyler.bbl.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 238.
+[5pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) 
+has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.149 \end{document}
-                     </Users/Tyler/LOVEFest/Figures/pdf/Fig4.pdf> </Users/Tyler
-/LOVEFest/Figures/pdf/Fig0_nTrees.pdf>] [7pdfTeX warning (ext4): destination wi
-th the same identifier (name{figure.2}) has been already used, duplicate ignore
-d
+l.238 \end{document}
+                     <../Figures/pdf/Fig1_Lhat.pdf>] [6pdfTeX warning (ext4): d
+estination with the same identifier (name{figure.2}) has been already used, dup
+licate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.149 \end{document}
+l.238 \end{document}
                     pdfTeX warning (ext4): destination with the same identifier
  (name{figure.3}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.149 \end{document}
-                     </Users/Tyler/LOVEFest/Figures/pdf/Trunk_hard.pdf> </Users
-/Tyler/LOVEFest/Figures/pdf/Cigars.pdf>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 149.
+l.238 \end{document}
+                     <../Figures/pdf/Fig2_Time.pdf> <../Figures/pdf/Fig3_Invari
+ance_v2.pdf>] [7pdfTeX warning (ext4): destination with the same identifier (na
+me{figure.4}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.238 \end{document}
+                    pdfTeX warning (ext4): destination with the same identifier
+ (name{figure.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.238 \end{document}
+                    pdfTeX warning (ext4): destination with the same identifier
+ (name{figure.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.238 \end{document}
+                     <../Figures/pdf/Fig4.pdf> <../Figures/pdf/Fig0_nTrees.pdf>
+] [8pdfTeX warning (ext4): destination with the same identifier (name{figure.2}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.238 \end{document}
+                    pdfTeX warning (ext4): destination with the same identifier
+ (name{figure.2}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.238 \end{document}
+                    pdfTeX warning (ext4): destination with the same identifier
+ (name{figure.3}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.238 \end{document}
+                    pdfTeX warning (ext4): destination with the same identifier
+ (name{figure.3}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.238 \end{document}
+                     <../Figures/pdf/Trunk_hard.pdf> <../Figures/pdf/Cigars.pdf
+>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 238.
  (./nips2015_tyler.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 149.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 149.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 238.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 238.
+Package rerunfilecheck Info: File `nips2015_tyler.out' has not changed.
+(rerunfilecheck)             Checksum: EEEB54F3DED5395B4A0711BD8C9D87A2;502.
 
-
-Package rerunfilecheck Warning: File `nips2015_tyler.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `nips2015_tyler.out':
-(rerunfilecheck)             Before: D41D8CD98F00B204E9800998ECF8427E;0
-(rerunfilecheck)             After:  9325FDE643E063F58AA8BB2F096AA078;436.
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 149.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 238.
  ) 
 Here is how much of TeX's memory you used:
- 6442 strings out of 493117
- 93636 string characters out of 6135433
- 184672 words of memory out of 5000000
- 9784 multiletter control sequences out of 15000+600000
- 24694 words of font info for 62 fonts, out of 8000000 for 9000
+ 7500 strings out of 493117
+ 107205 string characters out of 6135433
+ 200079 words of memory out of 5000000
+ 10804 multiletter control sequences out of 15000+600000
+ 25599 words of font info for 65 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 37i,10n,39p,2416b,327s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 37i,10n,39p,2454b,327s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2014/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/te
 xlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/tex
-live/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texl
-ive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texliv
-e/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texliv
-e/2014/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb></usr/local/te
-xlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texl
-ive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive
-/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/
-2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/20
-14/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2014
-/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/
-2014/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2014/tex
-mf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/fo
-nts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/
-urw/times/utmri8a.pfb>
-Output written on nips2015_tyler.pdf (7 pages, 544411 bytes).
+live/2014/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.pfb></usr/local/
+texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/t
+exlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/tex
+live/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texli
+ve/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texli
+ve/2014/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb></usr/local/t
+exlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/tex
+live/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texliv
+e/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/
+2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2
+014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/201
+4/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2014/
+texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2
+014/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2014/texm
+f-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/fon
+ts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/u
+rw/times/utmri8a.pfb>
+Output written on nips2015_tyler.pdf (8 pages, 580045 bytes).
 PDF statistics:
- 352 PDF objects out of 1000 (max. 8388607)
- 307 compressed objects within 4 object streams
- 19 named destinations out of 1000 (max. 500000)
- 78 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 394 PDF objects out of 1000 (max. 8388607)
+ 345 compressed objects within 4 object streams
+ 21 named destinations out of 1000 (max. 500000)
+ 142 words of extra memory for PDF output out of 10000 (max. 10000000)
 

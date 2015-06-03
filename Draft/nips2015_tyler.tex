@@ -5,8 +5,24 @@
 \usepackage{graphicx}
 \graphicspath{ {/Users/Tyler/LOVEFest/Figures/pdf/} }
 %\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
-\usepackage{amsfonts}
-\usepackage{amsmath}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+\usepackage{color}
+\usepackage{paralist}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\providecommand{\tt}[1]{\textcolor{blue}{\it tt says: #1}}
+\newcommand{\jovo}[1]{{\color{magenta}{\it jovo says: #1}}}
+
+\floatname{algorithm}{Procedure}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\newcommand{\Real}{\mathbb{R}}
+\providecommand{\mc}[1]{\mathcal{#1}}
+\providecommand{\mt}[1]{\widetilde{#1}}
+\newcommand{\T}{^{\ensuremath{\mathsf{T}}}}           % transpose
 
 
 \title{Randomer Forests}
@@ -20,6 +36,12 @@ Department of Biomedical Engineering\\
 Johns Hopkins University\\
 Baltimore, MD \\
 \texttt{ttomita@jhu.edu} \\
+\And
+Mauro Maggioni \\
+Department of Mathematics \\
+Duke University \\
+Durham, NC \\
+\texttt{mauro@math.duke.edu} \\
 \And
 Joshua T. Vogelstein \\
 Department of Biomedical Engineering \\
@@ -46,18 +68,82 @@ Baltimore, MD \\
 \maketitle
 
 \begin{abstract}
-Insert abstract
+\jovo{please make this submittable asap.  this means include bib, put figures in the right place, anonymize, etc.}
 \end{abstract}
 
 \section{Introduction}
-Ensemble classification methods have demonstrated much success in recent years (cite). One reason ensembles work well is because averaging the votes of many weak classifiers can substantially reduce the variance. Another reason is that the ensemble may provide a better approximation to the true function $f$ when the hypothesis space of individual classifiers does not contain a good approximation (Dietterich 2002). Two factors that have a significant impact in the performance of an ensemble method are \textit{diversity} and \textit{accuracy} (Margineantu and Dietterich 1997). Accuracy describes the ability of each individual classifier to generalize to new points, while diversity quantifies the amount of correlation between generalization errors of individual classifiers. It is easy to see that if all individual classifiers are completely accurate, then no benefit is gained using an ensemble. However, if individual classifiers are weak but diverse, the ensemble can have marked improvement in performance over any of the individual ones.
 
-One ensemble method in particular that has been shown to work well in a variety of settings is random forests (Breiman 2001). Recent studies evaluating many different classifiers on a wide range of datasets have shown random forest classifiers to exhibit the overall best performance across all classifiers examined (Caruana;Delgado) . A random forest is a diverse ensemble of decision trees, where diversity is introduced through a combination of bagging (cite) and random subsampling of predictors at each split node of each tree. While random forests has demonstrated marked success, decision boundaries associated with each split node are restricted to alignment with the coordinate axes. We believe that such a restriction limits both the accuracy as well as the diversity of the resulting ensemble classifier. In this paper, we propose a new method, called randomer forests, which removes the restriction of axis-aligned partitions. The main heuristic is in replacing random subsampling of predictors in random forests with sparse random projections. Details of the implementation of our method are described in section 2. In section 3, we evaluate the performance of our method on both simulated and real datasets. Furthermore, we explore robustness of our method against various transformations and outliers.
+% \paragraph{Opportunity} 
+Data science is becoming increasingly important as our ability of a society to collect and process data continues to increase.  Supervised learning---the act of using predictors to make a prediction about some target data---is of special interest to many applications, ranging from science to government to industry.  Classification, a special case of supervised learning, in which the target data is categorical, is one of the most fundamental learning problems that has been the subject of much study.  A simple pubmed search for the term ``classifier'' reveals nearly 9,000 publications, and a similar arxiv search reports that the number of hits is $>$1000.  Of all the classifiers, random forests (RFs) \cite{Breiman2001}, is generally considered to be best, with good reason.  Several recent benchmark papers assess the performance of many different classifiers on many different datasets \cite{Delgado2014,Caruana2008}, and both concluded the same thing: random forest are the best classifier.
+
+The reasons for the popularity and utility of random forests are many. Below, we list some of the primary reasons, in order of approximate importance (as assessed subjectively and qualitatively by us):
+\begin{compactitem}
+\item \textbf{empirical performance}: doing well in a wide variety of contexts
+\item \textbf{scale invariant}: this means that different predictor variables can have totally different units, millimeters and kilometers and milligrams and kilograms, for example, and RF does not care.
+\item \textbf{robust to outliers}: certain data points could be outliers, either because some or all of the values of their feature vector are far from the others
+\item \textbf{computational efficiency}: it is reasonably efficient, moreso than an exhaustive search to find the globally optimal tree, which is NP-hard \cite{Heath1993}
+\item \textbf{storage efficiency}: when training on lots of data, storage of the classifier can become problematic
+\item \textbf{interpretability}: it is reasonably interpretable, as each variable can be assigned an importance score (such as the ``gini'' score)
+\end{compactitem}
+
+
+% \paragraph{Challenge}
+Although the benefits of RF are many, as with everything, there is room to improve. The main drawback of using RFs, in our opinion, is its sensitivity to rotations.  Because when people refer to RFs they often mean Breiman's Forest-IC, which uses axis-parallel \cite{Heath1993}, or othogonal trees \cite{Menze2011}, Breiman also characterized Forest-RC, which used linear combinations of coordinates rather than indivudal coordinates, to split along.  Others have studied several different variants ``oblique'' random forests, including efforts to learn good projections \cite{Heath1993,Tan2004}, or using principal components analysis to find the directions of maximal variance \cite{Ho1998,Rodriguez2006}, or directly learn good discriminant directions \cite{Menze2011}.  While each of these approaches deal with rotational invariance, they all also lose at least one of the above benefits of RF, namely scale invariance.  The scale invariance property of RF is one of its most important and special properties, distinguishing it from most other classifiers, and making it appropriate in a wider variety of contexts.  
+Moreover, all of the above approaches become outlier sensitive, and lose computational and storage efficiency.
+Therefore, in the literature, there remains a gap to build a classifier that has excellent empirical performance, while maintaining scale invariance, as well as robustness and computational and storage efficiency.
+
+% \paragraph{Action}
+To bridge this gap, we first state a generalized forest building scheme, linear threshold trees, which includes all of the above algorithms as special cases.  This enables us to formally state our objective, and provides a lens that enables us to propose a few novel special cases, which we refer to as ``Randomer Forests''  (or RerFs for short), for reasons that will become clear in the sequel.  We both theoretically and empirically demonstrate that our methods have the same time and space complexity as random forests, while matching or exceeding their performance even on axis aligned data.  Moreover, we demonstrate that a variant of RerF is approximately is both affine invariant and robust to outliers, two properties that are relatively easy to obtain independently, though difficult to obtain jointly (though see recent work on robust PCA, for example \cite{Candes2009}). Finally, we demonstrate on a suite of benchmark datasets, that RerF outperforms RF in terms of both accuracy and interpretability.  We conclude that RerF should be the new reference classifier.
+
+
+% \paragraph{Resolution}
+
+% \paragraph{Future}
+
+% Ensemble classification methods have demonstrated much success in recent years (cite). One reason ensembles work well is because averaging the votes of many weak classifiers can substantially reduce the variance. Another reason is that the ensemble may provide a better approximation to the true function $f$ when the hypothesis space of individual classifiers does not contain a good approximation (Dietterich 2002). Two factors that have a significant impact in the performance of an ensemble method are \textit{diversity} and \textit{accuracy} (Margineantu and Dietterich 1997). Accuracy describes the ability of each individual classifier to generalize to new points, while diversity quantifies the amount of correlation between generalization errors of individual classifiers. It is easy to see that if all individual classifiers are completely accurate, then no benefit is gained using an ensemble. However, if individual classifiers are weak but diverse, the ensemble can have marked improvement in performance over any of the individual ones.
+
+% One ensemble method in particular that has been shown to work well in a variety of settings is random forests (Breiman 2001). Recent studies evaluating many different classifiers on a wide range of datasets have shown random forest classifiers to exhibit the overall best performance across all classifiers examined (Caruana;Delgado). A random forest is a diverse ensemble of decision trees, where diversity is introduced through a combination of bagging (cite) and random subsampling of predictors at each split node of each tree. While random forests has demonstrated marked success, decision boundaries associated with each split node are restricted to alignment with the coordinate axes. We believe that such a restriction limits both the accuracy as well as the diversity of the resulting ensemble classifier. In this paper, we propose a new method, called randomer forests, which removes the restriction of axis-aligned partitions. The main heuristic is in replacing random subsampling of predictors in random forests with sparse random projections. 
+
+% \jovo{outlines of the paper are verbose, and it should be clear from the introductory content what you will be doing. i removed yours}
+
+% Details of the implementation of our method are described in section 2. In section 3, we evaluate the performance of our method on both simulated and real datasets. Furthermore, we explore robustness of our method against various transformations and outliers.
+
+\section{Linear Threshold Tree Ensembles}
+
+
+\begin{algorithm}
+\begin{algorithmic}
+\Require \\ 
+\begin{compactitem}
+\item \textbf{Data}: $\mc{D}_n = (X_i,y_i) \in (\Real^p \times \mc{Y})$ for $i \in [n]$
+\item \textbf{Number of trees}: $L$ 
+\item \textbf{Data sampling strategy}: a rule for how to obtain $\mc{S}_l$, the subset of $[n]$ per tree $l$ 
+\item \textbf{Subspace}: $\mc{A}^{p \times d}$
+\item \textbf{Distribution on $k \times d$ matrices}: $f_A(\mc{D}_n)$, where $k=|\mc{S}_l|$
+\item \textbf{Stoppping criteria}: e.g., a maximal tree depth or minimum number of elements per tree 
+\end{compactitem}
+\Ensure trees, predictions, out of bag errors, etc. 
+\State Preprocess
+\For{$l \in [L]$}
+\State Sample $\mathcal{S}_l$
+\State Construct $X^{(l)}=\{X_i\}_{\mc{S}_l}$
+\For{Each leaf node in tree}
+\State Sample $A_{i,j} \sim f_A(\mc{D}_n)$
+\State Let $\mt{X} = A_{i,j}\T X^{(l)} \in \Real^{d \times |\mt{S}_l|}$
+\State variable selection rule
+\EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+
 
 \section{Randomer Forests}
 A random forest is an ensemble of randomized decision trees, where each decision tree consists of internal (split) and terminal (leaf) nodes. At each internal node, a random subset of the ambient (coordinate) dimensions is sampled and subsequent optimization of a split function selects the single best dimension and split point contained in this subset. Therefore, each tree within a random forest can be viewed as a hierarchical series of axis-aligned decision boundaries. Here, we introduce a new method for constructing randomized decision trees, where instead of random subsampling the dimensions, we randomly project to a lower dimensional subspace. By randomly projecting, decision boundaries are not restricted to alignment with the coordinate axes. Specifically, let $X_i \in \mathbb{R}^{n\times p}$ be a set of $n$ points in $p$ dimensional Euclidean space associated with the ith split node of a decision tree, and let $R_i \in \mathbb{R}^{p\times k}$ be a randomly chosen projection matrix at the ith node. Then for every split node, we compute the projection $X_{proj} = X_iR_i$ and select the optimal split dimension and split point in this randomly chosen k-dimensional subspace.
 
 There exists various choices for the random projection matrix $R$. If one cares about preserving pairwise distances between points, then $R$ must be chosen carefully. A variety of methods have been established recently for generating random projection matrices that preserve distances. The most common one is to sample each element $r_{ij}$ from a standard normal (Indyk and Motwani, 1998; Dasgupta and Gupta, 2003). Another method generates sparse matrices by setting each element equal to +1 or -1 with probability $1/2\sqrt(p)$ and 0 with probability $1 - 1/\sqrt(p)$ (Li 2006). In this work, we are not concerned with preserving pairwise distances. Rather, we are simply concerned with constructing features at each split node of a tree using linear combinations of the ambient dimensions. We construct random matrices by first, sampling the indices of the k nonzero elements uniformly at random. Next, each nonzero element is randomly assigned -1 or +1 with equal probability. Columns containing all zeros are removed. This results in a matrix with many columns having one nonzero element and a few columns having more than one nonzero element.
+
+\jovo{we need proper pseudocode table, make it sufficient general such that all the variants under consideration are special cases.}
 
 In addition to random projections, for classification problems involving $c$ classes we can compute a set of $c-1$ differences in class-conditional means $\{\boldsymbol{\delta_{ij}} = \boldsymbol{\mu_j} - \boldsymbol{\mu_i}: \forall i \in [1,...,c-1], j \in [2,...,c], j>i\}$ and sample each of them as a projection with probability $k/p$. Such supervised projections work especially well when all classes are normally distributed with diagonal covariance matrices, and are often useful even when these conditions are not met. We denote RerFs utilizing these projections as RerF($\delta$)
 
@@ -66,7 +152,7 @@ When taking linear combinations of ambient dimensions, it is important that the 
 \section{Experimental Evaluation}
 
 \subsection{Simulated Data}
-We constructed three synthetic datasets (Trunk, parity, and multimodal) to compare classification performance (Fig 1) and training time (Fig 2) of RerF, RerF($\delta$), and RerF($\delta$+r) with that of random forest. Trunk is a well-known binary classification (cite Trunk) in which each class is distributed as a p-dimensional multivariate gaussian with identity covariance matrices. The means of the two classes are $\mu_1 = (1,\frac{1}{\sqrt{2}},\frac{1}{\sqrt{3}},...,\frac{1}{\sqrt{p}})$ and $\mu_2 = (-1,-\frac{1}{\sqrt{2}},-\frac{1}{\sqrt{3}},...,-\frac{1}{\sqrt{p}})$. Parity is a binary classification problem in which each of the two classes is distributed as a mixture of $2^{p-1}$ multivariate gaussians with covariance matrices $\boldsymbol{\Sigma} = \frac{1}{32}\boldsymbol{I}$. The means of class one are the subset of $[0,1]^p$ for which the number of zeros in a mean is even. The means of class two are the subset of $[0,1]^p$ for which the number of zeros in a mean is odd. Multimodal is a four-class classification problem. Each of the four classes is distributed as an equal mixture of two multivariate gaussians. The means are randomly sampled from a p-dimensional multivariate standard gaussian and the covariance matrices are sampled from an inverse Wishart distribution with $10p$ degrees of freedom and  a mean covariance matrix equal to the identity matrix. The bottom panels of Figure 1 depict scatter plots of the data for $p=2$. The top panels depict average misclassification rate over ten trials estimated using the out of bag error. For the trunk and multimodal simulations, 100 points were sampled and p varied from two to 1000 dimensions. For the parity simulation, 100 points were sampled and p varied from two to ten. The appropriate number of trees trained for RF and all variants of RerF for trunk, parity, and multimodal were empirically determined to be 1500, 1000, and 500 respectively (Fig A1). Bayes error is also included for reference. In binary classification problems in which each class consists of a single multivariate gaussian with equal covariance matrices, such as the Trunk simulation, Bayes error can be computed analytically (Bickel and Levina 2004). In the Parity and Multimodal simulations, Bayes error was estimated by averaging the misclassification rate of the Bayes optimal classifier on 1000 points over ten trials.
+We constructed three synthetic datasets (Trunk, parity, and multimodal) to compare classification performance (Fig 1\jovo{use fig labels to refer to figs}) and training time (Fig 2) of RerF, RerF($\delta$), and RerF($\delta$+r) with that of random forest. Trunk is a well-known binary classification (cite Trunk) in which each class is distributed as a p-dimensional multivariate gaussian with identity covariance matrices. The means of the two classes are $\mu_1 = (1,\frac{1}{\sqrt{2}},\frac{1}{\sqrt{3}},...,\frac{1}{\sqrt{p}})$ and $\mu_2 = (-1,-\frac{1}{\sqrt{2}},-\frac{1}{\sqrt{3}},...,-\frac{1}{\sqrt{p}})$. Parity is a binary classification problem in which each of the two classes is distributed as a mixture of $2^{p-1}$ multivariate gaussians with covariance matrices $\boldsymbol{\Sigma} = \frac{1}{32}\boldsymbol{I}$. The means of class one are the subset of $[0,1]^p$ for which the number of zeros in a mean is even. The means of class two are the subset of $[0,1]^p$ for which the number of zeros in a mean is odd. Multimodal is a four-class classification problem. Each of the four classes is distributed as an equal mixture of two multivariate gaussians. The means are randomly sampled from a p-dimensional multivariate standard gaussian and the covariance matrices are sampled from an inverse Wishart distribution with $10p$ degrees of freedom and  a mean covariance matrix equal to the identity matrix. The bottom panels of Figure 1 depict scatter plots of the data for $p=2$. The top panels depict average misclassification rate over ten trials estimated using the out of bag error. For the trunk and multimodal simulations, 100 points were sampled and p varied from two to 1000 dimensions. For the parity simulation, 100 points were sampled and p varied from two to ten. The appropriate number of trees trained for RF and all variants of RerF for trunk, parity, and multimodal were empirically determined to be 1500, 1000, and 500 respectively (Fig A1). Bayes error is also included for reference. In binary classification problems in which each class consists of a single multivariate gaussian with equal covariance matrices, such as the Trunk simulation, Bayes error can be computed analytically (Bickel and Levina 2004). In the Parity and Multimodal simulations, Bayes error was estimated by averaging the misclassification rate of the Bayes optimal classifier on 1000 points over ten trials.
 
 Panel A of Figure 1 shows that RerF($\delta$) and RerF($\delta$+r) outperform RF across all numbers of dimensions. This can be attributed to projection onto the difference in means. All variants outperform RF up to approximately 250 dimensions. Above this, misclassification rate of RerF is comparable to RF. In Panel B, we observe that all variants of RerF outperform RF for all numbers of dimensions. This can be understood by observing that for p dimensions, all splits in RF up to a tree depth of $p - 1$ will result in daughter nodes having chance posterior probabilities of being in either class. Therefore, any splits up to this depth that are not aligned with the coordinate axes can only be better. Multimodal???
 
@@ -92,7 +178,7 @@ Much work is still to be done with our proposed method. In this work, we only ex
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 0.4in 0in 0.4in, clip=true, width=\linewidth]{Fig1_Lhat}
+\includegraphics[trim=0in 0.4in 0in 0.4in, clip=true, width=\linewidth]{../Figures/pdf/Fig1_Lhat}
 \end{center}
 \caption{Classification performance comparing Random Forest (RF) to several variants of Randomer Forest (RerF), and Bayes optimal performance, on three distinct simulation settings: (A) Trunk, (B) Parity, and (C) Multimodal (see Methods for details).  For all settings, the top panel depicts misclassification rate vs. the number of ambient (coordinate) dimensions, and the bottom panel shows a 2D scatter plot of the first 2 coordinates (dashed circles denote the standard deviation level set).  Note that in all settings, for all number of dimensions, RerF outperforms RF, even Trunk and Parity, which were designed specifically for RF because the discriminant boundary naturally lies along the coordinate basis.}
 \end{figure}
@@ -100,7 +186,7 @@ Much work is still to be done with our proposed method. In this work, we only ex
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 3in 0in 3in, clip=true, width=\linewidth]{Fig2_Time}
+\includegraphics[trim=0in 3in 0in 3in, clip=true, width=\linewidth]{../Figures/pdf/Fig2_Time}
 \end{center}
 \caption{Classifier training time comparing RF to several variants of RerF, same setting as the top row of Figure 1. The only difference is that the y-axis here labels training time (in seconds). Although RerF requires slightly more time than RF (largely due to random sampling of projection matrices), they scale similarly.}
 \end{figure}
@@ -108,7 +194,7 @@ Much work is still to be done with our proposed method. In this work, we only ex
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 0.9in 0in .09in, clip=true, width=\linewidth]{Fig3_Invariance_v2}
+\includegraphics[trim=0in 0.9in 0in .09in, clip=true, width=\linewidth]{../Figures/pdf/Fig3_Invariance_v2}
 \end{center}
 \caption{The effect of various transformations applied to the Trunk (panels A-D) and Parity (panels E-H) simulations (see Methods for details) on classification performance of (A,E) RF, (B,F) RerF (s+d), (C,G) RerF (s+d+r), and (D,H) Fisherfaces. Specifically, we consider, rotations, scalings, and affine transformations, as well as introducing outliers. Classification performance of RF is compromised by rotations and therefore affine transformations as well. RerF(s+d) is invariant to rotation, but not scaling and therefore not affine transformation. RerF(s+d+r) is invariant to to affine transformations. Like RerF (s+d), Fisherfaces is invariant to rotation but not scaling. Note that all variants are reasonably robust to outliers.}
 \end{figure}
@@ -116,7 +202,7 @@ Much work is still to be done with our proposed method. In this work, we only ex
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 2.3in 0in 2.3in, clip=true, width=\linewidth]{Fig4}
+\includegraphics[trim=0in 2.3in 0in 2.3in, clip=true, width=\linewidth]{../Figures/pdf/Fig4}
 \end{center}
 \caption{(A) Classification error and training time of Random Forest and Randomer Forests variants for all 121 datasets from the XXX benchmark comparison paper \cite{???}. (A) Average (dots) and 0.1 standard deviation level sets (dashed lines) for each method. (B) Classification error of Randomer Forest (sparse+delta+robust) vs. that of Random Forest for each of the 121 datasets. The black line indicates equal classification error of the two algorithms. Color indicates dimensionality of the datasets and size of points indicates number of samples. Note that RerF almost always does as well, and often significantly better.}
 \end{figure}
@@ -127,23 +213,26 @@ Much work is still to be done with our proposed method. In this work, we only ex
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[trim=0in 8in 0in 8in, clip=true, width=\linewidth]{Fig0_nTrees}
+\includegraphics[trim=0in 8in 0in 8in, clip=true, width=\linewidth]{../Figures/pdf/Fig0_nTrees}
 \end{center}
 \caption{The number of trees until a stable misclassification rate is achieved for RF and the RerF variants in the Trunk, parity, and multimodal simulations. Simulation settings are the same as in Fig1. The number of ambient dimensions for panels A, B, and C were chosen to be 1000, 10, and 1000 respectively.}
 \end{figure}
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[trim=0in 0in 0in 0in, clip=true, width=\linewidth]{Trunk_hard}
+\includegraphics[trim=0in 0in 0in 0in, clip=true, width=\linewidth]{../Figures/pdf/Trunk_hard}
 \end{center}
 \caption{Classification performance comparing Random Forest (RF) to several variants of Randomer Forest (RerF) on the modified Trunk simulation setting. Here, the ith diagonal of the covariance matrices of both classes is equal to the inverse of the difference in means of the ith dimension between the two classes. For small values of p, all variants of RerF perform marginally better than RF. For large values of p, all variants of RerF perform worse than RF.}
 \end{figure}
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[trim=0in 0in 0in 0in, clip=true, width=\linewidth]{Cigars}
+\includegraphics[trim=0in 0in 0in 0in, clip=true, width=\linewidth]{../Figures/pdf/Cigars}
 \end{center}
-\caption{Parallel cigars. (A) Decision boundaries from random forests. (B) Decision boundary constructed from projecting the input onto the difference in class-conditional means. (C) Same as in (B), but the input is scaled by passing to ranks before computing the difference in means.}
+\caption{Scatter plot of parallel cigars in two dimensions. (A) Decision boundaries from a single tree of RF. (B) The decision boundary obtained by projecting the input data onto the difference in class-conditional means. (C) The same as (B), but first passing the input to ranks before computing the difference in means.}
 \end{figure}
+
+\bibliography{nips2015_tyler}
+\bibliographystyle{IEEEtran}
 
 \end{document}
