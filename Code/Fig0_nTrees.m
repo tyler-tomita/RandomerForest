@@ -1,4 +1,4 @@
-%Make Fig1 for LOVEFest (Randomer Forest)
+%Make Fig0 for LOVEFest (Randomer Forest)
 
 close all
 clear
