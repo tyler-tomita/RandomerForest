@@ -174,7 +174,7 @@ classdef rpclassificationforest
             end
             if strcmp(treenum,'every')
                 err = NaN(forest.nTrees,1);
-                for i = 1:forest.nTrees
+                parfor i = 1:forest.nTrees
                     ensemblepredictions = mode(predmat(:,1:i),2);
                     missing = isnan(ensemblepredictions);
                     predictions = Labels(ensemblepredictions(~missing));
@@ -188,19 +188,19 @@ classdef rpclassificationforest
                 wrong = ~strcmp(predictions,Y(~missing));
                 err = mean(wrong);         
             end
-            if length(unique(Y)) == 2
-                pos = num2str(max(str2num(char(Y))));
-                neg = num2str(min(str2num(char(Y))));
+            %if length(unique(Y)) == 2
+            %    pos = num2str(max(str2num(char(Y))));
+            %    neg = num2str(min(str2num(char(Y))));
                 
                 %varargout{1} = sum(strcmp(predictions(strcmp(pos,Y)),Y(~missing & strcmp(pos,Y))))/sum(strcmp(pos,Y));  %sensitivity
                 %varargout{2} = sum(strcmp(predictions(strcmp(pos,Y)),Y(~missing & strcmp(pos,Y))))/sum(strcmp(pos,predictions));    %ppv
                 %varargout{3} = sum(strcmp(predictions(strcmp(neg,Y)),Y(~missing & strcmp(neg,Y))))/sum(strcmp(neg,Y));  %specificity
                 %varargout{4} = sum(strcmp(predictions(strcmp(neg,Y)),Y(~missing & strcmp(neg,Y))))/sum(strcmp(neg,predictions));    %npv
-                varargout{1} = sum(strcmp(predictions(strcmp(pos,Y)),Y(~missing & strcmp(pos,Y)))); %tp
-                varargout{2} = sum(~strcmp(predictions(strcmp(pos,Y)),Y(~missing & strcmp(pos,Y))));    %fn
-                varargout{3} = sum(strcmp(predictions(strcmp(neg,Y)),Y(~missing & strcmp(neg,Y)))); %tn
-                varargout{4} = sum(~strcmp(predictions(strcmp(neg,Y)),Y(~missing & strcmp(neg,Y))));    %fp
-            end
+                %varargout{1} = sum(strcmp(predictions(strcmp(pos,Y)),Y(~missing & strcmp(pos,Y)))); %tp
+                %varargout{2} = sum(~strcmp(predictions(strcmp(pos,Y)),Y(~missing & strcmp(pos,Y))));    %fn
+                %varargout{3} = sum(strcmp(predictions(strcmp(neg,Y)),Y(~missing & strcmp(neg,Y)))); %tn
+                %varargout{4} = sum(~strcmp(predictions(strcmp(neg,Y)),Y(~missing & strcmp(neg,Y))));    %fp
+            %end
         end     %function oobpredict
         
         function Y = predict(forest,X,varargin)

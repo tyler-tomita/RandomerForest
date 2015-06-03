@@ -976,6 +976,12 @@ function M = srpmat(d,k,method,varargin)
         M = sparse(d,k);
         M(randsample(d*k,k,false)) = randsample([-1 1],k,true,[0.5 0.5]);
         M = M(:,any(M));
+    elseif strcmp(method,'jovo')
+        M = sparse(d,k);
+        nnzs=unique(round(rand(k+5,1)*(k*d-1))+1);
+        M(nnzs(1:round(k/2)))=1;
+        M(nnzs(round(k/2)+1:end))=-1;
+        M = M(:,any(M));
     else
         M = sparse(d,k);
         R = poissrnd(1,1,k);
