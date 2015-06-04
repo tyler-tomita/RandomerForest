@@ -980,8 +980,8 @@ function M = srpmat(d,k,method,varargin)
         M = sparse(d,k);
         stop = false;
         while ~stop
-            nnzs=unique(round(rand(k+5,1)*(k*d-1))+1);
-            stop = length(nnzs) < numel(M) && length(nnzs) > 2;
+            nnzs=unique(round(rand(k+5,1)*(k*d-1))+1);a
+            stop = length(nnzs) < numel(M) && length(nnzs) > 2
         end
         M(nnzs(1:round(end/2)))=1;
         M(nnzs(round(end/2)+1:end))=-1;

@@ -87,8 +87,12 @@ classdef rpclassificationforest
             end
             parfor i = 1:nTrees
                 sampleidx = 1:length(Y);
-                ibidx = randsample(sampleidx,nboot,SampleWithReplacement);
-                oobidx{i} = setdiff(sampleidx,ibidx);
+                go = true;
+                while go
+                    ibidx = randsample(sampleidx,nboot,SampleWithReplacement);
+                    oobidx{i} = setdiff(sampleidx,ibidx);
+                    go = isempty(oobidx{i});
+                end
                 if ~RandomForest
                     Tree{i} = rpclassregtree(X(ibidx,:),Y(ibidx,:),...
                         'priorprob',Prior,'cost',Cost,'splitcriterion',...
