@@ -60,7 +60,7 @@ set(h_fig_new,...
 
 for i = 1:length(ax_old)
     %h_ax_new = subplot(2,3,i);
-    ax_new(i) = subplot(2,3,i);
+    ax_new(i) = subplot(1,3,i);
     axis square
     copyobj(allchild(ax_old(i)),ax_new(i));
     h_lines = allchild(ax_new(i));
@@ -77,8 +77,13 @@ for i = 1:length(ax_old)
         end
     end
     set(ax_new(i),'FontSize',FontSize,'Box',Box,'LineWidth',LineWidth)
-    xlim(XLim)
-    ylim(YLim)
+    if i < 3
+        xlim(XLim)
+        ylim(YLim)
+    else
+        xlim([-500 1500])
+        ylim([-500 1500])
+    end
     title(Title{i})
     xlabel('Ambient Dimension 1')
     ylabel('Ambient Dimension 2')
