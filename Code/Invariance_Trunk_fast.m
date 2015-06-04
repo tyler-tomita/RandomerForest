@@ -82,11 +82,11 @@ for trial = 1:ntrials
         rf_err(trial,i) = oobpredict(rf,X,Y,'last');
         clear rf
 
-        f1 = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','NWorkers',NWorkers);
+        f1 = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','NWorkers',NWorkers);
         f1_err(trial,i) = oobpredict(f1,X,Y,'last');
         clear f1
         
-        f2 = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','Robust',true,'NWorkers',NWorkers);
+        f2 = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','Robust',true,'NWorkers',NWorkers);
         f2_err(trial,i) = oobpredict(f2,X,Y,'last');
         clear f2
 
@@ -94,11 +94,11 @@ for trial = 1:ntrials
         rf_rot_err(trial,i) = oobpredict(rf_rot,X_rot,Y,'last');
         clear rf_rot
 
-        f1_rot = rpclassificationforest(ntrees,X_rot,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','NWorkers',NWorkers);
+        f1_rot = rpclassificationforest(ntrees,X_rot,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','NWorkers',NWorkers);
         f1_rot_err(trial,i) = oobpredict(f1_rot,X_rot,Y,'last');
         clear f1_rot
         
-        f2_rot = rpclassificationforest(ntrees,X_rot,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','Robust',true,'NWorkers',NWorkers);
+        f2_rot = rpclassificationforest(ntrees,X_rot,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','Robust',true,'NWorkers',NWorkers);
         f2_rot_err(trial,i) = oobpredict(f2_rot,X_rot,Y,'last');
         clear f2_rot
 
@@ -106,11 +106,11 @@ for trial = 1:ntrials
         rf_trans_err(trial,i) = oobpredict(rf_trans,X_trans,Y,'last');
         clear rf_trans
 
-        f1_trans = rpclassificationforest(ntrees,X_trans,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','NWorkers',NWorkers);
+        f1_trans = rpclassificationforest(ntrees,X_trans,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','NWorkers',NWorkers);
         f1_trans_err(trial,i) = oobpredict(f1_trans,X_trans,Y,'last');
         clear f1_trans
         
-        f2_trans = rpclassificationforest(ntrees,X_trans,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','Robust',true,'NWorkers',NWorkers);
+        f2_trans = rpclassificationforest(ntrees,X_trans,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','Robust',true,'NWorkers',NWorkers);
         f2_trans_err(trial,i) = oobpredict(f2_trans,X_trans,Y,'last');
         clear f2_trans
 
@@ -118,11 +118,11 @@ for trial = 1:ntrials
         rf_scale_err(trial,i) = oobpredict(rf_scale,X_scale,Y,'last');
         clear rf_scale
 
-        f1_scale = rpclassificationforest(ntrees,X_scale,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','NWorkers',NWorkers);
+        f1_scale = rpclassificationforest(ntrees,X_scale,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','NWorkers',NWorkers);
         f1_scale_err(trial,i) = oobpredict(f1_scale,X_scale,Y,'last');
         clear f1_scale
         
-        f2_scale = rpclassificationforest(ntrees,X_scale,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','Robust',true,'NWorkers',NWorkers);
+        f2_scale = rpclassificationforest(ntrees,X_scale,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','Robust',true,'NWorkers',NWorkers);
         f2_scale_err(trial,i) = oobpredict(f2_scale,X_scale,Y,'last');
         clear f2_scale
         
@@ -130,11 +130,11 @@ for trial = 1:ntrials
         rf_affine_err(trial,i) = oobpredict(rf_affine,X_affine,Y,'last');
         clear rf_affine
 
-        f1_affine = rpclassificationforest(ntrees,X_affine,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','NWorkers',NWorkers);
+        f1_affine = rpclassificationforest(ntrees,X_affine,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','NWorkers',NWorkers);
         f1_affine_err(trial,i) = oobpredict(f1_affine,X_affine,Y,'last');
         clear f1_affine
         
-        f2_affine = rpclassificationforest(ntrees,X_affine,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','Robust',true,'NWorkers',NWorkers);
+        f2_affine = rpclassificationforest(ntrees,X_affine,Y,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','Robust',true,'NWorkers',NWorkers);
         f2_affine_err(trial,i) = oobpredict(f2_affine,X_affine,Y,'last');
         clear f2_affine
 
@@ -142,11 +142,11 @@ for trial = 1:ntrials
         rf_out_err(trial,i) = oobpredict(rf_out,X_out,Y_out,'last');
         clear rf_out
 
-        f1_out = rpclassificationforest(ntrees,X_out,Y_out,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','NWorkers',NWorkers);
+        f1_out = rpclassificationforest(ntrees,X_out,Y_out,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','NWorkers',NWorkers);
         f1_out_err(trial,i) = oobpredict(f1_out,X_out,Y_out,'last');
         clear f1_out
         
-        f2_out = rpclassificationforest(ntrees,X_out,Y_out,'nvartosample',nvartosample,'mdiff','on','sparsemethod','fast','Robust',true,'NWorkers',NWorkers);
+        f2_out = rpclassificationforest(ntrees,X_out,Y_out,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','Robust',true,'NWorkers',NWorkers);
         f2_out_err(trial,i) = oobpredict(f2_out,X_out,Y_out,'last');
         clear f2_out
         
@@ -268,5 +268,5 @@ ylabel('Lhat')
 legend('Untransformed','Rotated','Translated','Scaled','Affine','Outlier')
 title('Fisherfaces')
 
-filename = 'Invariance_Trunk_fast';
+filename = 'Invariance_Trunk_jovo';
 save_fig(gcf,filename)
