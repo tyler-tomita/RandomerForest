@@ -42,6 +42,8 @@ MarkerSize = 24;
 Box = 'off';
 Box_Legend = 'off';
 FontSize = 24;
+XLim = [-8 8];
+YLim = XLim;
 
 Filename = '~/LOVEFest/Figures/fig/Cigars_rough.fig';
 
@@ -58,23 +60,27 @@ set(h_fig_new,...
 
 for i = 1:length(ax_old)
     %h_ax_new = subplot(2,3,i);
-    ax_new(i) = subplot(2,3,i);
+    ax_new(i) = subplot(1,3,i);
     axis square
     copyobj(allchild(ax_old(i)),ax_new(i));
     h_lines = allchild(ax_new(i));
     if i == 1
-        hh = h_lines
+        hh = h_lines;
     end
     for j = 1:length(h_lines)
-        if j ~= length(h_lines) || j ~= length(h_lines)-1
-            set(h_lines(j),'Color','k','linewidth',LineWidth,'Marker','none')
+        if j ~= length(h_lines) && j ~= length(h_lines)-1
+            set(h_lines(j),'Color','k','linewidth',2,'Marker','none')
         elseif j == length(h_lines)
-            set(h_lines(j),'linewidth',LineWidth,'Marker','o','MarkerEdgeColor','b')
-            elseif j == length(h_lines)
-            set(h_lines(j),'linewidth',LineWidth,'Marker','o','MarkerEdgeColor','b')
+            set(h_lines(j),'linewidth',LineWidth)
+        else
+            set(h_lines(j),'linewidth',LineWidth)
         end
     end
     set(ax_new(i),'FontSize',FontSize,'Box',Box,'LineWidth',LineWidth)
+    if i < 3
+        xlim(XLim)
+        ylim(YLim)
+        e
     title(Title{i})
     xlabel('Ambient Dimension 1')
     ylabel('Ambient Dimension 2')
