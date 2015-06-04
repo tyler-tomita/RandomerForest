@@ -22,7 +22,10 @@
 \newcommand{\Real}{\mathbb{R}}
 \providecommand{\mc}[1]{\mathcal{#1}}
 \providecommand{\mt}[1]{\widetilde{#1}}
+\providecommand{\mh}[1]{\hat{#1}}
 \newcommand{\T}{^{\ensuremath{\mathsf{T}}}}           % transpose
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
 
 
 \title{Randomer Forests}
@@ -108,46 +111,61 @@ To bridge this gap, we first state a generalized forest building scheme, linear 
 
 % Details of the implementation of our method are described in section 2. In section 3, we evaluate the performance of our method on both simulated and real datasets. Furthermore, we explore robustness of our method against various transformations and outliers.
 
-\section{Linear Threshold Tree Ensembles}
+\section{Linear Threshold Forests}
+
+A classification forest, $\bar{g}_n(X; \mc{D}_n)$ is an ensemble of decision trees, each of which is trained on a (sub)set of the data, $\mc{D}_n=(X_i,y_i)$ for all $i \in [n]$, and $X \in \Real^{p \times n}$. Linear threshold forests are a special case of classification forests that subsume all of the strategies mentioned above (see Pseudocode \ref{pseudo}).  The key idea of all of them is that at each node, given $\bar{X} \in \Real^{p \times s}$---the set of predictors in the node---we sample a  matrix $A \sim f_A(\mc{D}_n)$, where $A \in \Real^{p \times d}$ possibly in a data dependent fashion, which we use to project the predictor matrix $X$ onto a lower dimensional subspace, $\mt{X} = A\T X \in \Real^{d \times s}$, where $d \leq p$ is the dimensionality of the subspace, and $s \leq n$ is the number of samples at the given node.  To wit, Breiman's original Forest-IC algorithm can be characterized as a special case of linear threshold forests.  In particular, in Forest-IC constructs $A$ such that for each of the $d$ columns, we sample a coordinate (without replacement), and put a 1 in that coordinate, and zeros elsewhere. Similarly, Ho's rotation forests construct $A$ from the top $d$ principal components of the data $\bar{X}$ at a given node.  Thus, the key difference in all these approaches is the choice of $f_A$. 
 
 
 \begin{algorithm}
-\begin{algorithmic}
-\Require \\ 
-\begin{compactitem}
-\item \textbf{Data}: $\mc{D}_n = (X_i,y_i) \in (\Real^p \times \mc{Y})$ for $i \in [n]$
-\item \textbf{Number of trees}: $L$ 
-\item \textbf{Data sampling strategy}: a rule for how to obtain $\mc{S}_l$, the subset of $[n]$ per tree $l$ 
-\item \textbf{Subspace}: $\mc{A}^{p \times d}$
-\item \textbf{Distribution on $k \times d$ matrices}: $f_A(\mc{D}_n)$, where $k=|\mc{S}_l|$
-\item \textbf{Stoppping criteria}: e.g., a maximal tree depth or minimum number of elements per tree 
-\end{compactitem}
-\Ensure trees, predictions, out of bag errors, etc. 
-\State Preprocess
-\For{$l \in [L]$}
-\State Sample $\mathcal{S}_l$
-\State Construct $X^{(l)}=\{X_i\}_{\mc{S}_l}$
-\For{Each leaf node in tree}
-\State Sample $A_{i,j} \sim f_A(\mc{D}_n)$
-\State Let $\mt{X} = A_{i,j}\T X^{(l)} \in \Real^{d \times |\mt{S}_l|}$
-\State variable selection rule
+\caption{Psuedocode for Linear Threshold Forests, which generalizes a wide range of previously proposed decision forests.} \label{pseudo}
+\begin{algorithmic}[1]
+\Require 
+% \begin{compactitem}
+\State {Data}: $\mc{D}_n = (X_i,y_i) \in (\Real^p \times \mc{Y})$ for $i \in [n]$
+\State {Tree rules}:  $n_{tree}$, stopping criteria, pruning rules, rule for sampling data points per tree, etc.
+% \State \textbf{distribution on $[n]$}: $\mc{S}^l \sim f_s$ , where $\mc{S}^l \subset [n]$  is the index set of data points for tree $l$ 
+% \item \textbf{Subspace}: $\mc{A}^{p \times d}$
+\State {Distributions on $s \times d$ matrices}: $A \sim f_A(\mc{D}_n)$, for all $s \in [n]$
+% \item \textbf{Stoppping criteria}: e.g., a maximal tree depth or minimum number of elements per tree 
+% \end{compactitem}
+\State Preprocessing rules
+\Ensure decision trees, predictions, out of bag errors, etc. 
+\State Preprocess according to rule
+\For{each tree}
+\State Subsample data to obtain $(\bar{X},\bar{y})$, the set of data points to be used in this tree
+\For{each leaf node in tree}
+\State Let $\mt{X} =  A\T \bar{X} \in \Real^{d \times s}$, where $A \sim f_A(\mc{D}_n)$
+\State Find the coordinate $k^*$ in $\mt{X}$ with the ``best'' split
+\State Split $X$ according to whether $X(k) > t^*(k^*)$
+\State Assign each child node as a leaf or terminal  node according to convergence criteria
 \EndFor
 \EndFor
+\State Prune trees according to rule
 \end{algorithmic}
 \end{algorithm}
 
+The goal of this work is to find a linear threshold forest that has all of the desirable properties of random forests, as well as being approximately affine invariant, in part by changing the distribution $f_A$. The result we call randomer forests (or RerFs for short).
 
 
 \section{Randomer Forests}
-A random forest is an ensemble of randomized decision trees, where each decision tree consists of internal (split) and terminal (leaf) nodes. At each internal node, a random subset of the ambient (coordinate) dimensions is sampled and subsequent optimization of a split function selects the single best dimension and split point contained in this subset. Therefore, each tree within a random forest can be viewed as a hierarchical series of axis-aligned decision boundaries. Here, we introduce a new method for constructing randomized decision trees, where instead of random subsampling the dimensions, we randomly project to a lower dimensional subspace. By randomly projecting, decision boundaries are not restricted to alignment with the coordinate axes. Specifically, let $X_i \in \mathbb{R}^{n\times p}$ be a set of $n$ points in $p$ dimensional Euclidean space associated with the ith split node of a decision tree, and let $R_i \in \mathbb{R}^{p\times k}$ be a randomly chosen projection matrix at the ith node. Then for every split node, we compute the projection $X_{proj} = X_iR_i$ and select the optimal split dimension and split point in this randomly chosen k-dimensional subspace.
 
-There exists various choices for the random projection matrix $R$. If one cares about preserving pairwise distances between points, then $R$ must be chosen carefully. A variety of methods have been established recently for generating random projection matrices that preserve distances. The most common one is to sample each element $r_{ij}$ from a standard normal (Indyk and Motwani, 1998; Dasgupta and Gupta, 2003). Another method generates sparse matrices by setting each element equal to +1 or -1 with probability $1/2\sqrt(p)$ and 0 with probability $1 - 1/\sqrt(p)$ (Li 2006). In this work, we are not concerned with preserving pairwise distances. Rather, we are simply concerned with constructing features at each split node of a tree using linear combinations of the ambient dimensions. We construct random matrices by first, sampling the indices of the k nonzero elements uniformly at random. Next, each nonzero element is randomly assigned -1 or +1 with equal probability. Columns containing all zeros are removed. This results in a matrix with many columns having one nonzero element and a few columns having more than one nonzero element.
+We propose three ``tricks'', each one designed to address one of the benefits/drawbacks of random forest.
+First, we address the rotation sensitivity.  It is well known that principal components are rotationally invariant, and that random projections can be used to approximate principal components \cite{Candes2006}.  We use this trick to generate matrices $A$ that are rotation invariant, but maintain the space and time complexity of RFs.  Specifically, we take a lesson from random projections, particularly very sparse random projections \cite{Li2006}.  Thus, rather than sampling $d$ non-zero elements of $A$, enforcing that each columns gets a single non-zero number (without replacement), which is always one, we simply relax the constraints. More specifically, we simply drop $d$ non-zero numbers in $A$, distributed uniformly at random.  The result is equally sparse as RFs, but nearly rotationally invariant.  Note that this aspect of RerFs is quite similar to Breiman's Forest-RC, although he used the interval $[-1,1]$, amongst other minor differences. Denote linear threshold forests that use the above scheme for sampling $A$ matrices RerFs.
 
-\jovo{we need proper pseudocode table, make it sufficient general such that all the variants under consideration are special cases.}
+Unfortunately, by mixing dimensions of $X$, we have lost scale invariance.  In fact, all previously proposed oblique random forests, that we are aware of, have lost scale invariance.  We therefore note that random forests have a special property: they are invariant to monotonic transformations of the data applied to each coordinate in the ambient (observed) space.  This is because they are effectively operating on the order statistics, rather than the actual magnitudes.  In other words, if we convert, for each dimension, the values of the samples to their corresponding ranks, random forests yields the exact same result. Therefore, for our second trick, we adopt the same policy, and ``pass to ranks'' prior to doing anything else.   Denote RerFs that pass to ranks RerF(r).
 
-In addition to random projections, for classification problems involving $c$ classes we can compute a set of $c-1$ differences in class-conditional means $\{\boldsymbol{\delta_{ij}} = \boldsymbol{\mu_j} - \boldsymbol{\mu_i}: \forall i \in [1,...,c-1], j \in [2,...,c], j>i\}$ and sample each of them as a projection with probability $k/p$. Such supervised projections work especially well when all classes are normally distributed with diagonal covariance matrices, and are often useful even when these conditions are not met. We denote RerFs utilizing these projections as RerF($\delta$)
+Finally, the above two tricks do not use the data to construct $A$ at each node.  Yet, there is  evidence that doing so can significantly improve performance \cite{Heath1993}.  However, previously proposed approaches use relatively time and space intensive methods.  We propose a quite simple strategy: compute the mean difference vector.  In other words, given a two-class problem, let $\mh{d}=\mh{\mu}_0-\mh{\mu}_1$, where $\mh{\mu}_c$ is the estimated class conditional mean.  Under a spherically symmetric class conditional distribution assumption, $\mh{\delta}$ is the optimal projection vector.  When there are $C>2$ classes, the set of all pairwise distances between $\mh{\mu}_c$ and $\mh{\mu}_{c'}$ is of rank $C-1$.  Because RerFs are approximately rotationally invariant, we can simply compute all the class conditional means, and subtract each from one of them (we chose the $\mh{\mu}_c$ for which $n_c$, the number of samples in that class, is the largest).
+Computing this matrix is extremely fast, because it does not rely on costly singular value decompositions, matrix inversions, or iterative programming.  Thus, it nicely balances using the data to find good vectors, but not using much computational space or time. Denote RerFs that include this matrix RerF(d), and if they pass to ranks first, RerF(r+d).
 
-When taking linear combinations of ambient dimensions, it is important that the dimensions be scaled similarly. Therefore we also formulate a variant of RerF in which input data is passed to marginal ranks prior to training. Doing so not only scales the dimensions appropriately, but also can improve performance when outliers are present. This robust variant of randomer forest will be denoted as RerF(r).
+
+% A random forest is an ensemble of randomized decision trees, where each decision tree consists of internal (split) and terminal (leaf) nodes. At each internal node, a random subset of the ambient (coordinate) dimensions is sampled and subsequent optimization of a split function selects the single best dimension and split point contained in this subset. Therefore, each tree within a random forest can be viewed as a hierarchical series of axis-aligned decision boundaries. Here, we introduce a new method for constructing randomized decision trees, where instead of random subsampling the dimensions, we randomly project to a lower dimensional subspace. By randomly projecting, decision boundaries are not restricted to alignment with the coordinate axes. Specifically, let $X_i \in \mathbb{R}^{n\times p}$ be a set of $n$ points in $p$ dimensional Euclidean space associated with the ith split node of a decision tree, and let $R_i \in \mathbb{R}^{p\times k}$ be a randomly chosen projection matrix at the ith node. Then for every split node, we compute the projection $X_{proj} = X_iR_i$ and select the optimal split dimension and split point in this randomly chosen k-dimensional subspace.
+
+% There exists various choices for the random projection matrix $R$. If one cares about preserving pairwise distances between points, then $R$ must be chosen carefully. A variety of methods have been established recently for generating random projection matrices that preserve distances. The most common one is to sample each element $r_{ij}$ from a standard normal (Indyk and Motwani, 1998; Dasgupta and Gupta, 2003). Another method generates sparse matrices by setting each element equal to +1 or -1 with probability $1/2\sqrt(p)$ and 0 with probability $1 - 1/\sqrt(p)$ (Li 2006). In this work, we are not concerned with preserving pairwise distances. Rather, we are simply concerned with constructing features at each split node of a tree using linear combinations of the ambient dimensions. We construct random matrices by first, sampling the indices of the k nonzero elements uniformly at random. Next, each nonzero element is randomly assigned -1 or +1 with equal probability. Columns containing all zeros are removed. This results in a matrix with many columns having one nonzero element and a few columns having more than one nonzero element.
+
+
+% In addition to random projections, for classification problems involving $c$ classes we can compute a set of $c-1$ differences in class-conditional means $\{\boldsymbol{\delta_{ij}} = \boldsymbol{\mu_j} - \boldsymbol{\mu_i}: \forall i \in [1,...,c-1], j \in [2,...,c], j>i\}$ and sample each of them as a projection with probability $k/p$. Such supervised projections work especially well when all classes are normally distributed with diagonal covariance matrices, and are often useful even when these conditions are not met. We denote RerFs utilizing these projections as RerF($\delta$)
+
+% When taking linear combinations of ambient dimensions, it is important that the dimensions be scaled similarly. Therefore we also formulate a variant of RerF in which input data is passed to marginal ranks prior to training. Doing so not only scales the dimensions appropriately, but also can improve performance when outliers are present. This robust variant of randomer forest will be denoted as RerF(r).
 
 \section{Experimental Evaluation}
 
