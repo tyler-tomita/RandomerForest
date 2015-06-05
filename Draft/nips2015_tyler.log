@@ -1,12 +1,9 @@
-<<<<<<< HEAD
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  5 JUN 2015 11:28
-=======
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  5 JUN 2015 10:28
->>>>>>> 81dbdccca14cdf731b04b7ceda18d389471e00a3
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  5 JUN 2015 14:04
 entering extended mode
  restricted \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
-**nips2015_tyler.tex -recorder
+**nips2015_tyler.tex
 (./nips2015_tyler.tex
 LaTeX2e <2014/05/01>
 Babel <3.9k> and hyphenation patterns for 78 languages loaded.
@@ -476,71 +473,7 @@ l.251
 
 LaTeX Warning: Citation `Delgado14' on page 6 undefined on input line 268.
 
-<<<<<<< HEAD
-Underfull \hbox (badness 10000) in paragraph at lines 255--256
-\OT1/pcr/m/n/10 exhibits robustness to affine transformations, a property lacki
-ng
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 257--258
-[]\OT1/pcr/m/n/10 Much work is still to be done with our proposed method. In
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 257--258
-\OT1/pcr/m/n/10 this work, we only examined one method of constructing sparse
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 257--258
-\OT1/pcr/m/n/10 random projection matrices. It is possible that other choices
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 257--258
-\OT1/pcr/m/n/10 of construction will lead to improved performance in certain
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 257--258
-\OT1/pcr/m/n/10 settings. Additionally, it will be useful to evaluate the
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 257--258
-\OT1/pcr/m/n/10 sensitivity of our method to the use of different split criteri
-a,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 257--258
-\OT1/pcr/m/n/10 pruning, and other parameters of the decision tree. It will als
-o
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 257--258
-\OT1/pcr/m/n/10 be of interest to establish consistency theorems for our method
-.
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 257--258
-\OT1/pcr/m/n/10 While we only restricted our attention to classification thus f
-ar,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 257--258
-\OT1/pcr/m/n/10 our method can be generalized to other types of learning proble
-ms,
- []
-
-<../Figures/pdf/Fig3_Invariance_v2.pdf, id=124, 1284.8pt x 803.0pt>
-=======
 <../Figures/pdf/Fig3_Invariance_v2.pdf, id=127, 1284.8pt x 803.0pt>
->>>>>>> 81dbdccca14cdf731b04b7ceda18d389471e00a3
 File: ../Figures/pdf/Fig3_Invariance_v2.pdf Graphic file (type pdf)
 
 <use ../Figures/pdf/Fig3_Invariance_v2.pdf>
@@ -551,23 +484,16 @@ ne 280.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<<<<<<< HEAD
-<../Figures/pdf/Fig4.pdf, id=126, 1284.8pt x 803.0pt>
-=======
 <../Figures/pdf/Fig4.pdf, id=129, 1284.8pt x 803.0pt>
->>>>>>> 81dbdccca14cdf731b04b7ceda18d389471e00a3
 File: ../Figures/pdf/Fig4.pdf Graphic file (type pdf)
 
 <use ../Figures/pdf/Fig4.pdf>
 Package pdftex.def Info: ../Figures/pdf/Fig4.pdf used on input line 289.
-(pdftex.def)             Requested size: 397.48499pt x 145.57697pt.
+(pdftex.def)             Requested size: 397.48499pt x 114.27554pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<<<<<<< HEAD
-<../Figures/pdf/Fig0_nTrees.pdf, id=130, 1228.59pt x 1589.94pt>
-=======
 [6] [7pdfTeX warning (ext4): destination with the same identifier (name{figure.
 3}) has been already used, duplicate ignored
 
@@ -590,8 +516,7 @@ df>] (./nips2015_tyler.bbl
 ** the default language instead.
 ) [8
 
-] <../Figures/pdf/Fig0_nTrees.pdf, id=350, 1228.59pt x 1589.94pt>
->>>>>>> 81dbdccca14cdf731b04b7ceda18d389471e00a3
+] <../Figures/pdf/Fig0_nTrees.pdf, id=346, 1228.59pt x 1589.94pt>
 File: ../Figures/pdf/Fig0_nTrees.pdf Graphic file (type pdf)
 
 <use ../Figures/pdf/Fig0_nTrees.pdf>
@@ -616,14 +541,7 @@ e ignored
                    \relax 
 l.310 ...n to be 1000, 10, and 1000 respectively.}
                                                   
-<<<<<<< HEAD
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-<../Figures/pdf/Trunk_hard.pdf, id=132, 1284.8pt x 803.0pt>
-=======
-<../Figures/pdf/Trunk_hard.pdf, id=352, 1284.8pt x 803.0pt>
->>>>>>> 81dbdccca14cdf731b04b7ceda18d389471e00a3
+<../Figures/pdf/Trunk_hard.pdf, id=348, 1284.8pt x 803.0pt>
 File: ../Figures/pdf/Trunk_hard.pdf Graphic file (type pdf)
 
 <use ../Figures/pdf/Trunk_hard.pdf>
@@ -670,31 +588,10 @@ Here is how much of TeX's memory you used:
  10818 multiletter control sequences out of 15000+600000
  23856 words of font info for 58 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 37i,10n,39p,2438b,335s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 37i,10n,39p,2428b,335s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2014/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/te
 xlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/tex
-<<<<<<< HEAD
-live/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texli
-ve/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive
-/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/20
-14/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/2014
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2014/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2014/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2014/texmf-
-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2014/te
-xmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2014/texmf-dist
-/fonts/type1/urw/courier/ucrro8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/
-type1/urw/times/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/
-times/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr
-i8a.pfb>
-Output written on nips2015_tyler.pdf (9 pages, 460583 bytes).
-PDF statistics:
- 426 PDF objects out of 1000 (max. 8388607)
- 380 compressed objects within 4 object streams
- 34 named destinations out of 1000 (max. 500000)
-=======
 live/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texli
 ve/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive
 /2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2
@@ -709,11 +606,10 @@ f-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2014/texmf-dist/f
 onts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1
 /urw/times/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times
 /utmri8a.pfb>
-Output written on nips2015_tyler.pdf (9 pages, 442761 bytes).
+Output written on nips2015_tyler.pdf (9 pages, 457126 bytes).
 PDF statistics:
- 431 PDF objects out of 1000 (max. 8388607)
- 385 compressed objects within 4 object streams
+ 427 PDF objects out of 1000 (max. 8388607)
+ 383 compressed objects within 4 object streams
  37 named destinations out of 1000 (max. 500000)
->>>>>>> 81dbdccca14cdf731b04b7ceda18d389471e00a3
  139 words of extra memory for PDF output out of 10000 (max. 10000000)
 

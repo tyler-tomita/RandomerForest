@@ -20,7 +20,7 @@ addpath(p);
 Colors = repmat(linspecer(5,'sequential'),2,1);
 Fig_Color = [1 1 1];
 LineWidth = 3;
-Marker = {'none' 'none' 'none' 'none' 'none' '.' '.' '.' '.' '.'};
+Marker = {'none' 'none' 'none' 'none' '.' '.' '.' '.'};
 Units = 'pixels';
 %FigPosition = [0 140 1150 650];
 FigPosition = [0 140 1300 350];
@@ -66,6 +66,7 @@ set(h{i+1},...
 ax_old = get(h{1},'CurrentAxes');
 ax_new = subplot(1,3,1);
 copyobj(allchild(ax_old),ax_new);
+Colors = flipud(repmat(ax_new.ColorOrder(1:4,:),2,1));
 h_lines = allchild(ax_new);
 for j = 1:length(h_lines)
     set(h_lines(j),'Color',Colors(j,:),'linewidth',LineWidth,'Marker',Marker{j},'MarkerSize',MarkerSize,'MarkerFaceColor',Colors(j,:),'MarkerEdgeColor',Colors(j,:))
@@ -75,7 +76,7 @@ axis square
 xlabel('Training Time (sec)')
 ylabel('Error Rate')
 title('(A) Avg. Error Rate vs. Time')
-hL = legend('Random Forest','RerF','RerF(d)','RerF(d+r)');
+hL = legend('RF','RerF','RerF(d)','RerF(d+r)');
 set(hL,'Units',Units,'Visible','On','Box',Box_Legend)
 get(ax_new,'Position');
 
@@ -84,31 +85,38 @@ ax_new = subplot(1,3,2);
 copyobj(allchild(ax_old),ax_new);
 h_lines = allchild(ax_new);
 set(h_lines(1),'Color','k','linewidth',LineWidth)
+for j = 2:length(h_lines)
+    set(h_lines(j),'MarkerFaceColor',Colors(end,:),'MarkerEdgeColor',Colors(end,:))
+end
 set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
 axis square
 xlabel('RF')
-ylabel('Rer F(d+r)')
+ylabel('RerF')
 title('(B) Individual Error Rates')
 %hL = legend(ax_new,'Random Forest','Dense Randomer Forest','Sparse Randomer Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
 legend(ax_new,'hide')
 get(ax_new,'Position');
 rgb = map2color(transpose(linspace(1,1000,1000)),'log');
 colormap([rgb(:,1) rgb(:,2) rgb(:,3)])
-colorbar
+%colorbar
 caxis([4 263])
-hc = colorbar('Units',Units,'Ticks',[10 25 50 100 200]);
+%hc = colorbar('Units',Units,'Ticks',[10 25 50 100 200]);
 
 ax_old = get(h{3},'CurrentAxes');
 ax_new = subplot(1,3,3);
 copyobj(allchild(ax_old),ax_new);
 h_lines = allchild(ax_new);
-set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
+for j = 1:length(h_lines)
+    set(h_lines(j),'Color',Colors(j,:),'linewidth',LineWidth)
+end
+set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'XTick',[0 250 500])
+xlim([0 500])
 axis square
 xlabel('# of Trees')
 ylabel('OOB Error')
 title('(C) Convergence')
 %hL = legend(ax_new,'Random Forest','Dense Randomer Forest','Sparse Randomer Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
-hL = legend('Random Forest','RerF','RerF(d)','RerF(d+r)');
+hL = legend('RF','RerF','RerF(d)','RerF(d+r)');
 set(hL,'Units',Units,'Visible','On','Box',Box_Legend)
    
 
