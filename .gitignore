@@ -1,8 +1,8 @@
-*.m~
-*.out
-*.blg
-*.fdb*
-*.gz
-*.aux
-*.log
+Code/*.m~
+Draft/*.out
+Draft/*.blg
+Draft/*.fdb*
+Draft/*.gz
+Draft/*.aux
+Draft/*.log
 
