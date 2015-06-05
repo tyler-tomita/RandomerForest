@@ -134,7 +134,7 @@ for i = 1:length(Filename)
     ax_new = get(h{i+1},'CurrentAxes');
     copyobj(allchild(ax_old),ax_new);
 end
-Colors = ax_new.ColorOrder;
+Colors = flipud(ax_new.ColorOrder(1:4,:));
 
 for i = 2:length(h)
     ax_old = get(h{i},'CurrentAxes');
@@ -154,9 +154,13 @@ for i = 2:length(h)
     xmax = zeros(1,length(h_lines));
     ymax_ln = zeros(1,length(h_lines));
     for j = 1:length(h_lines)
-        set(h_lines(j),'Color',Colors(j,:),'linewidth',LineWidth,'Marker',Marker,'MarkerFaceColor',Colors(j,:),'MarkerEdgeColor',Colors(j,:))
-        xmax(j) = max(get(h_lines(j),'XData'));
-        ymax_ln(j) = max(get(h_lines(j),'YData'));
+        if j ~= 1
+            set(h_lines(j),'Color',Colors(j-1,:),'linewidth',LineWidth,'Marker',Marker,'MarkerFaceColor',Colors(j-1,:),'MarkerEdgeColor',Colors(j-1,:))
+        else
+            set(h_lines(j),'Color','b','linewidth',LineWidth,'Marker',Marker,'MarkerFaceColor','b','MarkerEdgeColor','b')
+        end
+            xmax(j) = max(get(h_lines(j),'XData'));
+            ymax_ln(j) = max(get(h_lines(j),'YData'));
     end
     xmax = max(xmax);
     ymax_ax = max(ymax_ln);
