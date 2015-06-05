@@ -46,40 +46,49 @@ Colorbar_Height = 280;
 FontSize = 24;
 
 BasePath = '~/LOVEFest/Figures/fig/';
-Filename = {'Fig4_Real_Data_Panel_A_v2.fig','Fig4_Real_Data_Panel_B_v2.fig'};
+Filename = {'Fig4_Real_Data_Panel_A_jovo.fig','Fig4_Real_Data_Panel_B_jovo.fig','Fig4_ntrees.fig'};
 
 for i = 1:length(Filename)
     h{i} = openfig(strcat(BasePath,Filename{i}),'invisible');
     grid off
 end
 
-h{3} = figure('Visible','On');
-set(h{3},'Position',FigPosition,'PaperOrientation','landscape','PaperUnits','inches','PaperSize',[8.5*2.1 11*2.1],'PaperPositionMode','auto','Color',Fig_Color)
+h{i+1} = figure('Visible','On');
+set(h{i+1},'Position',FigPosition,'PaperOrientation','landscape','PaperUnits','inches','PaperSize',[8.5*2.1 11*2.1],'PaperPositionMode','auto','Color',Fig_Color)
+
+set(h{i+1},'Units','normalized','position',[0 0 1 1]);
+set(h{i+1},'Units','inches');
+screenposition = get(h{i+1},'Position');
+set(h{i+1},...
+    'PaperPosition',[0 0 screenposition(3:4)],...
+    'PaperSize',screenposition(3:4));
 
 ax_old = get(h{1},'CurrentAxes');
-ax_new = subplot(1,2,1);
+ax_new = subplot(1,3,1);
 copyobj(allchild(ax_old),ax_new);
 h_lines = allchild(ax_new);
 for j = 1:length(h_lines)
     set(h_lines(j),'Color',Colors(j,:),'linewidth',LineWidth,'Marker',Marker{j},'MarkerSize',MarkerSize,'MarkerFaceColor',Colors(j,:),'MarkerEdgeColor',Colors(j,:))
 end
-set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(1) Axis_Bottom Axis_Width Axis_Height])
+set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
+axis square
 xlabel('Training Time (sec)')
 ylabel('Error Rate')
-title('(A) Average Error Rate vs. Time')
-hL = legend('Random Forest','R''er F(d)','R''er F(s)','R''er F(s+d)','R''er F(s+d+r)');
-set(hL,'Units',Units,'Position',[Legend_Left Legend_Bottom Legend_Width Legend_Height],'Visible','On','Box',Box_Legend)
+title('(A) Avg. Error Rate vs. Time')
+hL = legend('Random Forest','RerF','RerF(d)','RerF(d+r)');
+set(hL,'Units',Units,'Visible','On','Box',Box_Legend)
 get(ax_new,'Position');
 
 ax_old = get(h{2},'CurrentAxes');
-ax_new = subplot(1,2,2);
+ax_new = subplot(1,3,2);
 copyobj(allchild(ax_old),ax_new);
 h_lines = allchild(ax_new);
 set(h_lines(1),'Color','k','linewidth',LineWidth)
-set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth,'Units',Units,'Position',[Axis_Left(2) Axis_Bottom Axis_Width Axis_Height])
-xlabel('Random Forest')
-ylabel('R''er F(s+d+r)')
-title('(B) Error Rate For Each Dataset')
+set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
+axis square
+xlabel('RF')
+ylabel('Rer F(d+r)')
+title('(B) Individual Error Rates')
 %hL = legend(ax_new,'Random Forest','Dense Randomer Forest','Sparse Randomer Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
 legend(ax_new,'hide')
 get(ax_new,'Position');
@@ -87,7 +96,20 @@ rgb = map2color(transpose(linspace(1,1000,1000)),'log');
 colormap([rgb(:,1) rgb(:,2) rgb(:,3)])
 colorbar
 caxis([4 263])
-h = colorbar('Units',Units,'Position',[Colorbar_Left Colorbar_Bottom Colorbar_Width Colorbar_Height],'Ticks',[10 25 50 100 200]);
+hc = colorbar('Units',Units,'Ticks',[10 25 50 100 200]);
+
+ax_old = get(h{3},'CurrentAxes');
+ax_new = subplot(1,3,3);
+copyobj(allchild(ax_old),ax_new);
+h_lines = allchild(ax_new);
+set(ax_new,'FontSize',FontSize,'XGrid','Off','YGrid','Off','Box',Box,'LineWidth',LineWidth)
+axis square
+xlabel('# of Trees')
+ylabel('OOB Error')
+title('(C) Convergence')
+%hL = legend(ax_new,'Random Forest','Dense Randomer Forest','Sparse Randomer Forest','Sparse Randomer Forest w/ Mean Diff','Robust Sparse Randomer Forest w/ Mean Diff');
+hL = legend('Random Forest','RerF','RerF(d)','RerF(d+r)');
+set(hL,'Units',Units,'Visible','On','Box',Box_Legend)
    
 
 fname = '~/LOVEFest/Figures/Fig4';

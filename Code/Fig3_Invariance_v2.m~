@@ -22,7 +22,7 @@ Fig_Color = [1 1 1];
 LineWidth = 3;
 Marker = 'none';
 %Title = {'Trunk' 'Rotated' 'Translated' 'Scaled' 'Outliers'};
-Title = {'(A) RF' '(B) RerF(d)' '(C) RerF(d+r)' '(D) RF' '(E) RerF(d)' '(F) RerF(d+r)'};
+Title = {'(A) RF' '(B) RerF(delta)' '(C) RerF(delta+r)' '(D) Fisherfaces' '(E) RF' '(F) RerF(delta)' '(G) RerF(delta+r)' '(H) Fisherfaces'};
 Units = 'pixels';
 %FigPosition = [0 140 1150 650];
 FigPosition = [0 140 1300 350];
@@ -44,7 +44,7 @@ Box = 'off';
 Box_Legend = 'off';
 FontSize = 24;
 
-Filename = '~/LOVEFest/Figures/fig/Cigars.fig';
+Filename = '~/LOVEFest/Figures/fig/Invariance_Trunk_fast.fig';
 
 h_fig_old = openfig(Filename,'invisible');
 ax_old = flipud(findobj(h_fig_old,'Type','axes'));
@@ -52,6 +52,8 @@ ax_old = flipud(findobj(h_fig_old,'Type','axes'));
 Filename = '~/LOVEFest/Figures/fig/Invariance_Parity_fast.fig';
 
 h_fig_old3 = openfig(Filename,'invisible');
+
+Colors = ax_old.ColorOrder;
 
 h_fig_new = figure('Visible','On');
 set(h_fig_new,'Units','normalized','position',[0 0 1 1]);
