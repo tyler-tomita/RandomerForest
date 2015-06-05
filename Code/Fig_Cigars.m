@@ -81,8 +81,8 @@ for i = 1:length(ax_old)
         xlim(XLim)
         ylim(YLim)
     else
-        xlim([-500 1500])
-        ylim([-500 1500])
+        xlim([0 1000])
+        ylim([0 1000])
     end
     title(Title{i})
     xlabel('Ambient Dimension 1')

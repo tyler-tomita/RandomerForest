@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  5 JUN 2015 14:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  5 JUN 2015 17:07
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -430,6 +430,9 @@ File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 73.
+ [1
+
+{/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Try loading font information for OMS+ptm on input line 84.
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/psnfss/omsptm.fd
@@ -437,9 +440,6 @@ File: omsptm.fd
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 84.
- [1
-
-{/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
 put line 125.
  [2]
@@ -449,146 +449,91 @@ File: ../Figures/pdf/Cigars.pdf Graphic file (type pdf)
 <use ../Figures/pdf/Cigars.pdf>
 Package pdftex.def Info: ../Figures/pdf/Cigars.pdf used on input line 164.
 (pdftex.def)             Requested size: 397.48499pt x 109.80396pt.
- [3pdfTeX warning (ext4): destination with the same identifier (name{figure.1})
- has been already used, duplicate ignored
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[3] [4pdfTeX warning (ext4): destination with the same identifier (name{figure.
+1}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.173 
-       <../Figures/pdf/Cigars.pdf>] [4]
-<../Figures/pdf/Fig1_Simulation.pdf, id=111, 1284.8pt x 803.0pt>
-File: ../Figures/pdf/Fig1_Simulation.pdf Graphic file (type pdf)
+l.207 
+       <../Figures/pdf/Cigars.pdf>]
+<../Figures/pdf/Fig1_Simulation_v2.pdf, id=111, 1284.8pt x 803.0pt>
+File: ../Figures/pdf/Fig1_Simulation_v2.pdf Graphic file (type pdf)
 
-<use ../Figures/pdf/Fig1_Simulation.pdf>
-Package pdftex.def Info: ../Figures/pdf/Fig1_Simulation.pdf used on input line 
-224.
-(pdftex.def)             Requested size: 397.48499pt x 248.42506pt.
+<use ../Figures/pdf/Fig1_Simulation_v2.pdf>
+Package pdftex.def Info: ../Figures/pdf/Fig1_Simulation_v2.pdf used on input li
+ne 224.
+(pdftex.def)             Requested size: 397.48499pt x 279.9147pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
  [5pdfTeX warning (ext4): destination with the same identifier (name{figure.2})
  has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.251 
-       <../Figures/pdf/Fig1_Simulation.pdf>]
-
-LaTeX Warning: Citation `Delgado14' on page 6 undefined on input line 268.
-
-<../Figures/pdf/Fig3_Invariance_v2.pdf, id=127, 1284.8pt x 803.0pt>
+l.246 
+       <../Figures/pdf/Fig1_Simulation_v2.pdf>]
+<../Figures/pdf/Fig3_Invariance_v2.pdf, id=126, 1284.8pt x 803.0pt>
 File: ../Figures/pdf/Fig3_Invariance_v2.pdf Graphic file (type pdf)
 
 <use ../Figures/pdf/Fig3_Invariance_v2.pdf>
 Package pdftex.def Info: ../Figures/pdf/Fig3_Invariance_v2.pdf used on input li
-ne 280.
+ne 263.
 (pdftex.def)             Requested size: 397.48499pt x 226.29062pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<../Figures/pdf/Fig4.pdf, id=129, 1284.8pt x 803.0pt>
-File: ../Figures/pdf/Fig4.pdf Graphic file (type pdf)
+[6] <../Figures/pdf/Fig4_v2.pdf, id=137, 1284.8pt x 803.0pt>
+File: ../Figures/pdf/Fig4_v2.pdf Graphic file (type pdf)
 
-<use ../Figures/pdf/Fig4.pdf>
-Package pdftex.def Info: ../Figures/pdf/Fig4.pdf used on input line 289.
+<use ../Figures/pdf/Fig4_v2.pdf>
+Package pdftex.def Info: ../Figures/pdf/Fig4_v2.pdf used on input line 280.
 (pdftex.def)             Requested size: 397.48499pt x 114.27554pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[6] [7pdfTeX warning (ext4): destination with the same identifier (name{figure.
-3}) has been already used, duplicate ignored
+ [7pdfTeX warning (ext4): destination with the same identifier (name{figure.3})
+ has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.297 \clearpage
-                pdfTeX warning (ext4): destination with the same identifier (na
-me{figure.4}) has been already used, duplicate ignored
+l.290 
+      pdfTeX warning (ext4): destination with the same identifier (name{figure.
+4}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.297 \clearpage
-                 <../Figures/pdf/Fig3_Invariance_v2.pdf> <../Figures/pdf/Fig4.p
-df>] (./nips2015_tyler.bbl
+l.290 
+       <../Figures/pdf/Fig3_Invariance_v2.pdf> <../Figures/pdf/Fig4_v2.pdf>]
+[8] (./nips2015_tyler.bbl
 ** WARNING: IEEEtran.bst: No hyphenation pattern has been
 ** loaded for the language `English'. Using the pattern for
 ** the default language instead.
 ** WARNING: IEEEtran.bst: No hyphenation pattern has been
 ** loaded for the language `English'. Using the pattern for
 ** the default language instead.
-) [8
+) [9
 
-] <../Figures/pdf/Fig0_nTrees.pdf, id=346, 1228.59pt x 1589.94pt>
-File: ../Figures/pdf/Fig0_nTrees.pdf Graphic file (type pdf)
-
-<use ../Figures/pdf/Fig0_nTrees.pdf>
-Package pdftex.def Info: ../Figures/pdf/Fig0_nTrees.pdf used on input line 308.
-
-(pdftex.def)             Requested size: 397.48499pt x 140.28966pt.
-pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
-s been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.310 \caption
-              {The number of trees until a stable misclassification rate is ...
-pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
-s been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.310 ...n to be 1000, 10, and 1000 respectively.}
-                                                  pdfTeX warning (ext4): destin
-ation with the same identifier (name{figure.1}) has been already used, duplicat
-e ignored
-<to be read again> 
-                   \relax 
-l.310 ...n to be 1000, 10, and 1000 respectively.}
-                                                  
-<../Figures/pdf/Trunk_hard.pdf, id=348, 1284.8pt x 803.0pt>
-File: ../Figures/pdf/Trunk_hard.pdf Graphic file (type pdf)
-
-<use ../Figures/pdf/Trunk_hard.pdf>
-Package pdftex.def Info: ../Figures/pdf/Trunk_hard.pdf used on input line 316.
-(pdftex.def)             Requested size: 397.48499pt x 248.42506pt.
-pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
-s been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.318 \caption
-              {Classification performance comparing Random Forest (RF) to se...
-pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
-s been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.318 ... variants of RerF perform worse than RF.}
-                                                  pdfTeX warning (ext4): destin
-ation with the same identifier (name{figure.2}) has been already used, duplicat
-e ignored
-<to be read again> 
-                   \relax 
-l.318 ... variants of RerF perform worse than RF.}
-                                                  
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 323.
- [9
-
- <../Figures/pdf/Fig0_nTrees.pdf> <../Figures/pdf/Trunk_hard.pdf>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 323.
+]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 322.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 322.
  (./nips2015_tyler.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 323.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 323.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 322.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 322.
 Package rerunfilecheck Info: File `nips2015_tyler.out' has not changed.
 (rerunfilecheck)             Checksum: 0962078E36BB5E1416B98489FBE417E4;596.
-
-
-LaTeX Warning: There were undefined references.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 323.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 322.
  ) 
 Here is how much of TeX's memory you used:
- 7522 strings out of 493117
- 107515 string characters out of 6135433
- 207291 words of memory out of 5000000
- 10818 multiletter control sequences out of 15000+600000
+ 7509 strings out of 493117
+ 107203 string characters out of 6135433
+ 207284 words of memory out of 5000000
+ 10807 multiletter control sequences out of 15000+600000
  23856 words of font info for 58 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 37i,10n,39p,2428b,335s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 37i,10n,39p,2428b,377s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2014/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/te
 xlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/tex
@@ -606,10 +551,10 @@ f-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2014/texmf-dist/f
 onts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1
 /urw/times/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times
 /utmri8a.pfb>
-Output written on nips2015_tyler.pdf (9 pages, 457126 bytes).
+Output written on nips2015_tyler.pdf (9 pages, 384654 bytes).
 PDF statistics:
- 427 PDF objects out of 1000 (max. 8388607)
- 383 compressed objects within 4 object streams
+ 416 PDF objects out of 1000 (max. 8388607)
+ 376 compressed objects within 4 object streams
  37 named destinations out of 1000 (max. 500000)
- 139 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 117 words of extra memory for PDF output out of 10000 (max. 10000000)
 
