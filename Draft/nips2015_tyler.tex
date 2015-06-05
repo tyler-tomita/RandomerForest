@@ -71,7 +71,7 @@ Baltimore, MD \\
 \maketitle
 
 \begin{abstract}
-\jovo{please make this submittable asap.  this means include bib, put figures in the right place, anonymize, etc.}
+Random forests (RF) is a popular general purpose classifier that has been shown to outperform many other classifiers on a variety of datasets. The widespread use of random forests can be attributed to several factors, some of which include its excellent empirical performance, scale and unit invariance, robustness to outliers, computational efficiency, interpretability, and storage efficiency. While RF has many desirable qualties, one drawback is its sensitivity to rotations and other operations that "mix" variables. In this work, we establish a generalized forest building scheme, linear threshold forests. Random forests and many other currently existing decision forest algorithms can be viewed as special cases of this scheme. With this scheme in mind, we propose a few special cases which we call randomer forests (RerF). The goal in developing RerFs was to find a linear threshold forest that exhibits all of the nice properties of RF, while also being affine invariant. In simulated datasets designed for RF to do well, we demonstrate that RerF outperforms RF. We also demonstrate that one particular variant of RerF is affine invariant. Lastly, in an evaluation on 121 benchmark datasets, we observe that RerF outperforms RF. We conclude that RerF should be adopted as the general purpose classifier of choice.
 \end{abstract}
 
 \section{Introduction}
@@ -98,7 +98,7 @@ Moreover, all of the above oblique random forest approaches become outlier sensi
 There is therefore a gap that calls for the construction of a classifier that has excellent empirical performance, while maintaining scale invariance, as well as robustness and computational and storage efficiency.
 
 % \paragraph{Action}
-To bridge this gap, we first state a generalized forest building scheme, linear threshold trees, which includes all of the above algorithms as special cases.  This enables us to formally state our objective, and provides a lens that enables us to propose a few novel special cases, which we refer to as ``{\em{Randomer Forests}}''  (or RerFs for short), for reasons that will become clear in the sequel.  We both theoretically and empirically demonstrate that our methods have the same time and space complexity as random forests, while matching or exceeding their performance even on classification problems that are inherently axis aligned.  Moreover, we demonstrate that a variant of RerF is approximately is both affine invariant and robust to outliers, two properties that are relatively easy to obtain independently, though difficult to obtain jointly and inexpensively (see recent work on robust PCA following Candes et al., 2009 \cite{Candes2009}). Finally, we demonstrate on a suite of benchmark datasets, that RerF outperforms RF in terms of both accuracy and interpretability.  We conclude that RerF should be the new reference classifier.
+To bridge this gap, we first state a generalized forest building scheme, linear threshold forests, which includes all of the above algorithms as special cases.  This enables us to formally state our objective, and provides a lens that enables us to propose a few novel special cases, which we refer to as ``{\em{Randomer Forests}}''  (or RerFs for short), for reasons that will become clear in the sequel.  We both theoretically and empirically demonstrate that our methods have the same time and space complexity as random forests, while matching or exceeding their performance even on classification problems that are inherently axis aligned.  Moreover, we demonstrate that a variant of RerF is approximately is both affine invariant and robust to outliers, two properties that are relatively easy to obtain independently, though difficult to obtain jointly and inexpensively (see recent work on robust PCA following Candes et al., 2009 \cite{Candes2009}). Finally, we demonstrate on a suite of benchmark datasets, that RerF outperforms RF in terms of both accuracy and interpretability.  We conclude that RerF should be the new reference classifier.
 
 
 % \paragraph{Resolution}
@@ -208,7 +208,7 @@ For all comparisons, we used the same number of trees for each method, and the s
 In both cases, RerF(d+r) performs as well or better than RF, even though  the discriminant boundary is naturally axis aligned.  
 The top row shows that  RerF outperforms RF even in the axis aligned Trunk example.
 This is because  linear combinations of the ambient coordinates can yield new dimensions that have a higher signal to noise ratio than any of the original dimensions.  Therefore, RerF can capitalize on that, and use those dimensions to obtain cleaner splits, and therefore better trees.  
-Looking at the right panel, RerFs take slightly longer than RF on this problem, largely due to sampling of the random projection matrices. \jovo{still true?}
+Looking at the right panel, RerFs has comparable speed to RF.
 % The middle panel of Figure \ref{fig:sim} column A shows that RerF($\delta$) and RerF($\delta$+r) outperform RF across all numbers of dimensions in the Trunk problem. 
 % This can be attributed to projection onto the difference in means. 
 % All variants outperform RF up to approximately 250 dimensions. Above this, misclassification rate of RerF is comparable to RF. 
@@ -221,9 +221,9 @@ Looking at the right panels, we observe a slight increase in training time of al
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 0in 0in 0in, clip=true, width=\linewidth]{../Figures/pdf/Fig1_Simulation}
+\includegraphics[trim=0in 0in 2in 0in, clip=true, width=\linewidth]{../Figures/pdf/Fig1_Simulation_v2}
 \end{center}
-\caption{Classification performance comparing Random Forest (RF) to several variants of Randomer Forest (RerF), and Bayes optimal performance, on two distinct simulation settings: (A) Trunk and (B) Parity (see main text for details).  For all settings, the left panels show a 2D scatter plot of the first 2 coordinates (dashed circles denote the standard deviation level set), the middle and right panels depict misclassification rate and training time against the number of ambient (coordinate) dimensions, respectively, RF to several variants of RerF, as well as the Bayes optimal performance.  Note that in all settings, for all number of dimensions, RerF outperforms RF, even though these settings were designed specifically for RF because the discriminant boundary naturally lies along the coordinate basis. Although RerF requires slightly more time than RF (largely due to random sampling of projection matrices), they scale similarly. In each case, $n=100$ and the errorbars denote standard error over ten trials.}
+\caption{Classification performance comparing Random Forest (RF) to several variants of Randomer Forest (RerF), and Bayes optimal performance, on two distinct simulation settings: (A) Trunk and (B) Parity (see main text for details).  For all settings, the left panels show a 2D scatter plot of the first 2 coordinates (dashed circles denote the standard deviation level set), the middle and right panels depict misclassification rate and training time against the number of ambient (coordinate) dimensions, respectively, RF to several variants of RerF, as well as the Bayes optimal performance. In each case, $n=100$ and the errorbars denote standard error over ten trials. Note that in all settings, for all number of dimensions, RerF outperforms RF, even though these settings were designed specifically for RF because the discriminant boundary naturally lies along the coordinate basis. Training time of RerFs scales similarly to RF. }
 \label{fig:sim}
 \end{figure}
 
@@ -232,8 +232,6 @@ Looking at the right panels, we observe a slight increase in training time of al
 
 %Figure \ref{fig:time} shows the corresponding running time for RF and the different RerF variants.  Note that the RerF variants do not take significantly longer to train than RF.  
 % , we observe a slight increase training time of all RerF variants compared to RF. Despite this increase, training time for all classifiers scales similarly with the number of dimensions. The apparent increase in training time for the RerF variants is largely due to sampling of the random projection matrices. 
-
-
 
 
 \subsection{Theoretical Space and Time Complexity}
@@ -259,38 +257,39 @@ Figure \ref{fig:invar} shows the effect of these transformations and outliers on
 % This is because even $p-1$ dimensional marginal distributions of the data in the ambient coordinates have no class conditional signal.  Thus, rototating the data creates dimensions that have non-zero class conditional signal, which all of the RF and RerF variants can utilize.  
 On the other hand, Fisherfaces, which is a fundamentally linear classifier, achieves chance levels no matter what.  
 
+\begin{figure}[h]
+\begin{center}
+%\framebox[4.0in]{$\;$}
+\includegraphics[trim=0in 0.9in 0in .09in, clip=true, width=\linewidth]{../Figures/pdf/Fig3_Invariance_v2}
+\end{center}
+\caption{The effect of various transformations applied to the Trunk (panels A-D) and Parity (panels E-H) simulations (see Methods for details) on classification performance of (A,E) RF, (B,F) RerF (d), (C,G) RerF (d+r), and (D,H) Fisherfaces. Specifically, we consider, rotations, scalings, and affine transformations, as well as introducing outliers. Classification performance of RF is compromised by rotations and therefore affine transformations as well. RerF(d) is invariant to rotation, but not scaling and therefore not affine transformation. RerF(d+r) is invariant to to affine transformations. Like RerF (d), Fisherfaces is invariant to rotation but not scaling. Note that all variants are reasonably robust to outliers.}
+\label{fig:invar}
+\end{figure}
+
 %RF does especially well in classification problems in which the optimal decision boundaries are aligned or nearly aligned with the coordinate axes. Rotations in such situations can lead to a decrease in classification performance. Naturally, we wanted to examine the effects of various transformations on classification performance of RerF. These effects were examined using the Trunk and parity simulations as previously described. The transformations we applied were random rotations, scaling, and general affine transformations. Uniformly random rotation matrices were generated by first performing SVD on a p-dimensional matrix in which each element is sampled from a multivariate standard normal distribution. The rotation matrix was taken as the right singular vectors of this SVD. If the determinant of this matrix was equal to $-1$, the first two columns were permuted to render the determinant equal to $+1$. Random scaling was performed by applying to each dimension a scaling factor sampled from a uniform distribution on the interval [0,10]. Affine transformations were performed by applying a combination of rotations and scalings as just described. Additionally, we examined the effects of introducing outliers. Outliers were introduced to Trunk and parity simulations by sampling points from the distributions as previously described but instead using covariance matrices scaled by a factor of four. Empirically, an addition of 20 points from these outlier models to the original 100 points was found to produce a noticeable but not overwhelming effect on classifier performance. The classifiers evaluated were RF, RF(s), RF(s+$\delta$). Additionally, Fisherfaces was evaluated as a reference. The misclassification rate for Fisherfaces was estimated using leave-one-out cross validation. 
 
 %The top panels of Figure \ref{fig:invar} illustrate the effects of the transformations and outliers on the Trunk simulation. The bottom panels show these effects on the parity simulation. In the Trunk simulation, rotation results in noticeable degradation in classification performance of RF when the number of dimensions is greater than approximately 100. On the other hand, both RerF(d) and RerF(d+r) are unaffected by rotations. RerF(d) exhibits an increase in misclassification rate when scaling is applied. This is expected because ambient dimensions with a relatively large scale will dominate the variance of new dimensions constructed from a linear combination of the ambient ones. For this same reason, Fisherfaces is also affected by scaling. Since RerF(d+r) maps all dimensions to the same scale, it is invariant to scaling and is also the only classifier to exhibit invariance to affine transformations. We also observe that all classifiers are only slightly affected by the addition of outliers to the Trunk simulation. As shown in panel E, rotations in the Parity simulation actually improve classification performance of RF. As mentioned previously, all splits in RF up to a tree depth of $p - 1$ in the untransformed parity simulation result in chance probabilities of being in either class in the daughter nodes. Therefore, rotating can only improve performance. As in the Trunk simulation, performance of RerF is hurt when scaling is applied in the parity simulation.
 
 \subsection{Benchmark Data}
 
-In addition to the simulations, RF and RerF variants were evaluated on all 121 datasets as described in \cite{Delgado14}. Classifiers were trained on the entire training sets provided. For each data set, misclassification rates were again estimated by out of bag error, and training time was measured as wall clock time.  Figure \ref{fig:benchmark} depicts misclassification rates and training time for the different algorithms.  
+In addition to the simulations, RF and RerF variants were evaluated on all 121 datasets as described in \cite{Delgado2014}. Classifiers were trained on the entire training sets provided. For each data set, misclassification rates were again estimated by out of bag error, and training time was measured as wall clock time. The number of trees used in each algorithm was 500. All algorithms were trained using three different values for the dimension $s$ of the projected subspace, and error rates for each algorithm were selected as the minimum given by the three. The left panel of Figure \ref{fig:benchmark} depicts average misclassification rates and training times for each algorithm. The average misclassification rate of RerF  is marginally lower than RF, while the other variants have marginally higher misclassification rates. Panel B compares individual misclassification rates of RF to RerF. The black line is the region where RF and RerF have equal performance. The Wilcoxon signed rank test indicates a larger misclassification rate for RF compared to RerF (p = .02). Additionally, we were curious how the number of trees required to achieve a stable misclassification rate for each algorithm compared. Panel C depicts the average out of bag error of each algorithm as a function of the number of trees used in the ensemble. We see that all algorithms require a comparable number of trees in order to achieve a stable misclassification rate.
+
+\begin{figure}[h]
+\begin{center}
+%\framebox[4.0in]{$\;$}
+\includegraphics[trim=0in 3.1in 0in 2.9in, clip=true, width=\linewidth]{../Figures/pdf/Fig4_v2}
+\end{center}
+\caption{(A) Classification error and training time of RF and RerF variants for all 121 datasets from the benchmark comparison study by Delgado \cite{Delgado2014}. (A) Average (dots) and 0.1 standard deviation level sets (dashed lines) for each method. (B) Classification error of RerF(d+r) vs. that of RF for each of the 121 datasets. The black line indicates equal classification error of the two algorithms. (C) Average out of bag error for RF and RerF variants as a function of the number of trees used in the ensemble.}
+\label{fig:benchmark}
+\end{figure}
 
 
 \section{Conclusion}
 
-We have proposed a novel method for constructing ensemble classifiers. Like random forests, our method constructs an ensemble of randomized decision trees. However, by randomly projecting the data at each split node, partitions are not restricted to alignment with the coordinate axes. We have constructed datasets demonstrating settings in which RerF outperforms RF. Furthermore, one of the variants, RerF(d), exhibits robustness to affine transformations, a property lacking in RF.
+We have proposed novel methods for constructing decision forests, which we call RerFs. We view these methods as special cases of a more general forest building scheme. Like RF, RerF constructs an ensemble of randomized decision trees. However, by randomly projecting the data at each split node, partitions are not restricted to alignment with the coordinate axes. In simulated datasets designed for RF to perform well, we observe that RerFs outperform RF. Furthermore, one of the variants, RerF(d), exhibits robustness to affine transformations, a property lacking in RF. In tests performed on benchmark datasets, we observed that RerF outperforms RF.
 
-Much work is still to be done with our proposed method. In this work, we only examined one method of constructing sparse random projection matrices. It is possible that other choices of construction will lead to improved performance in certain settings. Additionally, it will be useful to evaluate the sensitivity of our method to the use of different split criteria, pruning, and other parameters of the decision tree. It will also be of interest to establish consistency theorems for our method. While we only restricted our attention to classification thus far, our method can be generalized to other types of learning problems, such as regression, density estimation, etc. 
+Much work is still to be done with our proposed method. In this work, we only examined one method of constructing sparse random projection matrices. It is possible that other choices of construction will lead to improved performance in certain settings. Additionally, it will be useful to evaluate the sensitivity of our method to the use of different split criteria, pruning, and other parameters of the decision tree. Evaluation on more benchmark datasets will be necessary, particularly datasets with dimensionality much larger than the number of training points, as nearly all of the benchmarks used in this study did not have this characteristic. It will also be of interest to establish consistency theorems for our method. Lastly, since we only restricted our attention to classification thus far, it will certainly be worth exploring how are method can be applied to other types of learning problems, such as regression, density estimation, etc. 
 
-\begin{figure}[h]
-\begin{center}
-%\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 0.9in 0in .09in, clip=true, width=\linewidth]{../Figures/pdf/Fig3_Invariance_v2}
-\end{center}
-\caption{The effect of various transformations applied to the Trunk (panels A-D) and Parity (panels E-H) simulations (see Methods for details) on classification performance of (A,E) RF, (B,F) RerF (s+d), (C,G) RerF (s+d+r), and (D,H) Fisherfaces. Specifically, we consider, rotations, scalings, and affine transformations, as well as introducing outliers. Classification performance of RF is compromised by rotations and therefore affine transformations as well. RerF(s+d) is invariant to rotation, but not scaling and therefore not affine transformation. RerF(s+d+r) is invariant to to affine transformations. Like RerF (s+d), Fisherfaces is invariant to rotation but not scaling. Note that all variants are reasonably robust to outliers.}
-\label{fig:invar}
-\end{figure}
-
-\begin{figure}[h]
-\begin{center}
-%\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 3.1in 0in 2.9in, clip=true, width=\linewidth]{../Figures/pdf/Fig4}
-\end{center}
-\caption{(A) Classification error and training time of Random Forest and Randomer Forests variants for all 121 datasets from the benchmark comparison study by Caruana \cite{Caruana2008}. (A) Average (dots) and 0.1 standard deviation level sets (dashed lines) for each method. (B) Classification error of Randomer Forest (sparse+delta+robust) vs. that of Random Forest for each of the 121 datasets. The black line indicates equal classification error of the two algorithms. Color indicates dimensionality of the datasets and size of points indicates number of samples. Note that RerF almost always does as well, and often significantly better.}
-\label{fig:benchmark}
-\end{figure}
 % Misclassification rates and training times were averaged over all 121 datasets (Fig 4).
 
 
@@ -299,25 +298,25 @@ Much work is still to be done with our proposed method. In this work, we only ex
 \bibliographystyle{IEEEtran}
 
 \clearpage
-\appendix
-\setcounter{figure}{0}
-\renewcommand\thefigure{A\arabic{figure}}
+%\appendix
+%\setcounter{figure}{0}
+%\renewcommand\thefigure{A\arabic{figure}}
 
-\begin{figure}[h]
-\begin{center}
-\includegraphics[trim=0in 8in 0in 8in, clip=true, width=\linewidth]{../Figures/pdf/Fig0_nTrees}
-\end{center}
-\caption{The number of trees until a stable misclassification rate is achieved for RF and the RerF variants in the Trunk, parity, and multimodal simulations. Simulation settings are the same as in Fig1. The number of ambient dimensions for panels A, B, and C were chosen to be 1000, 10, and 1000 respectively.}
-\label{fig:ntrees}
-\end{figure}
+%\begin{figure}[h]
+%\begin{center}
+%\includegraphics[trim=0in 8in 0in 8in, clip=true, width=\linewidth]{../Figures/pdf/Fig0_nTrees}
+%\end{center}
+%\caption{The number of trees until a stable misclassification rate is achieved for RF and the RerF variants in the Trunk, parity, and multimodal simulations. Simulation settings are the same as in Fig1. The number of ambient dimensions for panels A, B, and C were chosen to be 1000, 10, and 1000 respectively.}
+%\label{fig:ntrees}
+%\end{figure}
 
-\begin{figure}[h]
-\begin{center}
-\includegraphics[trim=0in 0in 0in 0in, clip=true, width=\linewidth]{../Figures/pdf/Trunk_hard}
-\end{center}
-\caption{Classification performance comparing Random Forest (RF) to several variants of Randomer Forest (RerF) on the modified Trunk simulation setting. Here, the ith diagonal of the covariance matrices of both classes is equal to the inverse of the difference in means of the ith dimension between the two classes. For small values of p, all variants of RerF perform marginally better than RF. For large values of p, all variants of RerF perform worse than RF.}
-\label{fig:trunk_hard}
-\end{figure}
+%\begin{figure}[h]
+%\begin{center}
+%\includegraphics[trim=0in 0in 0in 0in, clip=true, width=\linewidth]{../Figures/pdf/Trunk_hard}
+%\end{center}
+%\caption{Classification performance comparing Random Forest (RF) to several variants of Randomer Forest (RerF) on the modified Trunk simulation setting. Here, the ith diagonal of the covariance matrices of both classes is equal to the inverse of the difference in means of the ith dimension between the two classes. For small values of p, all variants of RerF perform marginally better than RF. For large values of p, all variants of RerF perform worse than RF.}
+%\label{fig:trunk_hard}
+%\end{figure}
 
 
 \end{document}
