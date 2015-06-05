@@ -69,9 +69,9 @@ Baltimore, MD \\
 \begin{document}
 
 \maketitle
-
+\vspace{-15pt}
 \begin{abstract}
-Random forests (RF) is a popular general purpose classifier that has been shown to outperform many other classifiers on a variety of datasets. The widespread use of random forests can be attributed to several factors, some of which include its excellent empirical performance, scale and unit invariance, robustness to outliers, time and space complexity, and interpretability. While RF has many desirable qualities, one drawback is its sensitivity to rotations and other operations that ``mix'' variables. In this work, we establish a generalized forest building scheme, linear threshold forests. Random forests and many other currently existing decision forest algorithms can be viewed as special cases of this scheme. With this scheme in mind, we propose a few special cases which we call randomer forests (RerFs). RerFs are linear threshold forest that exhibit all of the nice properties of RF, in addition to approximate affine invariance. In simulated datasets designed for RF to do well, we demonstrate that RerF outperforms RF. We also demonstrate that one particular variant of RerF is approximately affine invariant. Lastly, in an evaluation on 121 benchmark datasets, we observe that RerF outperforms RF. We therefore putatively propose that RerF be considered a replacement for RF as the general purpose classifier of choice.
+Random forests (RF) is a popular general purpose classifier that has been shown to outperform many other classifiers on a variety of datasets. The widespread use of random forests can be attributed to several factors, some of which include its excellent empirical performance, scale and unit invariance, robustness to outliers, time and space complexity, and interpretability. While RF has many desirable qualities, one drawback is its sensitivity to rotations and other operations that ``mix'' variables. In this work, we establish a generalized forest building scheme, linear threshold forests. Random forests and many other currently existing decision forest algorithms can be viewed as special cases of this scheme. With this scheme in mind, we propose a few special cases which we call randomer forests (RerFs). RerFs are linear threshold forest that exhibit all of the nice properties of RF, in addition to approximate affine invariance. In simulated datasets designed for RF to do well, we demonstrate that RerF outperforms RF. We also demonstrate that one particular variant of RerF is approximately affine invariant. Lastly, in an evaluation on 121 benchmark datasets, we observe that RerF outperforms RF. We therefore putatively propose that RerF be considered a replacement for RF as the general purpose classifier of choice. Open source code will be available.
 \end{abstract}
 
 \section{Introduction}
@@ -85,7 +85,7 @@ The reasons for the popularity and utility of random forests are many. Below, we
 \item \textbf{scale and unit invariance}: different predictor variables can have totally different units, e.g. millimeters and kilograms, for example, without affecting RF's;
 \item \textbf{robust to outliers}: certain data points could be outliers, either because some or all of the values of their feature vector are far from the others;
 \item \textbf{time complexity}: it is reasonably efficient, more so than an exhaustive search to find the globally optimal tree, which is NP-hard \cite{Heath1993};
-\item \textbf{space complexity efficiency}: when training on lots of data, storage of the classifier can become problematic;
+\item \textbf{space complexity}: when training on lots of data, storage of the classifier can become problematic;
 \item \textbf{interpretability}: it is reasonably interpretable, as each variable can be assigned an importance score (such as the ``gini'' score), albeit for large forests it can become hard to sort the variables in order of importance.
 \end{compactitem}
 
@@ -98,7 +98,7 @@ Moreover, all of the above oblique random forest approaches become outlier sensi
 There is therefore a gap that calls for the construction of a classifier that has excellent empirical performance, while maintaining scale invariance, as well as robustness and computational and storage efficiency.
 
 % \paragraph{Action}
-To bridge this gap, we first state a generalized forest building scheme, linear threshold forests, which includes all of the above algorithms as special cases.  This enables us to formally state our objective, and provides a lens that enables us to propose a few novel special cases, which we refer to as ``{\em{Randomer Forests}}''  (or RerFs for short), for reasons that will become clear in the sequel.  We both theoretically and empirically demonstrate that our methods have the same time and space complexity as random forests, while matching or exceeding their performance even on classification problems that are inherently axis aligned.  Moreover, we demonstrate that a variant of RerF is approximately is both affine invariant and robust to outliers, two properties that are relatively easy to obtain independently, though difficult to obtain jointly and inexpensively (see recent work on robust PCA following Candes et al., 2009 \cite{Candes2009}). Finally, we demonstrate on a suite of benchmark datasets, that RerF outperforms RF in terms of both accuracy and interpretability.  We conclude that RerF should be the new reference classifier.
+To bridge this gap, we first state a generalized forest building scheme, linear threshold forests, which includes all of the above algorithms as special cases.  This enables us to formally state our objective, and provides a lens that enables us to propose a few novel special cases, which we refer to as ``{\em{Randomer Forests}}''  (or RerFs for short), for reasons that will become clear in the sequel.  We both theoretically and empirically demonstrate that our methods have the same time and space complexity as random forests, while matching or exceeding their performance even on classification problems that are inherently axis aligned.  Moreover, we demonstrate that a variant of RerF is approximately is both affine invariant and robust to outliers, two properties that are relatively easy to obtain independently, though difficult to obtain jointly and inexpensively (see recent work on robust PCA following Candes et al., 2009 \cite{Candes2009}). Finally, we demonstrate on a suite of benchmark datasets, that RerF outperforms RF in terms of both accuracy and interpretability.  We conclude that RerF ought be considered a replacement for RF as the reference classifier.  Open source code will be made available.
 
 
 % \paragraph{Resolution}
@@ -299,7 +299,7 @@ The simplicity of these ideas suggest that they will be amenable to theoretical 
 Even under the currently proposed $f_A(\mc{D}_n)$, our implementation has room for improvement, although it has the same space and time complexity as RF, we will determine explicit constants, and improve our implementation accordingly.  Indeed, our current implementation (which will be open sourced after blind revision) is a proof-of-concept MATLAB implementation.  We will utilize recent GPU and semi-external memory methods to significantly speed up RerF \cite{zheng15flashgraph}.  
 Faster implementations will enable us to more easily investigate the contexts under which RerFs outperform RF, as we currently only know that we expect RerFs to perform better.
 As with all decision forests, multiclass classification is but one exploitation task they can be used for; therefore, we will also extend this work to enable regression, density estimation, clustering, and hashing.
-Even in the absense of all these improvements, we are cautiously optimistic that RerFs may prove to be a better default classifier than RF at this time.
+Even in the absence of all these improvements, we are cautiously optimistic that RerFs may prove to be a better default classifier than RF at this time. We will provide open source code to enable more rigorous and extended analyses by the machine learning community.
 % propose RerFs as a new reference classifier
 % In this work, we only examined one method of constructing sparse random projection matrices. 
 % It is possible that other choices of construction will lead to improved performance in certain settings. Additionally, it will be useful to evaluate the sensitivity of our method to the use of different split criteria, pruning, and other parameters of the decision tree. 
@@ -310,7 +310,7 @@ Even in the absense of all these improvements, we are cautiously optimistic that
 
 % \clearpage
 \bibliography{nips2015_tyler}
-\bibliographystyle{IEEEtran}
+\bibliographystyle{abbrv}
 
 \clearpage
 %\appendix
