@@ -1,14 +1,6 @@
 This is BibTeX, Version 0.99d (TeX Live 2014)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: nips2015_tyler.aux
-White space in argument---line 34 of file nips2015_tyler.aux
- : \citation{Bickel
- :                  and Levina 2004}
-I'm skipping whatever remains of this command
-White space in argument---line 37 of file nips2015_tyler.aux
- : \citation{Delgado
- :                   2014}
-I'm skipping whatever remains of this command
 The style file: IEEEtran.bst
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
@@ -16,51 +8,51 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: nips2015_tyler.bib
-Warning--I didn't find a database entry for "???"
+Warning--I didn't find a database entry for "Delgado14"
 -- IEEEtran.bst version 1.13 (2008/09/30) by Michael Shell.
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
 
 Done.
-You've used 9 entries,
+You've used 12 entries,
             4039 wiz_defined-function locations,
-            883 strings with 8900 characters,
-and the built_in function-call counts, 7519 in all, are:
-= -- 632
-> -- 174
-< -- 71
-+ -- 97
-- -- 29
-* -- 399
-:= -- 1175
-add.period$ -- 19
-call.type$ -- 9
-change.case$ -- 11
-chr.to.int$ -- 153
-cite$ -- 9
-duplicate$ -- 524
-empty$ -- 545
-format.name$ -- 36
-if$ -- 1700
+            906 strings with 9444 characters,
+and the built_in function-call counts, 10340 in all, are:
+= -- 860
+> -- 235
+< -- 102
++ -- 133
+- -- 37
+* -- 533
+:= -- 1565
+add.period$ -- 27
+call.type$ -- 12
+change.case$ -- 14
+chr.to.int$ -- 231
+cite$ -- 12
+duplicate$ -- 716
+empty$ -- 777
+format.name$ -- 47
+if$ -- 2365
 int.to.chr$ -- 0
-int.to.str$ -- 9
-missing$ -- 87
-newline$ -- 54
-num.names$ -- 11
-pop$ -- 169
+int.to.str$ -- 12
+missing$ -- 115
+newline$ -- 63
+num.names$ -- 14
+pop$ -- 236
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 574
+skip$ -- 793
 stack$ -- 0
-substring$ -- 364
-swap$ -- 464
-text.length$ -- 20
+substring$ -- 549
+swap$ -- 632
+text.length$ -- 25
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 9
+type$ -- 12
 warning$ -- 0
-while$ -- 35
-width$ -- 10
-write$ -- 122
-(There were 2 error messages)
+while$ -- 50
+width$ -- 14
+write$ -- 151
+(There was 1 warning)
