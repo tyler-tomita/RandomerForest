@@ -4,7 +4,8 @@ close all
 clear
 clc
 
-Colors = linspecer(5,'sequential');
+%Colors = linspecer(5,'sequential');
+%Colors = parula(5);
 ScatterColors = {'r' 'b' 'g' 'm'};
 Fig_Color = [1 1 1];
 LineWidth = 3;
@@ -118,8 +119,8 @@ set(hL(1), 'position',[ax_edge-.09 axpos(2)+axpos(4)/2-lpos(4)/2 lpos(3:4)],'Box
 %============================Lhat=================================
 
 BasePath = '~/LOVEFest/Figures/fig/';
-Filename = {'Trunk_ooberror_vs_d_n100_var1_ntrees1500_ntrials10_jovo.fig'...
- 'Parity_ooberror_vs_d_n100_ntrees1000_ntrials10_jovo.fig'};
+Filename = {'Trunk_ooberror_vs_d_n100_var1_ntrees1500_ntrials10_fast.fig'...
+ 'Parity_ooberror_vs_d_n100_ntrees1000_ntrials10_fast.fig'};
 BayesFigs = {'Trunk_bayes_error_vs_d_v2.fig' 'Parity_bayes_error_v4.fig'};
 
 
@@ -133,6 +134,7 @@ for i = 1:length(Filename)
     ax_new = get(h{i+1},'CurrentAxes');
     copyobj(allchild(ax_old),ax_new);
 end
+Colors = ax_new.ColorOrder;
 
 for i = 2:length(h)
     ax_old = get(h{i},'CurrentAxes');
@@ -142,10 +144,13 @@ for i = 2:length(h)
     copyobj(allchild(ax_old),ax_new);
     h_lines = allchild(ax_new);
     for j = 1:length(h_lines)
+        h_lines(j).DisplayName
         if strcmp(h_lines(j).DisplayName,'TylerForest')
             rmidx = j;
         end
     end
+    delete(h_lines(rmidx));
+    h_lines(rmidx) = [];
     xmax = zeros(1,length(h_lines));
     ymax_ln = zeros(1,length(h_lines));
     for j = 1:length(h_lines)
@@ -179,8 +184,8 @@ set(hL(2), 'position',[ax_edge-.09 axpos(2)+axpos(4)/2-lpos(4)/2 lpos(3:4)],'Box
 
 %=============================Time===================================
 
-Filename = {'Trunk_time_vs_d_n100_var1_ntrees1500_ntrials10_jovo.fig'...
- 'Parity_time_vs_d_n100_ntrees1000_ntrials10_jovo.fig'};
+Filename = {'Trunk_time_vs_d_n100_var1_ntrees1500_ntrials10_fast.fig'...
+ 'Parity_time_vs_d_n100_ntrees1000_ntrials10_fast.fig'};
 
 h{4} = openfig(strcat(BasePath,Filename{1}),'invisible');
 h{5} = openfig(strcat(BasePath,Filename{2}),'invisible');
@@ -197,6 +202,8 @@ for i = 4:5
             rmidx = j;
         end
     end
+    delete(h_lines(rmidx));
+    h_lines(rmidx) = [];
     xmax = zeros(1,length(h_lines));
     ymax_ln = zeros(1,length(h_lines));
     for j = 1:length(h_lines)

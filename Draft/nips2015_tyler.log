@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  4 JUN 2015 11:46
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  5 JUN 2015 11:28
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -593,7 +593,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 257--258
 ms,
  []
 
-<../Figures/pdf/Fig3_Invariance_v2.pdf, id=125, 1284.8pt x 803.0pt>
+<../Figures/pdf/Fig3_Invariance_v2.pdf, id=124, 1284.8pt x 803.0pt>
 File: ../Figures/pdf/Fig3_Invariance_v2.pdf Graphic file (type pdf)
 
 <use ../Figures/pdf/Fig3_Invariance_v2.pdf>
@@ -604,7 +604,7 @@ ne 262.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<../Figures/pdf/Fig4.pdf, id=127, 1284.8pt x 803.0pt>
+<../Figures/pdf/Fig4.pdf, id=126, 1284.8pt x 803.0pt>
 File: ../Figures/pdf/Fig4.pdf Graphic file (type pdf)
 
 <use ../Figures/pdf/Fig4.pdf>
@@ -614,7 +614,7 @@ Package pdftex.def Info: ../Figures/pdf/Fig4.pdf used on input line 271.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<../Figures/pdf/Fig0_nTrees.pdf, id=131, 1228.59pt x 1589.94pt>
+<../Figures/pdf/Fig0_nTrees.pdf, id=130, 1228.59pt x 1589.94pt>
 File: ../Figures/pdf/Fig0_nTrees.pdf Graphic file (type pdf)
 
 <use ../Figures/pdf/Fig0_nTrees.pdf>
@@ -642,7 +642,7 @@ l.289 ...n to be 1000, 10, and 1000 respectively.}
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<../Figures/pdf/Trunk_hard.pdf, id=133, 1284.8pt x 803.0pt>
+<../Figures/pdf/Trunk_hard.pdf, id=132, 1284.8pt x 803.0pt>
 File: ../Figures/pdf/Trunk_hard.pdf Graphic file (type pdf)
 
 <use ../Figures/pdf/Trunk_hard.pdf>
@@ -864,10 +864,10 @@ xmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2014/texmf-dist
 type1/urw/times/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/
 times/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr
 i8a.pfb>
-Output written on nips2015_tyler.pdf (9 pages, 446589 bytes).
+Output written on nips2015_tyler.pdf (9 pages, 460583 bytes).
 PDF statistics:
- 427 PDF objects out of 1000 (max. 8388607)
- 381 compressed objects within 4 object streams
+ 426 PDF objects out of 1000 (max. 8388607)
+ 380 compressed objects within 4 object streams
  34 named destinations out of 1000 (max. 500000)
  139 words of extra memory for PDF output out of 10000 (max. 10000000)
 

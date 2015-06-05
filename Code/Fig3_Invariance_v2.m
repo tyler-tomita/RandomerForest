@@ -53,6 +53,8 @@ Filename = '~/LOVEFest/Figures/fig/Invariance_Parity_fast.fig';
 
 h_fig_old3 = openfig(Filename,'invisible');
 
+Colors = ax_old.ColorOrder;
+
 h_fig_new = figure('Visible','On');
 set(h_fig_new,'Units','normalized','position',[0 0 1 1]);
 set(h_fig_new,'Units','inches');
