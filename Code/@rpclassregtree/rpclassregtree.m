@@ -73,6 +73,27 @@ splitcriterion = '';
                 Yhat(noderows{node}) = Tree.classname(Tree.class(node));
             end
         end     %function rptreepredict
+        
+        function classprob = rpclassprob(Tree,X)
+            classprob = NaN(size(X,1),length(Tree.classname));
+            noderows = cell(0,length(Tree.node));
+            noderows{1} = 1:size(X,1);
+            internalnodes = Tree.node(Tree.var ~= 0);
+            internalnodes = internalnodes';
+            leafnodes = Tree.node(Tree.var == 0);
+            leafnodes = leafnodes';
+            for node = internalnodes
+                cut = Tree.cut{node};
+                projection = Tree.rpm{node};
+                Xpro = X(noderows{node},:)*projection;
+                ch = Tree.children(node,:);
+                noderows{ch(1)} = noderows{node}(Xpro < cut);
+                noderows{ch(2)} = noderows{node}(Xpro >= cut);
+            end
+            for node = leafnodes
+                classprob(noderows{node},:) = repmat(Tree.classprob(node,:),length(noderows{node}),1);            
+            end
+        end     %function rpclassprob
     end     %methods block
     
         methods(Hidden = true)
@@ -391,16 +412,16 @@ okargs =   {'priorprob'   'cost'  'splitcriterion' ...
             'splitmin' 'minparent' 'minleaf' ...
             'nvartosample' 'mergeleaves' 'categorical' 'prune' 'method' ...
             'qetoler' 'names' 'weights' 'surrogate' 'skipchecks' ...
-            'stream' 's'    'mdiff' 'sparsemethod'};
+            'stream' 's'    'mdiff' 'sparsemethod'  'nmix'};
 defaults = {[]            []      'gdi'                        ...
             []         []          1                          ...
             'all'          'on'          []            'off'    Method      ...
             1e-6      {}       []        'off'      false ...
-            []  3   'off'   'dense'};
+            []  3   'off'   'dense' 2};
 
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
-    skipchecks,Stream,s,mdiff,sparsemethod,~,extra] = ...
+    skipchecks,Stream,s,mdiff,sparsemethod,nmix,~,extra] = ...
     internal.stats.parseArgs(okargs,defaults,varargin{:});
 
 % For backwards compatibility. 'catidx' is a synonym for 'categorical'
@@ -428,6 +449,12 @@ doclass = strcmpi(Method(1),'c');
 if isempty(W)
     W = ones(size(X,1),1);
 end
+
+%sort Ys and corresponding Xs so that cnames is ordered consistently across
+%all trees in a forest
+[Y,sortidx] = sort(Y);
+X = X(sortidx,:);
+
 if skipchecks
     if doclass
         % If checks are skipped, Y must be of type ClassLabel.
@@ -651,21 +678,23 @@ nextunusednode = 2;
 tnode = 1;
 Labels = unique(Y);
 K = length(Labels);
-if strcmp(mdiff,'on') && K > 1
-    %Yneg = min(Y);
-    %Ypos = max(Y);
-    %mu_diff = transpose(mean(X(Y==Ypos,:)) - mean(X(Y==Yneg,:)));
-    Labels = unique(Y);
-    pairs = zeros(K-1,2);
-    npairs = K-1;
-    pairs(:,1) = 1:npairs;
-    pairs(:,2) = pairs(:,1) + 1;
-    mu_diff = zeros(nvars,npairs);
+pairs = zeros(K-1,2);
+npairs = K-1;
+pairs(:,1) = 1:npairs;
+pairs(:,2) = pairs(:,1) + 1;
+mu_diff = zeros(nvars,npairs);
+p = hygepdf(1,size(X,2),1,nvartosample);
+
+%compute class conditional difference in means and scale each dimension by
+%the average of the class-conditional standard deviations for that
+%dimension
+if strcmp(mdiff,'all') && K > 1
     for i = 1:npairs
         mu_diff(:,i) = transpose(mean(X(Y==Labels(pairs(i,2)),:)) - mean(X(Y==Labels(pairs(i,1)),:)));
+        %mu_diff(:,i) = mu_diff(:,i)./transpose(mean(cat(1,std(X(Y==Labels(pairs(i,1)),:)),std(X(Y==Labels(pairs(i,2)),:)))));
     end
-    p = hygepdf(1,size(X,2),1,nvartosample);
 end
+
 while(tnode < nextunusednode)
    % Record information about this node
    noderows = assignednode{tnode};
@@ -712,10 +741,17 @@ while(tnode < nextunusednode)
    end
    
    % Consider splitting this node
-   if (Nt>=minparent) && impure      % split only large impure nodes
-      Xnode = X(noderows,:);
-      if strcmp(mdiff,'on') && K > 1
-          promat = srpmat(nvars,nusevars,sparsemethod,s);    %random projection matrix
+    if (Nt>=minparent) && impure      % split only large impure nodes
+        Xnode = X(noderows,:);
+        Ynode = Y(noderows);
+        if strcmp(mdiff,'node') && K > 1
+            for i = 1:npairs
+                mu_diff(:,i) = transpose(mean(Xnode(Ynode==Labels(pairs(i,2)),:)) - mean(Xnode(Ynode==Labels(pairs(i,1)),:)));
+                %mu_diff(:,i) = mu_diff(:,i)./transpose(mean(cat(1,std(X(Y==Labels(pairs(i,1)),:)),std(X(Y==Labels(pairs(i,2)),:)))));
+            end
+        end
+      if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
+          promat = srpmat(nvars,nusevars,sparsemethod,s,nmix);    %random projection matrix
           md_ind = rand(size(mu_diff,2),1) <= p;
           promat = cat(2,mu_diff(:,md_ind),promat);
           md_idx = 1:sum(md_ind);   %Indices of where the mean difference vectors are in the matrix
@@ -723,7 +759,7 @@ while(tnode < nextunusednode)
           %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
           nvarsplit = cat(2,zeros(1,sum(md_ind)),nvarsplit);
       else
-          promat = srpmat(nvars,nusevars,sparsemethod,s);    %random projection matrix
+          promat = srpmat(nvars,nusevars,sparsemethod,s,nmix);    %random projection matrix
           iscat2 = iscat;
           %nvarsplit2 = nvarsplit;
       end
@@ -966,17 +1002,18 @@ end
 function M = srpmat(d,k,method,varargin)
     if strcmp(method,'dense')
         s = varargin{1};
-        M = vec2mat(randsample([-1 0 1],d*k,true,[1/(2*s) 1-1/s 1/(2*s)]),k);
-    elseif strcmp(method,'dgaussian')
-        s = varargin{1};
-        M = vec2mat(randsample([-1 0 1],d*k,true,[1/(2*s) 1-1/s 1/(2*s)]),k);
-        M(M==1) = sqrt((s-1))*randn(sum(M(:)==1),1) + 1;
-        M(M==-1) = sqrt((s-1))*randn(sum(M(:)==-1),1) - 1;
-    elseif strcmp(method,'fast')
-        M = sparse(d,k);
-        M(randsample(d*k,k,false)) = randsample([-1 1],k,true,[0.5 0.5]);
-        M = M(:,any(M));
-    elseif strcmp(method,'jovo')
+        M = vec2mat(randsample([0 1],d*k,true,[1-1/s 1/s]),k);
+        M(M==1) = rand(sum(M(:)==1),1)*2 - 1;
+    %elseif strcmp(method,'dgaussian')
+    %    s = varargin{1};
+    %    M = vec2mat(randsample([-1 0 1],d*k,true,[1/(2*s) 1-1/s 1/(2*s)]),k);
+    %    M(M==1) = sqrt((s-1))*randn(sum(M(:)==1),1) + 1;
+    %    M(M==-1) = sqrt((s-1))*randn(sum(M(:)==-1),1) - 1;
+    %elseif strcmp(method,'fast')
+    %    M = sparse(d,k);
+    %    M(randsample(d*k,k,false)) = randsample([-1 1],k,true,[0.5 0.5]);
+    %    M = M(:,any(M));
+    elseif strcmp(method,'sparse')
         M = sparse(d,k);
         stop = false;
         while ~stop
@@ -986,6 +1023,21 @@ function M = srpmat(d,k,method,varargin)
         M(nnzs(1:round(end/2)))=1;
         M(nnzs(round(end/2)+1:end))=-1;
         M = M(:,any(M));
+    %elseif strcmp(method,'frc')
+    %    nmix = varargin{2};
+    %    M = sparse(d,k);
+    %    nz = zeros(1,k*nmix);
+    %    for j = 1:k
+    %        r = randperm(d);
+    %        nz(nmix*(j-1)+1:nmix*j) = r(1:nmix)+d*(j-1);
+    %    end
+    %    M(nz) = rand(1,nmix*k)*2-1;
+    elseif strcmp(method,'breiman')
+        M = zeros(d,k);
+        R = unidrnd(min(10,d),1,k);
+        for j = 1:k
+            M(randsample(d,R(j),false),j) = rand(R(j),1)*2-1;
+        end
     else
         M = sparse(d,k);
         R = poissrnd(1,1,k);

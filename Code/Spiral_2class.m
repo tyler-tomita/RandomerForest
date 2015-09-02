@@ -15,10 +15,10 @@ function [X,Y] = Spiral_2class(n,d)
 
     %phi_final = (d-1)*2*pi*randi(d-1,1,d-1);
     if d == 2
-        phi_final = 2*pi;
+        phi_final = 4*pi;
     else
         %phi_final = (d-1)*2*pi*linspace(1,2,d-1);
-        phi_final = 2*pi*linspace(1,2,d-1);
+        phi_final = 4*pi*linspace(1,2,d-1);
     end
     r_final = 1;
     X0 = zeros(round(n/2),d);
@@ -27,7 +27,7 @@ function [X,Y] = Spiral_2class(n,d)
     Y1 = ones(size(X1,1),1);
 
     Mu = zeros(1,d);
-    Sigma = 0.0001*ones(1,d);
+    Sigma = 0.005*ones(1,d);
     for i = 1:length(Y0)
         t0 = rand;
         r = t0*r_final;

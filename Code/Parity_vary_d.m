@@ -16,7 +16,7 @@ p(colons(endGit-1):colons(endGit)-1)=[];
 end
 addpath(p);
 
-n = 100;
+n = 10000;
 dims = [2 3 4 5 10];
 ntrials = 10;
 ntrees = 1000;
@@ -26,11 +26,13 @@ cumf1err = NaN(ntrials,length(dims));
 cumf2err = NaN(ntrials,length(dims));
 cumf3err = NaN(ntrials,length(dims));
 cumf4err = NaN(ntrials,length(dims));
+cumf5err = NaN(ntrials,length(dims));
 trf = NaN(ntrials,length(dims));
 tf1 = NaN(ntrials,length(dims));
 tf2 = NaN(ntrials,length(dims));
 tf3 = NaN(ntrials,length(dims));
 tf4 = NaN(ntrials,length(dims));
+tf5 = NaN(ntrials,length(dims));
 
 poolobj = gcp('nocreate');
 if isempty(poolobj)
@@ -76,35 +78,44 @@ for trial = 1:ntrials
         fprintf('TylerForest+ complete\n')
         
         tic
-        f3 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','NWorkers',NWorkers);
+        f3 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','all','sparsemethod','jovo','NWorkers',NWorkers);
         tf3(trial,i) = toc;
         cumf3err(trial,i) = oobpredict(f3,X,Y,'last');
         
-        fprintf('TylerForest+meandiff complete\n')
+        fprintf('TylerForest+meandiff all complete\n')
         
         tic
-        f4 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','Robust',true,'NWorkers',NWorkers);
+        f4 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','all','sparsemethod','jovo','Robust',true,'NWorkers',NWorkers);
         tf4(trial,i) = toc;
         cumf4err(trial,i) = oobpredict(f4,X,Y,'last');
         
         fprintf('Robust complete\n')
+        
+        tic
+        f5 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','node','sparsemethod','jovo','NWorkers',NWorkers);
+        tf5(trial,i) = toc;
+        cumf5err(trial,i) = oobpredict(f5,X,Y,'last');
+        
+        fprintf('TylerForest+meandiff node complete\n')
     end
 end
 
-save('Parity_vary_d.mat','cumrferr','cumf2err','cumf3err','cumf4err','trf','tf2','tf3','tf4')
+%save('Parity_vary_d.mat','cumrferr','cumf2err','cumf3err','cumf4err','cumf5err','trf','tf2','tf3','tf4','tf5')
 
 rfsem = std(cumrferr)/sqrt(ntrials);
 f2sem  = std(cumf2err)/sqrt(ntrials);
 f3sem  = std(cumf3err)/sqrt(ntrials);
 f4sem  = std(cumf4err)/sqrt(ntrials);
+f5sem  = std(cumf5err)/sqrt(ntrials);
 cumrferr = mean(cumrferr);
 cumf2err = mean(cumf2err);
 cumf3err = mean(cumf3err);
 cumf4err = mean(cumf4err);
-Ynames = {'cumrferr' 'cumf2err' 'cumf3err' 'cumf4err'};
-Enames = {'rfsem' 'f2sem' 'f3sem' 'f4sem'};
-lspec = {'-bo','-rx','-gd','-ks'};
-facespec = {'b','r','g','k'};
+cumf5err = mean(cumf5err);
+Ynames = {'cumrferr' 'cumf2err' 'cumf3err' 'cumf4err' 'cumf5err'};
+Enames = {'rfsem' 'f2sem' 'f3sem' 'f4sem' 'f5sem'};
+lspec = {'-bo','-rx','-gd','-ks','-m.'};
+facespec = {'b','r','g','k','m'};
 hold on
 for i = 1:length(Ynames)
     errorbar(dims,eval(Ynames{i}),eval(Enames{i}),lspec{i},'MarkerEdgeColor','k','MarkerFaceColor',facespec{i});
@@ -112,19 +123,21 @@ end
 %set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel(sprintf('OOB Error for %d Trees',ntrees))
-legend('RandomForest','TylerForest+','TylerForest+meandiff','Robust TylerForest+meandiff')
-fname = sprintf('Parity_ooberror_vs_d_n%d_ntrees%d_ntrials%d_jovo',n,ntrees,ntrials);
+legend('RandomForest','TylerForest+','TylerForest+meandiff all','Robust TylerForest+meandiff all','TylerForest+meandiff node')
+fname = sprintf('Parity_ooberror_vs_d_n%d_ntrees%d_ntrials%d_mean_node',n,ntrees,ntrials);
 save_fig(gcf,fname)
 
 rfsem = std(trf)/sqrt(ntrials);
 f2sem = std(tf2)/sqrt(ntrials);
 f3sem = std(tf3)/sqrt(ntrials);
 f4sem = std(tf4)/sqrt(ntrials);
+f5sem = std(tf5)/sqrt(ntrials);
 trf = mean(trf);
 tf2 = mean(tf2);
 tf3 = mean(tf3);
 tf4 = mean(tf4);
-Ynames = {'trf' 'tf2' 'tf3' 'tf4'};
+tf5 = mean(tf5);
+Ynames = {'trf' 'tf2' 'tf3' 'tf4' 'tf5'};
 
 figure(2)
 hold on
@@ -134,6 +147,6 @@ end
 %set(gca,'XScale','log')
 xlabel('# Ambient Dimensions')
 ylabel('Wall Time (sec)')
-legend('RandomForest','TylerForest+','TylerForest+meandiff','Robust TylerForest+meandiff')
-fname = sprintf('Parity_time_vs_d_n%d_ntrees%d_ntrials%d_jovo',n,ntrees,ntrials);
+legend('RandomForest','TylerForest+','TylerForest+meandiff all','Robust TylerForest+meandiff all','TylerForest+meandiff node')
+fname = sprintf('Parity_time_vs_d_n%d_ntrees%d_ntrials%d_mean_node',n,ntrees,ntrials);
 save_fig(gcf,fname)

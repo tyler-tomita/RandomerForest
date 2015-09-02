@@ -143,6 +143,26 @@ splitcriterion = '';
                 a = treefit(a,x,y,varargin{:});  % calls local version of treefit
             end
         end % classregtree2 constructor
+        
+        function classprob = rfclassprob(Tree,X)
+            classprob = NaN(size(X,1),length(Tree.classname));
+            noderows = cell(0,length(Tree.node));
+            noderows{1} = 1:size(X,1);
+            internalnodes = Tree.node(Tree.var ~= 0);
+            internalnodes = internalnodes';
+            leafnodes = Tree.node(Tree.var == 0);
+            leafnodes = leafnodes';
+            for node = internalnodes
+                cut = Tree.cut{node};
+                x = X(noderows{node},Tree.var(node));
+                ch = Tree.children(node,:);
+                noderows{ch(1)} = noderows{node}(x < cut);
+                noderows{ch(2)} = noderows{node}(x >= cut);
+            end
+            for node = leafnodes
+                classprob(noderows{node},:) = repmat(Tree.classprob(node,:),length(noderows{node}),1);            
+            end
+        end     %function rpclassprob
     end % methods block
 
     methods(Hidden = true)
@@ -493,6 +513,12 @@ doclass = strcmpi(Method(1),'c');
 if isempty(W)
     W = ones(size(X,1),1);
 end
+
+%sort Ys and corresponding Xs so that cnames is ordered consistently across
+%all trees in a forest
+[Y,sortidx] = sort(Y);
+X = X(sortidx,:);
+
 if skipchecks
     if doclass
         % If checks are skipped, Y must be of type ClassLabel.

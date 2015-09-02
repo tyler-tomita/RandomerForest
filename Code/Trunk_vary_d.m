@@ -64,18 +64,18 @@ for trial = 1:ntrials
         fprintf('TylerForest+ complete\n')
         
         tic
-        f3 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','NWorkers',NWorkers);
+        f3 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','all','sparsemethod','jovo','NWorkers',NWorkers);
         tf3(trial,i) = toc;
         cumf3err(trial,i) = oobpredict(f3,X,Y,'last');
         
-        fprintf('TylerForest+meandiff complete\n')
+        fprintf('TylerForest+meandiff all complete\n')
         
         tic
-        f4 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','on','sparsemethod','jovo','Robust',true,'NWorkers',NWorkers);
+        f4 = rpclassificationforest(ntrees,X,Y,'s',3,'nvartosample',nvartosample,'mdiff','node','sparsemethod','jovo','NWorkers',NWorkers);
         tf4(trial,i) = toc;
         cumf4err(trial,i) = oobpredict(f4,X,Y,'last');
         
-        fprintf('Robust complete\n')
+        fprintf('TylerForest+meandiff node complete\n')
     end
 end
 
@@ -99,8 +99,8 @@ set(gca,'XScale','log')
 xlabel('# ambient dimensions')
 ylabel('oob error')
 title('Trunk')
-legend('RandomForest','TylerForest+','TylerForest+meandiff','Robust')
-fname = sprintf('Trunk_ooberror_vs_d_n%d_var%d_ntrees%d_ntrials%d_jovo',n,Sigma(1),ntrees,ntrials);
+legend('RandomForest','TylerForest+','TylerForest+meandiff all','TylerForest+meandiff node')
+fname = sprintf('Trunk_ooberror_vs_d_n%d_var%d_ntrees%d_ntrials%d_meandiff_node',n,Sigma(1),ntrees,ntrials);
 save_fig(gcf,fname)
 
 figure(2)
@@ -123,6 +123,6 @@ set(gca,'XScale','log')
 xlabel('# ambient dimensions')
 ylabel('Training time (sec)')
 title('Trunk')
-legend('RandomForest','TylerForest+','TylerForest+meandiff','Robust')
-fname = sprintf('Trunk_time_vs_d_n%d_var%d_ntrees%d_ntrials%d_jovo',n,Sigma(1),ntrees,ntrials);
+legend('RandomForest','TylerForest+','TylerForest+meandiff all','TylerForest+meandiff node')
+fname = sprintf('Trunk_time_vs_d_n%d_var%d_ntrees%d_ntrials%d_meandiff_node',n,Sigma(1),ntrees,ntrials);
 save_fig(gcf,fname)

@@ -61,11 +61,11 @@ classdef rpclassificationforest
             %projections to be sampled. The 'node' option computes sample
             %means using only samples at the current split node. Connect to
             %6 workers, which allows 6 trees to be constructed in parallel.
-            %Compute out of bag error achieved at the final ('last') tree.
+            %C
             %
             %rerf = rpclassificationforest(500,X,Y,'s',3,'mdiff','node','NWorkers',6);
             %
-            %err = oobpredict(rerf,X,Y,'last');
+            %err = oobpredict(rerf,X,Y,'last')
                 
             if ~iscell(Y)
                 Y = cellstr(num2str(Y));
