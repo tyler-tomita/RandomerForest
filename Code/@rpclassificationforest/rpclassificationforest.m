@@ -126,7 +126,7 @@ classdef rpclassificationforest
             end
             
             parfor i = 1:nTrees
-                
+
                 %Rotate data?
                 if rotate
                     RR(:,:,i) = random_rotation(d);
@@ -138,10 +138,14 @@ classdef rpclassificationforest
                 go = true;
                 if Stratified
                     while go
-                        ibidx = [];
+                        ibidx = []
                         for c = 1:nclasses
                             idx = find(strcmp(forest.classname{c},Y));
-                            ibidx = cat(2,ibidx,transpose(randsample(idx,ceil(fboot*length(idx)),SampleWithReplacement)));
+                            if length(idx) > 1
+                                ibidx = cat(2,ibidx,transpose(randsample(idx,ceil(fboot*length(idx)),SampleWithReplacement)));
+                            else
+                                ibidx(end+1) = idx;
+                            end
                         end
                         oobidx{i} = setdiff(sampleidx,ibidx);
                         go = isempty(oobidx{i});
@@ -363,14 +367,25 @@ classdef rpclassificationforest
             nclasses = length(Labels);
             scoremat = NaN(nrows,nclasses,forest.nTrees);
             trees = forest.Tree;
+            rotate = ~isempty(forest.rotmat);
             if ~forest.RandomForest
                 parfor i = 1:forest.nTrees
-                    score_i = rpclassprob(trees{i},Xtest)
+                    if rotate
+                        Xtree = Xtest*forest.rotmat(:,:,i);
+                    else
+                        Xtree = Xtest;
+                    end
+                    score_i = rpclassprob(trees{i},Xtree)
                     scoremat(:,:,i) = score_i;
                 end
             else
                 parfor i = 1:forest.nTrees
-                    score_i = rfclassprob(trees{i},Xtest);
+                    if rotate
+                        Xtree = Xtest*forest.rotmat(:,:,i);
+                    else
+                        Xtree = Xtest;
+                    end
+                    score_i = rfclassprob(trees{i},Xtree);
                     scoremat(:,:,i) = score_i;
                 end
             end
