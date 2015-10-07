@@ -582,7 +582,7 @@ if strcmpi(nvartosample,'all')
     %end
     success = true;
 end
-if isnumeric(nvartosample) && nvartosample>0 && nvartosample<=nvars
+if isnumeric(nvartosample) && nvartosample>0
     %if strcmp(mdiff,'on')
     %    nvartosample = ceil(nvartosample) - 1;
     %else
@@ -771,7 +771,8 @@ while(tnode < nextunusednode)
       for jvar=1:size(Xnode,2)
 
          % Categorical variable?
-         xcat = iscat2(jvar);
+         %xcat = iscat2(jvar);
+         xcat = false;
 
          % Get rid of missing values and sort this variable
          idxnan = isnan(Xnode(:,jvar));
@@ -821,19 +822,19 @@ while(tnode < nextunusednode)
       % Note: we have leftside==~rightside in the absence of NaN's
       if bestvar~=0
          %nvarsplit2(bestvar) = nvarsplit2(bestvar)+1;
-         nvarsplit(bestvar) = nvarsplit(bestvar)+1;
+         %nvarsplit(bestvar) = nvarsplit(bestvar)+1;
          x = Xnode(:,bestvar);
          
          % Send observations left or right
-         if ~iscat2(bestvar)
+         %if ~iscat2(bestvar)
             cutvar(tnode) = bestvar;
             leftside = x<bestcut;
             rightside = x>=bestcut;
-         else
-            cutvar(tnode) = -bestvar;          % negative indicates cat. var. split
-            leftside = ismember(x,bestcut{1});
-            rightside = ismember(x,bestcut{2});
-         end
+         %else
+         %   cutvar(tnode) = -bestvar;          % negative indicates cat. var. split
+         %   leftside = ismember(x,bestcut{1});
+         %   rightside = ismember(x,bestcut{2});
+         %end
          
          % Store split position, children, parent, and node number
          cutpoint{tnode} = bestcut;
@@ -955,7 +956,7 @@ else
 end
 Tree.mergeleaves = Merge;
 %Tree.nvarsplit = nvarsplit2;
-Tree.nvarsplit = nvarsplit;
+%Tree.nvarsplit = nvarsplit;
 Tree.rpm = rpm(1:topnode);  %Store proj matrices in a structure field
 Tree.isdelta = isdelta(1:topnode);
 
@@ -1018,7 +1019,7 @@ function M = srpmat(d,k,method,varargin)
         stop = false;
         while ~stop
             nnzs=unique(round(rand(k+5,1)*(k*d-1))+1);
-            stop = length(nnzs) < numel(M) && length(nnzs) > 2;
+            stop = length(nnzs) <= numel(M) && length(nnzs) >= 2;
         end
         M(nnzs(1:round(end/2)))=1;
         M(nnzs(round(end/2)+1:end))=-1;
@@ -1032,12 +1033,15 @@ function M = srpmat(d,k,method,varargin)
     %        nz(nmix*(j-1)+1:nmix*j) = r(1:nmix)+d*(j-1);
     %    end
     %    M(nz) = rand(1,nmix*k)*2-1;
-    elseif strcmp(method,'breiman')
-        M = zeros(d,k);
-        R = unidrnd(min(10,d),1,k);
-        for j = 1:k
-            M(randsample(d,R(j),false),j) = rand(R(j),1)*2-1;
+    elseif strcmp(method,'uniform')
+        M = sparse(d,k);
+        stop = false;
+        while ~stop
+            nnzs=unique(round(rand(k+5,1)*(k*d-1))+1);
+            stop = length(nnzs) <= numel(M) && length(nnzs) >= 2;
         end
+        M(nnzs)=rand(1,length(nnzs))*2 - 1;
+        M = M(:,any(M));
     else
         M = sparse(d,k);
         R = poissrnd(1,1,k);
@@ -1053,16 +1057,6 @@ function M = srpmat(d,k,method,varargin)
             M(M==1) = binsample;
             M(M==1) = sqrt((d-1))*randn(sum(M(:)==1),1) + 1;
             M(M==-1) = sqrt((d-1))*randn(sum(M(:)==-1),1) - 1;
-        elseif strcmp(method,'uniform')
-            syms a x
-            eqn = symsum(x^2,-a,a)/(2*a) == d;
-            a = solve(eqn,a);
-            a = double(a);
-            a = round(a(a>0));
-            binsample = randsample([-1 1],sum(R),true,[0.5 0.5]);
-            M(M==1) = binsample;
-            M(M==1) = unidrnd(a,sum(M(:)==1),1);
-            M(M==-1) = -unidrnd(a,sum(M(:)==-1),1);
         else
             binsample = randsample([-1 1],sum(R),true,[0.5 0.5]);
             M(M==1) = binsample;

@@ -27,7 +27,7 @@ function [X,Y] = Spiral_2class(n,d)
     Y1 = ones(size(X1,1),1);
 
     Mu = zeros(1,d);
-    Sigma = 0.005*ones(1,d);
+    Sigma = 0.001*ones(1,d);
     for i = 1:length(Y0)
         t0 = rand;
         r = t0*r_final;

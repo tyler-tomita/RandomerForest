@@ -1,0 +1,44 @@
+function [Lhat,Time,Cl,n,d,sp,tr] = Benchmark(FileName)
+
+    X = dlmread(FileName,'\t',1,1);
+    Y = cellstr(num2str(X(:,end)));
+    X(:,end) = [];
+    [n,d] = size(X);
+    tr = trace(cov(X));
+    embed = ceil(d.^[1/2 2/3 3/4]);
+    ntrees = 500;
+    NWorkers = 24;
+    
+    poolobj = gcp('nocreate');
+    if isempty(poolobj)
+        parpool('local',NWorkers,'IdleTimeout',360);
+    end
+    for i = 1:length(embed)
+
+        nvartosample = embed(i);
+
+        tic
+        Cl.rerfdn(i) = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','node','sparsemethod','sparse','NWorkers',NWorkers);
+        Time.rerfdn(i) = toc;
+        Lhat.rerfdn(:,i) = oobpredict(Cl.rerfdn(i),X,Y,'every');
+        sp.rerfdn(i) = sum(Cl.rerfdn(i).NumVars);
+
+        tic
+        Cl.rerfdn(i) = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','node','sparsemethod','sparse','NWorkers',NWorkers);
+        Time.rerfdn(i) = toc;
+        Lhat.rerfdn(:,i) = oobpredict(Cl.rerfdn(i),X,Y,'every');
+        sp.rerfdn(i) = sum(Cl.rerfdn(i).NumVars);
+
+        tic
+        Cl.rerfdn(i) = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','node','sparsemethod','sparse','NWorkers',NWorkers);
+        Time.rerfdn(i) = toc;
+        Lhat.rerfdn(:,i) = oobpredict(Cl.rerfdn(i),X,Y,'every');
+        sp.rerfdn(i) = sum(Cl.rerfdn(i).NumVars);
+
+        tic
+        Cl.rerfdn(i) = rpclassificationforest(ntrees,X,Y,'nvartosample',nvartosample,'mdiff','node','sparsemethod','sparse','NWorkers',NWorkers);
+        Time.rerfdn(i) = toc;
+        Lhat.rerfdn(:,i) = oobpredict(Cl.rerfdn(i),X,Y,'every');
+        sp.rerfdn(i) = sum(Cl.rerfdn(i).NumVars);
+    end
+end
