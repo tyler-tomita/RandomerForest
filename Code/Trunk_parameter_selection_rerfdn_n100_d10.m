@@ -3,35 +3,28 @@ clear
 clc
 
 n = 100;
-d =3;
+d =10;
 ntrees = 1000;
 ntrials = 20;
 NWorkers = 2;
-mtrys = 1:d;
+mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
 Colors = linspecer(2*length(mtrys),'sequential');
+err_rf = zeros(ntrees,length(mtrys),ntrials);
 err_rerf = zeros(ntrees,length(mtrys),ntrials);
-err_rerfdn = zeros(ntrees,length(mtrys),ntrials);
+Class = [0;1];
 
 for trial = 1:ntrials
     
     fprintf('trial %d\n',trial)
     
-    X = zeros(n,d);
-    %Sigma = 1/8*ones(1,d);
-    Sigma = 1/32*ones(1,d);
-    %nones = randi(d+1,n,1)-1;
-    %Y = mod(nones,2);
-    %Ystr = cellstr(num2str(Y));
-    Mu = sparse(n,d);
-    for j = 1:n
-        %onesidx = randsample(1:d,nones(j),false);
-        %Mu(j,onesidx) = 1;
-        Mu(j,:) = binornd(1,0.5,1,d);
-        X(j,:) = mvnrnd(Mu(j,:),Sigma);
-    end
-
-    nones = sum(Mu,2);
-    Ystr = cellstr(num2str(mod(nones,2)));    
+    d_idx = 1:d;
+    mu1 = 1./sqrt(d_idx);
+    mu0 = -1*mu1;
+    Mu = cat(1,mu0,mu1);
+    Sigma = ones(1,d);
+    obj = gmdistribution(Mu,Sigma);
+    [X,idx] = random(obj,n);
+    Ystr = cellstr(num2str(Class(idx)));
     
     i = 1;
     
@@ -49,7 +42,7 @@ for trial = 1:ntrials
     end
 end
 
-save(sprintf('Parity_parameter_selection_rerfdn_n%d_d%d.mat',n,d),'err_rerf','err_rerfdn')
+save(sprintf('Trunk_parameter_selection_rerfdn_n%d_d%d.mat',n,d),'err_rerf','err_rerfdn')
 
 sem_rerf = std(err_rerf,[],3)/sqrt(ntrials);
 sem_rerfdn = std(err_rerfdn,[],3)/sqrt(ntrials);
@@ -81,9 +74,9 @@ end
 legend(h,legend_names)
 xlabel('# trees')
 ylabel('oob error')
-title(sprintf('Parity (n=%d, d=%d, ntrials=%d)',n,d,ntrials))
+title(sprintf('Trunk (n=%d, d=%d, ntrials=%d)',n,d,ntrials))
 
-save_fig(gcf,sprintf('Parity_parameter_selection_rerfdn_n%d_d%d',n,d))
+save_fig(gcf,sprintf('Trunk_parameter_selection_rerfdn_n%d_d%d',n,d))
 
 figure(2)
 
@@ -104,9 +97,9 @@ end
 legend(h,legend_names)
 xlabel('# trees')
 ylabel('var(oob error)')
-title(sprintf('Parity (n=%d, d=%d, ntrials=%d)',n,d,ntrials))
+title(sprintf('Trunk (n=%d, d=%d, ntrials=%d)',n,d,ntrials))
 
-save_fig(gcf,sprintf('Parity_parameter_selection_rerfdn_variance_n%d_d%d',n,d))
+save_fig(gcf,sprintf('Trunk_parameter_selection_rerfdn_variance_n%d_d%d',n,d))
 
 figure(3)
 
@@ -127,5 +120,5 @@ end
 legend(h,legend_names)
 xlabel('# trees')
 ylabel('oob error')
-title(sprintf('Parity (n=%d, d=%d, ntrials=%d)',n,d,ntrials))
-save_fig(gcf,sprintf('Parity_parameter_selection_rerfdn_errorbar_n%d_d%d',n,d))
+title(sprintf('Trunk (n=%d, d=%d, ntrials=%d)',n,d,ntrials))
+save_fig(gcf,sprintf('Trunk_parameter_selection_rerfdn_errorbar_n%d_d%d',n,d))

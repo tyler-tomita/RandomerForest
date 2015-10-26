@@ -412,16 +412,16 @@ okargs =   {'priorprob'   'cost'  'splitcriterion' ...
             'splitmin' 'minparent' 'minleaf' ...
             'nvartosample' 'mergeleaves' 'categorical' 'prune' 'method' ...
             'qetoler' 'names' 'weights' 'surrogate' 'skipchecks' ...
-            'stream' 's'    'mdiff' 'sparsemethod'  'nmix'};
+            'stream' 's'    'mdiff' 'sparsemethod'  'nmix'  'p'};
 defaults = {[]            []      'gdi'                        ...
             []         []          1                          ...
             'all'          'on'          []            'off'    Method      ...
             1e-6      {}       []        'off'      false ...
-            []  3   'off'   'dense' 2};
+            []  3   'off'   'dense' 2   []};
 
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
-    skipchecks,Stream,s,mdiff,sparsemethod,nmix,~,extra] = ...
+    skipchecks,Stream,s,mdiff,sparsemethod,nmix,p,~,extra] = ...
     internal.stats.parseArgs(okargs,defaults,varargin{:});
 
 % For backwards compatibility. 'catidx' is a synonym for 'categorical'
@@ -683,7 +683,10 @@ npairs = K-1;
 pairs(:,1) = 1:npairs;
 pairs(:,2) = pairs(:,1) + 1;
 mu_diff = zeros(nvars,npairs);
-p = hygepdf(1,size(X,2),1,nvartosample);
+if isempty(p)
+    %p = hygepdf(1,size(X,2),1,nvartosample);
+    p = 1/npairs;
+end
 
 %compute class conditional difference in means and scale each dimension by
 %the average of the class-conditional standard deviations for that
@@ -694,6 +697,10 @@ if strcmp(mdiff,'all') && K > 1
         %mu_diff(:,i) = mu_diff(:,i)./transpose(mean(cat(1,std(X(Y==Labels(pairs(i,1)),:)),std(X(Y==Labels(pairs(i,2)),:)))));
     end
 end
+
+%if strcmp(sparsemethod,'sparse') && nusevars <= 10
+%    sparsemethod = 'lowk';
+%end
 
 while(tnode < nextunusednode)
    % Record information about this node
@@ -1010,20 +1017,40 @@ function M = srpmat(d,k,method,varargin)
     %    M = vec2mat(randsample([-1 0 1],d*k,true,[1/(2*s) 1-1/s 1/(2*s)]),k);
     %    M(M==1) = sqrt((s-1))*randn(sum(M(:)==1),1) + 1;
     %    M(M==-1) = sqrt((s-1))*randn(sum(M(:)==-1),1) - 1;
-    %elseif strcmp(method,'fast')
+    elseif strcmp(method,'fast')
+        M = sparse(d,k);
+        M(randsample(d*k,k,false)) = randsample([-1 1],k,true,[0.5 0.5]);
+        M = M(:,any(M));
+    %elseif strcmp(method,'sparse')
     %    M = sparse(d,k);
-    %    M(randsample(d*k,k,false)) = randsample([-1 1],k,true,[0.5 0.5]);
+    %    stop = false;
+    %    while ~stop
+    %        nnz=unique(round(rand(k+5,1)*(k*d-1))+1);
+    %        nnzs = length(nnz);
+    %        stop = nnzs <= numel(M) && nnzs >= 2;
+    %    end
+    %    M(nnz(1:round(nnzs/2)))=1;
+    %    M(nnz(round(nnzs/2)+1:end))=-1;
     %    M = M(:,any(M));
     elseif strcmp(method,'sparse')
         M = sparse(d,k);
-        stop = false;
-        while ~stop
-            nnzs=unique(round(rand(k+5,1)*(k*d-1))+1);
-            stop = length(nnzs) <= numel(M) && length(nnzs) >= 2;
-        end
-        M(nnzs(1:round(end/2)))=1;
-        M(nnzs(round(end/2)+1:end))=-1;
+        nzs=randperm(d*k,k);
+        nnzs = length(nzs);
+        M(nzs(1:round(nnzs/2)))=1;
+        M(nzs(round(nnzs/2)+1:end))=-1;
         M = M(:,any(M));
+    elseif strcmp(method,'lowk')
+        M = zeros(d,k);
+        R = poissrnd(1,1,k);
+        R(R==0) = 1;
+        R(R>d) = d;
+        rowidx = arrayfun(@(n) randsample(d,n,false),R,'UniformOutput',false);
+        for j = 1:k
+            M(rowidx{j},j) = 1;
+        end
+        binsample = randsample([-1 1],sum(R),true,[0.5 0.5]);
+        M(M==1) = binsample;
+        M = sparse(M);
     %elseif strcmp(method,'frc')
     %    nmix = varargin{2};
     %    M = sparse(d,k);

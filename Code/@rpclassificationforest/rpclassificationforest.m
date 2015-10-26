@@ -82,16 +82,16 @@ classdef rpclassificationforest
                         'skipchecks'    'stream'    'fboot'...
                         'SampleWithReplacement' 's' 'mdiff' 'sparsemethod'...
                         'RandomForest'   'Robust'   'NWorkers'  'Stratified'...
-                        'nmix'  'rotate'};
+                        'nmix'  'rotate'    'p'};
             defaults = {[]  []  'gdi'   []  []  1   ceil(size(X,2)^(2/3))...
                         'off'    []  'off'    'classification'  1e-6    {}...
                         []  'off'   false  []  1    true   3    'off'   'dense'...
-                        false false 1   false   2   false};
+                        false false 1   false   2   false  []};
             [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
                 nvartosample,Merge,categ,Prune,Method,qetoler,names,W,...
                 surrogate,skipchecks,Stream,fboot,...
                 SampleWithReplacement,s,mdiff,sparsemethod,RandomForest,...
-                Robust,NWorkers,Stratified,nmix,rotate,~,extra] = ...
+                Robust,NWorkers,Stratified,nmix,rotate,p,~,extra] = ...
                 internal.stats.parseArgs(okargs,defaults,varargin{:});
             
             %Convert to double if not already
@@ -167,7 +167,8 @@ classdef rpclassificationforest
                         categ,'prune',Prune,'method',Method,'qetoler',...
                         qetoler,'names',names,'weights',W,'surrogate',...
                         surrogate,'skipchecks',skipchecks,'stream',Stream,...
-                        's',s,'mdiff',mdiff,'sparsemethod',sparsemethod,'nmix',nmix);
+                        's',s,'mdiff',mdiff,'sparsemethod',sparsemethod,'nmix',nmix,...
+                        'p',p);
                 else
                     Tree{i} = classregtree2(Xtree(ibidx,:),Y(ibidx,:),...
                         'priorprob',Prior,'cost',Cost,'splitcriterion',...
@@ -424,26 +425,33 @@ classdef rpclassificationforest
             predmat = NaN(n,forest.nTrees);
             YTree = cell(n,forest.nTrees);
             Tree = forest.Tree;
+            rotate = ~isempty(forest.rotmat);
             if ~forest.RandomForest
                 parfor i = 1:forest.nTrees
-                    YTree(:,i) = rptreepredict(Tree{i},X);
+                    if rotate
+                        Xtree = X*forest.rotmat(:,:,i);
+                    else
+                        Xtree = X;
+                    end
+                    YTree(:,i) = rptreepredict(Tree{i},Xtree);
                 end
             else
                 parfor i = 1:forest.nTrees
-                    YTree(:,i) = eval(Tree{i},X);
+                    if rotate
+                        Xtree = X*forest.rotmat(:,:,i);
+                    else
+                        Xtree = X;
+                    end
+                    YTree(:,i) = eval(Tree{i},Xtree);
                 end
             end
             Labels = forest.classname;
             for j = 1:length(Labels)
                 predmat(strcmp(YTree,Labels{j})) = j;
             end
-            if length(Labels) > 2
-                ensemblepredictions = mode(predmat,2);
-                missing = isnan(ensemblepredictions);
-                Y = Labels(ensemblepredictions(~missing));
-            else
-                Y = sum(predmat==2,2)./sum(~isnan(predmat),2);  %Y is fraction of trees that votes for positive class
-            end
+            ensemblepredictions = mode(predmat,2);
+            missing = isnan(ensemblepredictions);
+            Y = Labels(ensemblepredictions(~missing));
         end     %function predict
         
         function sp = db_sparsity(forest)
