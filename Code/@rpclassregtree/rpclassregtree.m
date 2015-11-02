@@ -417,7 +417,7 @@ defaults = {[]            []      'gdi'                        ...
             []         []          1                          ...
             'all'          'on'          []            'off'    Method      ...
             1e-6      {}       []        'off'      false ...
-            []  3   'off'   'dense' 2   []};
+            []  3   'off'   'sparse' 2   []};
 
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
@@ -698,10 +698,6 @@ if strcmp(mdiff,'all') && K > 1
     end
 end
 
-%if strcmp(sparsemethod,'sparse') && nusevars <= 10
-%    sparsemethod = 'lowk';
-%end
-
 while(tnode < nextunusednode)
    % Record information about this node
    noderows = assignednode{tnode};
@@ -849,7 +845,7 @@ while(tnode < nextunusednode)
          nodenumber(nextunusednode+(0:1)) = nextunusednode+(0:1)';
          parent(nextunusednode+(0:1)) = tnode;
          rpm{tnode} = promat(:,bestvar);
-         if strcmp(mdiff,'on') && K > 1
+         if strcmp(mdiff,'all') || strcmp(mdiff,'node') && K > 1
              if ~isempty(md_idx)
                 isdelta(tnode) = bestvar <= max(md_idx);
              end
@@ -956,11 +952,11 @@ Tree.catcols   = categ;
 Tree.names     = names;
 Tree.minleaf   = minleaf;
 Tree.minparent = minparent;
-if strcmp(mdiff,'on') && K > 1
-    Tree.nvartosample = nvartosample + 1;
-else
+%if strcmp(mdiff,'all') && K > 1
+%    Tree.nvartosample = nvartosample + 1;
+%else
     Tree.nvartosample = nvartosample;
-end
+%end
 Tree.mergeleaves = Merge;
 %Tree.nvarsplit = nvarsplit2;
 %Tree.nvarsplit = nvarsplit;
@@ -1021,7 +1017,7 @@ function M = srpmat(d,k,method,varargin)
         M = sparse(d,k);
         M(randsample(d*k,k,false)) = randsample([-1 1],k,true,[0.5 0.5]);
         M = M(:,any(M));
-    %elseif strcmp(method,'sparse')
+    %elseif strcmp(method,'jovo')
     %    M = sparse(d,k);
     %    stop = false;
     %    while ~stop
@@ -1033,24 +1029,14 @@ function M = srpmat(d,k,method,varargin)
     %    M(nnz(round(nnzs/2)+1:end))=-1;
     %    M = M(:,any(M));
     elseif strcmp(method,'sparse')
-        M = sparse(d,k);
-        nzs=randperm(d*k,k);
-        nnzs = length(nzs);
-        M(nzs(1:round(nnzs/2)))=1;
-        M(nzs(round(nnzs/2)+1:end))=-1;
+        kk = round(k/(1-1/exp(1)));
+        M = sparse(d,kk);
+        nzs=randperm(d*kk,kk);
+        npos = rand(kk,1) > 0.5;
+        M(nzs(npos))=1;
+        M(nzs(~npos))=-1;
         M = M(:,any(M));
-    elseif strcmp(method,'lowk')
-        M = zeros(d,k);
-        R = poissrnd(1,1,k);
-        R(R==0) = 1;
-        R(R>d) = d;
-        rowidx = arrayfun(@(n) randsample(d,n,false),R,'UniformOutput',false);
-        for j = 1:k
-            M(rowidx{j},j) = 1;
-        end
-        binsample = randsample([-1 1],sum(R),true,[0.5 0.5]);
-        M(M==1) = binsample;
-        M = sparse(M);
+        M = M(:,1:min(k,size(M,2)));
     %elseif strcmp(method,'frc')
     %    nmix = varargin{2};
     %    M = sparse(d,k);
