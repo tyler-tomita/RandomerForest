@@ -27,7 +27,6 @@ classifiers = fieldnames(Lhat);
 for i = 1:length(classifiers)
     cl = classifiers{i};
     h(i) = errorbar(dims,Lhat.(cl)(:)',sem.(cl));
-    i = i + 1;
     hold on
 end
 xlabel('d')
