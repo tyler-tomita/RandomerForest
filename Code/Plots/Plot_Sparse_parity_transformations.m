@@ -9,7 +9,7 @@ runSims = false;
 if runSims
     run_Sparse_parity_transformations
 else
-    load Sparse_parity_transformations2
+    load ~/Sparse_parity_transformations
 end
 
 Transformations = fieldnames(mean_err_rf);
