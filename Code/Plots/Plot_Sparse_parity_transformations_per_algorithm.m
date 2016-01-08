@@ -33,29 +33,30 @@ for j = 1:length(Transformations)
     end
 
     classifiers = fieldnames(Lhat);
-
-    figure(j)
     
     for i = 1:length(classifiers)
         cl = classifiers{i};
+        figure(i)
         h(i) = errorbar(dims,Lhat.(cl)(:)',sem.(cl));
-        i = i + 1;
         hold on
-    end
+    end  
+end
+
+for i = 1:length(classifiers)
+    figure(i)
     xlabel('d')
     ylabel('Lhat')
-    title(Transform)
-    legend('RF','RerF','RerFdn','Rotation RF','Location','southeast')
-    
-    ax(j) = gca;
-    YLower(j) = ax(j).YLim(1);
-    YUpper(j) = ax(j).YLim(2);
+    title(classifiers{i},'Interpreter','none')
+    legend('Untransformed','Rotated','Scaled','Affine','Outlier','Location','southeast')
+    ax(i) = gca;
+    YLower(i) = ax(i).YLim(1);
+    YUpper(i) = ax(i).YLim(2);
 end
 
 YLower = min(YLower);
 YUpper = max(YUpper);
 
-for j = 1:length(Transformations)
-    ax(j).YLim = [YLower YUpper];
-    save_fig(gcf,['~/RandomerForest/Figures/Sparse_parity_' Transformations{j}])
+for i = 1:length(classifiers)
+    ax(i).YLim = [YLower YUpper];
+    save_fig(gcf,['~/RandomerForest/Figures/Sparse_parity_transformations_' classifiers{i}])
 end
