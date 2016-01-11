@@ -75,7 +75,7 @@ end
 [~,rf_rot.minIdx] = min(rf_rot.Lhat(end,:));
 
 %% Plot posterior heat maps
-npoints = 1000;
+npoints = 200;
 [xgv,ygv] = meshgrid(linspace(xmin,xmax,npoints),linspace(ymin,ymax,npoints));
 X = xgv(:);
 Y = ygv(:);
