@@ -38,7 +38,7 @@ for j = 1:length(Transformations)
     
     for i = 1:length(classifiers)
         cl = classifiers{i};
-        h(i) = errorbar(dims,Lhat.(cl)(:)',sem.(cl));
+        h(i) = errorbar(dims,Lhat.(cl)(:)',sem.(cl),'LineWidth',2);
         i = i + 1;
         hold on
     end
@@ -48,12 +48,15 @@ for j = 1:length(Transformations)
     legend('RF','RerF','RerFdn','Rotation RF','Location','southeast')
     
     ax(j) = gca;
+    ax(j).YScale = 'log';
     YLower(j) = ax(j).YLim(1);
     YUpper(j) = ax(j).YLim(2);
 end
 
-YLower = min(YLower);
-YUpper = max(YUpper);
+%YLower = min(YLower);
+%YUpper = max(YUpper);
+YLower = .005;
+YUpper = .55;
 
 for j = 1:length(Transformations)
     ax(j).YLim = [YLower YUpper];
