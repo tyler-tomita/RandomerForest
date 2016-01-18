@@ -2,26 +2,36 @@ close all
 clear
 clc
 
-dims = [5 10 25 50 100];
+fpath = mfilename('fullpath');
+rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
+
+rng(1);
+
+n = 1000;
+ntrees = 500;
+ntrials = 5;
+NWorkers = 2;
+Class = [0;1];
+dims = [2 5 10 25 50 100];
 
 for j = 1:length(dims)
     
     d = dims(j);
-    n = 1000;
-    dgood = 3;
-    ntrees = 500;
-    ntrials = 5;
-    NWorkers = 2;
+    dgood = min(3,d);
+    
     if d <= 5
         mtrys = 1:d;
     else
         mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
     end
-    err_rf = zeros(ntrees,length(mtrys),ntrials);
-    err_rerf = zeros(ntrees,length(mtrys),ntrials);
-    err_rerfdn = zeros(ntrees,length(mtrys),ntrials);
-    err_rf_rot = zeros(ntrees,length(mtrys),ntrials);
-    Class = [0;1];
+    Lhat.rf = zeros(ntrees,length(mtrys),ntrials);
+    Lhat.rerf = zeros(ntrees,length(mtrys),ntrials);
+    Lhat.rerfdn = zeros(ntrees,length(mtrys),ntrials);
+    Lhat.rf_rot = zeros(ntrees,length(mtrys),ntrials);
+    trainTime.rf = zeros(ntrials,length(mtrys));
+    trainTime.rerf = zeros(ntrials,length(mtrys));
+    trainTime.rerfdn = zeros(ntrials,length(mtrys));
+    trainTime.rf_rot = zeros(ntrials,length(mtrys));
 
     for trial = 1:ntrials
 
@@ -50,72 +60,92 @@ for j = 1:length(dims)
 
             fprintf('mtry = %d\n',mtry)
             
-            rf = rpclassificationforest(ntrees,X,Ystr,'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf(:,i,trial) = oobpredict(rf,X,Ystr,'every');
+            tic;
+            cl.rf = rpclassificationforest(ntrees,X,Ystr,'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+            trainTime.rf(trial,i) = toc;
+            Lhat.rf(:,i,trial) = oobpredict(cl.rf,X,Ystr,'every');
 
-            rerf = rpclassificationforest(ntrees,X,Ystr,'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerf(:,i,trial) = oobpredict(rerf,X,Ystr,'every');
+            tic;
+            cl.rerf = rpclassificationforest(ntrees,X,Ystr,'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+            trainTime.rerf(trial,i) = toc;
+            Lhat.rerf(:,i,trial) = oobpredict(cl.rerf,X,Ystr,'every');
 
-            rerfdn = rpclassificationforest(ntrees,X,Ystr,'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerfdn(:,i,trial) = oobpredict(rerfdn,X,Ystr,'every');
+            tic;
+            cl.rerfdn = rpclassificationforest(ntrees,X,Ystr,'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+            trainTime.rerfdn(trial,i) = toc;
+            Lhat.rerfdn(:,i,trial) = oobpredict(cl.rerfdn,X,Ystr,'every');
             
-            rf_rot = rpclassificationforest(ntrees,X,Ystr,'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf_rot(:,i,trial) = oobpredict(rf_rot,X,Ystr,'every');
+            tic;
+            cl.rf_rot = rpclassificationforest(ntrees,X,Ystr,'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+            trainTime.rf_rot(trial,i) = toc;
+            Lhat.rf_rot(:,i,trial) = oobpredict(cl.rf_rot,X,Ystr,'every');
 
             i = i + 1;
         end
     end
 
-    save(sprintf('~/RandomerForest/Results/Sparse_parity_parameter_selection_n%d_d%d.mat',n,d),'err_rf','err_rerf','err_rerfdn','err_rf_rot')
+    save(sprintf([rerfPath 'RandomerForest/Results/Sparse_parity_parameter_selection_n%d_d%d.mat'],n,d),'Lhat','trainTime')
 
     if length(mtrys) < 5
         emptyCol = 5 - length(mtrys);
         
-        sem_rf(:,1:length(mtrys),j) = std(err_rf,[],3)/sqrt(ntrials);
-        sem_rerf(:,1:length(mtrys),j) = std(err_rerf,[],3)/sqrt(ntrials);
-        sem_rerfdn(:,1:length(mtrys),j) = std(err_rerfdn,[],3)/sqrt(ntrials);
-        sem_rf_rot(:,1:length(mtrys),j) = std(err_rf_rot,[],3)/sqrt(ntrials);
-        sem_rf(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
-        sem_rerf(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
-        sem_rerfdn(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
-        sem_rf_rot(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
+        semLhat.rf(:,1:length(mtrys),j) = std(Lhat.rf,[],3)/sqrt(ntrials);
+        semLhat.rerf(:,1:length(mtrys),j) = std(Lhat.rerf,[],3)/sqrt(ntrials);
+        semLhat.rerfdn(:,1:length(mtrys),j) = std(Lhat.rerfdn,[],3)/sqrt(ntrials);
+        semLhat.rf_rot(:,1:length(mtrys),j) = std(Lhat.rf_rot,[],3)/sqrt(ntrials);
+        semLhat.rf(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
+        semLhat.rerf(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
+        semLhat.rerfdn(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
+        semLhat.rf_rot(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
 
-        var_rf(:,1:length(mtrys),j) = var(err_rf,0,3);
-        var_rerf(:,1:length(mtrys),j) = var(err_rerf,0,3);
-        var_rerfdn(:,1:length(mtrys),j) = var(err_rerfdn,0,3);
-        var_rf_rot(:,1:length(mtrys),j) = var(err_rf_rot,0,3);
-        var_rf(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
-        var_rerf(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
-        var_rerfdn(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
-        var_rf_rot(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
-
-        mean_err_rf(:,1:length(mtrys),j) = mean(err_rf,3);
-        mean_err_rerf(:,1:length(mtrys),j) = mean(err_rerf,3);
-        mean_err_rerfdn(:,1:length(mtrys),j) = mean(err_rerfdn,3);
-        mean_err_rf_rot(:,1:length(mtrys),j) = mean(err_rf_rot,3);
-        mean_err_rf(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
-        mean_err_rerf(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
-        mean_err_rerfdn(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
-        mean_err_rf_rot(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
+        meanLhat.rf(:,1:length(mtrys),j) = mean(Lhat.rf,3);
+        meanLhat.rerf(:,1:length(mtrys),j) = mean(Lhat.rerf,3);
+        meanLhat.rerfdn(:,1:length(mtrys),j) = mean(Lhat.rerfdn,3);
+        meanLhat.rf_rot(:,1:length(mtrys),j) = mean(Lhat.rf_rot,3);
+        meanLhat.rf(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
+        meanLhat.rerf(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
+        meanLhat.rerfdn(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
+        meanLhat.rf_rot(:,length(mtrys)+1:5,j) = NaN(ntrees,emptyCol);
+        
+        semTrainTime.rf(1,1:length(mtrys),j) = std(trainTime.rf)/sqrt(ntrials);
+        semTrainTime.rerf(1,1:length(mtrys),j) = std(trainTime.rerf)/sqrt(ntrials);
+        semTrainTime.rerfdn(1,1:length(mtrys),j) = std(trainTime.rerfdn)/sqrt(ntrials);
+        semTrainTime.rf_rot(1,1:length(mtrys),j) = std(trainTime.rf_rot)/sqrt(ntrials);
+        semTrainTime.rf(1,length(mtrys)+1:5,j) = NaN(1,emptyCol);
+        semTrainTime.rerf(1,length(mtrys)+1:5,j) = NaN(1,emptyCol);
+        semTrainTime.rerfdn(1,length(mtrys)+1:5,j) = NaN(1,emptyCol);
+        semTrainTime.rf_rot(1,length(mtrys)+1:5,j) = NaN(1,emptyCol);
+        
+        meanTrainTime.rf(1,1:length(mtrys),j) = mean(trainTime.rf);
+        meanTrainTime.rerf(1,1:length(mtrys),j) = mean(trainTime.rerf);
+        meanTrainTime.rerfdn(1,1:length(mtrys),j) = mean(trainTime.rerfdn);
+        meanTrainTime.rf_rot(1,1:length(mtrys),j) = mean(trainTime.rf_rot);
+        meanTrainTime.rf(1,length(mtrys)+1:5,j) = NaN(1,emptyCol);
+        meanTrainTime.rerf(1,length(mtrys)+1:5,j) = NaN(1,emptyCol);
+        meanTrainTime.rerfdn(1,length(mtrys)+1:5,j) = NaN(1,emptyCol);
+        meanTrainTime.rf_rot(1,length(mtrys)+1:5,j) = NaN(1,emptyCol);
     else
-        sem_rf(:,:,j) = std(err_rf,[],3)/sqrt(ntrials);
-        sem_rerf(:,:,j) = std(err_rerf,[],3)/sqrt(ntrials);
-        sem_rerfdn(:,:,j) = std(err_rerfdn,[],3)/sqrt(ntrials);
-        sem_rf_rot(:,:,j) = std(err_rf_rot,[],3)/sqrt(ntrials);
+        semLhat.rf(:,:,j) = std(Lhat.rf,[],3)/sqrt(ntrials);
+        semLhat.rerf(:,:,j) = std(Lhat.rerf,[],3)/sqrt(ntrials);
+        semLhat.rerfdn(:,:,j) = std(Lhat.rerfdn,[],3)/sqrt(ntrials);
+        semLhat.rf_rot(:,:,j) = std(Lhat.rf_rot,[],3)/sqrt(ntrials);
 
-        var_rf(:,:,j) = var(err_rf,0,3);
-        var_rerf(:,:,j) = var(err_rerf,0,3);
-        var_rerfdn(:,:,j) = var(err_rerfdn,0,3);
-        var_rf_rot(:,:,j) = var(err_rf_rot,0,3);
+        meanLhat.rf(:,:,j) = mean(Lhat.rf,3);
+        meanLhat.rerf(:,:,j) = mean(Lhat.rerf,3);
+        meanLhat.rerfdn(:,:,j) = mean(Lhat.rerfdn,3);
+        meanLhat.rf_rot(:,:,j) = mean(Lhat.rf_rot,3);
+        
+        semTrainTime.rf(1,:,j) = std(trainTime.rf)/sqrt(ntrials);
+        semTrainTime.rerf(1,:,j) = std(trainTime.rerf)/sqrt(ntrials);
+        semTrainTime.rerfdn(1,:,j) = std(trainTime.rerfdn)/sqrt(ntrials);
+        semTrainTime.rf_rot(1,:,j) = std(trainTime.rf_rot)/sqrt(ntrials);
 
-        mean_err_rf(:,:,j) = mean(err_rf,3);
-        mean_err_rerf(:,:,j) = mean(err_rerf,3);
-        mean_err_rerfdn(:,:,j) = mean(err_rerfdn,3);
-        mean_err_rf_rot(:,:,j) = mean(err_rf_rot,3);
+        meanTrainTime.rf(1,:,j) = mean(trainTime.rf);
+        meanTrainTime.rerf(1,:,j) = mean(trainTime.rerf);
+        meanTrainTime.rerfdn(1,:,j) = mean(trainTime.rerfdn);
+        meanTrainTime.rf_rot(1,:,j) = mean(trainTime.rf_rot);
     end
 
 end
 
-save('~/RandomerForest/Results/Sparse_parity.mat','sem_rf','sem_rerf','sem_rerfdn','sem_rf_rot',...
-    'var_rf','var_rerf','var_rerfdn','var_rf_rot',...
-    'mean_err_rf','mean_err_rerf','mean_err_rerfdn','mean_err_rf_rot')
+save([rerfPath 'RandomerForest/Results/Sparse_parity.mat'],'meanLhat','semLhat','meanTrainTime','semTrainTime')
