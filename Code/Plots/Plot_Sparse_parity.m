@@ -2,6 +2,22 @@ clear
 close all
 clc
 
+LineWidth = 3;
+FontSize = .25;
+axWidth = 2;
+axHeight = 2;
+axLeft = [FontSize*4 FontSize*8+axWidth FontSize*4 FontSize*8+axWidth];
+axBottom = [FontSize*8+axHeight FontSize*8+axHeight FontSize*4 FontSize*4];
+cbWidth = .25;
+cbHeight = axHeight;
+cbLeft = axLeft(4) + axWidth + FontSize;
+cbBottom = axBottom(4);
+figWidth = cbLeft + cbWidth + FontSize*4;
+figHeight = axBottom(1) + axHeight + FontSize*4;
+
+fpath = mfilename('fullpath');
+rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
+
 runSims = true;
 
 if runSims

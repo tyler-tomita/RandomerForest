@@ -1,0 +1,209 @@
+Reviewer 1}
+
+``It is not clear why mean difference vectors are needed in RerF(d). Also, this doesn't seem to improve classification performance, but instead often hurts (Sec 4.4).''}
+
+The mean difference vectors are projections that are informed by the data, and are sampled each with a certain probability. As noted in the manuscript, when the data in each class are spherically symmetric (they have identity covariance matrices), these projections provide maximal separation. Even when these conditions are not met, such projections often provide reasonable separability between classes.
+
+``The synthetic experiments are interesting, as they show that RerF can do better than RFs in some cases. However, is there a reason for RerF without ``d'' nor ``r'' to not be present in the plots?''}
+
+RerF w/o d nor was not invariant to rotation.
+
+``For the benchmarks on the 126 datasets, RerF seems to do very similar to RFs, and RerF(d) and RerF(d+r) hurt (in average). This contrasts with the strong statement in the abstract ``We therefore putatively propose that RerF be considered a replacement for RF as the general purpose classifier of choice''.''} 
+
+Although performance of RerF and RF is comparable, a pairwise Wilcoxon signed rank test shows that the misclassification rate for RerF is slightly lower.
+
+``Something important that is missing is why or when RerF does worse than RF. There are 121 benchmark datasets, but what is it that makes RF or RerF do worse on them? is it the feature type? categorical features? etc. Including such analysis would benefit the paper and improve the discussion and comparison of the different methods presented, and when each should be used.''}
+
+We have conjectures as to why one might perform better than the other on a particular dataset. An analysis of how the properties of a dataset affect performance would be very insightful, and can be done.
+
+``It would be interesting to see what RerF(r) does, without the 'd' part, since I feel that pass to ranks is more beneficial than the mean difference vector step.''}
+
+This is a great suggestion. The relative benefit of passing to ranks vs projecting onto the mean difference vector depends on the data set. For the Trunk simulation, we see that the mean difference is much more beneficial than passing to ranks.
+
+``The base method RerF, without d nor r, is almost equivalent to Breiman's Forest-RC. Therefore, if the pass to ranks and mean difference vectors do not provide a consistent improvement, the paper should instead be presented as a review and comparison of existing techniques, rather than a novel technique that replaces RFs''}
+
+The difference between our method and Forest-RC lies in the fact that our method does not fix the number of variables to be 'mixed.' Therefore our method is more flexible and allows for more diverse trees to be generated. Although the pass to ranks and mean difference vectors do not always provide improvement, there are certainly situations in which these do substantially improve performance. The synthetic Trunk and Parity datasets are two examples. While these were constructed specifically to demsonstrate the usefulness of our methods, it is likely that there also exist real world datasets for which passing to ranks and the mean difference vectors provide substantial improvement.
+
+Reviewer 2}
+
+``Several works have already explored Random forests variants using oblique splits that can indeed improve significantly with respect to random forests. The way such splits are generated here (through sparse random projections) is interesting but it is not very different from the way they are generated in Breiman’s Forest-RC method''}
+
+The two other proposed modifications are not very well motivated or presented. Concerning the rank transformation, I think the author should better explain why scale and unit invariance is so important and in particular why they think it’s really possible (and relevant) to combine such invariance with rotation invariance. Standard random forests are scale invariant because they are never comparing features. As soon as you compare features (as it is the case with oblique splits), you have to make this comparison scale dependent. The proposed solution, turn feature values into ranks, is very straightforward and not necessarily the only or best solution (why not simply standardising the features for example?).}
+
+It is unclear what is meant by comparing features. Scale invariance becomes an issue when features are combined. In the case of oblique splits, features are combined linearly. If the scale of one feature is substantially greater in magnitude than the others in a linear combination, the variance of said feature will swamp out the variance of the others. We chose the rank transformation because in addition to homogenizing scale across all features, estimation of the mean difference vectors is robust to outliers. 
+
+From the description in the paper, I was not really able to understand the third modification that computes the mean difference vectors. \hat{\mu}_c is defined as the estimated class conditional mean. Is it the mean of the original feature vector or of the transformed input vector through matrix A? In any case, it should be a constant vector. How can it be concatenated with the matrix \tilde{X}? Do you expand it into a constant d x n matrix with constant rows? A more precise description of this method should be given.}
+
+\hat{\mu}_c is computed in the following way: For each dimension k, k=1,...p, \hat{\mu}_c(k) = mean(x_c(k)), x_c = {x_i: y_i = c}. That is, the kth element of \hat{\mu}_c is the average over those values of the kth dimension for samples associated with class label c. In a certain sense, it is correct to say that it is a constant vector. Within a single tree, it is constant. However, it will vary from tree to tree due to the bootstrapping of samples. For C classes, we compute $\Delta = (\delta_{(2)-(1)}, \ldots, \delta_{(C)-(1)}) \in \Real^{(C-1) \times p}$, where $\delta_{(i)-(j)} = \hat{\mu}_i - \hat{\mu}_j$. With probability $\frac{\binom{p-1}{d-1}}{\binom{p}{d}}$ each p-dimensional vector $\delta{(i)-(j)} \in \Delta$ is appended to the matrix A. 
+
+All in all, the proposed modifications are very heuristic. Although they indeed could work, it’s not clear why they are better than other potential alternative ways to address the same issues with trees.}
+
+The reason for our proposed modifcations as opposed to alternative ways for addressing affine invariance is largely scalability. Our methods utilize sparse projections and do not rely on expensive matrix inversions, singular value decompositions, or convex optimization problems. The goal is to allow for a broader distribution of trees to be sampled while keeping the scalability close to that of random forests. 
+
+RerF is only compared with standard RF. The comparison should include other oblique tree models, for example Breiman’s Forest-RC method, which is very close to RerRF, or Rodriguez et al’s rotation forests.}
+
+This is an excellent point and is currently being addressed. 
+
+The authors do not provide the exact setting of all methods, which does not allow me to really appreciate how relevant the experiments are. More precisely, the authors say that the number of non-zero values in A was fixed to the same value for both RF and RerF. What is this number? How was it chosen? I think that the impact of the parameter d on both RF and RerF should be analysed thoroughly, as it might impact both methods differently. RF might be outperformed by RerF in the experiments only because the choice of d is more favorable to RerF than to RF.}
+
+In RF, the $p \times d$ matrix A is sampled such that for each of the d columns, the index j is sampled uniformly from {1,...,p}, the jth element is set to a value of 1, and the reamining elements in the column are zero. That is, each column of A has exactly one nonzero element. Therefore, by definition, the number of non-zero values in A for RF is equal to d. In RerF, A still has d nonzero values. However, A is not restricted to having exactly one nonzero element in each column, thereby creating new features that are random linear combinations of the original features. As for the parameter d, our analysis on the 121 benchmark datasets was conducted using three different values: p^(1/2), p^(2/3), and p^(3/4). For each classification method, the misclassification rate on each of the 121 datasets was taken as the lowest given by the three values of d. Given additional time, a wider range of values for d can be tested. 
+
+first paragraph: one does not need to motivate supervised learning and classification for the nips audience.}
+
+Space complexity is a negative points against random forests and should thus not be listed among reasons for its popularity.}
+
+Time complexity: being faster than exhaustive search is not really what makes RF interesting. What makes them interesting is their efficiency with respect to other learning algorithms.}
+
+Interpretability: « for large forests it can become hard to sort the variables in order of importance » Why? What do you mean exactly?}
+
+Scale and unit invariance: why is it so important to be scale and unit invariant?}
+
+See above
+
+« ho’s rotation forests »: To the best of my knowledge, Rotation forests were proposed by Rodriguez et al., not by Ho.}
+
+Thank you for the correction.
+
+The pseudo-code in Procedure 1 is not accurate. Before entering the loop defined in line 8, a tree should be initialized with a single leaf node containing all data points. Then loop in line 8 should rather be something like « while there remain leaf nodes: select one leaf node… ». What is ’s’ in line 9? Notation in line 11 is not clear: what is k? What is t*(k*)? Why X and not \bar{X} in line 11? Etc.}
+
+Thank you for pointing out the error in line 8. A tree shoud be initialized with a single leaf node containing all bootsrapped samples. While the stopping criteria has not been met, split the next leaf node. In line 9, s is the number of points in the current node being split.
+
+Notations in Section 2 are not very clear: Why do you use two indices for tree nodes? (like in « the (ij)^th node »). The definition of \tilde{X} should be A^T \bar{X} and not A^T X, Etc.}
+
+Correct. \tilde{X} = A^T \bar{X}
+
+How do you transform the features of the test points into ranks? Do you assume that all test points are available at training?}
+
+During testing, each test point is embedded into the rank transformed space. The rank transormation of a test point that lies between two training points is linearly interpolated from the rank transformed values. For instance if a single dimension of xtrain = {10,2} and xtest = 4, then xtrain_rank = {2,1} and xtest_rank = $\frac{4-2}{10-2} (2-1) + 1$
+
+The third modification is not clear at all. \hat{\mu}_c is the estimated class condition mean. Of what? Of the original attributes? Of the projected attributes? The exact formula to compute \hat{\mu}_c should be provided.}
+
+See above
+
+What does mean « ambient dim »? Why not talking about « input features » instead?}
+
+By ambient dimensions, we are referring to the original input features. 
+
+In Figure 4(B), the caption says that RF is compared with RerF(d+r), while the text talks about RerF (without (d+r)).}
+
+Apologies for the error. Fig 4(B) is in fact comparing RF with RerF without (d+r). The caption is incorrect.
+
+Figure 4(A) shows that RerF(d+r) is faster than RerF. I don’t understand why this is the case as RerF(d+r) merely adds some pre-processing and more features with respect to RerF.}
+
+This is a surprise for us as well. It could be that RerF(d+r) and RerF(d) are faster if their trees are smaller (i.e. the stopping criteria is reached at a smaller number of total nodes).
+
+Like the authors, I don’t understand why RF is worse than RerF on the artificial problems without transformations, since these problems have been designed to require only axis-parallel splits. I think this unintuitive result should be investigated more thoroughly. I’m wondering again if it’s not a consequence of a poor choice of the parameter d.}
+
+The complexity analysis in Section 4.2 is not very formal. In the worst case, tree construction is indeed O(n^2 \log n) with respect to the training set size. One can reach O(n \log n) only if the trees are assumed to be well balanced (or of random structure in the average case) and either there is only discrete variables or one sorts the training set for numerical variables only once prior to the tree construction. Given that pre-sorting is not possible in the case of the proposed algorithm (given that the features are generated on the fly at each tree node), I think that the complexity should be O(n (log(n)^2)) for balanced trees (as expanding one node has O(n log n) complexity for finding the optimal thresholds).}
+
+The way the matrix A is generated for RerF is not totally clear to me. The authors mention that they select d non-zero numbers uniformly at random in A which is of size p x d. Does it mean then that several columns of A will be full of zeroes and thus that potentially much less than d linear combinations will be tested at each node?}
+
+Yes, this is correct. Columns full of zeroes are removed. When this happens, less than d linear combinations are tested.
+
+Reviewer 3}
+
+However, I have some concerns about the claimed properties of RerF. I do not see how the proposed manner to build the matrix A would result in a rotational-invariant forest. Besides, even if considering the rank of samples instead of their values do not change the standard RF algorithm, I suspect that it would affect the resulting RerF since the matrix A mixes the coordinates. The simulation on the second data set in Figure 3 seems to corroborate this idea (although on the first data set, RerF are clearly `more rotational invariant' than RF). Would you agree?}
+
+The proposed method utilizes sparse projections to allow oblique splits to sampled and tested. While somewhat restrictive in the possible oblique splits that can be sampled, it is still more flexible than RF. Therefore, it might be more accurate to say that RerF is more robust to rotation than is RF.
+
+Regarding the rank transformation, we agree that it does have an impact on RerF and not on RF specifically because of the mixing of variables. This is why we proposed the rank transformation. 
+
+Section 4.3 is devoted to show that RerFs have the desirable properties of being rotationally, scale and affine invariant. But it seems that the experiments are not conclusive: the results on Parity data set show that RF, RerF(d), and RerF(d+r) behave in the same manner. Maybe you could carry out the same analysis on several other data sets to clearly demonstrate the benefits of RerF compared to RF.}
+
+We agree that the Parity dataset does show RF, RerF(d), and RerF(d+r) to behave similarly. It certainly would be beneficial to conduct the same analysis on additional datasets. We supplement this analysis with additional synthetic datasets as well as real datasets.
+
+- page 2, line 59: There is a mistake in the reference, Breiman's paper should be cited instead of [7]. Besides, I believe Forest-IC should be replaced by Forest-RI (according to the notations of Breiman's paper).
+
+These are indeed mistakes and will be corrected.
+
+page 2, line 75-76: RerFs outperform random forests even if regression problems are intrinsically axis aligned. Could you give any idea why it is true?}
+
+I believe you meant classification and not regression. We demonstrate that this is true with the Trunk and Parity datasets in figure 2. We should be more clear in what we mean when we say that a classification problem is intrinsically axis-aligned. In the case of the Trunk dataset, axis-aligned splits perform well but are suboptimal. This is why although RF performs reasonably well on this problem, the RerF variants perform even better. In the case of the Parity dataset, as we state in the last paragraph of section 4.2, all axis-aligned splits up to a tree depth of p-1 will result in daughter nodes having chance posterior probabilites of being in either class. Therefore, any oblique split up to this depth can only be better than an axis-aligned one.
+
+page 2, line 80: You claim that your method outperform RF in terms of interpretability. What do you mean?}
+
+page 2, line 81: Maybe you should scale back your claim since the error prediction of RF is quite similar to that of RerF (Figure 4 (A)).}
+
+
+page 2, line 88: There is an extra parenthesis.}
+
+page 2, line 96: Your analysis regarding Breiman's forest is true when setting mtry=1. But in most applications and in Breiman's paper, other values of mtry are considered (mtry = sqrt{p} or mtry = log2(p)). This could be interesting to note.}
+
+Again, Forest-IC should actually be Forest-RI. Regardless of the value of mtry, we still assert that Forest-RI is a special case of our linear threshold forest framework. It restricts splits to be axis-aligned, whereas the linear threshold forest framework does not require splits to be axis-aligned.
+
+page 3, line 134: You claim that the resulting procedure is `nearly rotationally invariant'. Could you define it precisely? Since the original directions are weighted by a factor -1 or +1, I suspect that the resulting procedure still highly depends on the original directions.}
+
+See above. Rather than stating that RerF is nearly rotationally invariant, it is probably better to state that RerF is more robust to rotation than is RF.
+
+page 3, line 161: `if we convert for each dimension...' Although I understand the idea, I do not understand well how you transform the data. Could you be a little bit more specific?}
+
+Let $X_{i,j}$ be the value of the jth dimension for the ith data point. For a single dimension $j \in [p]$, sort ${X_{i,j}: i \in [n]}$ from smallest to largest. The smallest value is assigned a rank of 1, the second smallest is assigned a rank of 2, and so forth. Do this for each dimension.
+
+page 4, third paragraph: Could you detail why concatenating delta is a good idea? I would have supposed that the easiest way to use delta was to use it as a projection vector into the matrix A.}
+
+We made some errors in describing the procedure for utilizing the mean difference vectors. For clarity, we will describe it again here. For C classes, we compute $\Delta = (\delta_{(2)(1)}, \ldots, \delta_{(C)(1)}) \in Real^{(C-1) \times p}$, where $\delta_{(i)(j)} = \hat{\mu}_i - \hat{\mu}_j$ is the difference in means of class i and j. With probability $\frac{\binom{p-1}{d-1}}{\binom{p}{d}}$ each p-dimensional vector $\delta{(i)(j)} \in \Delta$ is appended to the matrix A. Each vector $\delta_{(i)(j)}$ is a supervised projection that maximizes the distance between the projected means of class i and j. It is intuitively clear why such projections can be good.
+
+Reviewer 4}
+
+The paper is limited in novelty and is largely empirical in nature not well suited for NIPS.}
+
+Reviewer 5}
+
+(1) the term ``affine invariance'' is not well defined. Either something is invariant with respect to a certain transformation or not. Otherwise, ``robust to'' might be the better wording.}
+
+Addressed above.
+
+(2) The title is pretty special and I have no idea how ``randomer'' relates to the content of the paper.}
+
+The basis for the term 'randomer forest' lies in the fact that RerF relaxes the restriction of axis-aligned splits to allow the sampling of oblique splits. This increases the randomization of trees.
+
+(3) ``the act of using predictors to make a prediction''}
+ 
+(4) ``random forests are the best classifier'', do not make such a statement in general. It might be true under certain assumptions of the data distribution,
+but making such a general statement and ranking of classifiers is not reasonable taking the no-free-lunch-theorem into account.}
+
+Addressed above.
+
+(5) the authors use quite unusual terms such as ambient space or coordinates for features}
+
+Addressed above.
+
+(6) stating that oblique forests are sensitive to outliers is not true in general. This depends very much on the algorithm used to calculate an ``oblique split''}
+
+I couldn't find this statement in the paper.
+
+(7) the related work section is rather small}
+
+(8) it is unclear how rotation robustness can be achieved by sparse random projections, this is neither explained, proven or motivated in the paper}
+
+Addressed above.
+
+(9) when the authors use ``pass to ranks'' it is unclear for me what happens during testing. For computing the features, the values need to be ranked within the sorted list of training values, which requires logarithmic time complexity and is slower than for standard trees.}
+
+Addressed above.
+
+(10) how does the ``mean difference vector'' idea relate to standard Fisher LDA?}
+
+While LDA projections maximizes the ratio of interclass distance to intraclass variation, projection onto the mean difference simply maximizes interclass distance, making no attempt to minimize intraclass variation. When the data structure from each class is normal and spherically symmetric, LDA and projection onto the mean difference vector are identical and optimal. When not spherically symmetric, projection onto the mean difference vector is suboptimal. However, it is substantially faster to compute and more amenable to problems where p >> n than is LDA.
+
+(11) how many trees are used in the experiments of Sect 4.1? there are in general a lot of missing hyperparameters (depth, minimum examples in leaves, etc.).}
+
+The number of trees in the Trunk and Parity experiments was 1500 and 1000 respectively. There was no specific constraint on the depth. Nodes were split as long as they had 10 or more observations and were impure. At each split node, the dimensions of the matrix A were p^(2/3) x p.
+
+(12) only for the synthetic dataset, the training time seems to be comparable to standard RF, this is not the case in Figure 4}
+
+(13) The algorithm needs to be compared not only with standard RF (and Fisher Faces also known as LDA) but also with other classification approaches such as SVM, etc.}
+
+Comparison with additional classification methods will be performed. On the 121 benchmark datasets, RF has previously been shown to outperform all other approaches [6], which is why we only chose to compare our algorithm with that.
+
+(14) The power of the algorithm is heavily over-advertised in the whole paper. I am sorry, but the results do not suggest that this will be the next classifier, everyone should use.}
+
+(15) Although the results have been tested with a theoretical significance test, I cannot see any practical significance of the results, since the approach only showed a very minor improvement.}
+
+Addressed above.
+
+(16) The authors state that the additional cost for RerF is minor, however, this is wrong, since the approach is orders of magnitude slower in the following experiments.}
+
+To better put this statement into perspective, we will perform this analysis with other methods for oblique trees. While RerF is slower than RF, we are inclined to believe that it is substantially faster than other well-known methods for oblique trees.
+
+(17) Comparing the approach with a linear classifier on the Parity dataset is not really fair :)}

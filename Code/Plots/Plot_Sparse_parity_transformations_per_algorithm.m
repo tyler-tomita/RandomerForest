@@ -58,5 +58,5 @@ YUpper = max(YUpper);
 
 for i = 1:length(classifiers)
     ax(i).YLim = [YLower YUpper];
-    save_fig(gcf,['~/RandomerForest/Figures/Sparse_parity_transformations_' classifiers{i}])
+    %save_fig(gcf,['~/RandomerForest/Figures/Sparse_parity_transformations_' classifiers{i}])
 end

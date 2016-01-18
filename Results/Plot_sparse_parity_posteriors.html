@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Plot Sparse Parity Posterior Heat Maps</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-01-11"><meta name="DC.source" content="Plot_sparse_parity_posteriors.m"><style type="text/css">
+      --><title>Plot posterior heat maps</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-01-15"><meta name="DC.source" content="Plot_sparse_parity_posteriors.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,108 +66,52 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Plot Sparse Parity Posterior Heat Maps</h1><!--introduction--><p>Trains RF, RerF, RerFdn, and Rotation RF on sparse parity and plots posterior heat maps for each classifier</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Initialize parameters</a></li><li><a href="#2">Generate datapoints</a></li><li><a href="#3">Train classifiers</a></li><li><a href="#4">Select best hyperparameters for each algorithm</a></li><li><a href="#5">Plot posterior heat maps</a></li></ul></div><h2>Initialize parameters<a name="1"></a></h2><pre class="codeinput">close <span class="string">all</span>
-clear
+  </style></head><body><div class="content"><h1>Plot posterior heat maps</h1><pre class="codeinput">clear
+close <span class="string">all</span>
 clc
 
-n = 1000;
-d = 20;
-dgood = 3;
-ntrees = 1000;
-NWorkers = 2;
-<span class="keyword">if</span> d &lt;= 5
-    mtrys = 1:d;
+fpath = mfilename(<span class="string">'fullpath'</span>);
+rerfPath = fpath(1:strfind(fpath,<span class="string">'RandomerForest'</span>)-1);
+
+runSims = false;
+
+<span class="keyword">if</span> runSims
+    run_sparse_parity_posteriors
 <span class="keyword">else</span>
-    mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
-<span class="keyword">end</span>
-rf.Lhat = zeros(ntrees,length(mtrys));
-rerf.Lhat = zeros(ntrees,length(mtrys));
-rerfdn.Lhat = zeros(ntrees,length(mtrys));
-rf_rot.Lhat = zeros(ntrees,length(mtrys));
-Class = [0;1];
-</pre><h2>Generate datapoints<a name="2"></a></h2><pre class="codeinput">X = zeros(n,d);
-<span class="comment">%Sigma = 1/8*ones(1,d);</span>
-Sigma = 1/32*ones(1,d);
-<span class="comment">%nones = randi(d+1,n,1)-1;</span>
-<span class="comment">%Y = mod(nones,2);</span>
-<span class="comment">%Ystr = cellstr(num2str(Y));</span>
-Mu = sparse(n,d);
-<span class="keyword">for</span> jj = 1:n
-    <span class="comment">%onesidx = randsample(1:d,nones(j),false);</span>
-    <span class="comment">%Mu(j,onesidx) = 1;</span>
-    Mu(jj,:) = binornd(1,0.5,1,d);
-    X(jj,1:d) = mvnrnd(Mu(jj,:),Sigma);
+    load <span class="string">Sparse_parity_posteriors.mat</span>
 <span class="keyword">end</span>
 
-nones = sum(Mu(:,1:dgood),2);
-Ystr = cellstr(num2str(mod(nones,2)));
-
-xmin = min(X(:,1));
-xmax = max(X(:,1));
-ymin = min(X(:,2));
-ymax = max(X(:,2));
-</pre><h2>Train classifiers<a name="3"></a></h2><pre class="codeinput">i = 1;
-
-<span class="keyword">for</span> mtry = mtrys
-
-    fprintf(<span class="string">'mtry = %d\n'</span>,mtry)
-
-    rf.cl{i} = rpclassificationforest(ntrees,X,Ystr,<span class="string">'RandomForest'</span>,true,<span class="string">'nvartosample'</span>,mtry,<span class="string">'NWorkers'</span>,NWorkers,<span class="string">'Stratified'</span>,true);
-    rf.Lhat(:,i) = oobpredict(rf.cl{i},X,Ystr,<span class="string">'every'</span>);
-
-    rerf.cl{i} = rpclassificationforest(ntrees,X,Ystr,<span class="string">'sparsemethod'</span>,<span class="string">'sparse'</span>,<span class="string">'nvartosample'</span>,mtry,<span class="string">'NWorkers'</span>,NWorkers,<span class="string">'Stratified'</span>,true);
-    rerf.Lhat(:,i) = oobpredict(rerf.cl{i},X,Ystr,<span class="string">'every'</span>);
-
-    rerfdn.cl{i} = rpclassificationforest(ntrees,X,Ystr,<span class="string">'sparsemethod'</span>,<span class="string">'sparse'</span>,<span class="string">'mdiff'</span>,<span class="string">'node'</span>,<span class="string">'nvartosample'</span>,mtry,<span class="string">'NWorkers'</span>,NWorkers,<span class="string">'Stratified'</span>,true);
-    rerfdn.Lhat(:,i) = oobpredict(rerfdn.cl{i},X,Ystr,<span class="string">'every'</span>);
-
-    rf_rot.cl{i} = rpclassificationforest(ntrees,X,Ystr,<span class="string">'RandomForest'</span>,true,<span class="string">'rotate'</span>,true,<span class="string">'nvartosample'</span>,mtry,<span class="string">'NWorkers'</span>,NWorkers,<span class="string">'Stratified'</span>,true);
-    rf_rot.Lhat(:,i) = oobpredict(rf_rot.cl{i},X,Ystr,<span class="string">'every'</span>);
-
-    i = i + 1;
-<span class="keyword">end</span>
-</pre><pre class="codeoutput">mtry = 1
-Starting parallel pool (parpool) using the 'local' profile ... connected to 2 workers.
-mtry = 3
-mtry = 5
-mtry = 10
-mtry = 20
-</pre><h2>Select best hyperparameters for each algorithm<a name="4"></a></h2><pre class="codeinput">[~,rf.minIdx] = min(rf.Lhat(end,:));
-[~,rerf.minIdx] = min(rerf.Lhat(end,:));
-[~,rerfdn.minIdx] = min(rerfdn.Lhat(end,:));
-[~,rf_rot.minIdx] = min(rf_rot.Lhat(end,:));
-</pre><h2>Plot posterior heat maps<a name="5"></a></h2><pre class="codeinput">npoints = 200;
-[xgv,ygv] = meshgrid(linspace(xmin,xmax,npoints),linspace(ymin,ymax,npoints));
-X = xgv(:);
-Y = ygv(:);
-Z = zeros(npoints^2,d-2);
-
-rf.posteriors = rerf_classprob(rf.cl{rf.minIdx},[X Y Z]);
-p1 = posterior_map(X,Y,rf.posteriors);
+figure(<span class="string">'visible'</span>,<span class="string">'off'</span>)
+p1 = posterior_map(Xpost,Ypost,mean(rf.posteriors,3));
 xlabel(<span class="string">'x1'</span>)
 ylabel(<span class="string">'x2'</span>)
-title(<span class="string">'RF'</span>)
+t(1) = title(<span class="string">'RF'</span>);
+ax_old(1) = gca;
+c(1) = findobj(gcf,<span class="string">'Type'</span>,<span class="string">'ColorBar'</span>);
 
-figure(2)
-rerf.posteriors = rerf_classprob(rerf.cl{rerf.minIdx},[X Y Z]);
-p2 = posterior_map(X,Y,rerf.posteriors);
+figure(<span class="string">'visible'</span>,<span class="string">'off'</span>)
+p2 = posterior_map(Xpost,Ypost,mean(rerf.posteriors,3));
 xlabel(<span class="string">'x1'</span>)
 ylabel(<span class="string">'x2'</span>)
-title(<span class="string">'RerF'</span>)
+t(2) = title(<span class="string">'RerF'</span>);
+ax_old(2) = gca;
+c(2) = findobj(gcf,<span class="string">'Type'</span>,<span class="string">'ColorBar'</span>);
 
-figure(3)
-rerfdn.posteriors = rerf_classprob(rerfdn.cl{rerfdn.minIdx},[X Y Z]);
-p3 = posterior_map(X,Y,rerfdn.posteriors);
+figure(<span class="string">'visible'</span>,<span class="string">'off'</span>)
+p3 = posterior_map(Xpost,Ypost,mean(rerfdn.posteriors,3));
 xlabel(<span class="string">'x1'</span>)
 ylabel(<span class="string">'x2'</span>)
-title(<span class="string">'RerFdn'</span>)
+t(3) = title(<span class="string">'RerFdn'</span>);
+ax_old(3) = gca;
+c(3) = findobj(gcf,<span class="string">'Type'</span>,<span class="string">'ColorBar'</span>);
 
-figure(4)
-rf_rot.posteriors = rerf_classprob(rf_rot.cl{rf_rot.minIdx},[X Y Z]);
-p4 = posterior_map(X,Y,rf_rot.posteriors);
+figure(<span class="string">'visible'</span>,<span class="string">'off'</span>)
+p4 = posterior_map(Xpost,Ypost,mean(rf_rot.posteriors,3));
 xlabel(<span class="string">'x1'</span>)
 ylabel(<span class="string">'x2'</span>)
-title(<span class="string">'Rotation RF'</span>)
+t(4) = title(<span class="string">'Rotation RF'</span>);
+ax_old(4) = gca;
+c(4) = findobj(gcf,<span class="string">'Type'</span>,<span class="string">'ColorBar'</span>);
 
 cmin = min([p1.CData(:);p2.CData(:);p3.CData(:);p4.CData(:)]);
 cmax = max([p1.CData(:);p2.CData(:);p3.CData(:);p4.CData(:)]);
@@ -175,118 +119,77 @@ cmax = max([p1.CData(:);p2.CData(:);p3.CData(:);p4.CData(:)]);
 <span class="keyword">for</span> i = 1:4
     figure(i)
     caxis([cmin cmax])
+    save_fig(gcf,[rerfPath <span class="string">'RandomerForest/Figures/Sparse_parity_posteriors_'</span> strrep(t(i).String,<span class="string">' '</span>,<span class="string">'_'</span>)])
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_01.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_02.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_03.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_04.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
-##### SOURCE BEGIN #####
-%% Plot Sparse Parity Posterior Heat Maps 
-% Trains RF, RerF, RerFdn, and Rotation RF on sparse parity and plots
-% posterior heat maps for each classifier
 
-%% Initialize parameters
-close all
+cmaps = {<span class="string">'parula'</span> <span class="string">'jet'</span> <span class="string">'hot'</span> <span class="string">'cool'</span> <span class="string">'spring'</span> <span class="string">'summer'</span> <span class="string">'autumn'</span> <span class="string">'winter'</span>};
+
+<span class="keyword">for</span> i = 1:length(cmaps)
+    fig = figure;
+    <span class="keyword">for</span> j = 1:4
+        figure(fig)
+        ax = subplot(2,2,j);
+        newHandle = copyobj(allchild(ax_old(j)),ax);
+        ax.Title.String = ax_old(j).Title.String;
+        ax.XLabel.String = ax_old(j).XLabel.String;
+        ax.YLabel.String = ax_old(j).YLabel.String;
+        ax.XLim = ax_old(j).XLim;
+        ax.YLim = ax_old(j).YLim;
+        colorbar
+        caxis(c(j).Limits)
+    <span class="keyword">end</span>
+    colormap(fig,cmaps{i})
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_01.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_02.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_03.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_04.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_05.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_06.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_07.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_08.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_09.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_10.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_11.png" alt=""> <img vspace="5" hspace="5" src="Plot_sparse_parity_posteriors_12.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot posterior heat maps
+
 clear
+close all
 clc
 
-n = 1000;
-d = 20;
-dgood = 3;
-ntrees = 1000;
-NWorkers = 2;
-if d <= 5
-    mtrys = 1:d;
+fpath = mfilename('fullpath');
+rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
+
+runSims = false;
+
+if runSims
+    run_sparse_parity_posteriors
 else
-    mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
-end
-rf.Lhat = zeros(ntrees,length(mtrys));
-rerf.Lhat = zeros(ntrees,length(mtrys));
-rerfdn.Lhat = zeros(ntrees,length(mtrys));
-rf_rot.Lhat = zeros(ntrees,length(mtrys));
-Class = [0;1];
-
-%% Generate datapoints
-X = zeros(n,d);
-%Sigma = 1/8*ones(1,d);
-Sigma = 1/32*ones(1,d);
-%nones = randi(d+1,n,1)-1;
-%Y = mod(nones,2);
-%Ystr = cellstr(num2str(Y));
-Mu = sparse(n,d);
-for jj = 1:n
-    %onesidx = randsample(1:d,nones(j),false);
-    %Mu(j,onesidx) = 1;
-    Mu(jj,:) = binornd(1,0.5,1,d);
-    X(jj,1:d) = mvnrnd(Mu(jj,:),Sigma);
+    load Sparse_parity_posteriors.mat
 end
 
-nones = sum(Mu(:,1:dgood),2);
-Ystr = cellstr(num2str(mod(nones,2)));
-
-xmin = min(X(:,1));
-xmax = max(X(:,1));
-ymin = min(X(:,2));
-ymax = max(X(:,2));
-
-%% Train classifiers
-i = 1;
-
-for mtry = mtrys
-
-    fprintf('mtry = %d\n',mtry)
-
-    rf.cl{i} = rpclassificationforest(ntrees,X,Ystr,'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-    rf.Lhat(:,i) = oobpredict(rf.cl{i},X,Ystr,'every');
-
-    rerf.cl{i} = rpclassificationforest(ntrees,X,Ystr,'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-    rerf.Lhat(:,i) = oobpredict(rerf.cl{i},X,Ystr,'every');
-
-    rerfdn.cl{i} = rpclassificationforest(ntrees,X,Ystr,'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-    rerfdn.Lhat(:,i) = oobpredict(rerfdn.cl{i},X,Ystr,'every');
-
-    rf_rot.cl{i} = rpclassificationforest(ntrees,X,Ystr,'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-    rf_rot.Lhat(:,i) = oobpredict(rf_rot.cl{i},X,Ystr,'every');
-
-    i = i + 1;
-end
-
-%% Select best hyperparameters for each algorithm
-[~,rf.minIdx] = min(rf.Lhat(end,:));
-[~,rerf.minIdx] = min(rerf.Lhat(end,:));
-[~,rerfdn.minIdx] = min(rerfdn.Lhat(end,:));
-[~,rf_rot.minIdx] = min(rf_rot.Lhat(end,:));
-
-%% Plot posterior heat maps
-npoints = 200;
-[xgv,ygv] = meshgrid(linspace(xmin,xmax,npoints),linspace(ymin,ymax,npoints));
-X = xgv(:);
-Y = ygv(:);
-Z = zeros(npoints^2,d-2);
-
-rf.posteriors = rerf_classprob(rf.cl{rf.minIdx},[X Y Z]);
-p1 = posterior_map(X,Y,rf.posteriors);
+figure('visible','off')
+p1 = posterior_map(Xpost,Ypost,mean(rf.posteriors,3));
 xlabel('x1')
 ylabel('x2')
-title('RF')
+t(1) = title('RF');
+ax_old(1) = gca;
+c(1) = findobj(gcf,'Type','ColorBar');
 
-figure(2)
-rerf.posteriors = rerf_classprob(rerf.cl{rerf.minIdx},[X Y Z]);
-p2 = posterior_map(X,Y,rerf.posteriors);
+figure('visible','off')
+p2 = posterior_map(Xpost,Ypost,mean(rerf.posteriors,3));
 xlabel('x1')
 ylabel('x2')
-title('RerF')
+t(2) = title('RerF');
+ax_old(2) = gca;
+c(2) = findobj(gcf,'Type','ColorBar');
 
-figure(3)
-rerfdn.posteriors = rerf_classprob(rerfdn.cl{rerfdn.minIdx},[X Y Z]);
-p3 = posterior_map(X,Y,rerfdn.posteriors);
+figure('visible','off')
+p3 = posterior_map(Xpost,Ypost,mean(rerfdn.posteriors,3));
 xlabel('x1')
 ylabel('x2')
-title('RerFdn')
+t(3) = title('RerFdn');
+ax_old(3) = gca;
+c(3) = findobj(gcf,'Type','ColorBar');
 
-figure(4)
-rf_rot.posteriors = rerf_classprob(rf_rot.cl{rf_rot.minIdx},[X Y Z]);
-p4 = posterior_map(X,Y,rf_rot.posteriors);
+figure('visible','off')
+p4 = posterior_map(Xpost,Ypost,mean(rf_rot.posteriors,3));
 xlabel('x1')
 ylabel('x2')
-title('Rotation RF')
+t(4) = title('Rotation RF');
+ax_old(4) = gca;
+c(4) = findobj(gcf,'Type','ColorBar');
 
 cmin = min([p1.CData(:);p2.CData(:);p3.CData(:);p4.CData(:)]);
 cmax = max([p1.CData(:);p2.CData(:);p3.CData(:);p4.CData(:)]);
@@ -294,6 +197,26 @@ cmax = max([p1.CData(:);p2.CData(:);p3.CData(:);p4.CData(:)]);
 for i = 1:4
     figure(i)
     caxis([cmin cmax])
+    save_fig(gcf,[rerfPath 'RandomerForest/Figures/Sparse_parity_posteriors_' strrep(t(i).String,' ','_')])
+end
+
+cmaps = {'parula' 'jet' 'hot' 'cool' 'spring' 'summer' 'autumn' 'winter'};
+
+for i = 1:length(cmaps)
+    fig = figure;
+    for j = 1:4
+        figure(fig)
+        ax = subplot(2,2,j);
+        newHandle = copyobj(allchild(ax_old(j)),ax);
+        ax.Title.String = ax_old(j).Title.String;
+        ax.XLabel.String = ax_old(j).XLabel.String;
+        ax.YLabel.String = ax_old(j).YLabel.String;
+        ax.XLim = ax_old(j).XLim;
+        ax.YLim = ax_old(j).YLim;
+        colorbar
+        caxis(c(j).Limits)
+    end
+    colormap(fig,cmaps{i})
 end
 ##### SOURCE END #####
 --></body></html>

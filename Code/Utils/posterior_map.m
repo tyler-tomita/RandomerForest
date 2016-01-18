@@ -11,7 +11,6 @@ function p = posterior_map(X,Y,posteriors)
     p.CData = C;
     colormap(gray)
     caxis([min(p.CData(:)) max(p.CData(:))])
-    p.FaceAlpha = 0.25;
     p.LineStyle = 'none';
     axis([xmin xmax ymin ymax])
     view(2)
