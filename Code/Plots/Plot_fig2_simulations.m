@@ -9,7 +9,7 @@ rng(1);
 
 LineWidth = 2;
 MarkerSize = 12;
-FontSize = .2;
+FontSize = .25;
 axWidth = 1.75;
 axHeight = 1.75;
 axLeft = [FontSize*4 FontSize*8+axWidth FontSize*12+axWidth*2 FontSize*4,...
@@ -59,6 +59,7 @@ ylabel('X_2')
 l = legend('Class 1','Class 2');
 l.Location = 'northwest';
 l.Box = 'off';
+l.FontSize = 12;
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -104,7 +105,7 @@ end
 
 title('(C) Sparse Parity')
 xlabel('d')
-ylabel('Training Time (sec)')
+ylabel('Train Time (s)')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -188,10 +189,11 @@ end
 
 title('(F) Trunk')
 xlabel('d')
-ylabel('Training Time (sec)')
+ylabel('Train Time (s)')
 l = legend('RF','RerF','RerFd','Rotation RF');
 l.Location = 'northwest';
 l.Box = 'off';
+l.FontSize = 12;
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;

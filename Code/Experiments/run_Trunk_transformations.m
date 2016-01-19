@@ -78,7 +78,7 @@ for j = 1:length(dims)
         [X_out,idx_out] = random(outlier_model,0.05*n);
         X_out = cat(1,X,X_out);
         Y_out = cellstr(num2str(Class(idx_out)));
-        Y_out = cat(1,Y,Y_out);
+        Y_out = cat(1,Ystr,Y_out);
 
         i = 1;
 
@@ -170,7 +170,7 @@ for j = 1:length(dims)
         end
     end
 
-    save(sprintf('~/RandomerForest/Results/Trunk_transformations_n%d_d%d.mat',n,d),'err_rf','err_rerf','err_rerfr','err_rerfdn','err_rf_rot')
+    save(sprintf([rerfPath 'RandomerForest/Results/Trunk_transformations_n%d_d%d.mat'],n,d),'err_rf','err_rerf','err_rerfr','err_rerfdn','err_rf_rot')
 
     if length(mtrys) < 5
         emptyCol = 5 - length(mtrys);
@@ -443,6 +443,6 @@ for j = 1:length(dims)
 
 end
 
-save('~/RandomerForest/Results/Trunk_transformations.mat','dims','sem_rf','sem_rerf','sem_rerfr','sem_rerfdn','sem_rf_rot',...
+save([rerfPath 'RandomerForest/Results/Trunk_transformations.mat'],'dims','sem_rf','sem_rerf','sem_rerfr','sem_rerfdn','sem_rf_rot',...
     'var_rf','var_rerf','var_rerfr','var_rerfdn','var_rf_rot',...
     'mean_err_rf','mean_err_rerf','mean_err_rerfr','mean_err_rerfdn','mean_err_rf_rot')
