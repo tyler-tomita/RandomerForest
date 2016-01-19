@@ -11,7 +11,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 %PageHeigth = 11;
 
 %FigPosition = [0 0 8.5 11];
-LineWidth = 3;
+LineWidth = 2;
 FontSize = .25;
 axWidth = 2;
 axHeight = 2;
