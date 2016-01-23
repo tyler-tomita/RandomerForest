@@ -9,7 +9,7 @@ rng(1);
 
 n = 1000;
 ntrees = 500;
-ntrials = 5;
+ntrials = 10;
 NWorkers = 2;
 Class = [0;1];
 dims = [2 5 10 25 50 100];
@@ -38,15 +38,9 @@ for j = 1:length(dims)
         fprintf('trial %d\n',trial)
 
         X = zeros(n,d);
-        %Sigma = 1/8*ones(1,d);
         Sigma = 1/32*ones(1,d);
-        %nones = randi(d+1,n,1)-1;
-        %Y = mod(nones,2);
-        %Ystr = cellstr(num2str(Y));
         Mu = sparse(n,d);
         for jj = 1:n
-            %onesidx = randsample(1:d,nones(j),false);
-            %Mu(j,onesidx) = 1;
             Mu(jj,:) = binornd(1,0.5,1,d);
             X(jj,1:d) = mvnrnd(Mu(jj,:),Sigma);
         end
@@ -59,6 +53,11 @@ for j = 1:length(dims)
         for mtry = mtrys
 
             fprintf('mtry = %d\n',mtry)
+            
+            poolobj = gcp('nocreate');
+            if isempty(poolobj)
+                parpool('local',NWorkers);
+            end
             
             tic;
             cl.rf = rpclassificationforest(ntrees,X,Ystr,'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
@@ -148,4 +147,4 @@ for j = 1:length(dims)
 
 end
 
-save([rerfPath 'RandomerForest/Results/Sparse_parity.mat'],'meanLhat','semLhat','meanTrainTime','semTrainTime')
+save([rerfPath 'RandomerForest/Results/Sparse_parity.mat'],'dims','meanLhat','semLhat','meanTrainTime','semTrainTime')

@@ -89,7 +89,7 @@ Baltimore, MD \\
 % Figure 1
 \begin{figure}[h]
 \begin{center}
-\includegraphics[trim=0in 3.2in 0in 3in, clip=true, width=\linewidth]{../Figures/pdf/Sparse_parity_posteriors}
+\includegraphics[trim=0in 0in 0in 0in, clip=true, width=\linewidth]{../Figures/pdf/Sparse_parity_posteriors}
 \end{center}
 \caption{}
 \label{fig:posteriors}
@@ -99,7 +99,7 @@ Baltimore, MD \\
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 0in 2in 0in, clip=true, width=\linewidth]{../Figures/pdf/Fig2_simulations}
+\includegraphics[trim=0in 0in 0in 0in, clip=true, width=\linewidth]{../Figures/pdf/Fig2_simulations}
 \end{center}
 \caption{}
 \label{fig:sim}
@@ -109,7 +109,7 @@ Baltimore, MD \\
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 0.9in 0in .09in, clip=true, width=\linewidth]{../Figures/pdf/Fig3_transformations}
+\includegraphics[trim=0in 0in 0in 0in, clip=true, width=\linewidth]{../Figures/pdf/Fig3_transformations}
 \end{center}
 \caption{}
 \label{fig:transformations}
@@ -119,7 +119,7 @@ Baltimore, MD \\
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
-\includegraphics[trim=0in 3.1in 0in 2.9in, clip=true, width=\linewidth]{../Figures/pdf/Fig4_benchmark}
+\includegraphics[trim=0in 0in 0in 0in, clip=true, width=\linewidth]{../Figures/pdf/Fig4_benchmark}
 \end{center}
 \caption{}
 \label{fig:benchmark}

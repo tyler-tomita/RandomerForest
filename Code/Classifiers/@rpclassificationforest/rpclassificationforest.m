@@ -7,7 +7,7 @@ classdef rpclassificationforest
         classname;
         RandomForest;
         Robust;
-        NumVars = [];
+%         NumVars = [];
         priors = [];
         rotmat = [];
     end
@@ -182,28 +182,28 @@ classdef rpclassificationforest
             end     %parallel loop over i
             
             %Compute interpretability as total number of variables split on
-            NumVars = NaN(1,nTrees);
-            if RandomForest
-                for i = 1:nTrees
-                    NumVars(i) = sum(Tree{i}.var~=0);
-                end
-            else
-                for i = 1:nTrees
-                    internalnodes = transpose(Tree{i}.node(Tree{i}.var ~= 0));
-                    TreeVars = zeros(1,length(Tree{i}.node));
-                    for nd = internalnodes
-                        if ~Tree{i}.isdelta(nd)
-                            TreeVars(nd) = nnz(Tree{i}.rpm{nd});
-                        end
-                    end
-                    NumVars(i) = sum(TreeVars);
-                end
-            end                        
+%             NumVars = NaN(1,nTrees);
+%             if RandomForest
+%                 for i = 1:nTrees
+%                     NumVars(i) = sum(Tree{i}.var~=0);
+%                 end
+%             else
+%                 for i = 1:nTrees
+%                     internalnodes = transpose(Tree{i}.node(Tree{i}.var ~= 0));
+%                     TreeVars = zeros(1,length(Tree{i}.node));
+%                     for nd = internalnodes
+%                         if ~Tree{i}.isdelta(nd)
+%                             TreeVars(nd) = nnz(Tree{i}.rpm{nd});
+%                         end
+%                     end
+%                     NumVars(i) = sum(TreeVars);
+%                 end
+%             end                        
             forest.Tree = Tree;
             forest.oobidx = oobidx;
             forest.nTrees = length(forest.Tree);
             forest.RandomForest = RandomForest;
-            forest.NumVars = NumVars;
+%             forest.NumVars = NumVars;
             forest.priors = priors;
             if rotate
                 forest.rotmat = RR;
