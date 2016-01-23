@@ -139,4 +139,4 @@ for j = 1:length(dims)
 
 end
 
-save([rerfPath 'RandomerForest/Results/Trunk.mat'],'meanLhat','semLhat','meanTrainTime','semTrainTime')
+save([rerfPath 'RandomerForest/Results/Trunk.mat'],'dims','meanLhat','semLhat','meanTrainTime','semTrainTime')

@@ -9,12 +9,13 @@ rng(1);
 
 LineWidth = 2;
 MarkerSize = 12;
-FontSize = .25;
+FontSize = .2;
+TitleFontSize = 18;
 axWidth = 1.75;
 axHeight = 1.75;
 axLeft = [FontSize*4 FontSize*8+axWidth FontSize*12+axWidth*2 FontSize*4,...
     FontSize*8+axWidth FontSize*12+axWidth*2];
-axBottom = [FontSize*8+axHeight FontSize*8+axHeight FontSize*8+axHeight,...
+axBottom = [FontSize*9+axHeight FontSize*9+axHeight FontSize*9+axHeight,...
     FontSize*4 FontSize*4 FontSize*4];
 figWidth = axLeft(end) + axWidth + FontSize*4;
 figHeight = axBottom(1) + axHeight + FontSize*4;
@@ -68,18 +69,32 @@ ax.Position = [axLeft(1) axBottom(1) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [-2 3];
 ax.YLim = [-2 3];
+ax.XTick = [-2 0 2];
+ax.YTick = [-2 0 2];
+ax.XTickLabel = {'-2';'0';'2'};
+ax.YTickLabel = {'-2';'0';'2'};
 
 ax = subplot(2,3,2);
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
-    [minLhat.(cl),minLhatIdx.(cl)] = min(meanLhat.(cl)(end,:,:),[],2);
-    for j = 1:length(dims)
-        minSemLhat.(cl)(j) = semLhat.(cl)(end,minLhatIdx.(cl)(j),j);
+    if ~strcmp(cl,'rerfdn')
+        [minLhat.(cl),minLhatIdx.(cl)] = min(meanLhat.(cl)(end,:,:),[],2);
+        for j = 1:length(dims)
+            minSemLhat.(cl)(j) = semLhat.(cl)(end,minLhatIdx.(cl)(j),j);
+        end
+        hLhat(i) = errorbar(dims,minLhat.(cl)(:)',minSemLhat.(cl),'LineWidth',LineWidth);
+        hold on
     end
-    hLhat(i) = errorbar(dims,minLhat.(cl)(:)',minSemLhat.(cl),'LineWidth',LineWidth);
-    hold on
 end
+
+if runSims
+    Sparse_parity_bayes_error
+else
+    load Sparse_parity_bayes_error.mat
+end
+
+errorbar(dims,bayes_error,sem_bayes_error,'LineWidth',LineWidth)
 
 title('(B) Sparse Parity')
 xlabel('d')
@@ -97,10 +112,12 @@ ax = subplot(2,3,3);
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
-    trainTime.(cl) = nanmean(meanTrainTime.(cl),2);
-    semMeanTrainTime.(cl) = nanmean(semTrainTime.(cl),2);
-    hTrainTime(i) = errorbar(dims,trainTime.(cl)(:)',semMeanTrainTime.(cl)(:)','LineWidth',LineWidth);
-    hold on
+    if ~strcmp(cl,'rerfdn')
+        trainTime.(cl) = nanmean(meanTrainTime.(cl),2);
+        semMeanTrainTime.(cl) = nanmean(semTrainTime.(cl),2);
+        hTrainTime(i) = errorbar(dims,trainTime.(cl)(:)',semMeanTrainTime.(cl)(:)','LineWidth',LineWidth);
+        hold on
+    end
 end
 
 title('(C) Sparse Parity')
@@ -150,18 +167,34 @@ ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft(4) axBottom(4) axWidth axHeight];
 ax.Box = 'off';
+ax.XLim = [-5 5];
+ax.YLim = [-5 5];
+ax.XTick = [-5 0 5];
+%ax.YTick = [-5 0 5];
+ax.XTickLabel = {'-5';'0';'5'};
+%ax.YTickLabel = {'-5';'0';'5'};
 
 ax = subplot(2,3,5);
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
-    [minLhat.(cl),minLhatIdx.(cl)] = min(meanLhat.(cl)(end,:,:),[],2);
-    for j = 1:length(dims)
-        minSemLhat.(cl)(j) = semLhat.(cl)(end,minLhatIdx.(cl)(j),j);
+    if ~strcmp(cl,'rerfdn')
+        [minLhat.(cl),minLhatIdx.(cl)] = min(meanLhat.(cl)(end,:,:),[],2);
+        for j = 1:length(dims)
+            minSemLhat.(cl)(j) = semLhat.(cl)(end,minLhatIdx.(cl)(j),j);
+        end
+        hLhat(i) = errorbar(dims,minLhat.(cl)(:)',minSemLhat.(cl),'LineWidth',LineWidth);
+        hold on
     end
-    hLhat(i) = errorbar(dims,minLhat.(cl)(:)',minSemLhat.(cl),'LineWidth',LineWidth);
-    hold on
 end
+
+if runSims
+    Trunk_bayes_error
+else
+    load Trunk_bayes_error.mat
+end
+
+plot(dims,bayes_error,'LineWidth',LineWidth)
 
 title('(E) Trunk')
 xlabel('d')
@@ -176,21 +209,27 @@ ax.XLim = [1 550];
 ax.YLim = [0 .15];
 ax.XScale = 'log';
 ax.XTick = [logspace(0,2,3) 500];
+ax.XTickLabel = {'1';'10';'100';'500'};
 
 ax = subplot(2,3,6);
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
-    trainTime.(cl) = nanmean(meanTrainTime.(cl),2);
-    semMeanTrainTime.(cl) = nanmean(semTrainTime.(cl),2);
-    hTrainTime(i) = errorbar(dims,trainTime.(cl)(:)',semMeanTrainTime.(cl)(:)','LineWidth',LineWidth);
-    hold on
+    if ~strcmp(cl,'rerfdn')
+        trainTime.(cl) = nanmean(meanTrainTime.(cl),2);
+        semMeanTrainTime.(cl) = nanmean(semTrainTime.(cl),2);
+        hTrainTime(i) = errorbar(dims,trainTime.(cl)(:)',semMeanTrainTime.(cl)(:)','LineWidth',LineWidth);
+        hold on
+    end
 end
+
+%Plot dummy line for bayes just so that it's in the legend
+plot([0 0 0],[0 0 0],'LineWidth',LineWidth,'Visible','off')
 
 title('(F) Trunk')
 xlabel('d')
 ylabel('Train Time (s)')
-l = legend('RF','RerF','RerFd','Rotation RF');
+l = legend('RF','RerF','RotRF','Bayes');
 l.Location = 'northwest';
 l.Box = 'off';
 l.FontSize = 12;
@@ -203,5 +242,6 @@ ax.Box = 'off';
 ax.XLim = [1 550];
 ax.XScale = 'log';
 ax.XTick = [logspace(0,2,3) 500];
+ax.XTickLabel = {'1';'10';'100';'500'};
 
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig2_simulations'])

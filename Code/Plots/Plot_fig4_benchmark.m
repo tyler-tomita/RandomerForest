@@ -7,7 +7,7 @@ fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 LineWidth = 2;
-FontSize = .25;
+FontSize = .2;
 axWidth = 2;
 axHeight = 2;
 axLeft = [FontSize*4 FontSize*8+axWidth FontSize*4 FontSize*8+axWidth];
@@ -36,7 +36,7 @@ hold on
 
 xmin = min(tau);
 xmax = max(tau);
-ymin = min(rho_ps(:));
+ymin = .7;
 ymax = max(rho_ps(:));
 
 for i =1:length(clnames)
@@ -54,6 +54,8 @@ ax.Position = [axLeft(1) axBottom(1) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [xmin xmax];
 ax.YLim = [ymin ymax];
+ax.YTick = [.7 .8 .9 1];
+
 
 if runSims
     run_Performance_profile_rotate
@@ -66,7 +68,7 @@ hold on
 
 xmin = min(tau);
 xmax = max(tau);
-ymin = min(rho_ps(:));
+ymin = .7;
 ymax = max(rho_ps(:));
 
 for i =1:length(clnames)
@@ -84,6 +86,7 @@ ax.Position = [axLeft(2) axBottom(2) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [xmin xmax];
 ax.YLim = [ymin ymax];
+ax.YTick = [.7 .8 .9 1];
 
 if runSims
     run_Performance_profile_scale
@@ -96,7 +99,7 @@ hold on
 
 xmin = min(tau);
 xmax = max(tau);
-ymin = min(rho_ps(:));
+ymin = .9;
 ymax = max(rho_ps(:));
 
 for i =1:length(clnames)
@@ -114,6 +117,8 @@ ax.Position = [axLeft(3) axBottom(3) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [xmin xmax];
 ax.YLim = [ymin ymax];
+ax.YTick = [.9 .95 1];
+
 
 if runSims
     run_Performance_profile_affine
@@ -126,7 +131,7 @@ hold on
 
 xmin = min(tau);
 xmax = max(tau);
-ymin = min(rho_ps(:));
+ymin = .9;
 ymax = max(rho_ps(:));
 
 
@@ -145,8 +150,9 @@ ax.Position = [axLeft(4) axBottom(4) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [xmin xmax];
 ax.YLim = [ymin ymax];
+ax.YTick = [.9 .95 1];
 
-l = legend({'RF';'RerF';'Rotation RF';'RerFd'});
+l = legend({'RF';'RerF';'RotRF';'RerFd'});
 l.Location = 'southeast';
 l.Box = 'off';
 
