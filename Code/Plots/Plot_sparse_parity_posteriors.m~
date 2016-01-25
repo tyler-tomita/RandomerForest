@@ -16,7 +16,7 @@ FontSize = .2;
 axWidth = 2;
 axHeight = 2;
 axLeft = [FontSize*4 FontSize*8+axWidth FontSize*4 FontSize*8+axWidth];
-axBottom = [FontSize*8+axHeight FontSize*8+axHeight FontSize*4 FontSize*4];
+axBottom = [FontSize*9+axHeight FontSize*9+axHeight FontSize*4 FontSize*4];
 cbWidth = .25;
 cbHeight = axHeight;
 cbLeft = axLeft(4) + axWidth + FontSize;
@@ -36,28 +36,28 @@ else
     load Sparse_parity_posteriors_npoints_50.mat
 end
 
-clNames = {'RF' 'RerF' 'RerFdn' 'f_{Y|X}'};
+clNames = {'RF' 'RerF' 'RotRF' 'Posterior'};
 
 figure('visible','off')
 p1 = posterior_map(Xpost,Ypost,mean(rf.posteriors,3));
-xlabel('x1')
-ylabel('x2')
+xlabel('X_1')
+ylabel('X_2')
 t(1) = title(['(A) ' clNames{1}]);
 ax_old(1) = gca;
 c(1) = findobj(gcf,'Type','ColorBar');
 
 figure('visible','off')
 p2 = posterior_map(Xpost,Ypost,mean(rerf.posteriors,3));
-xlabel('x1')
-ylabel('x2')
+xlabel('X_1')
+ylabel('X_2')
 t(2) = title(['(B) ' clNames{2}]);
 ax_old(2) = gca;
 c(2) = findobj(gcf,'Type','ColorBar');
 
 figure('visible','off')
 p3 = posterior_map(Xpost,Ypost,mean(rf_rot.posteriors,3));
-xlabel('x1')
-ylabel('x2')
+xlabel('X_1')
+ylabel('X_2')
 t(3) = title(['(C) ' clNames{3}]);
 ax_old(3) = gca;
 c(3) = findobj(gcf,'Type','ColorBar');
@@ -72,8 +72,8 @@ end
 
 figure('visible','off')
 p4 = posterior_map(Xpost,Ypost,mean(truth.posteriors,3));
-xlabel('x1')
-ylabel('x2')
+xlabel('X_1')
+ylabel('X_2')
 t(4) = title(['(D) ' clNames{4}]);
 ax_old(4) = gca;
 c(4) = findobj(gcf,'Type','ColorBar');
@@ -102,17 +102,26 @@ for j = 1:4
     ax.FontSize = FontSize;
     ax.Units = 'inches';
     ax.Position = [axLeft(j) axBottom(j) axWidth axHeight];
-    ax.XTick = [ax.XLim(1) mean(ax.XLim) ax.XLim(2)];
+    ax.XTick = [];
     ax.YTick = ax.XTick;
     ax.TickDir = 'out';
     ax.TickLength = [.02 .03];
 
-    if j
-    if j ==4
+    if j == 2
         cb = colorbar;
         cb.Units = 'inches';
-        cb.Position = [cbLeft cbBottom cbWidth cbHeight];
+        cb.Position = [cbLeft cbBottom(1) cbWidth cbHeight];
         cb.Box = 'off';
+        colormap(ax,'parula')
+        %cb.Ticks = cb.Limits(1)+(cb.Limits(2)-cb.Limits(1))/5:(cb.Limits(2)-cb.Limits(1))/5:cb.Limits(2)-(cb.Limits(2)-cb.Limits(1))/5;
+    elseif j == 4
+        cb = colorbar;
+        cb.Units = 'inches';
+        cb.Position = [cbLeft cbBottom(2) cbWidth cbHeight];
+        cb.Box = 'off';
+        colormap(ax,'jet')
+    else
+        colormap(ax,'parula')
     end
     caxis(c(j).Limits)
 end

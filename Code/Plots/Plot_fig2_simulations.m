@@ -83,7 +83,9 @@ for i = 1:length(classifiers)
         for j = 1:length(dims)
             minSemLhat.(cl)(j) = semLhat.(cl)(end,minLhatIdx.(cl)(j),j);
         end
-        hLhat(i) = errorbar(dims,minLhat.(cl)(:)',minSemLhat.(cl),'LineWidth',LineWidth);
+        if i ~= 1
+            hLhat(i) = errorbar(dims,minLhat.(cl)(:)'-minLhat.rf(:)',sqrt(minSemLhat.(cl).^2+minSemLhat.rf.^2),'LineWidth',LineWidth);
+        end
         hold on
     end
 end
@@ -94,11 +96,11 @@ else
     load Sparse_parity_bayes_error.mat
 end
 
-errorbar(dims,bayes_error,sem_bayes_error,'LineWidth',LineWidth)
+% errorbar(dims,bayes_error,sem_bayes_error,'LineWidth',LineWidth)
 
 title('(B) Sparse Parity')
 xlabel('d')
-ylabel('Error Rate')
+ylabel('Relative Error')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -106,7 +108,10 @@ ax.Units = 'inches';
 ax.Position = [axLeft(2) axBottom(2) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [0 105];
-ax.YLim = [0 .5];
+% ax.YLim = [0 .5];
+l = legend('RerF','RotRF');
+l.Location = 'northwest';
+l.Box = 'off';
 
 ax = subplot(2,3,3);
 
@@ -130,6 +135,10 @@ ax.Units = 'inches';
 ax.Position = [axLeft(3) axBottom(3) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [0 105];
+l = legend('RF','RerF','RotRF');
+l.Location = 'northwest';
+l.Box = 'off';
+l.FontSize = 12;
 
 clear hLhat hTrainTime minLhat minSemLhat trainTime semMeanTrainTime
 
@@ -183,7 +192,9 @@ for i = 1:length(classifiers)
         for j = 1:length(dims)
             minSemLhat.(cl)(j) = semLhat.(cl)(end,minLhatIdx.(cl)(j),j);
         end
-        hLhat(i) = errorbar(dims,minLhat.(cl)(:)',minSemLhat.(cl),'LineWidth',LineWidth);
+        if i ~= 1
+            hLhat(i) = errorbar(dims,minLhat.(cl)(:)'-minLhat.rf(:)',sqrt(minSemLhat.(cl).^2+minSemLhat.rf.^2),'LineWidth',LineWidth);
+        end
         hold on
     end
 end
@@ -194,11 +205,11 @@ else
     load Trunk_bayes_error.mat
 end
 
-plot(dims,bayes_error,'LineWidth',LineWidth)
+% plot(dims,bayes_error,'LineWidth',LineWidth)
 
 title('(E) Trunk')
 xlabel('d')
-ylabel('Error Rate')
+ylabel('Relative Error')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -206,7 +217,7 @@ ax.Units = 'inches';
 ax.Position = [axLeft(5) axBottom(5) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [1 550];
-ax.YLim = [0 .15];
+% ax.YLim = [0 .15];
 ax.XScale = 'log';
 ax.XTick = [logspace(0,2,3) 500];
 ax.XTickLabel = {'1';'10';'100';'500'};
@@ -224,15 +235,11 @@ for i = 1:length(classifiers)
 end
 
 %Plot dummy line for bayes just so that it's in the legend
-plot([0 0 0],[0 0 0],'LineWidth',LineWidth,'Visible','off')
+% plot([0 0 0],[0 0 0],'LineWidth',LineWidth,'Visible','off')
 
 title('(F) Trunk')
 xlabel('d')
 ylabel('Train Time (s)')
-l = legend('RF','RerF','RotRF','Bayes');
-l.Location = 'northwest';
-l.Box = 'off';
-l.FontSize = 12;
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
