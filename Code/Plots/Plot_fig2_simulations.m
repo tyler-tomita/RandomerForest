@@ -7,6 +7,11 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
+C = linspecer(4);
+Colors.rf = C(1,:);
+Colors.rerf = C(2,:);
+Colors.rf_rot = C(3,:);
+Colors.rerfdn = C(4,:);
 LineWidth = 2;
 MarkerSize = 12;
 FontSize = .2;
@@ -34,7 +39,7 @@ else
     load Sparse_parity.mat
 end
 
-classifiers = fieldnames(meanLhat);
+classifiers = fieldnames(Lhat);
 
 ax = subplot(2,3,1);
 
@@ -54,9 +59,10 @@ Y = mod(nones,2);
 
 plot(X(Y==0,1),X(Y==0,2),'b.',X(Y==1,1),X(Y==1,2),'r.','MarkerSize',MarkerSize)
 
-title('(A) Sparse Parity')
+title('(A)','Units','normalized','Position',[0 1.1],'HorizontalAlignment','right')
+text(0.5,1,'Scatterplot','FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('X_1')
-ylabel('X_2')
+ylabel({'\bf{Sparse Parity}';'\rm{X_1}'})
 l = legend('Class 1','Class 2');
 l.Location = 'northwest';
 l.Box = 'off';
@@ -79,13 +85,9 @@ ax = subplot(2,3,2);
 for i = 1:length(classifiers)
     cl = classifiers{i};
     if ~strcmp(cl,'rerfdn')
-        [minLhat.(cl),minLhatIdx.(cl)] = min(meanLhat.(cl)(end,:,:),[],2);
-        for j = 1:length(dims)
-            minSemLhat.(cl)(j) = semLhat.(cl)(end,minLhatIdx.(cl)(j),j);
-        end
-        if i ~= 1
-            hLhat(i) = errorbar(dims,minLhat.(cl)(:)'-minLhat.rf(:)',sqrt(minSemLhat.(cl).^2+minSemLhat.rf.^2),'LineWidth',LineWidth);
-        end
+        [minLhat.(cl),minLhatIdx.(cl)] = min(Lhat.(cl),[],2);
+        LhatDiff = minLhat.(cl)-minLhat.(classifiers{1});
+        hLhat(i) = errorbar(dims,mean(LhatDiff,3),std(LhatDiff,0,3)/sqrt(size(LhatDiff,3)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
 end
@@ -98,9 +100,10 @@ end
 
 % errorbar(dims,bayes_error,sem_bayes_error,'LineWidth',LineWidth)
 
-title('(B) Sparse Parity')
+title('(B)','Units','normalized','Position',[0 1.1],'HorizontalAlignment','right')
+text(0.5,1,{'Error Rate';'(relative to RF)'},'FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('d')
-ylabel('Relative Error')
+ylabel('Error')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -108,26 +111,24 @@ ax.Units = 'inches';
 ax.Position = [axLeft(2) axBottom(2) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [0 105];
+ax.XScale = 'log';
 % ax.YLim = [0 .5];
-l = legend('RerF','RotRF');
-l.Location = 'northwest';
-l.Box = 'off';
 
 ax = subplot(2,3,3);
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
     if ~strcmp(cl,'rerfdn')
-        trainTime.(cl) = nanmean(meanTrainTime.(cl),2);
-        semMeanTrainTime.(cl) = nanmean(semTrainTime.(cl),2);
-        hTrainTime(i) = errorbar(dims,trainTime.(cl)(:)',semMeanTrainTime.(cl)(:)','LineWidth',LineWidth);
+        trainTime.(cl) = nanmean(trainTime.(cl),2);
+        hTrainTime(i) = errorbar(dims,mean(trainTime.(cl),3),std(trainTime.(cl),0,3)/sqrt(size(trainTime.(cl),3)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
 end
 
-title('(C) Sparse Parity')
+title('(C)','Units','normalized','Position',[0 1.1],'HorizontalAlignment','right')
+text(0.5,1,'Training Time','FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('d')
-ylabel('Train Time (s)')
+ylabel('Time (s)')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -135,12 +136,9 @@ ax.Units = 'inches';
 ax.Position = [axLeft(3) axBottom(3) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [0 105];
-l = legend('RF','RerF','RotRF');
-l.Location = 'northwest';
-l.Box = 'off';
-l.FontSize = 12;
+ax.XScale = 'log';
 
-clear hLhat hTrainTime minLhat minSemLhat trainTime semMeanTrainTime
+clear hLhat hTrainTime Lhat minLhat trainTime
 
 if runSims
     run_Trunk
@@ -148,7 +146,7 @@ else
     load Trunk.mat
 end
 
-classifiers = fieldnames(meanLhat);
+classifiers = fieldnames(Lhat);
 
 ax = subplot(2,3,4);
 
@@ -167,9 +165,9 @@ Y = Class(idx);
 
 plot(X(Y==0,1),X(Y==0,2),'b.',X(Y==1,1),X(Y==1,2),'r.','MarkerSize',MarkerSize)
 
-title('(D) Trunk')
+title('(D)','Units','normalized','Position',[0 1.1],'HorizontalAlignment','right')
 xlabel('X_1')
-ylabel('X_2')
+ylabel({'\bf{Trunk}';'\rm{X_2}'})
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -188,13 +186,9 @@ ax = subplot(2,3,5);
 for i = 1:length(classifiers)
     cl = classifiers{i};
     if ~strcmp(cl,'rerfdn')
-        [minLhat.(cl),minLhatIdx.(cl)] = min(meanLhat.(cl)(end,:,:),[],2);
-        for j = 1:length(dims)
-            minSemLhat.(cl)(j) = semLhat.(cl)(end,minLhatIdx.(cl)(j),j);
-        end
-        if i ~= 1
-            hLhat(i) = errorbar(dims,minLhat.(cl)(:)'-minLhat.rf(:)',sqrt(minSemLhat.(cl).^2+minSemLhat.rf.^2),'LineWidth',LineWidth);
-        end
+        [minLhat.(cl),minLhatIdx.(cl)] = min(Lhat.(cl),[],2);
+        LhatDiff = minLhat.(cl)-minLhat.(classifiers{1});
+        hLhat(i) = errorbar(dims,mean(LhatDiff,3),std(LhatDiff,0,3)/sqrt(size(LhatDiff,3)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
 end
@@ -207,9 +201,9 @@ end
 
 % plot(dims,bayes_error,'LineWidth',LineWidth)
 
-title('(E) Trunk')
+title('(E)','Units','normalized','Position',[0 1.1],'HorizontalAlignment','right')
 xlabel('d')
-ylabel('Relative Error')
+ylabel('Error')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -227,9 +221,8 @@ ax = subplot(2,3,6);
 for i = 1:length(classifiers)
     cl = classifiers{i};
     if ~strcmp(cl,'rerfdn')
-        trainTime.(cl) = nanmean(meanTrainTime.(cl),2);
-        semMeanTrainTime.(cl) = nanmean(semTrainTime.(cl),2);
-        hTrainTime(i) = errorbar(dims,trainTime.(cl)(:)',semMeanTrainTime.(cl)(:)','LineWidth',LineWidth);
+        trainTime.(cl) = nanmean(trainTime.(cl),2);
+        hTrainTime(i) = errorbar(dims,mean(trainTime.(cl),3),std(trainTime.(cl),0,3)/sqrt(size(trainTime.(cl),3)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
 end
@@ -237,9 +230,9 @@ end
 %Plot dummy line for bayes just so that it's in the legend
 % plot([0 0 0],[0 0 0],'LineWidth',LineWidth,'Visible','off')
 
-title('(F) Trunk')
+title('(F)','Units','normalized','Position',[0 1.1],'HorizontalAlignment','right')
 xlabel('d')
-ylabel('Train Time (s)')
+ylabel('Time (s)')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -250,5 +243,9 @@ ax.XLim = [1 550];
 ax.XScale = 'log';
 ax.XTick = [logspace(0,2,3) 500];
 ax.XTickLabel = {'1';'10';'100';'500'};
+l = legend('RF','RerF','RotRF');
+l.Location = 'northwest';
+l.Box = 'off';
+l.FontSize = 12;
 
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig2_simulations'])

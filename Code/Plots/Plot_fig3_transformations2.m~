@@ -5,6 +5,11 @@ clc
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
+C = linspecer(4);
+Colors.rf = C(1,:);
+Colors.rerf = C(2,:);
+Colors.rf_rot = C(3,:);
+Colors.rerfdn = C(4,:);
 LineWidth = 2;
 FontSize = .16;
 axWidth = 1.3;
@@ -61,14 +66,16 @@ for j = 1:length(Transformations)
     
     for i = 1:length(classifiers)
         cl = classifiers{i};
-        h = errorbar(dims,Lhat.(cl)(:)',sem.(cl),'LineWidth',LineWidth);
+        h = errorbar(dims,Lhat.(cl)(:)',sem.(cl),'LineWidth',LineWidth,'Color',Colors(i,:));
         hold on
     end
     
+    title(['(' char('A'+j-1) ')'],'Units','normalized','Position',[0 1.15],'HorizontalAlignment','left')
+    text(0.5,1,Transform,'FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
     title(['(' char('A'+j-1) ') ' Transform])
     xlabel('d')
     if j == 1
-        ylabel('Error Rate')
+        ylabel({''Error Rate')
     end
     ax.LineWidth = LineWidth;
     ax.FontUnits = 'inches';
@@ -102,13 +109,13 @@ for j = 1:length(Transformations)
     
     [Lhat.rf,minIdx.rf] = min(mean_err_rf.(Transform)(end,:,:),[],2);
     [Lhat.rerf,minIdx.rerf] = min(mean_err_rerf.(Transform)(end,:,:),[],2);
-    [Lhat.rerfdn,minIdx.rerfdn] = min(mean_err_rerfdn.(Transform)(end,:,:),[],2);
+%     [Lhat.rerfdn,minIdx.rerfdn] = min(mean_err_rerfdn.(Transform)(end,:,:),[],2);
     [Lhat.rf_rot,minIdx.rf_rot] = min(mean_err_rf_rot.(Transform)(end,:,:),[],2);
 
     for i = 1:length(dims)
         sem.rf(i) = sem_rf.(Transform)(end,minIdx.rf(i),i);
         sem.rerf(i) = sem_rerf.(Transform)(end,minIdx.rerf(i),i);
-        sem.rerfdn(i) = sem_rerfdn.(Transform)(end,minIdx.rerfdn(i),i);
+%         sem.rerfdn(i) = sem_rerfdn.(Transform)(end,minIdx.rerfdn(i),i);
         sem.rf_rot(i) = sem_rf_rot.(Transform)(end,minIdx.rf_rot(i),i);
     end
 
@@ -118,7 +125,7 @@ for j = 1:length(Transformations)
     
     for i = 1:length(classifiers)
         cl = classifiers{i};
-        h = errorbar(dims,Lhat.(cl)(:)',sem.(cl),'LineWidth',LineWidth);
+        h = errorbar(dims,Lhat.(cl)(:)',sem.(cl),'LineWidth',LineWidth,'Color',Colors(i,:));
         hold on
     end
     
@@ -143,9 +150,9 @@ for j = 1:length(Transformations)
     end
 end
 
-l = legend('RF','RerF','RerFd','RotRF');
-l.Location = 'southeast';
-l.Box = 'off';
-l.FontSize = 10;
+% l = legend('RF','RerF','RotRF');
+% l.Location = 'southeast';
+% l.Box = 'off';
+% l.FontSize = 10;
 
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig3_transformations2'])

@@ -6,10 +6,15 @@ clc
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
+C = linspecer(4);
+Colors.rf = C(1,:);
+Colors.rerf = C(2,:);
+Colors.rf_rot = C(3,:);
+Colors.rerfdn = C(4,:);
 LineWidth = 2;
 FontSize = .16;
-axWidth = 1.75;
-axHeight = 1.75;
+axWidth = 1.5;
+axHeight = 1.5;
 axLeft = [FontSize*4,FontSize*7+axWidth,FontSize*10+axWidth*2,...
     FontSize*13+axWidth*3];
 axBottom = [FontSize*4,FontSize*4,FontSize*4,FontSize*4];
@@ -21,7 +26,7 @@ fig.PaperUnits = 'inches';
 fig.Position = [0 0 figWidth figHeight];
 fig.PaperPosition = [0 0 figWidth figHeight];
 
-Titles = {'(A) Untransformed' '(B) Rotated' '(C) Scaled' '(D) Affine'};
+Transformations = {'Untransformed' 'Rotated' 'Scaled' 'Affine'};
 
 runSims = false;
 
@@ -40,12 +45,13 @@ ymin = .7;
 ymax = max(rho_ps(:));
 
 for i = 1:length(clnames)-1
-     plot(tau,rho_ps(:,i),'LineWidth',LineWidth)
+     plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
-title(Titles{1})
+title('(A)','Units','normalized','Position',[0 1.15],'HorizontalAlignment','left')
+text(0.5,1,Transformations{1},'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('Relative Performance')
-ylabel('Emperical Distribution')
+ylabel('Proportion')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -55,6 +61,9 @@ ax.Box = 'off';
 ax.XLim = [xmin xmax];
 ax.YLim = [ymin ymax];
 ax.YTick = [.7 .8 .9 1];
+l = legend(sprintf('AUC = %0.2f',AUC.rf),sprintf('AUC = %0.2f',AUC.rerf),sprintf('AUC = %0.2f',AUC.rf_rot));
+l.Location = 'southeast';
+l.Box = 'off';
 
 
 if runSims
@@ -72,10 +81,11 @@ ymin = .7;
 ymax = max(rho_ps(:));
 
 for i = 1:length(clnames)-1
-     plot(tau,rho_ps(:,i),'LineWidth',LineWidth)
+     plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
-title(Titles{2})
+title('(B)','Units','normalized','Position',[0 1.15],'HorizontalAlignment','left')
+text(0.5,1,Transformations{2},'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('Relative Performance')
 % ylabel('Emperical Distribution')
 ax.LineWidth = LineWidth;
@@ -87,6 +97,9 @@ ax.Box = 'off';
 ax.XLim = [xmin xmax];
 ax.YLim = [ymin ymax];
 ax.YTick = [.7 .8 .9 1];
+l = legend(sprintf('AUC = %0.2f',AUC.rf),sprintf('AUC = %0.2f',AUC.rerf),sprintf('AUC = %0.2f',AUC.rf_rot));
+l.Location = 'southeast';
+l.Box = 'off';
 
 if runSims
     run_Performance_profile_scale
@@ -103,10 +116,11 @@ ymin = .9;
 ymax = max(rho_ps(:));
 
 for i = 1:length(clnames)-1
-     plot(tau,rho_ps(:,i),'LineWidth',LineWidth)
+     plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
-title(Titles{3})
+title('(C)','Units','normalized','Position',[0 1.15],'HorizontalAlignment','left')
+text(0.5,1,Transformations{3},'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('Relative Performance')
 % ylabel('Emperical Distribution')
 ax.LineWidth = LineWidth;
@@ -119,6 +133,9 @@ ax.XLim = [xmin xmax];
 ax.YLim = [ymin ymax];
 ax.XTick = 2:6:14;
 ax.YTick = [.9 .95 1];
+l = legend(sprintf('AUC = %0.2f',AUC.rf),sprintf('AUC = %0.2f',AUC.rerf),sprintf('AUC = %0.2f',AUC.rf_rot));
+l.Location = 'southeast';
+l.Box = 'off';
 
 
 if runSims
@@ -137,10 +154,11 @@ ymax = max(rho_ps(:));
 
 
 for i = 1:length(clnames)-1
-     plot(tau,rho_ps(:,i),'LineWidth',LineWidth)
+     plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
-title(Titles{4})
+title('(D)','Units','normalized','Position',[0 1.15],'HorizontalAlignment','left')
+text(0.5,1,Transformations{4},'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('Relative Performance')
 % ylabel('Emperical Distribution')
 ax.LineWidth = LineWidth;
@@ -152,8 +170,7 @@ ax.Box = 'off';
 ax.XLim = [xmin xmax];
 ax.YLim = [ymin ymax];
 ax.YTick = [.9 .95 1];
-
-l = legend({'RF';'RerF';'RotRF';'RerFd'});
+l = legend(sprintf('AUC = %0.2f',AUC.rf),sprintf('AUC = %0.2f',AUC.rerf),sprintf('AUC = %0.2f',AUC.rf_rot));
 l.Location = 'southeast';
 l.Box = 'off';
 
