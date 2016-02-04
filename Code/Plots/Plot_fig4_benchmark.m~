@@ -13,8 +13,8 @@ Colors.rf_rot = C(3,:);
 Colors.rerfdn = C(4,:);
 LineWidth = 2;
 FontSize = .16;
-axWidth = 1.75;
-axHeight = 1.75;
+axWidth = 1.5;
+axHeight = 1.5;
 axLeft = [FontSize*4,FontSize*7+axWidth,FontSize*10+axWidth*2,...
     FontSize*13+axWidth*3];
 axBottom = [FontSize*4,FontSize*4,FontSize*4,FontSize*4];
@@ -42,13 +42,14 @@ hold on
 xmin = min(tau);
 xmax = max(tau);
 ymin = .7;
-ymax = max(rho_ps(:));
+ymax = 1.04;
 
 for i = 1:length(clnames)-1
      plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
-title(Transformations{1})
+title('(A)','Units','normalized','Position',[0.025 1],'HorizontalAlignment','left','VerticalAlignment','top')
+text(0.5,1.05,Transformations{1},'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('Relative Performance')
 ylabel('Proportion')
 ax.LineWidth = LineWidth;
@@ -60,7 +61,7 @@ ax.Box = 'off';
 ax.XLim = [xmin xmax];
 ax.YLim = [ymin ymax];
 ax.YTick = [.7 .8 .9 1];
-l = legend(sprintf('AUC = %0.2f',AUC.rf),sprintf('AUC = %0.2f',AUC.rerf),sprintf('AUC = %0.2f',AUC.rf_rot));
+l = legend(sprintf('AUC = %0.2f',AUC.rf),['\bfsprintf('AUC = %0.2f',AUC.rerf),sprintf('AUC = %0.2f',AUC.rf_rot));
 l.Location = 'southeast';
 l.Box = 'off';
 
@@ -77,13 +78,14 @@ hold on
 xmin = min(tau);
 xmax = max(tau);
 ymin = .7;
-ymax = max(rho_ps(:));
+ymax = 1.04;
 
 for i = 1:length(clnames)-1
      plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
-title(Transformations{2})
+title('(B)','Units','normalized','Position',[0.025 1],'HorizontalAlignment','left','VerticalAlignment','top')
+text(0.5,1.05,Transformations{2},'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('Relative Performance')
 % ylabel('Emperical Distribution')
 ax.LineWidth = LineWidth;
@@ -111,13 +113,14 @@ hold on
 xmin = min(tau);
 xmax = max(tau);
 ymin = .9;
-ymax = max(rho_ps(:));
+ymax = 1.02;
 
 for i = 1:length(clnames)-1
      plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
-title(Transformations{3})
+title('(C)','Units','normalized','Position',[0.025 1],'HorizontalAlignment','left','VerticalAlignment','top')
+text(0.5,1.05,Transformations{3},'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('Relative Performance')
 % ylabel('Emperical Distribution')
 ax.LineWidth = LineWidth;
@@ -147,14 +150,15 @@ hold on
 xmin = min(tau);
 xmax = max(tau);
 ymin = .9;
-ymax = max(rho_ps(:));
+ymax = 1.02;
 
 
 for i = 1:length(clnames)-1
      plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
-title(Transformations{4})
+title('(D)','Units','normalized','Position',[0.025 1],'HorizontalAlignment','left','VerticalAlignment','top')
+text(0.5,1.05,Transformations{4},'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('Relative Performance')
 % ylabel('Emperical Distribution')
 ax.LineWidth = LineWidth;

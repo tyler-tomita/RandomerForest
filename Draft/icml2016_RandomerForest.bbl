@@ -1,0 +1,90 @@
+\begin{thebibliography}{12}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Blaser \& Fryzlewicz(2015)Blaser and Fryzlewicz]{Blaser2015}
+Blaser, R. and Fryzlewicz, P.
+\newblock Random rotation ensembles.
+\newblock 2015.
+\newblock URL \url{http://stats.lse.ac.uk/fryzlewicz/rre/rre.pdf}.
+
+\bibitem[Breiman(2001)]{Breiman2001}
+Breiman, L.
+\newblock Random forests.
+\newblock \emph{Machine Learning}, 4\penalty0 (1):\penalty0 5--32, October
+  2001.
+
+\bibitem[Caruana et~al.(2008)Caruana, Karampatziakis, and
+  Yessenalina]{Caruana2008}
+Caruana, R., Karampatziakis, N., and Yessenalina, A.
+\newblock An empirical evaluation of supervised learning in high dimensions.
+\newblock \emph{Proceedings of the 25th International Conference on Machine
+  Learning}, 2008.
+
+\bibitem[Dolan \& Mor\'e(2008)Dolan and Mor\'e]{Dolan2002}
+Dolan, E.~D. and Mor\'e, J.~J.
+\newblock Benchmarking optimization software with performance profiles.
+\newblock \emph{Mathematical Programming}, 91:\penalty0 201--213, 2008.
+
+\bibitem[Fernandez-Delgado et~al.(2014)Fernandez-Delgado, Cernadas, Barro, and
+  Amorim]{Delgado2014}
+Fernandez-Delgado, M., Cernadas, E., Barro, S., and Amorim, D.
+\newblock Do we need hundreds of classifiers to solve real world classification
+  problems?
+\newblock \emph{Journal of Machine Learning Research}, 15\penalty0
+  (1):\penalty0 3133--3181, October 2014.
+
+\bibitem[Heath et~al.(1993)Heath, Kasif, and Salzberg]{Heath1993}
+Heath, D., Kasif, S., and Salzberg, S.
+\newblock Induction of oblique decision trees.
+\newblock \emph{Journal of Artificial Intelligence Research}, 2\penalty0
+  (2):\penalty0 1--32, 1993.
+
+\bibitem[Ho(1998)]{Ho1998}
+Ho, T.~K.
+\newblock The random subspace method for constructing decision forests.
+\newblock \emph{Pattern Analysis and Machine Intelligence, IEEE Transactions
+  on}, 20\penalty0 (8):\penalty0 832--844, Aug 1998.
+\newblock ISSN 0162-8828.
+\newblock \doi{10.1109/34.709601}.
+
+\bibitem[Li et~al.(2006)Li, Hastie, and Church]{Li2006}
+Li, P., Hastie, T.~J., and Church, K.~W.
+\newblock Very sparse random projections.
+\newblock In \emph{Proceedings of the 12th ACM SIGKDD international conference
+  on Knowledge discovery and data mining}, pp.\  287--296. ACM, 2006.
+
+\bibitem[Menze et~al.(2011)Menze, Kelm, Splitthoff, Koethe, and
+  Hamprecht]{Menze2011}
+Menze, B.~H., Kelm, B.M, Splitthoff, D.~N., Koethe, U., and Hamprecht, F.~A.
+\newblock On oblique random forests.
+\newblock In Gunopulos, Dimitrios, Hofmann, Thomas, Malerba, Donato, and
+  Vazirgiannis, Michalis (eds.), \emph{Machine Learning and Knowledge Discovery
+  in Databases}, volume 6912 of \emph{Lecture Notes in Computer Science}, pp.\
+  453--469. Springer Berlin Heidelberg, 2011.
+\newblock ISBN 978-3-642-23782-9.
+\newblock \doi{10.1007/978-3-642-23783-6_29}.
+\newblock URL \url{http://dx.doi.org/10.1007/978-3-642-23783-6_29}.
+
+\bibitem[Rodriguez et~al.(2006)Rodriguez, Kuncheva, and Alonso]{Rodriguez2006}
+Rodriguez, J.~J., Kuncheva, L.~I., and Alonso, C.~J.
+\newblock Rotation forest: A new classifier ensemble method.
+\newblock \emph{Pattern Analysis and Machine Intelligence, IEEE Transactions
+  on}, 28\penalty0 (10):\penalty0 1619--1630, 2006.
+
+\bibitem[Tan \& Dowe(2005)Tan and Dowe]{Tan2005}
+Tan, P.~J. and Dowe, D.~L.
+\newblock Mml inference of oblique decision trees.
+\newblock In \emph{AI 2004: Advances in Artificial Intelligence}, pp.\
+  1082--1088. Springer, 2005.
+
+\bibitem[Trunk(1979)]{Trunk1979}
+Trunk, G.~V.
+\newblock A problem of dimensionality: A simple example.
+\newblock \emph{Pattern Analysis and Machine Intelligence, IEEE Transactions
+  on}, \penalty0 (3):\penalty0 306--307, 1979.
+
+\end{thebibliography}

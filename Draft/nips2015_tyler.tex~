@@ -207,7 +207,7 @@ For all comparisons, we used the same number of trees for each method, and the s
 
 In both cases, RerF(d+r) performs as well or better than RF, even though  the discriminant boundary is naturally axis aligned.  
 The top row shows that  RerF outperforms RF even in the axis aligned Trunk example.
-This is because  linear combinations of the ambient coordinates can yield new dimensions that have a higher signal to noise ratio than any of the original dimensions.  Therefore, RerF can capitalize on that, and use those dimensions to obtain cleaner splits, and therefore better trees.  
+This is because linear combinations of the ambient coordinates can yield new dimensions that have a higher signal to noise ratio than any of the original dimensions.  Therefore, RerF can capitalize on that, and use those dimensions to obtain cleaner splits, and therefore better trees.  
 Looking at the right panel, RerFs has comparable speed to RF.
 % The middle panel of Figure \ref{fig:sim} column A shows that RerF($\delta$) and RerF($\delta$+r) outperform RF across all numbers of dimensions in the Trunk problem. 
 % This can be attributed to projection onto the difference in means. 
@@ -250,8 +250,6 @@ The cost of initially sorting in RerF(r), and of computing the means of the clas
 
 \subsection{Effects of Transformations and Outliers on Classifier Performance}
 
-
-
 \begin{figure}[h]
 \begin{center}
 %\framebox[4.0in]{$\;$}
@@ -266,7 +264,7 @@ Given that RerF do as well in misclassification rate as RF in multiple disparate
 Affine transformations were performed by applying a combination of rotations and scalings as just described. Additionally, we examined the effects of introducing outliers. Outliers were introduced by sampling points from the distributions as previously described but instead using covariance matrices scaled by a factor of four. Empirically, an addition of 20 points from these outlier models to the original 100 points was found to produce a noticeable but not overwhelming effect on classifier performance. For a baseline, we compare RF with RerF variants and Fisherfaces \cite{Fisherfaces}. The misclassification rate for Fisherfaces was estimated using leave-one-out cross validation.
 
 
-Figure \ref{fig:invar} shows the effect of these transformations and outliers on the Trunk (top) and Parity (bottom) rows. Figure \ref{fig:invar}(A) shows that RF is sensitive to rotations, and therefore affine transformations, but robust to outliers.  Figure \ref{fig:invar}(B) shows that RerF(d) is sensitive to scale, and therefore affine transformations, but not outliers.   Figure \ref{fig:invar}(C) shows that RerF(d+r) is robust to affine transformations and outliers, as desired.  Fisherfaces, which is essentially designed for this example, suffers from scale and therefore affine transformations, as well as outliers.  The Parity example yields a similar result, except that rotating the data helps all the RF and RerF variants (for the same reason that RerF does better on the untransformed Parity setting).  
+Figure \ref{fig:invar} shows the effect of these transformations and outliers on the Trunk (top) and Parity (bottom) rows. Figure \ref{fig:invar}(A) shows that RF is sensitive to rotations, and therefore affine transformations, but robust to outliers.  Figure \ref{fig:invar}(B) shows that RerF(d) is sensitive to scale, and therefore affine transformations, but not outliers.   Figure \ref{fig:invar}(C) shows that RerF(d+r) is robust to affine transformations and outliers, as desired.  Fisherfaces, which is essentially designed for this example, suffers from scale and therefore affine transformations, as well as outliers.  The Parity example yields a similar result, except that rotating the data helps all the RF and RerF variants (for the same reason that RerF does better on the untransformed Parity setting).
 % This is because even $p-1$ dimensional marginal distributions of the data in the ambient coordinates have no class conditional signal.  Thus, rototating the data creates dimensions that have non-zero class conditional signal, which all of the RF and RerF variants can utilize.  
 On the other hand, Fisherfaces, which is a fundamentally linear classifier, achieves chance levels no matter what on this example.  
 
