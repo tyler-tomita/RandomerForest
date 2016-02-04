@@ -18,11 +18,11 @@ axHeight = 2;
 cbWidth = .25;
 cbHeight = axHeight;
 axLeft = [FontSize*4 FontSize*10+axWidth+cbWidth FontSize*4 FontSize*10+axWidth+cbWidth];
-axBottom = [FontSize*8+axHeight FontSize*8+axHeight FontSize*4 FontSize*4];
+axBottom = [FontSize*6+axHeight FontSize*6+axHeight FontSize*3 FontSize*3];
 cbLeft = axLeft + axWidth + FontSize;
 cbBottom = axBottom;
 figWidth = cbLeft(end) + cbWidth + FontSize*4;
-figHeight = axBottom(1) + axHeight + FontSize*4;
+figHeight = axBottom(1) + axHeight + FontSize*3;
 
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
@@ -42,9 +42,7 @@ figure('visible','off')
 p1 = posterior_map(Xpost,Ypost,mean(truth.posteriors,3));
 xlabel('X_1')
 ylabel('X_2')
-title('(A)','Units','normalized','Position',[0 1.15],'HorizontalAlignment','left')
-text(0.5,1,clNames{1},'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
-% t(1) = title(['(A) ' clNames{1});
+t(1) = title(['(A) ' clNames{1}]);
 ax_old(1) = gca;
 c(1) = findobj(gcf,'Type','ColorBar');
 
@@ -90,13 +88,14 @@ fig.Units = 'inches';
 fig.PaperUnits = 'inches';
 fig.Position = [0 0 figWidth figHeight];
 fig.PaperPosition = [0 0 figWidth figHeight];
+fig.PaperSize = [figWidth figHeight];
 
 for j = 1:4
     figure(fig)
     ax = subplot(2,2,j);
     newHandle = copyobj(allchild(ax_old(j)),ax);
-    title(['(' char('A'+j-1) ')'],'Units','normalized','Position',[0 1.1],'HorizontalAlignment','left')
-    text(0.5,1,clNames{j},'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
+    title(['(' char('A'+j-1) ')'],'Units','normalized','Position',[0 1.05],'HorizontalAlignment','left')
+    text(0.5,1.05,clNames{j},'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 %     ax.Title.String = ax_old(j).Title.String;
     ax.XLabel.String = ax_old(j).XLabel.String;
     ax.YLabel.String = ax_old(j).YLabel.String;
@@ -112,14 +111,14 @@ for j = 1:4
     ax.TickDir = 'out';
     ax.TickLength = [.02 .03];
 
-    if j ~= 1
+    if j == 2
         cb = colorbar;
         cb.Units = 'inches';
         cb.Position = [cbLeft(j) cbBottom(j) cbWidth cbHeight];
         cb.Box = 'off';
         colormap(ax,'parula')
         cb.Ticks = .45:.025:.525;
-    else
+    elseif j == 1
         cb = colorbar;
         cb.Units = 'inches';
         cb.Position = [cbLeft(j) cbBottom(j) cbWidth cbHeight];

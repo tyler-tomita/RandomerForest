@@ -23,17 +23,18 @@ axLeft = [FontSize*5,FontSize*6+axWidth,FontSize*7+axWidth*2,...
     FontSize*8+axWidth*3,FontSize*9+axWidth*4,FontSize*5,...
     FontSize*6+axWidth,FontSize*7+axWidth*2,FontSize*8+axWidth*3,...
     FontSize*9+axWidth*4];
-axBottom = [FontSize*9+axHeight,FontSize*9+axHeight,FontSize*9+axHeight,...
-    FontSize*9+axHeight,FontSize*9+axHeight,FontSize*4,FontSize*4,...
-    FontSize*4,FontSize*4 FontSize*4];
+axBottom = [FontSize*6+axHeight,FontSize*6+axHeight,FontSize*6+axHeight,...
+    FontSize*6+axHeight,FontSize*6+axHeight,FontSize*3,FontSize*3,...
+    FontSize*3,FontSize*3 FontSize*3];
 figWidth = axLeft(end) + axWidth + FontSize*4;
-figHeight = axBottom(1) + axHeight + FontSize*4;
+figHeight = axBottom(1) + axHeight + FontSize*3;
 
 fig = figure;
 fig.Units = 'inches';
 fig.PaperUnits = 'inches';
 fig.Position = [0 0 figWidth figHeight];
 fig.PaperPosition = [0 0 figWidth figHeight];
+fig.PaperSize = [figWidth figHeight];
 
 runSims = false;
 
@@ -70,12 +71,17 @@ for j = 1:length(Transformations)
         hold on
     end
     
-    title(['(' char('A'+j-1) ')'],'Units','normalized','Position',[0 1.15],'HorizontalAlignment','left')
+    title(['(' char('A'+j-1) ')'],'Units','normalized','Position',[0.025 0.975],'HorizontalAlignment','left','VerticalAlignment','top')
     text(0.5,1,Transform,'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 %     title(['(' char('A'+j-1) ') ' Transform])
-    xlabel('d')
     if j == 1
+        xlabel('p')
         ylabel({'\bf{Sparse Parity}';'\rm{Error Rate}'})
+        ax.XTick = [5 10 25 50];
+        ax.XTickLabel = {'5';'10';'25';'50'};
+    else
+        ax.XTick = [];
+        ax.YTick = [];
     end
     ax.LineWidth = LineWidth;
     ax.FontUnits = 'inches';
@@ -85,12 +91,7 @@ for j = 1:length(Transformations)
     ax.Box = 'off';
     ax.XLim = [0 55];
     ax.XScale = 'log';
-    ax.XTick = [5 10 25 50];
-    ax.XTickLabel = {'5';'10';'25';'50'};
     ax.YLim = [0 .55];
-    if j ~= 1
-        ax.YTick = [];
-    end
 end
 
 
@@ -129,13 +130,9 @@ for j = 1:length(Transformations)
         hold on
     end
     
-    title(['(' char('A'+j+4) ')'],'Units','normalized','Position',[0 1.15],'HorizontalAlignment','left')
+    title(['(' char('A'+j+4) ')'],'Units','normalized','Position',[0.025 0.975],'HorizontalAlignment','left','VerticalAlignment','top')
 %     text(0.5,1,Transform,'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 %     title(['(' char('A'+j+4) ') ' Transform])
-    xlabel('d')
-    if j+5 == 6
-        ylabel({'\bf{Trunk}';'\rm{Error Rate}'})
-    end
     ax.LineWidth = LineWidth;
     ax.FontUnits = 'inches';
     ax.FontSize = FontSize;
@@ -143,11 +140,15 @@ for j = 1:length(Transformations)
     ax.Position = [axLeft(j+5) axBottom(j+5) axWidth axHeight];
     ax.Box = 'off';
     ax.XLim = [1 600];
-    ax.YLim = [0 .15];
+    ax.YLim = [0.02 .17];
     ax.XScale = 'log';
-    ax.XTick = [logspace(0,2,3) 500];
-    ax.XTickLabel = {'1';'10';'100';'500'};
-    if j+5 ~= 6
+    if j+5 == 6
+        xlabel('p')
+        ylabel({'\bf{Trunk}';'\rm{Error Rate}'})
+        ax.XTick = [logspace(0,2,3) 500];
+        ax.XTickLabel = {'1';'10';'100';'500'};
+    else
+        ax.XTick = [];
         ax.YTick = [];
     end
 end

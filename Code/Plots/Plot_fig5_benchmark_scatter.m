@@ -2,6 +2,9 @@ clear
 close all
 clc
 
+fpath = mfilename('fullpath');
+rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
+
 LineWidth = 2;
 MarkerSize = 12;
 FontSize = .2;
@@ -79,7 +82,7 @@ if length(unique(np)) == 1
     Lhat_ps = zeros(np,ns);
    
     for i = 2:ns
-        subplot(1,ns-1,i)
+        subplot(1,ns-1,i-1)
         plot(Lhat_min.(clnames{1}),Lhat_min.(clnames{i}),'.','MarkerSize',MarkerSize);
         hold on
         plot([0 1],[0 1],'-k','LineWidth',LineWidth)

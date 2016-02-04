@@ -19,8 +19,8 @@ axHeight = 1.3;
 %     FontSize*12+axWidth*2,FontSize*16+axWidth*3];
 % axBottom = [FontSize*8+axHeight,FontSize*8+axHeight,FontSize*8+axHeight,...
 %     FontSize*8+axHeight,FontSize*4,FontSize*4,FontSize*4,FontSize*4];
-axLeft = [FontSize*4,FontSize*6+axWidth,FontSize*7+axWidth*2,...
-    FontSize*8+axWidth*3,FontSize*9+axWidth*4,FontSize*4,...
+axLeft = [FontSize*5,FontSize*6+axWidth,FontSize*7+axWidth*2,...
+    FontSize*8+axWidth*3,FontSize*9+axWidth*4,FontSize*5,...
     FontSize*6+axWidth,FontSize*7+axWidth*2,FontSize*8+axWidth*3,...
     FontSize*9+axWidth*4];
 axBottom = [FontSize*9+axHeight,FontSize*9+axHeight,FontSize*9+axHeight,...
@@ -66,16 +66,18 @@ for j = 1:length(Transformations)
     
     for i = 1:length(classifiers)
         cl = classifiers{i};
-        h = errorbar(dims,Lhat.(cl)(:)',sem.(cl),'LineWidth',LineWidth,'Color',Colors(i,:));
+        h = errorbar(dims,Lhat.(cl)(:)',sem.(cl),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
     
-    title(['(' char('A'+j-1) ')'],'Units','normalized','Position',[0 1.15],'HorizontalAlignment','left')
-    text(0.5,1,Transform,'FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
-    title(['(' char('A'+j-1) ') ' Transform])
-    xlabel('d')
+    title(['(' char('A'+j-1) ')'],'Units','normalized','Position',[0.025 0.975],'HorizontalAlignment','left','VerticalAlignment','top')
+    text(0.5,1,Transform,'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
+%     title(['(' char('A'+j-1) ') ' Transform])
     if j == 1
-        ylabel({''Error Rate')
+        xlabel('d')
+        ylabel({'\bf{Sparse Parity}';'\rm{Error Rate}'})
+    ax.XTick = [5 10 25 50];
+    ax.XTickLabel = {'5';'10';'25';'50'};
     end
     ax.LineWidth = LineWidth;
     ax.FontUnits = 'inches';
@@ -85,8 +87,6 @@ for j = 1:length(Transformations)
     ax.Box = 'off';
     ax.XLim = [0 55];
     ax.XScale = 'log';
-    ax.XTick = [5 10 25 50];
-    ax.XTickLabel = {'5';'10';'25';'50'};
     ax.YLim = [0 .55];
     if j ~= 1
         ax.YTick = [];
@@ -125,15 +125,13 @@ for j = 1:length(Transformations)
     
     for i = 1:length(classifiers)
         cl = classifiers{i};
-        h = errorbar(dims,Lhat.(cl)(:)',sem.(cl),'LineWidth',LineWidth,'Color',Colors(i,:));
+        h = errorbar(dims,Lhat.(cl)(:)',sem.(cl),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
     
-    title(['(' char('A'+j+4) ') ' Transform])
-    xlabel('d')
-    if j+5 == 6
-        ylabel('Error Rate')
-    end
+    title(['(' char('A'+j+4) ')'],'Units','normalized','Position',[0.025 0.975],'HorizontalAlignment','left','VerticalAlignment','top')
+%     text(0.5,1,Transform,'FontSize',14,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
+%     title(['(' char('A'+j+4) ') ' Transform])
     ax.LineWidth = LineWidth;
     ax.FontUnits = 'inches';
     ax.FontSize = FontSize;
@@ -141,11 +139,15 @@ for j = 1:length(Transformations)
     ax.Position = [axLeft(j+5) axBottom(j+5) axWidth axHeight];
     ax.Box = 'off';
     ax.XLim = [1 600];
-    ax.YLim = [0 .15];
+    ax.YLim = [0.02 .17];
     ax.XScale = 'log';
-    ax.XTick = [logspace(0,2,3) 500];
-    ax.XTickLabel = {'1';'10';'100';'500'};
-    if j+5 ~= 6
+    if j+5 == 6
+        xlabel('d')
+        ylabel({'\bf{Trunk}';'\rm{Error Rate}'})
+        ax.XTick = [logspace(0,2,3) 500];
+        ax.XTickLabel = {'1';'10';'100';'500'};
+    else
+        ax.XTick = [];
         ax.YTick = [];
     end
 end

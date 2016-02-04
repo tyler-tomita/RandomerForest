@@ -20,7 +20,7 @@ axWidth = 1.75;
 axHeight = 1.75;
 axLeft = [FontSize*4 FontSize*8+axWidth FontSize*12+axWidth*2 FontSize*4,...
     FontSize*8+axWidth FontSize*12+axWidth*2];
-axBottom = [FontSize*9+axHeight FontSize*9+axHeight FontSize*9+axHeight,...
+axBottom = [FontSize*7+axHeight FontSize*7+axHeight FontSize*7+axHeight,...
     FontSize*4 FontSize*4 FontSize*4];
 figWidth = axLeft(end) + axWidth + FontSize*4;
 figHeight = axBottom(1) + axHeight + FontSize*4;
@@ -30,6 +30,7 @@ fig.Units = 'inches';
 fig.PaperUnits = 'inches';
 fig.Position = [0 0 figWidth figHeight];
 fig.PaperPosition = [0 0 figWidth figHeight];
+fig.PaperSize = [figWidth figHeight];
 
 runSims = false;
 
@@ -59,12 +60,12 @@ Y = mod(nones,2);
 
 plot(X(Y==0,1),X(Y==0,2),'b.',X(Y==1,1),X(Y==1,2),'r.','MarkerSize',MarkerSize)
 
-title('(A)','Units','normalized','Position',[0 1.1],'HorizontalAlignment','right')
-text(0.5,1,'Scatterplot','FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
+title('(A)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
+text(0.5,1.05,'Scatterplot','FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('X_1')
 ylabel({'\bf{Sparse Parity}';'\rm{X_1}'})
 l = legend('Class 1','Class 2');
-l.Location = 'northwest';
+l.Location = 'southwest';
 l.Box = 'off';
 l.FontSize = 12;
 ax.LineWidth = LineWidth;
@@ -100,9 +101,9 @@ end
 
 % errorbar(dims,bayes_error,sem_bayes_error,'LineWidth',LineWidth)
 
-title('(B)','Units','normalized','Position',[0 1.1],'HorizontalAlignment','right')
-text(0.5,1,{'Error Rate';'(relative to RF)'},'FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
-xlabel('d')
+title('(B)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
+text(0.5,1.05,{'Error Rate';'(relative to RF)'},'FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
+xlabel('p')
 ylabel('Error')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
@@ -110,8 +111,10 @@ ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft(2) axBottom(2) axWidth axHeight];
 ax.Box = 'off';
-ax.XLim = [0 105];
+ax.XLim = [1 105];
 ax.XScale = 'log';
+ax.XTick = [1 10 100];
+ax.XTickLabel = {'1' '10' '100'};
 % ax.YLim = [0 .5];
 
 ax = subplot(2,3,3);
@@ -125,9 +128,9 @@ for i = 1:length(classifiers)
     end
 end
 
-title('(C)','Units','normalized','Position',[0 1.1],'HorizontalAlignment','right')
-text(0.5,1,'Training Time','FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
-xlabel('d')
+title('(C)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
+text(0.5,1.05,'Training Time','FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
+xlabel('p')
 ylabel('Time (s)')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
@@ -135,7 +138,9 @@ ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft(3) axBottom(3) axWidth axHeight];
 ax.Box = 'off';
-ax.XLim = [0 105];
+ax.XLim = [1 105];
+ax.XTick = [1 10 100];
+ax.XTickLabel = {'1' '10' '100'};
 ax.XScale = 'log';
 
 clear hLhat hTrainTime Lhat minLhat trainTime
@@ -165,7 +170,7 @@ Y = Class(idx);
 
 plot(X(Y==0,1),X(Y==0,2),'b.',X(Y==1,1),X(Y==1,2),'r.','MarkerSize',MarkerSize)
 
-title('(D)','Units','normalized','Position',[0 1.1],'HorizontalAlignment','right')
+title('(D)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 xlabel('X_1')
 ylabel({'\bf{Trunk}';'\rm{X_2}'})
 ax.LineWidth = LineWidth;
@@ -201,8 +206,8 @@ end
 
 % plot(dims,bayes_error,'LineWidth',LineWidth)
 
-title('(E)','Units','normalized','Position',[0 1.1],'HorizontalAlignment','right')
-xlabel('d')
+title('(E)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
+xlabel('p')
 ylabel('Error')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
@@ -230,8 +235,8 @@ end
 %Plot dummy line for bayes just so that it's in the legend
 % plot([0 0 0],[0 0 0],'LineWidth',LineWidth,'Visible','off')
 
-title('(F)','Units','normalized','Position',[0 1.1],'HorizontalAlignment','right')
-xlabel('d')
+title('(F)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
+xlabel('p')
 ylabel('Time (s)')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
@@ -244,7 +249,7 @@ ax.XScale = 'log';
 ax.XTick = [logspace(0,2,3) 500];
 ax.XTickLabel = {'1';'10';'100';'500'};
 l = legend('RF','RerF','RotRF');
-l.Location = 'northwest';
+l.Location = 'southwest';
 l.Box = 'off';
 l.FontSize = 12;
 
