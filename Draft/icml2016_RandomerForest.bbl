@@ -1,9 +1,15 @@
-\begin{thebibliography}{12}
+\begin{thebibliography}{14}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Biau et~al.(2008)Biau, Devroye, and Lugosi]{biau2008}
+Biau, G., Devroye, L., and Lugosi, G.
+\newblock Consistency of random forests and other averaging classifiers.
+\newblock \emph{The Journal of Machine Learning Research}, 9:\penalty0
+  2015--2033, 2008.
 
 \bibitem[Blaser \& Fryzlewicz(2015)Blaser and Fryzlewicz]{Blaser2015}
 Blaser, R. and Fryzlewicz, P.
@@ -86,5 +92,14 @@ Trunk, G.~V.
 \newblock A problem of dimensionality: A simple example.
 \newblock \emph{Pattern Analysis and Machine Intelligence, IEEE Transactions
   on}, \penalty0 (3):\penalty0 306--307, 1979.
+
+\bibitem[Zheng et~al.(2015)Zheng, Mhembere, Burns, Vogelstein, Priebe, and
+  Szalay]{zheng15flashgraph}
+Zheng, D., Mhembere, D., Burns, R., Vogelstein, J.~T., Priebe, C.~E., and
+  Szalay, A.~S.
+\newblock Flashgraph: Processing billion-node graphs on an array of commodity
+  ssds.
+\newblock In \emph{13th USENIX Conference on File and Storage Technologies
+  (FAST 15)}. USENIX Association, 2015.
 
 \end{thebibliography}
