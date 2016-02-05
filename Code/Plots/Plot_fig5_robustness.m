@@ -16,9 +16,9 @@ axHeight = 1.75;
 % axBottom = [FontSize*8+axHeight,FontSize*8+axHeight,FontSize*8+axHeight,...
 %     FontSize*8+axHeight,FontSize*4,FontSize*4,FontSize*4,FontSize*4];
 axLeft = [FontSize*4,FontSize*5+axWidth,FontSize*6+axWidth*2,...
-    FontSize*7+axWidth*3];
-axBottom = [FontSize*3,FontSize*3,FontSize*3,FontSize*3];
-figWidth = axLeft(end) + axWidth + FontSize*4;
+    FontSize*7+axWidth*3,FontSize*8+axWidth*4];
+axBottom = [FontSize*3,FontSize*3,FontSize*3,FontSize*3,FontSize*3];
+figWidth = axLeft(end) + axWidth + FontSize*3;
 figHeight = axBottom(1) + axHeight + FontSize*3;
 
 fig = figure;
@@ -26,8 +26,9 @@ fig.Units = 'inches';
 fig.PaperUnits = 'inches';
 fig.Position = [0 0 figWidth figHeight];
 fig.PaperPosition = [0 0 figWidth figHeight];
+fig.PaperSize = [figWidth figHeight];
 
-Titles = {'RF' 'RerF' 'RerFd' 'Rotation RF'};
+Titles = {'RF' 'RerF' 'RerF(d)' 'RerF(d+r)' 'Rotation RF'};
 
 runSims = false;
 
@@ -35,6 +36,7 @@ if runSims
     run_Trunk_transformations
 else
     load Trunk_transformations.mat
+    load Trunk_transformations_rankRerFd.mat
 end
 
 Transformations = fieldnames(mean_err_rf);
@@ -45,12 +47,14 @@ for j = 1:length(Transformations)
     [Lhat.rf,minIdx.rf] = min(mean_err_rf.(Transform)(end,:,:),[],2);
     [Lhat.rerf,minIdx.rerf] = min(mean_err_rerf.(Transform)(end,:,:),[],2);
     [Lhat.rerfdn,minIdx.rerfdn] = min(mean_err_rerfdn.(Transform)(end,:,:),[],2);
+    [Lhat.rerfdnr,minIdx.rerfdnr] = min(mean_err_rerfdnr.(Transform)(end,:,:),[],2);
     [Lhat.rf_rot,minIdx.rf_rot] = min(mean_err_rf_rot.(Transform)(end,:,:),[],2);
 
     for i = 1:length(dims)
         sem.rf(i) = sem_rf.(Transform)(end,minIdx.rf(i),i);
         sem.rerf(i) = sem_rerf.(Transform)(end,minIdx.rerf(i),i);
         sem.rerfdn(i) = sem_rerfdn.(Transform)(end,minIdx.rerfdn(i),i);
+        sem.rerfdnr(i) = sem_rerfdnr.(Transform)(end,minIdx.rerfdnr(i),i);
         sem.rf_rot(i) = sem_rf_rot.(Transform)(end,minIdx.rf_rot(i),i);
     end
 
@@ -59,7 +63,7 @@ for j = 1:length(Transformations)
     for i = 1:length(classifiers)
         cl = classifiers{i};
         if j == 1
-            ax(i) = subplot(1,4,i);
+            ax(i) = subplot(1,5,i);
             hold on
         else
             axes(ax(i));
@@ -87,6 +91,8 @@ for i = 1:length(classifiers)
     if i > 1
         ax(i).XTickLabel = {};
         ax(i).YTickLabel = {};
+    else
+        ax(i).XTickLabel = {'1' '10' '100' '500'};
     end
     ax(i).Position = [axLeft(i) axBottom(i) axWidth axHeight];
     ax(i).Box = 'off';
