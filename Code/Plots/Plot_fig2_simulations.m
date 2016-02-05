@@ -7,7 +7,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-C = linspecer(4);
+C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
 Colors.rf = C(1,:);
 Colors.rerf = C(2,:);
 Colors.rf_rot = C(3,:);
@@ -198,12 +198,6 @@ for i = 1:length(classifiers)
     end
 end
 
-if runSims
-    Trunk_bayes_error
-else
-    load Trunk_bayes_error.mat
-end
-
 % plot(dims,bayes_error,'LineWidth',LineWidth)
 
 title('(E)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
@@ -215,11 +209,11 @@ ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft(5) axBottom(5) axWidth axHeight];
 ax.Box = 'off';
-ax.XLim = [1 550];
+ax.XLim = [1 1100];
 % ax.YLim = [0 .15];
 ax.XScale = 'log';
-ax.XTick = [logspace(0,2,3) 500];
-ax.XTickLabel = {'1';'10';'100';'500'};
+ax.XTick = logspace(0,3,4);
+ax.XTickLabel = {'1';'10';'100';'1000'};
 
 ax = subplot(2,3,6);
 
@@ -244,10 +238,10 @@ ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft(6) axBottom(6) axWidth axHeight];
 ax.Box = 'off';
-ax.XLim = [1 550];
+ax.XLim = [1 1100];
 ax.XScale = 'log';
-ax.XTick = [logspace(0,2,3) 500];
-ax.XTickLabel = {'1';'10';'100';'500'};
+ax.XTick = logspace(0,3,4);
+ax.XTickLabel = {'1';'10';'100';'1000'};
 l = legend('RF','RerF','RotRF');
 l.Location = 'southwest';
 l.Box = 'off';
