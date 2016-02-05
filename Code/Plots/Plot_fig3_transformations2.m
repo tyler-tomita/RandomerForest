@@ -5,7 +5,7 @@ clc
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
-C = linspecer(4);
+C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0];
 Colors.rf = C(1,:);
 Colors.rerf = C(2,:);
 Colors.rf_rot = C(3,:);
