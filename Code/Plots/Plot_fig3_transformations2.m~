@@ -23,7 +23,7 @@ axLeft = [FontSize*5,FontSize*6+axWidth,FontSize*7+axWidth*2,...
     FontSize*8+axWidth*3,FontSize*9+axWidth*4,FontSize*5,...
     FontSize*6+axWidth,FontSize*7+axWidth*2,FontSize*8+axWidth*3,...
     FontSize*9+axWidth*4];
-axBottom = [FontSize*9+axHeight,FontSize*9+axHeight,FontSize*9+axHeight,...
+axBottom = [FontSize*7+axHeight,FontSize*7+axHeight,FontSize*9+axHeight,...
     FontSize*9+axHeight,FontSize*9+axHeight,FontSize*4,FontSize*4,...
     FontSize*4,FontSize*4 FontSize*4];
 figWidth = axLeft(end) + axWidth + FontSize*4;
@@ -76,8 +76,11 @@ for j = 1:length(Transformations)
     if j == 1
         xlabel('d')
         ylabel({'\bf{Sparse Parity}';'\rm{Error Rate}'})
-    ax.XTick = [5 10 25 50];
-    ax.XTickLabel = {'5';'10';'25';'50'};
+        ax.XTick = [5 10 25 50];
+        ax.XTickLabel = {'5';'10';'25';'50'};
+    else
+        ax.XTick = [];
+        ax.YTick = [];
     end
     ax.LineWidth = LineWidth;
     ax.FontUnits = 'inches';
@@ -88,9 +91,6 @@ for j = 1:length(Transformations)
     ax.XLim = [0 55];
     ax.XScale = 'log';
     ax.YLim = [0 .55];
-    if j ~= 1
-        ax.YTick = [];
-    end
 end
 
 
