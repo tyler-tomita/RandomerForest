@@ -73,7 +73,7 @@ for i = 1:length(classifiers)
         'Units','normalized','HorizontalAlignment','center',...
         'VerticalAlignment','middle','Rotation',90)
     if i == 1
-        xlabel('d')
+        xlabel('p')
         ylabel('Error Rate')
     end
     ax(i).LineWidth = LineWidth;
