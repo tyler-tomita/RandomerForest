@@ -1,0 +1,444 @@
+\usepackage{fullpage,subfigure,fancyhdr}
+\usepackage[pdftex]{color}
+\usepackage{wrapfig}
+\usepackage{textcomp}
+\usepackage{verbatim}
+\usepackage{times}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+\usepackage{textcomp}
+\usepackage{url}
+\usepackage{mdwlist}
+\usepackage{subfigure}
+\usepackage{sidecap}
+\usepackage{wrapfig}
+\usepackage{xspace}
+\usepackage{algorithm,algorithmic}
+\usepackage[pdftex]{graphicx}
+\usepackage[colorlinks=true,pagebackref,linkcolor=magenta]{hyperref}
+\usepackage[sort&compress,comma,round,numbers]{natbib}
+\usepackage{pict2e}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{paralist}
+\usepackage{multicol}
+\usepackage{lettrine}
+\usepackage{caption}
+\usepackage{wrapfig}
+\usepackage{helvet}
+
+
+% \usepackage{trackchanges}
+% \usepackage{mcode}
+
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\definecolor{MyGray}{rgb}{0.7,0.7,0.7}
+
+% \numberwithin{figure}{section}
+% \numberwithin{table}{section}
+% \numberwithin{algorithm}{section}
+
+\pagestyle{fancy}
+% \oddsidemargin=-0.5in 
+% \evensidemargin=-0.5in
+\textwidth=6.5in 
+\headwidth=6.5in
+\textheight=9.0in 
+\headheight=0.5pt
+\topmargin=-0.5in
+\headsep=0.5in
+
+
+
+%%%%% COLOR STUFF %%%%%%%%%%
+\newcommand{\db}[1]{{\color{dark_blue}{#1}}}
+\newcommand{\bb}[1]{{\textbf{\db{#1}}}}
+
+\definecolor{MyPlum}{rgb}{0.3,0,0.3}
+\definecolor{MyOrange}{rgb}{1,0.5,0}
+\definecolor{deep_blue}{rgb}{0,.2,.5}
+\definecolor{dark_blue}{rgb}{0,.15,.5}
+
+\newcommand{\marta}[1]{{\color{red}{\it marta: #1}}}
+\newcommand{\youngser}[1]{{\color{green}{\it youngser: #1}}}
+\newcommand{\brett}[1]{{\color{blue}{\it brett says: #1}}}
+\newcommand{\jovo}[1]{{\color{magenta}{\it JoVo: #1}}}
+\newcommand{\rb}[1]{{\color{red}{\it rb: #1}}}
+\newcommand{\bro}[1]{{\color{blue}{\it youngser: #1}}}
+\newcommand{\agastya}[1]{{\color{red}{\it agastya: #1}}}
+\providecommand{\tg}[1]{\textcolor{green}{#1}}
+\providecommand{\tb}[1]{\textcolor{blue}{#1}}
+\providecommand{\tr}[1]{\textcolor{red}{#1}}
+\providecommand{\tk}[1]{\textcolor{black}{#1}}
+\providecommand{\twhite}[1]{\textcolor{white}{#1}}
+
+
+%%%%%%%%% MATH OPERATORS %%%%%%%%%%%%
+\providecommand{\ve}[1]{\boldsymbol{#1}}
+\providecommand{\ma}[1]{\boldsymbol{#1}}
+\providecommand{\norm}[1]{\left \lVert#1 \right  \rVert}
+\providecommand{\deter}[1]{\lvert #1 \rvert}
+\providecommand{\abs}[1]{\left \lvert #1 \right \rvert}
+\providecommand{\mat}[1]{\left[ #1 \right]}
+\newcommand{\trans}[1]{{#1}^{\ensuremath{\mathsf{T}}}}           % transpose
+\newcommand{\transpose}[1]{{#1}^{\ensuremath{\mathsf{T}}}}           % transpose
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+\newcommand{\T}{^{\ensuremath{\mathsf{T}}}}           % transpose
+\newcommand{\from}{{\ensuremath{\colon}}}           % :
+\newcommand{\trace}[1]{{\ensuremath{\operatorname{tr}\!\left(#1\right)}}}           % :
+
+\providecommand{\ms}[1]{\mathsf{#1}}
+\providecommand{\mc}[1]{\mathcal{#1}}
+\providecommand{\mt}[1]{\widetilde{#1}}
+\providecommand{\mb}[1]{\boldsymbol{#1}}
+\providecommand{\mbb}[1]{\mathbb{#1}}
+\providecommand{\mv}[1]{\vec{#1}}
+\providecommand{\mh}[1]{\hat{#1}}
+\providecommand{\wh}[1]{\widehat{#1}}
+\providecommand{\mhv}[1]{\mh{\mv{#1}}}
+\providecommand{\mvh}[1]{\mv{\mh{#1}}}
+\providecommand{\mhc}[1]{\hat{\mathcal{#1}}}
+\providecommand{\mbc}[1]{\mb{\mathcal{#1}}}
+\providecommand{\mvc}[1]{\mv{\mathcal{#1}}}
+\providecommand{\mtc}[1]{\widetilde{\mathcal{#1}}}
+\providecommand{\mth}[1]{\mt{\mh{#1}}}
+\providecommand{\mht}[1]{\mh{\mt{#1}}}
+\providecommand{\mhb}[1]{\hat{\boldsymbol{#1}}}
+\providecommand{\whb}[1]{\widehat{\boldsymbol{#1}}}
+\providecommand{\mvb}[1]{\vec{\boldsymbol{#1}}}
+\providecommand{\mtb}[1]{\widetilde{\boldsymbol{#1}}}
+\providecommand{\mbt}[1]{\widetilde{\boldsymbol{#1}}}
+\providecommand{\mvc}[1]{\vec{\mathcal{#1}}}
+% \newcommand{\D}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dd}[2]{\frac{\partial ^2 #1}{\partial #2 ^2}}
+\newcommand{\DDD}[3]{\frac{\partial ^2 #1}{\partial #2 \partial #3}}
+\newcommand{\Di}[2]{\frac{\partial ^i #1}{\partial #2 ^i}}
+
+
+
+%%%%%%%%%% ENVIRONMENTS %%%%%%%%%%%%%
+
+\newtheorem{Rem}{Remark}%[section]
+\newtheorem{Alg}{Algorithm}%[section]
+\newtheorem{thm}{Theorem}
+\newtheorem{Thm}{Theorem}[section]
+\newtheorem{lem}{Lemma}
+\newtheorem{Lem}{Lemma}%[section]
+\newtheorem{defi}{Definition}
+\newtheorem{Def}{Definition}[section]
+\newtheorem{prop}{Proposition}
+\newtheorem{coro}[thm]{Corollary}
+\newtheorem{claim}{Claim}
+\newtheorem{conj}{Conjecture}
+\newtheorem{question}{Question}
+\newtheorem{rem}{Remark}%[section]
+\newtheorem{cor}[lem]{Corollary}
+\newtheorem{model}{Model}
+
+\newcommand{\bla}{\begin{block}}
+\newcommand{\blb}{\end{block}}
+
+\newcommand{\defa}{\begin{defi}}
+\newcommand{\defb}{\end{defi}}
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+\newcommand{\thma}{\begin{thm}}
+\newcommand{\thmb}{\end{thm}}
+
+\newcommand{\mata}{\begin{bmatrix}}
+\newcommand{\matb}{\end{bmatrix}}
+
+\floatname{algorithm}{Procedure}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\floatname{algorithm}{Pseudocode}
+
+
+
+%%%%%%%%%% ENVIRONMENTS %%%%%%%%%%%%%
+
+
+\renewcommand{\thesection}{\Roman{section}}   % set the section counter to Alpha
+\renewcommand{\thesubsection}{\Roman{section}.\Alph{subsection}}   % set the subsection counter to alpha
+\renewcommand{\thesubsubsection}{\Roman{section}.\Alph{subsection}(\arabic{subsubsection})}   % set the subsection counter to alpha
+% 
+% 
+\makeatletter
+% \def\subsize{\@setsize\subsize{8pt}\xipt\@xipt}
+ \def\section{\@startsection {section}{1}{\z@}{5pt}{9pt}{\Large\bf\db}}
+ \def\subsection{\@startsection {subsection}{2}{\z@}{10pt}{4pt}{\large\bf\db}}
+ \def\subsubsection{\@startsection {subsubsection}{2}{\z@}{10pt}{4pt}{\bf\db}}
+% \def\subs{\@startsection {subsubsection}{2}{0pt}{5pt}{0pt}{ \subsize\bf\db}}
+\def\paragraph{\@startsection {paragraph}{2}{\z@}{10pt}{4pt}{\bf\db}}
+% \def\subparagraph{\@startsection 
+
+
+\newcommand{\para}[1]{\vspace{3pt}\noindent{{\fontsize{10pt}{4pt} \bf \db{#1} }}}
+\newcommand{\subpara}[1]{\vspace{3pt}\noindent{{\fontsize{10pt}{4pt} \bf \emph{#1}}}}
+\newcommand{\subsubpara}[1]{\vspace{3pt}\noindent{{\fontsize{10pt}{4pt} \emph{#1}}}}
+
+\setlength{\parindent}{0pt}
+
+%%%%%% SHORT HAND %%%%%%%%%%
+\renewcommand{\refname}{References and Notes}
+
+\newcommand{\jv}{Joshua Vogelstein}
+\newcommand{\jhu}{Johns Hopkins University}
+\newcommand{\website}{http://jovo.me/}
+\newcommand{\email}{jovo@jhu.edu}
+
+\newcommand{\Vr}{V_{reset}}
+\newcommand{\Vl}{V_{leat}}
+\newcommand{\eqdef}{\overset{\triangle}{=}}
+\newcommand{\grad}{\nabla}
+\newcommand{\Hess}{\nabla\nabla}
+\newcommand{\defn}{\overset{\triangle}{=}}
+
+\newcommand{\iid}{\overset{iid}{\sim}}
+\newcommand{\knn}{$k$NN}
+
+\newcommand{\elegans}{\emph{C. elegans} }
+
+\newcommand{\Lik}{\mathcal{L}}
+\newcommand{\Cae}{[\widehat{\text{Ca}}^{2+}]}
+\newcommand{\Cav}{\ve{C}}%[\ve{\text{Ca}}^{2+}]}
+\newcommand{\sml}{\sqrt{\ma{\lambda}}}
+\newcommand{\ml}{\ma{\lambda}}
+\newcommand{\nw}{\widehat{n}}
+\newcommand{\nv}{\vec{n}}
+\newcommand{\Ae}{\widehat{A}}
+\newcommand{\te}{\widehat{\tau}}
+\newcommand{\maxn}{\max_{\ve{n}: n_t \geq 0}}
+% \newcommand{\V}{\text{Var}}
+
+\newcommand{\PmcP}{P \in \mc{P}}
+\newcommand{\mP}{\mathbb{P}}
+
+% \newcommand{\dvs}{\dot{\bs}_t}
+% \newcommand{\dvw}{\dot{\bw}_t}
+% \newcommand{\dvx}{\dot{\bx}_t}
+% \newcommand{\dvy}{\dot{\by}_t}
+
+\newcommand{\ft}{f_{\ve{\thet}}}
+\newcommand{\gt}{g_{\ve{\thet}}}
+\newcommand{\hht}{h_{\thetn}}
+
+\newcommand{\Real}{\mathbb{R}}
+
+
+
+\newcommand{\wconv}{\overset{i.p.}{\rightarrow}}
+\newcommand{\sconv}{\overset{i.p.}{\rightarrow}}
+\newcommand{\conv}{\rightarrow}
+\newcommand{\pconv}{\overset{p}{\conv}}
+\newcommand{\mcE}{\mathcal{E}}
+\newcommand{\mcT}{\mathcal{T}}
+\newcommand{\mcG}{\mathcal{G}}
+\newcommand{\mcM}{\mathcal{M}}
+\newcommand{\mcL}{\mathcal{L}}
+\newcommand{\hatmcE}{\widehat{\mcE}}
+\newcommand{\hatp}{\widehat{p}}
+\newcommand{\hatP}{\widehat{P}}
+\newcommand{\hatQ}{\widehat{Q}}
+\newcommand{\hatL}{\widehat{L}}
+\newcommand{\mhP}{\widehat{\PP}}
+\newcommand{\tildeA}{\widetilde{A}}
+\newcommand{\defeq}{\overset{\triangle}{=}}
+
+
+\DeclareMathOperator{\Pmat}{\mathbf{P}}
+\DeclareMathOperator{\veta}{\mathbf{\mb{v}}}
+\DeclareMathOperator*{\minimize}{\mathrm{minimize}}
+\DeclareMathOperator*{\maximize}{\mathrm{maximize}}
+% \DeclareMathOperator*{\mb{v}mod}{\mathbf{\mb{v}}}
+
+
+%%%%%%% LATIN LETTERS
+
+
+\newcommand{\bA}{\mb{A}}
+\newcommand{\bB}{\mb{B}}
+\newcommand{\bD}{\mb{D}}
+\newcommand{\bI}{\mb{I}}
+\newcommand{\bP}{\mb{P}}
+\newcommand{\bS}{\mb{S}}
+\newcommand{\bU}{\mb{U}}
+\newcommand{\bV}{\mb{V}}
+\newcommand{\bW}{\mb{W}}
+\newcommand{\bX}{\mb{X}}
+\newcommand{\bY}{\mb{Y}}
+\newcommand{\bZ}{\mb{Z}}
+
+\newcommand{\ba}{\mb{a}}
+\renewcommand{\ba}{\mb{b}}
+\newcommand{\bd}{\mb{d}}
+\newcommand{\bp}{\mb{p}}
+\newcommand{\bs}{\mb{s}}
+\newcommand{\bu}{\mb{u}}
+\newcommand{\bv}{\mb{v}}
+\newcommand{\bw}{\mb{w}}
+\newcommand{\bx}{\mb{x}}
+\newcommand{\by}{\mb{y}}
+\newcommand{\bz}{\mb{z}}
+
+
+\newcommand{\Aa}{\mathbb{A}}
+\newcommand{\BB}{\mathbb{B}}
+\newcommand{\CC}{\mathbb{C}}         
+\newcommand{\DD}{\mathbb{D}}         
+\newcommand{\EE}{\mathbb{E}}           % expected value
+\newcommand{\FF}{\mathbb{F}}         
+\newcommand{\GG}{\mathbb{G}}
+\newcommand{\HH}{\mathbb{H}}         
+\newcommand{\II}{\mathbb{I}}           % indicator function
+\newcommand{\LL}{\mathbb{L}}
+\newcommand{\MM}{\mathbb{M}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\PP}{\mathbb{P}}         
+\newcommand{\QQ}{\mathbb{Q}}           
+\newcommand{\SSS}{\mathbb{S}}           
+\newcommand{\VV}{\mathbb{V}}
+\newcommand{\WW}{\mathbb{W}}         
+\newcommand{\XX}{\mathbb{X}}         
+\newcommand{\YY}{\mathbb{Y}}
+\newcommand{\ZZ}{\mathbb{Z}}         
+
+
+
+
+\newcommand{\Qs}{Q}
+\newcommand{\mcS}{\mc{S}}
+\newcommand{\mcU}{\mc{U}}
+
+\newcommand{\mbd}{\mb{d}}
+\newcommand{\mbD}{\mb{D}}
+\newcommand{\mbx}{\mb{x}}
+\newcommand{\mbX}{\mb{X}}
+\newcommand{\mby}{\mb{y}}
+\newcommand{\mbY}{\mb{Y}}
+
+\newcommand{\mtbd}{\mtb{d}}
+\newcommand{\mtbD}{\mtb{D}}
+\newcommand{\mtbx}{\mtb{x}}
+\newcommand{\mtbX}{\mtb{X}}
+\newcommand{\mtby}{\mtb{y}}
+\newcommand{\mtbY}{\mtb{Y}}
+
+
+
+\DeclareMathOperator{\Ri}{\mathbf{\R}^{-1}}
+\DeclareMathOperator{\A}{A}
+\DeclareMathOperator{\W}{\mathbf{W}}
+\DeclareMathOperator{\V}{\mathbf{V}}
+\DeclareMathOperator{\U}{\mathbf{U}}
+\DeclareMathOperator{\C}{\mathbf{C}}
+\DeclareMathOperator{\uvec}{\mathbf{u}}
+\DeclareMathOperator{\D}{\mathbf{D}}
+\DeclareMathOperator{\Q}{\mathbf{Q}}
+\DeclareMathOperator{\R}{R} %\mathbf{P}}
+\DeclareMathOperator{\Y}{\mathbf{Y}}
+\DeclareMathOperator{\B}{\mathbf{B}}
+\DeclareMathOperator{\Hmat}{\mathbf{H}}
+\DeclareMathOperator{\Gmat}{\mathbf{G}}
+\DeclareMathOperator{\X}{\mathbf{X}}
+\DeclareMathOperator{\Cmat}{C} %\mathbf{L}}\providecommand{\ms}[1]{\mathsf{#1}}
+
+\DeclareMathOperator*{\Ymod}{\mathbf{\Y}}
+\DeclareMathOperator*{\Bmod}{\mathbf{B}}
+\DeclareMathOperator*{\Hmod}{\mathbf{H}}
+\DeclareMathOperator*{\Lmod}{\mathbf{L}}
+\DeclareMathOperator*{\Xmod}{\mathbf{\X}}
+
+
+%%% THETA %%%%
+
+\newcommand{\bth}{\ve{\theta}}
+\newcommand{\hth}{\mh{\theta}}
+\newcommand{\htth}{\mh{\theta}}
+\newcommand{\bhth}{\mh{\ve{\theta}}}
+\newcommand{\thetn}{\ve{\theta}}
+\newcommand{\thet}{\thetn}
+\newcommand{\theth}{\widehat{\ve{\theta}}}
+\newcommand{\theto}{\ve{\theta}'}
+\newcommand{\wht}{\widehat{\thet}}
+\newcommand{\wtt}{\widetilde{\thet}}
+\newcommand{\vth}{\ve{\thet}}
+\newcommand{\vTh}{\ve{\Theta}}
+\newcommand{\hvth}{\widehat{\ve{\thet}}}
+\newcommand{\bTh}{\ve{\Theta}}
+\newcommand{\hbth}{\widehat{\thet}}
+\newcommand{\tbth}{\tilde{\bth}}
+
+
+
+% \newcommand{\p}{P_{\bth}}
+\newcommand{\pold}{P_{\bth'}}
+\newcommand{\pk}{P_{\widehat{\ve{\theta}}^{(k)}}}
+\newcommand{\pT}{P_{\thetn_{Tr}}} %\thetn_T
+\newcommand{\pO}{P_{\thetn_o}} %\thetn_o
+% \newcommand{\Q}{Q(\thetn,\theto)}
+% \newcommand{\m}{m^{\ast}}
+% \newcommand{\q}{q(\ve{H}_t)}
+\newcommand{\Ca}{[\text{Ca}^{2+}]}
+
+
+%%%%%% GREEK LETTERS
+
+\newcommand{\del}{\delta}
+\newcommand{\sig}{\sigma}
+\newcommand{\lam}{\lambda}
+\newcommand{\gam}{\gamma}
+\newcommand{\eps}{\varepsilon}
+
+\newcommand{\Del}{\Delta}
+\newcommand{\Sig}{\Sigma}
+\newcommand{\Lam}{\Lambda}
+\newcommand{\Gam}{\Gamma}
+
+\newcommand{\bSig}{\ve{\Sigma}}
+\newcommand{\bOm}{\ve{\Omega}}
+\newcommand{\bLam}{\ve{\Lambda}}
+\newcommand{\bPhi}{\ve{\Phi}}
+\newcommand{\bPsi}{\ve{\Psi}}
+
+\newcommand{\bmu}{\ve{\mu}}
+\newcommand{\bal}{\ve{\alpha}}
+\newcommand{\bpi}{\ve{\pi}}
+\newcommand{\bkap}{\ve{\kappa}}
+\newcommand{\bdel}{\ve{\delta}}
+\newcommand{\bphi}{\ve{\phi}}
+\newcommand{\bpsi}{\ve{\psi}}
+
+
+
+\DeclareMathOperator{\Delti}{\mathbf{\Delta}^{-1}}
+\DeclareMathOperator{\Delt}{Q} %\mathbf{\Delta}}
+% \DeclareMathOperator{\Gam}{\mathbf{\Gamma}}
+\DeclareMathOperator{\Gami}{\mathbf{\Gamma}^{-1}}
+\DeclareMathOperator{\Sigb}{\mathbf{\Sigma}}
+
+
+
+
+
+
+%%%%%%%%%%% ALGORITHM NAMES %%%%%%%%%%%%%
+
+\newcommand{\FAQ}{\texttt{FAQ} }
+
+\providecommand{\sct}[1]{{\sc \texttt{#1}}}
+\newcommand{\msl}{{\sc Idt}}
+
+\newcommand{\Svd}{\sct{Svd}}
+\newcommand{\Pca}{\sct{Pca}}
+\newcommand{\Fld}{\sct{Fld}}
+\newcommand{\Lda}{\sct{Lda}}
+\newcommand{\eig}{\sct{eig}}
+\newcommand{\qr}{\sct{qr}}
+\newcommand{\Lol}{\sct{Lol}}
+\newcommand{\Lal}{\sct{Lal}}
+\newcommand{\Lrl}{\sct{Lrl}}
+\newcommand{\Lfl}{\sct{Lfl}}
+
+
+

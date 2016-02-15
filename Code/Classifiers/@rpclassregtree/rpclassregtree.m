@@ -1037,15 +1037,23 @@ function M = srpmat(d,k,method,varargin)
         M(nzs(~npos))=-1;
         M = M(:,any(M));
         M = M(:,1:min(k,size(M,2)));
-    %elseif strcmp(method,'frc')
-    %    nmix = varargin{2};
-    %    M = sparse(d,k);
-    %    nz = zeros(1,k*nmix);
-    %    for j = 1:k
-    %        r = randperm(d);
-    %        nz(nmix*(j-1)+1:nmix*j) = r(1:nmix)+d*(j-1);
-    %    end
-    %    M(nz) = rand(1,nmix*k)*2-1;
+    elseif strcmp(method,'frc')
+        nmix = varargin{2};
+        M = sparse(d,k);
+        p = 1;
+        for i = 1:nmix-1
+            p = p*(d-i)/d;
+        end
+        kk = round(4*k/p);
+        go = true;
+        while go
+            idx = randi(d,nmix,kk);
+            idx = idx(:,all(diff(sort(idx)),1));
+            go = size(idx,2) < k;
+        end
+        idx = idx(:,1:k);
+        idx = (ndgrid(1:k,1:nmix)'-1)*d + idx;
+        M(idx) = rand(1,nmix*k)*2 - 1;
     elseif strcmp(method,'uniform')
         M = sparse(d,k);
         stop = false;

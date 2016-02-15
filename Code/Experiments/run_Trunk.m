@@ -12,8 +12,7 @@ ntrees = 1000;
 ntrials = 25;
 NWorkers = 2;
 Class = [0;1];
-% dims = [2 10 50 100 500 1000];
-dims = 1000;
+dims = [2 10 50 100 500 1000];
 ndims = length(dims);
 Lhat.rf = NaN(ndims,5,ntrials);
 Lhat.rerf = NaN(ndims,5,ntrials);
@@ -67,13 +66,13 @@ for j = 1:ndims
             cl.rerf = rpclassificationforest(ntrees,X,Ystr,'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
             trainTime.rerf(j,i,trial) = toc;
             Lhat.rerf(j,i,trial) = oobpredict(cl.rerf,X,Ystr,'last');
+    
+            tic;
+            cl.rerfdn = rpclassificationforest(ntrees,X,Ystr,'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+            trainTime.rerfdn(j,i,trial) = toc;
+            Lhat.rerfdn(j,i,trial) = oobpredict(cl.rerfdn,X,Ystr,'last');
 
-            if d <= 500    
-                tic;
-                cl.rerfdn = rpclassificationforest(ntrees,X,Ystr,'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-                trainTime.rerfdn(j,i,trial) = toc;
-                Lhat.rerfdn(j,i,trial) = oobpredict(cl.rerfdn,X,Ystr,'last');
-            
+            if d <= 500
                 tic;
                 cl.rf_rot = rpclassificationforest(ntrees,X,Ystr,'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
                 trainTime.rf_rot(j,i,trial) = toc;
@@ -83,4 +82,4 @@ for j = 1:ndims
     end
 end
 
-save([rerfPath 'RandomerForest/Results/Trunk_d_1000.mat'],'dims','Lhat','trainTime')
+save([rerfPath 'RandomerForest/Results/Trunk.mat'],'dims','Lhat','trainTime')
