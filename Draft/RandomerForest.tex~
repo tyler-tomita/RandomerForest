@@ -4,7 +4,7 @@
 \documentclass[10pt]{article}
 \input{preamble.tex}
 
-\title{\vspace{-50pt}\db{RandomerForests}}
+\title{\vspace{-50pt}\db{Randomer Forests}}
 \author{Tyler M. Tomita, Mauro Maggioni, Joshua T.~Vogelstein}
 \date{}
 

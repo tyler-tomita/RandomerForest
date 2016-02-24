@@ -11,7 +11,9 @@ C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
 Colors.rf = C(1,:);
 Colors.rerf = C(2,:);
 Colors.rf_rot = C(3,:);
-Colors.rerfdn = C(4,:);
+Colors.rerfr = C(4,:);
+Colors.frc = C(5,:);
+Colors.rerfdn = C(6,:);
 LineWidth = 2;
 MarkerSize = 12;
 FontSize = .2;
@@ -93,14 +95,6 @@ for i = 1:length(classifiers)
     end
 end
 
-if runSims
-    Sparse_parity_bayes_error
-else
-    load Sparse_parity_bayes_error.mat
-end
-
-% errorbar(dims,bayes_error,sem_bayes_error,'LineWidth',LineWidth)
-
 title('(B)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 text(0.5,1.05,{'Error Rate';'(relative to RF)'},'FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('p')
@@ -117,12 +111,14 @@ ax.XTick = [1 10 100];
 ax.XTickLabel = {'1' '10' '100'};
 % ax.YLim = [0 .5];
 
+load Sparse_parity
+
 ax = subplot(2,3,3);
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
     if ~strcmp(cl,'rerfdn')
-        trainTime.(cl) = nanmean(trainTime.(cl),2);
+        trainTime.(cl) = nansum(trainTime.(cl),2);
         hTrainTime(i) = errorbar(dims,mean(trainTime.(cl),3),std(trainTime.(cl),0,3)/sqrt(size(trainTime.(cl),3)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
@@ -198,7 +194,19 @@ for i = 1:length(classifiers)
     end
 end
 
-% plot(dims,bayes_error,'LineWidth',LineWidth)
+load Trunk_rerfr_frc
+
+classifiers = fieldnames(Lhat);
+
+for i = 1:length(classifiers)
+    cl = classifiers{i};
+    [minLhat.(cl),minLhatIdx.(cl)] = min(Lhat.(cl),[],2);
+    LhatDiff = minLhat.(cl)-minLhat.(classifiers{1});
+    if i > 1
+        hLhat(i) = errorbar(dims,mean(LhatDiff,3),std(LhatDiff,0,3)/sqrt(size(LhatDiff,3)),'LineWidth',LineWidth,'Color',Colors.(cl));
+    end
+    hold on
+end
 
 title('(E)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 xlabel('p')
@@ -215,19 +223,33 @@ ax.XScale = 'log';
 ax.XTick = logspace(0,3,4);
 ax.XTickLabel = {'1';'10';'100';'1000'};
 
+load Trunk
+
+classifiers = fieldnames(Lhat);
+
 ax = subplot(2,3,6);
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
     if ~strcmp(cl,'rerfdn')
-        trainTime.(cl) = nanmean(trainTime.(cl),2);
+        trainTime.(cl) = nansum(trainTime.(cl),2);
         hTrainTime(i) = errorbar(dims,mean(trainTime.(cl),3),std(trainTime.(cl),0,3)/sqrt(size(trainTime.(cl),3)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
 end
 
-%Plot dummy line for bayes just so that it's in the legend
-% plot([0 0 0],[0 0 0],'LineWidth',LineWidth,'Visible','off')
+load Trunk_rerfr_frc
+
+classifiers = fieldnames(Lhat);
+
+for i = 1:length(classifiers)
+    cl = classifiers{i};
+    trainTime.(cl) = nansum(trainTime.(cl),2);
+    if i > 1
+        hTrainTime(i) = errorbar(dims,mean(trainTime.(cl),3),std(trainTime.(cl),0,3)/sqrt(size(trainTime.(cl),3)),'LineWidth',LineWidth,'Color',Colors.(cl));
+    end
+    hold on
+end
 
 title('(F)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 xlabel('p')
@@ -242,7 +264,7 @@ ax.XLim = [1 1100];
 ax.XScale = 'log';
 ax.XTick = logspace(0,3,4);
 ax.XTickLabel = {'1';'10';'100';'1000'};
-l = legend('RF','RerF','RotRF');
+l = legend('RF','RerF','RotRF','RerF(r)','FRC');
 l.Location = 'southwest';
 l.Box = 'off';
 l.FontSize = 12;

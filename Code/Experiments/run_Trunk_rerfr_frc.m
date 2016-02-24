@@ -20,9 +20,10 @@ trainTime.rf = NaN(ndims,5,ntrials);
 trainTime.rerfr = NaN(ndims,5,ntrials);
 trainTime.frc = NaN(ndims,25,ntrials);
 
-for i = 1:ndims
+for i = ndims:ndims
 
     d = dims(i);
+    fprintf('d = %d\n',d)
     
     if d <= 5
         mtrys = 1:d;
@@ -73,4 +74,4 @@ for i = 1:ndims
     end
 end
 
-save([rerfPath 'RandomerForest/Results/Trunk_rerfr_frc.mat'],'dims','Lhat','trainTime')
+save([rerfPath 'RandomerForest/Results/Trunk_rerfr_frc_d1000.mat'],'dims','Lhat','trainTime')
