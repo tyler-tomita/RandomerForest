@@ -9,7 +9,8 @@ C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0];
 Colors.rf = C(1,:);
 Colors.rerf = C(2,:);
 Colors.rf_rot = C(3,:);
-Colors.rerfdn = C(4,:);
+Colors.rerfr = C(4,:);
+Colors.frc = C(5,:);
 LineWidth = 2;
 FontSize = .16;
 axWidth = 1.3;
@@ -19,15 +20,15 @@ axHeight = 1.3;
 %     FontSize*12+axWidth*2,FontSize*16+axWidth*3];
 % axBottom = [FontSize*8+axHeight,FontSize*8+axHeight,FontSize*8+axHeight,...
 %     FontSize*8+axHeight,FontSize*4,FontSize*4,FontSize*4,FontSize*4];
-% axLeft = [FontSize*5,FontSize*6+axWidth,FontSize*7+axWidth*2,...
-%     FontSize*8+axWidth*3,FontSize*9+axWidth*4,FontSize*5,...
-%     FontSize*6+axWidth,FontSize*7+axWidth*2,FontSize*8+axWidth*3,...
-%     FontSize*9+axWidth*4];
-% axBottom = [FontSize*6+axHeight,FontSize*6+axHeight,FontSize*6+axHeight,...
-%     FontSize*6+axHeight,FontSize*6+axHeight,FontSize*3,FontSize*3,...
-%     FontSize*3,FontSize*3 FontSize*3];
-axLeft = [FontSize*4 FontSize*8+axWidth FontSize*4 FontSize*8+axWidth+cbWidth];
-axBottom = [FontSize*6+axHeight FontSize*6+axHeight FontSize*3 FontSize*3];
+axLeft = [FontSize*5,FontSize*6+axWidth,FontSize*7+axWidth*2,...
+    FontSize*8+axWidth*3,FontSize*9+axWidth*4,FontSize*5,...
+    FontSize*6+axWidth,FontSize*7+axWidth*2,FontSize*8+axWidth*3,...
+    FontSize*9+axWidth*4];
+axBottom = [FontSize*6+axHeight,FontSize*6+axHeight,FontSize*6+axHeight,...
+    FontSize*6+axHeight,FontSize*6+axHeight,FontSize*3,FontSize*3,...
+    FontSize*3,FontSize*3 FontSize*3];
+% axLeft = [FontSize*4 FontSize*8+axWidth FontSize*4 FontSize*8+axWidth];
+% axBottom = [FontSize*6+axHeight FontSize*6+axHeight FontSize*3 FontSize*3];
 figWidth = axLeft(end) + axWidth + FontSize*4;
 figHeight = axBottom(1) + axHeight + FontSize*3;
 
@@ -55,12 +56,16 @@ for j = 1:length(Transformations)
     [Lhat.rerf,minIdx.rerf] = min(mean_err_rerf.(Transform)(end,:,:),[],2);
 %     [Lhat.rerfdn,minIdx.rerfdn] = min(mean_err_rerfdn.(Transform)(end,:,:),[],2);
     [Lhat.rf_rot,minIdx.rf_rot] = min(mean_err_rf_rot.(Transform)(end,:,:),[],2);
+    [Lhat.rerfr,minIdx.rerfr] = min(mean_err_rerfr.(Transform)(end,:,:),[],2);
+    [Lhat.frc,minIdx.frc] = min(mean_err_frc.(Transform)(end,:,:),[],2);
 
     for i = 1:length(dims)
         sem.rf(i) = sem_rf.(Transform)(end,minIdx.rf(i),i);
         sem.rerf(i) = sem_rerf.(Transform)(end,minIdx.rerf(i),i);
 %         sem.rerfdn(i) = sem_rerfdn.(Transform)(end,minIdx.rerfdn(i),i);
         sem.rf_rot(i) = sem_rf_rot.(Transform)(end,minIdx.rf_rot(i),i);
+        sem.rerfr(i) = sem_rerfr.(Transform)(end,minIdx.rerfr(i),i);
+        sem.frc(i) = sem_frc.(Transform)(end,minIdx.frc(i),i);
     end
 
     classifiers = fieldnames(Lhat);
@@ -114,12 +119,16 @@ for j = 1:length(Transformations)
     [Lhat.rerf,minIdx.rerf] = min(mean_err_rerf.(Transform)(end,:,:),[],2);
 %     [Lhat.rerfdn,minIdx.rerfdn] = min(mean_err_rerfdn.(Transform)(end,:,:),[],2);
     [Lhat.rf_rot,minIdx.rf_rot] = min(mean_err_rf_rot.(Transform)(end,:,:),[],2);
+    [Lhat.rerfr,minIdx.rerfr] = min(mean_err_rerfr.(Transform)(end,:,:),[],2);
+    [Lhat.frc,minIdx.frc] = min(mean_err_frc.(Transform)(end,:,:),[],2);
 
     for i = 1:length(dims)
         sem.rf(i) = sem_rf.(Transform)(end,minIdx.rf(i),i);
         sem.rerf(i) = sem_rerf.(Transform)(end,minIdx.rerf(i),i);
 %         sem.rerfdn(i) = sem_rerfdn.(Transform)(end,minIdx.rerfdn(i),i);
         sem.rf_rot(i) = sem_rf_rot.(Transform)(end,minIdx.rf_rot(i),i);
+        sem.rerfr(i) = sem_rerfr.(Transform)(end,minIdx.rerfr(i),i);
+        sem.frc(i) = sem_frc.(Transform)(end,minIdx.frc(i),i);
     end
 
     classifiers = fieldnames(Lhat);
