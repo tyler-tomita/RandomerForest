@@ -8,16 +8,16 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
 LineWidth = 2;
 FontSize = .2;
-axWidth = 1.75;
-axHeight = 1.75;
+axWidth = 1.5;
+axHeight = 1.5;
 % axLeft = [FontSize*4,FontSize*8+axWidth,FontSize*12+axWidth*2,...
 %     FontSize*16+axWidth*3,FontSize*4,FontSize*8+axWidth,...
 %     FontSize*12+axWidth*2,FontSize*16+axWidth*3];
 % axBottom = [FontSize*8+axHeight,FontSize*8+axHeight,FontSize*8+axHeight,...
 %     FontSize*8+axHeight,FontSize*4,FontSize*4,FontSize*4,FontSize*4];
 axLeft = [FontSize*4,FontSize*5+axWidth,FontSize*6+axWidth*2,...
-    FontSize*7+axWidth*3,FontSize*8+axWidth*4];
-axBottom = [FontSize*3,FontSize*3,FontSize*3,FontSize*3,FontSize*3];
+    FontSize*7+axWidth*3,FontSize*8+axWidth*4,FontSize*9+axWidth*5];
+axBottom = [FontSize*3,FontSize*3,FontSize*3,FontSize*3,FontSize*3,FontSize*3];
 figWidth = axLeft(end) + axWidth + FontSize*3;
 figHeight = axBottom(1) + axHeight + FontSize*3;
 
@@ -28,7 +28,7 @@ fig.Position = [0 0 figWidth figHeight];
 fig.PaperPosition = [0 0 figWidth figHeight];
 fig.PaperSize = [figWidth figHeight];
 
-Titles = {'RF' 'RerF' 'RerF(d)' 'RerF(d+r)' 'Rotation RF'};
+Titles = {'RF' 'RerF' 'RerF(d)' 'RerF(d+r)' 'Rotation RF' 'FRC'};
 
 runSims = false;
 
@@ -49,6 +49,7 @@ for j = 1:length(Transformations)
     [Lhat.rerfdn,minIdx.rerfdn] = min(mean_err_rerfdn.(Transform)(end,:,:),[],2);
     [Lhat.rerfdnr,minIdx.rerfdnr] = min(mean_err_rerfdnr.(Transform)(end,:,:),[],2);
     [Lhat.rf_rot,minIdx.rf_rot] = min(mean_err_rf_rot.(Transform)(end,:,:),[],2);
+    [Lhat.frc,minIdx.frc] = min(mean_err_frc.(Transform)(end,:,:),[],2);
 
     for i = 1:length(dims)
         sem.rf(i) = sem_rf.(Transform)(end,minIdx.rf(i),i);
@@ -56,6 +57,7 @@ for j = 1:length(Transformations)
         sem.rerfdn(i) = sem_rerfdn.(Transform)(end,minIdx.rerfdn(i),i);
         sem.rerfdnr(i) = sem_rerfdnr.(Transform)(end,minIdx.rerfdnr(i),i);
         sem.rf_rot(i) = sem_rf_rot.(Transform)(end,minIdx.rf_rot(i),i);
+        sem.frc(i) = sem_frc.(Transform)(end,minIdx.frc(i),i);
     end
 
     classifiers = fieldnames(Lhat);
@@ -63,7 +65,7 @@ for j = 1:length(Transformations)
     for i = 1:length(classifiers)
         cl = classifiers{i};
         if j == 1
-            ax(i) = subplot(1,5,i);
+            ax(i) = subplot(1,6,i);
             hold on
         else
             axes(ax(i));

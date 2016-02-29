@@ -16,43 +16,50 @@ classdef rpclassificationforest
         function forest = rpclassificationforest(nTrees,X,Y,varargin)
             %class contstructor for RandomerForest object
             %
-            %nTrees is number of trees
+            %nTrees: number of trees in ensemble
             %
-            %X is an n x d matrix where n is number of samples and d is
+            %X: n x d matrix where n is number of samples and d is
             %
             %number of dimensions (predictor variables)
             %
-            %Y is an n x 1 cell string of class labels
+            %Y: n x 1 cell string of class labels
             %
             %Optional Arguments:
                 %nvartosample: if 'RandomForest' is true, then this is the
                 %number of variables subsampled when splitting. Otherwise,
-                %this is the dimension (<=d) of the subspace projected
+                %this is the dimension of the subspace randomly projected
                 %into
                 %
                 %s: s a parameter that specifies the sparsity of the random
                 %projection matrix. Sparsity is computed as 1/(2*s). Only
                 %used if sparsemethod is set to 'dense'
                 %
-                %mdiff: string 'all', 'node' or 'off'. Specifying 'all' or 'node' allows the
-                %difference in class-conditional means to sampled as a
-                %projection
+                %mdiff: string 'all', 'node' or 'off'. Specifying 'all' or
+                %'node' allows the full-sample or node-sample
+                %class-conditional differences in means to be sampled as
+                %projections
                 %
                 %sparsemethod: string specifying the method for sampling
                 %the random projection matrix. Options are 'dense' (dense
-                %nonzeros sampled from [-1,1]) and 'sparse' (nonzeros
-                %sampled from {-1,1}). For dense, sparsity is controlled by
-                %the parameter 's'.
+                %nonzeros sampled from [-1,1]), 'sparse' (nonzeros
+                %sampled from {-1,1}), and 'frc' (Breiman's Forest-RC). For
+                %dense, sparisty is controlled by the parameter 's'.
                 %
                 %RandomForest: logical true or false (default). Setting to
-                %true performs regular random forest
+                %true performs traditional random forest
                 %
-                %Robust: logical true or false (defualt). Setting to true
+                %Robust: logical true or false (default). Setting to true
                 %passes the data to marginal ranks prior to any computing
                 %
                 %NWorkers: number of workers for parallel computing
+                %(default = 1)
                 %
-                %rotate: uniformly randomly rotate data for each tree
+                %rotate: logical true or false (default). Setting to true
+                %uniformly randomly rotates the data for each tree prior to
+                %fitting
+                %
+                %p: probability of sampling each of the K-1 mean difference
+                %vectors, where K is the number of classes
             %
             %Example:
             %
