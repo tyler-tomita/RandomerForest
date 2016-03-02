@@ -1029,10 +1029,12 @@ function M = srpmat(d,k,method,varargin)
     %    M(nnz(round(nnzs/2)+1:end))=-1;
     %    M = M(:,any(M));
     elseif strcmp(method,'sparse')
+        s = varargin{1};
         kk = round(k/(1-1/exp(1)));
         M = sparse(d,kk);
-        nzs=randperm(d*kk,kk);
-        npos = rand(kk,1) > 0.5;
+        nnzs = round(kk*d*s);
+        nzs=randperm(d*kk,nnzs);
+        npos = rand(nnzs,1) > 0.5;
         M(nzs(npos))=1;
         M(nzs(~npos))=-1;
         M = M(:,any(M));
