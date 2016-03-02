@@ -92,7 +92,7 @@ classdef rpclassificationforest
                         'nmix'  'rotate'    'p'};
             defaults = {[]  []  'gdi'   []  []  1   ceil(size(X,2)^(2/3))...
                         'off'    []  'off'    'classification'  1e-6    {}...
-                        []  'off'   false  []  1    true   3    'off'   'sparse'...
+                        []  'off'   false  []  1    true   1/size(X,2)    'off'   'sparse'...
                         false false 1   true   2   false  []};
             [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
                 nvartosample,Merge,categ,Prune,Method,qetoler,names,W,...
@@ -115,6 +115,14 @@ classdef rpclassificationforest
             end
             
             [n,d] = size(X);
+            
+            %Check sparsity
+            if s < 1/d
+                s = 1/d;
+            elseif s > 1
+                s = 1;
+            end
+            
             nclasses = length(forest.classname);
             priors = NaN(1,nclasses);
             for c = 1:nclasses
