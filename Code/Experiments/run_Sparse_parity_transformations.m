@@ -9,7 +9,7 @@ rng(1);
 
 load Sparse_parity_transformations_data
 ntrees = 500;
-NWorkers = 2;
+NWorkers = 24;
 
 for i = 1:length(dims)
     
@@ -57,15 +57,15 @@ for i = 1:length(dims)
     err_rerfr.Outlier = zeros(ntrees,length(mtrys),ntrials);
     err_rf_rot.Outlier = zeros(ntrees,length(mtrys),ntrials);
     
-    err_frc.Untransformed = zeros(ntrees,length(mtrys),ntrials);
+    err_frc.Untransformed = zeros(ntrees,length(mtrys)*length(nmixs),ntrials);
     
-    err_frc.Rotated = zeros(ntrees,length(mtrys),ntrials);
+    err_frc.Rotated = zeros(ntrees,length(mtrys)*length(nmixs),ntrials);
     
-    err_frc.Scaled = zeros(ntrees,length(mtrys),ntrials);
+    err_frc.Scaled = zeros(ntrees,length(mtrys)*length(nmixs),ntrials);
     
-    err_frc.Affine = zeros(ntrees,length(mtrys),ntrials);
+    err_frc.Affine = zeros(ntrees,length(mtrys)*length(nmixs),ntrials);
     
-    err_frc.Outlier = zeros(ntrees,length(mtrys),ntrials);
+    err_frc.Outlier = zeros(ntrees,length(mtrys)*length(nmixs),ntrials);
     
     Class = [0;1];
 
@@ -80,83 +80,83 @@ for i = 1:length(dims)
             
             %Untransformed
             rf = rpclassificationforest(ntrees,X{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf.Untransformed(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rf,X{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rf.Untransformed(:,j,trial) = oobpredict(rf,X{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rerf = rpclassificationforest(ntrees,X{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerf.Untransformed(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerf,X{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rerf.Untransformed(:,j,trial) = oobpredict(rerf,X{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rerfdn = rpclassificationforest(ntrees,X{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerfdn.Untransformed(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerfdn,X{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rerfdn.Untransformed(:,j,trial) = oobpredict(rerfdn,X{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rerfr = rpclassificationforest(ntrees,X{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','Robust',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerfr.Untransformed(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerfr,X{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rerfr.Untransformed(:,j,trial) = oobpredict(rerfr,X{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rf_rot = rpclassificationforest(ntrees,X{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf_rot.Untransformed(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rf_rot,X{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rf_rot.Untransformed(:,j,trial) = oobpredict(rf_rot,X{i}(:,:,trial),Y{i}(:,trial),'every');
 
             %Rotated
             rf = rpclassificationforest(ntrees,X_rot{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf.Rotated(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rf,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rf.Rotated(:,j,trial) = oobpredict(rf,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rerf = rpclassificationforest(ntrees,X_rot{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerf.Rotated(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerf,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rerf.Rotated(:,j,trial) = oobpredict(rerf,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rerfdn = rpclassificationforest(ntrees,X_rot{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerfdn.Rotated(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerfdn,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rerfdn.Rotated(:,j,trial) = oobpredict(rerfdn,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rerfr = rpclassificationforest(ntrees,X_rot{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','Robust',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerfr.Rotated(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerfr,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rerfr.Rotated(:,j,trial) = oobpredict(rerfr,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rf_rot = rpclassificationforest(ntrees,X_rot{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf_rot.Rotated(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rf_rot,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rf_rot.Rotated(:,j,trial) = oobpredict(rf_rot,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
 
             %Scaled
             rf = rpclassificationforest(ntrees,X_scale{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf.Scaled(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rf,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rf.Scaled(:,j,trial) = oobpredict(rf,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rerf = rpclassificationforest(ntrees,X_scale{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerf.Scaled(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerf,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rerf.Scaled(:,j,trial) = oobpredict(rerf,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rerfdn = rpclassificationforest(ntrees,X_scale{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerfdn.Scaled(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerfdn,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rerfdn.Scaled(:,j,trial) = oobpredict(rerfdn,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rerfr = rpclassificationforest(ntrees,X_scale{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','Robust',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerfr.Scaled(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerfr,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rerfr.Scaled(:,j,trial) = oobpredict(rerfr,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rf_rot = rpclassificationforest(ntrees,X_scale{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf_rot.Scaled(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rf_rot,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rf_rot.Scaled(:,j,trial) = oobpredict(rf_rot,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
 
             %Affine
             rf = rpclassificationforest(ntrees,X_affine{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf.Affine(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rf,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rf.Affine(:,j,trial) = oobpredict(rf,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rerf = rpclassificationforest(ntrees,X_affine{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerf.Affine(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerf,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rerf.Affine(:,j,trial) = oobpredict(rerf,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rerfdn = rpclassificationforest(ntrees,X_affine{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerfdn.Affine(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerfdn,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rerfdn.Affine(:,j,trial) = oobpredict(rerfdn,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rerfr = rpclassificationforest(ntrees,X_affine{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','Robust',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerfr.Affine(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerfr,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rerfr.Affine(:,j,trial) = oobpredict(rerfr,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
 
             rf_rot = rpclassificationforest(ntrees,X_affine{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf_rot.Affine(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rf_rot,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
+            err_rf_rot.Affine(:,j,trial) = oobpredict(rf_rot,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
 
             %Outlier
             rf = rpclassificationforest(ntrees,X_out{i}(:,:,trial),Y_out{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf.Outlier(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rf,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
+            err_rf.Outlier(:,j,trial) = oobpredict(rf,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
 
             rerf = rpclassificationforest(ntrees,X_out{i}(:,:,trial),Y_out{i}(:,trial),'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerf.Outlier(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerf,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
+            err_rerf.Outlier(:,j,trial) = oobpredict(rerf,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
 
             rerfdn = rpclassificationforest(ntrees,X_out{i}(:,:,trial),Y_out{i}(:,trial),'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerfdn.Outlier(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerfdn,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
+            err_rerfdn.Outlier(:,j,trial) = oobpredict(rerfdn,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
 
             rerfr = rpclassificationforest(ntrees,X_out{i}(:,:,trial),Y_out{i}(:,trial),'sparsemethod','sparse','Robust',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rerfr.Outlier(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rerfr,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
+            err_rerfr.Outlier(:,j,trial) = oobpredict(rerfr,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
 
             rf_rot = rpclassificationforest(ntrees,X_out{i}(:,:,trial),Y_out{i}(:,trial),'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf_rot.Outlier(:,length(nmixs)*(j-1)+k,trial) = oobpredict(rf_rot,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
+            err_rf_rot.Outlier(:,j,trial) = oobpredict(rf_rot,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
 
             for k = 1:length(nmixs)
                 nmix = nmixs(k);
