@@ -61,6 +61,7 @@ for j = 1:length(Transformations)
     end
 
     classifiers = fieldnames(Lhat);
+    classifiers(strcmp(classifiers,'frc')) = [];
     
     for i = 1:length(classifiers)
         cl = classifiers{i};

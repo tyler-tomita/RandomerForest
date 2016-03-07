@@ -178,7 +178,7 @@ Much work is still to be done with our proposed methods. The simplicity of RerFs
 
 \section*{Acknowledgements}
 
-This work is partially supported by DARPA GRAPHS N66001-14-1-4028 and DARPA SIMPLEX program through SPAWAR contract N66001-15-C-4041.
+This work is graciously supported by the Defense Advanced Research Projects Agency (DARPA) SIMPLEX program through SPAWAR contract N66001-15-C-4041 and DARPA GRAPHS N66001-14-1-4028.
 
 \bibliography{RandomerForest}
 \bibliographystyle{IEEEtran}

@@ -43,6 +43,7 @@ else
 end
 
 classifiers = fieldnames(Lhat);
+classifiers(strcmp(classifiers,'frc')) = [];
 
 ax = subplot(2,3,1);
 
@@ -264,7 +265,7 @@ ax.XLim = [1 1100];
 ax.XScale = 'log';
 ax.XTick = logspace(0,3,4);
 ax.XTickLabel = {'1';'10';'100';'1000'};
-l = legend('RF','RerF','RotRF','RerF(r)','FRC');
+l = legend('RF','RerF','RotRF','RerF(r)');
 l.Location = 'southwest';
 l.Box = 'off';
 l.FontSize = 12;
