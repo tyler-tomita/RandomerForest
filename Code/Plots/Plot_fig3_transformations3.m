@@ -43,7 +43,7 @@ runSims = false;
 if runSims
     run_Sparse_parity_transformations
 else
-    load Sparse_parity_transformations.mat
+    load Sparse_parity_transformations2.mat
 end
 
 Transformations = fieldnames(mean_err_rf);
@@ -64,6 +64,7 @@ for j = 1:length(Transformations)
     end
 
     classifiers = fieldnames(Lhat);
+    classifiers(strcmp(classifiers,'frc')) = [];
     
     ax = subplot(5,2,2*j-1);
     
@@ -105,7 +106,7 @@ clear Lhat sem minIdx
 if runSims
     run_Trunk_transformations
 else
-    load Trunk_transformations.mat
+    load Trunk_transformations2.mat
 end
 
 Transformations = fieldnames(mean_err_rf);
