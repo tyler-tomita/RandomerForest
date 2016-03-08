@@ -25,12 +25,15 @@ axBottom = FontSize*4;
 figWidth = axLeft(end) + axWidth + FontSize*4;
 figHeight = axBottom(1) + axHeight + FontSize*4;
 
-fig = figure;
-fig.Units = 'inches';
-fig.PaperUnits = 'inches';
-fig.Position = [0 0 figWidth figHeight];
-fig.PaperPosition = [0 0 figWidth figHeight];
-fig.PaperSize = [figWidth figHeight];
+% fig = figure;
+% fig.Units = 'inches';
+% fig.PaperUnits = 'inches';
+% fig.Position = [0 0 figWidth figHeight];
+% fig.PaperPosition = [0 0 figWidth figHeight];
+% fig.PaperSize = [figWidth figHeight];
+
+Markers = {'none','none','none','none','o'};
+LineStyles = {'-','--',':','-.','none'};
 
 ax = axis;
 hold on
@@ -43,17 +46,23 @@ nmixs = 2:6;
 for i = 1:length(mtrys)
     err.rerf = Lhat.rerf(1,length(nmixs)*(i-1)+1:length(nmixs)*(i-1)+length(nmixs),:);
     err.frc = Lhat.frc(1,length(nmixs)*(i-1)+1:length(nmixs)*(i-1)+length(nmixs),:);
-    errorbar(nmixs,mean(err.rerf,3),std(err.rerf,0,3)/sqrt(size(err.rerf,3)-1),'LineWidth',LineWidth,'Color',Colors.rerf)
-    errorbar(nmixs,mean(err.frc,3),std(err.frc,0,3)/sqrt(size(err.frc,3)-1),'LineWidth',LineWidth,'Color',Colors.frc)
+    errorbar(nmixs,mean(err.rerf,3),std(err.rerf,0,3)/sqrt(size(err.rerf,3)-1),'LineWidth',LineWidth,'Color',Colors.rerf,'Marker',Markers{i},'LineStyle',LineStyles{i})
+    errorbar(nmixs,mean(err.frc,3),std(err.frc,0,3)/sqrt(size(err.frc,3)-1),'LineWidth',LineWidth,'Color',Colors.frc,'Marker',Markers{i},'LineStyle',LineStyles{i})
+    l{2*i-1} = ['RerF (mtry = ' num2str(mtrys(i)) ')'];
+    l{2*i} = ['FRC (mtry = ' num2str(mtrys(i)) ')'];
 end
 
 xlabel('# linearly combined variables')
 ylabel('Error Rate')
+lg = legend(l);
+lg.Box = 'off';
+lg.Location = 'eastoutside';
+ax = gca;
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
-ax.Units = 'inches';
-%ax.Position = [axLeft axBottom axWidth axHeight];
+% ax.Units = 'inches';
+% %ax.Position = [axLeft axBottom axWidth axHeight];
 ax.Box = 'off';
 
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/error_vs_sparsity'])

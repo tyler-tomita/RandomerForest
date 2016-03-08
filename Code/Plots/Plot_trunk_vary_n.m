@@ -45,7 +45,7 @@ for i = 1:length(mtrys)
     end
     errorbar(ns,minLhat.rf,sem.rf,'LineWidth',LineWidth,'Color',Colors.rf)
     hold on
-    errorbar(ns,minLhat.rf,sem.rerf,'LineWidth',LineWidth,'Color',Colors.rerf)
+    errorbar(ns,minLhat.rerf,sem.rerf,'LineWidth',LineWidth,'Color',Colors.rerf)
 end
 
 load Trunk_bayes_error

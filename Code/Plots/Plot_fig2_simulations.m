@@ -149,6 +149,7 @@ else
 end
 
 classifiers = fieldnames(Lhat);
+classifiers(strcmp(classifiers,'frc')) = [];
 
 ax = subplot(2,3,4);
 
@@ -198,6 +199,7 @@ end
 load Trunk_rerfr_frc
 
 classifiers = fieldnames(Lhat);
+classifiers(strcmp(classifiers,'frc')) = [];
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
@@ -227,6 +229,7 @@ ax.XTickLabel = {'1';'10';'100';'1000'};
 load Trunk
 
 classifiers = fieldnames(Lhat);
+classifiers(strcmp(classifiers,'frc')) = [];
 
 ax = subplot(2,3,6);
 
@@ -242,6 +245,7 @@ end
 load Trunk_rerfr_frc
 
 classifiers = fieldnames(Lhat);
+classifiers(strcmp(classifiers,'frc')) = [];
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
