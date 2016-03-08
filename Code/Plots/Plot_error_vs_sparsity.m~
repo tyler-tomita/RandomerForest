@@ -1,0 +1,66 @@
+clear
+close all
+clc
+
+fpath = mfilename('fullpath');
+rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
+
+rng(1);
+
+C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
+Colors.rf = C(1,:);
+Colors.rerf = C(2,:);
+Colors.rf_rot = C(3,:);
+Colors.rerfr = C(4,:);
+Colors.frc = C(5,:);
+Colors.rerfdn = C(6,:);
+LineWidth = 2;
+MarkerSize = 12;
+FontSize = .2;
+TitleFontSize = 18;
+axWidth = 1.75;
+axHeight = 1.75;
+axLeft = FontSize*4;
+axBottom = FontSize*4;
+figWidth = axLeft(end) + axWidth + FontSize*4;
+figHeight = axBottom(1) + axHeight + FontSize*4;
+
+% fig = figure;
+% fig.Units = 'inches';
+% fig.PaperUnits = 'inches';
+% fig.Position = [0 0 figWidth figHeight];
+% fig.PaperPosition = [0 0 figWidth figHeight];
+% fig.PaperSize = [figWidth figHeight];
+
+Markers = {'o','.','x','s','d'};
+
+ax = axis;
+hold on
+
+load Trunk_rerf_frc_parameter_sweep_d1000
+
+mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
+nmixs = 2:6;
+
+for i = 1:length(mtrys)
+    err.rerf = Lhat.rerf(1,length(nmixs)*(i-1)+1:length(nmixs)*(i-1)+length(nmixs),:);
+    err.frc = Lhat.frc(1,length(nmixs)*(i-1)+1:length(nmixs)*(i-1)+length(nmixs),:);
+    errorbar(nmixs,mean(err.rerf,3),std(err.rerf,0,3)/sqrt(size(err.rerf,3)-1),'LineWidth',LineWidth,'Color',Colors.rerf,'Marker',Markers{i})
+    errorbar(nmixs,mean(err.frc,3),std(err.frc,0,3)/sqrt(size(err.frc,3)-1),'LineWidth',LineWidth,'Color',Colors.frc,'Marker',Markers{i})
+    l{2*i-1} = ['RerF (mtry = ' num2str(mtrys(i)) ')'];
+    l{2*i} = ['FRC (mtry = ' num2str(mtrys(i)) ')'];
+end
+
+xlabel('# linearly combined variables')
+ylabel('Error Rate')
+lg = legend(l);
+lg.Box = 'off';
+lg.Location = 'eastoutside'
+% ax.LineWidth = LineWidth;
+% ax.FontUnits = 'inches';
+% ax.FontSize = FontSize;
+% ax.Units = 'inches';
+% %ax.Position = [axLeft axBottom axWidth axHeight];
+% ax.Box = 'off';
+
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/error_vs_sparsity'])
