@@ -9,7 +9,7 @@ rng(1);
 
 load Sparse_parity_transformations_data
 ntrees = 500;
-NWorkers = 2;
+NWorkers = 24;
 
 for i = 1:length(dims)
     
