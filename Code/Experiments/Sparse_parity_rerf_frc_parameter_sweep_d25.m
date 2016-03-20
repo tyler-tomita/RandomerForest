@@ -26,7 +26,7 @@ for i = 4:4
     if d <= 5
         mtrys = 1:d;
     else
-        mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
+        mtrys = ceil(d.^[0 1/2 1 1.5 2]);
     end
     
     if d >= 6
@@ -69,4 +69,4 @@ for i = 4:4
     end
 end
 
-save([rerfPath 'RandomerForest/Results/Sparse_parity_rerf_frc_parameter_sweep_d25.mat'],'dims','Lhat','trainTime')
+save([rerfPath 'RandomerForest/Results/Sparse_parity_rerf_frc_parameter_sweep_d25.mat'],'d','Lhat','trainTime')

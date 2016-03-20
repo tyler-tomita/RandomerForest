@@ -19,6 +19,7 @@ X_affine = cell(1,ndims);
 X_out = cell(1,ndims);
 Y = cell(1,ndims);
 Y_out = cell(1,ndims);
+scaleFactor = [-5 0 5];
 
 for i = 1:ndims
     d = dims(i);
@@ -39,6 +40,7 @@ for i = 1:ndims
         y(:,trial) = cellstr(num2str(mod(nones,2)));
         R = random_rotation(d);
         S = 10.^random_scaling(n,d,-5,5);
+        S(:,1:dgood) = repmat(10.^scaleFactor(1:dgood),n,1);
         Sigma_outlier = 4*Sigma;
         x_rot(:,:,trial) = x(:,:,trial)*R;
         x_scale(:,:,trial) = x(:,:,trial).*S;
