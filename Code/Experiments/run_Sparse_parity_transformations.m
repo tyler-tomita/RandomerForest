@@ -16,9 +16,9 @@ for i = 1:length(dims)
     d = dims(i);
     fprintf('dimension %d\n',d)
     if d <= 5
-        mtrys = 1:d;
+        mtrys = [1:d ceil(d.^[1.5 2])];
     else
-        mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
+        mtrys = ceil(d.^[0 1/4 1/2 3/4 1 1.5 2]);
     end
     
     if d >= 6
@@ -27,45 +27,45 @@ for i = 1:length(dims)
         nmixs = 2:d;
     end 
 
-    err_rf.Untransformed = zeros(ntrees,length(mtrys),ntrials);
-    err_rerf.Untransformed = zeros(ntrees,length(mtrys),ntrials);
-    err_rerfdn.Untransformed = zeros(ntrees,length(mtrys),ntrials);
-    err_rerfr.Untransformed = zeros(ntrees,length(mtrys),ntrials);
-    err_rf_rot.Untransformed = zeros(ntrees,length(mtrys),ntrials);
+    err_rf.Untransformed = NaN(ntrees,length(mtrys),ntrials);
+    err_rerf.Untransformed = NaN(ntrees,length(mtrys),ntrials);
+    err_rerfdn.Untransformed = NaN(ntrees,length(mtrys),ntrials);
+    err_rerfr.Untransformed = NaN(ntrees,length(mtrys),ntrials);
+    err_rf_rot.Untransformed = NaN(ntrees,length(mtrys),ntrials);
     
-    err_rf.Rotated = zeros(ntrees,length(mtrys),ntrials);
-    err_rerf.Rotated = zeros(ntrees,length(mtrys),ntrials);
-    err_rerfdn.Rotated = zeros(ntrees,length(mtrys),ntrials);
-    err_rerfr.Rotated = zeros(ntrees,length(mtrys),ntrials);
-    err_rf_rot.Rotated = zeros(ntrees,length(mtrys),ntrials);
+    err_rf.Rotated = NaN(ntrees,length(mtrys),ntrials);
+    err_rerf.Rotated = NaN(ntrees,length(mtrys),ntrials);
+    err_rerfdn.Rotated = NaN(ntrees,length(mtrys),ntrials);
+    err_rerfr.Rotated = NaN(ntrees,length(mtrys),ntrials);
+    err_rf_rot.Rotated = NaN(ntrees,length(mtrys),ntrials);
     
-    err_rf.Scaled = zeros(ntrees,length(mtrys),ntrials);
-    err_rerf.Scaled = zeros(ntrees,length(mtrys),ntrials);
-    err_rerfdn.Scaled = zeros(ntrees,length(mtrys),ntrials);
-    err_rerfr.Scaled = zeros(ntrees,length(mtrys),ntrials);
-    err_rf_rot.Scaled = zeros(ntrees,length(mtrys),ntrials);
+    err_rf.Scaled = NaN(ntrees,length(mtrys),ntrials);
+    err_rerf.Scaled = NaN(ntrees,length(mtrys),ntrials);
+    err_rerfdn.Scaled = NaN(ntrees,length(mtrys),ntrials);
+    err_rerfr.Scaled = NaN(ntrees,length(mtrys),ntrials);
+    err_rf_rot.Scaled = NaN(ntrees,length(mtrys),ntrials);
     
-    err_rf.Affine = zeros(ntrees,length(mtrys),ntrials);
-    err_rerf.Affine = zeros(ntrees,length(mtrys),ntrials);
-    err_rerfdn.Affine = zeros(ntrees,length(mtrys),ntrials);
-    err_rerfr.Affine = zeros(ntrees,length(mtrys),ntrials);
-    err_rf_rot.Affine = zeros(ntrees,length(mtrys),ntrials);
+    err_rf.Affine = NaN(ntrees,length(mtrys),ntrials);
+    err_rerf.Affine = NaN(ntrees,length(mtrys),ntrials);
+    err_rerfdn.Affine = NaN(ntrees,length(mtrys),ntrials);
+    err_rerfr.Affine = NaN(ntrees,length(mtrys),ntrials);
+    err_rf_rot.Affine = NaN(ntrees,length(mtrys),ntrials);
     
-    err_rf.Outlier = zeros(ntrees,length(mtrys),ntrials);
-    err_rerf.Outlier = zeros(ntrees,length(mtrys),ntrials);
-    err_rerfdn.Outlier = zeros(ntrees,length(mtrys),ntrials);
-    err_rerfr.Outlier = zeros(ntrees,length(mtrys),ntrials);
-    err_rf_rot.Outlier = zeros(ntrees,length(mtrys),ntrials);
+    err_rf.Outlier = NaN(ntrees,length(mtrys),ntrials);
+    err_rerf.Outlier = NaN(ntrees,length(mtrys),ntrials);
+    err_rerfdn.Outlier = NaN(ntrees,length(mtrys),ntrials);
+    err_rerfr.Outlier = NaN(ntrees,length(mtrys),ntrials);
+    err_rf_rot.Outlier = NaN(ntrees,length(mtrys),ntrials);
     
-    err_frc.Untransformed = zeros(ntrees,length(mtrys)*length(nmixs),ntrials);
+    err_frc.Untransformed = NaN(ntrees,length(mtrys)*length(nmixs),ntrials);
     
-    err_frc.Rotated = zeros(ntrees,length(mtrys)*length(nmixs),ntrials);
+    err_frc.Rotated = NaN(ntrees,length(mtrys)*length(nmixs),ntrials);
     
-    err_frc.Scaled = zeros(ntrees,length(mtrys)*length(nmixs),ntrials);
+    err_frc.Scaled = NaN(ntrees,length(mtrys)*length(nmixs),ntrials);
     
-    err_frc.Affine = zeros(ntrees,length(mtrys)*length(nmixs),ntrials);
+    err_frc.Affine = NaN(ntrees,length(mtrys)*length(nmixs),ntrials);
     
-    err_frc.Outlier = zeros(ntrees,length(mtrys)*length(nmixs),ntrials);
+    err_frc.Outlier = NaN(ntrees,length(mtrys)*length(nmixs),ntrials);
     
     Class = [0;1];
 
@@ -79,8 +79,10 @@ for i = 1:length(dims)
             fprintf('mtry = %d\n',mtry)
             
             %Untransformed
-            rf = rpclassificationforest(ntrees,X{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf.Untransformed(:,j,trial) = oobpredict(rf,X{i}(:,:,trial),Y{i}(:,trial),'every');
+            if mtry <= d
+                rf = rpclassificationforest(ntrees,X{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+                err_rf.Untransformed(:,j,trial) = oobpredict(rf,X{i}(:,:,trial),Y{i}(:,trial),'every');
+            end
 
             rerf = rpclassificationforest(ntrees,X{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
             err_rerf.Untransformed(:,j,trial) = oobpredict(rerf,X{i}(:,:,trial),Y{i}(:,trial),'every');
@@ -95,8 +97,10 @@ for i = 1:length(dims)
             err_rf_rot.Untransformed(:,j,trial) = oobpredict(rf_rot,X{i}(:,:,trial),Y{i}(:,trial),'every');
 
             %Rotated
-            rf = rpclassificationforest(ntrees,X_rot{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf.Rotated(:,j,trial) = oobpredict(rf,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
+            if mtry <= d
+                rf = rpclassificationforest(ntrees,X_rot{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+                err_rf.Rotated(:,j,trial) = oobpredict(rf,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
+            end
 
             rerf = rpclassificationforest(ntrees,X_rot{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
             err_rerf.Rotated(:,j,trial) = oobpredict(rerf,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
@@ -111,8 +115,10 @@ for i = 1:length(dims)
             err_rf_rot.Rotated(:,j,trial) = oobpredict(rf_rot,X_rot{i}(:,:,trial),Y{i}(:,trial),'every');
 
             %Scaled
-            rf = rpclassificationforest(ntrees,X_scale{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf.Scaled(:,j,trial) = oobpredict(rf,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
+            if mtry <= d
+                rf = rpclassificationforest(ntrees,X_scale{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+                err_rf.Scaled(:,j,trial) = oobpredict(rf,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
+            end
 
             rerf = rpclassificationforest(ntrees,X_scale{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
             err_rerf.Scaled(:,j,trial) = oobpredict(rerf,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
@@ -127,8 +133,10 @@ for i = 1:length(dims)
             err_rf_rot.Scaled(:,j,trial) = oobpredict(rf_rot,X_scale{i}(:,:,trial),Y{i}(:,trial),'every');
 
             %Affine
-            rf = rpclassificationforest(ntrees,X_affine{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf.Affine(:,j,trial) = oobpredict(rf,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
+            if mtry <= d
+                rf = rpclassificationforest(ntrees,X_affine{i}(:,:,trial),Y{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+                err_rf.Affine(:,j,trial) = oobpredict(rf,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
+            end
 
             rerf = rpclassificationforest(ntrees,X_affine{i}(:,:,trial),Y{i}(:,trial),'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
             err_rerf.Affine(:,j,trial) = oobpredict(rerf,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
@@ -143,8 +151,10 @@ for i = 1:length(dims)
             err_rf_rot.Affine(:,j,trial) = oobpredict(rf_rot,X_affine{i}(:,:,trial),Y{i}(:,trial),'every');
 
             %Outlier
-            rf = rpclassificationforest(ntrees,X_out{i}(:,:,trial),Y_out{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            err_rf.Outlier(:,j,trial) = oobpredict(rf,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
+            if mtry <= d
+                rf = rpclassificationforest(ntrees,X_out{i}(:,:,trial),Y_out{i}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+                err_rf.Outlier(:,j,trial) = oobpredict(rf,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
+            end
 
             rerf = rpclassificationforest(ntrees,X_out{i}(:,:,trial),Y_out{i}(:,trial),'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
             err_rerf.Outlier(:,j,trial) = oobpredict(rerf,X_out{i}(:,:,trial),Y_out{i}(:,trial),'every');
@@ -545,7 +555,7 @@ for i = 1:length(dims)
 
 end
 
-save([rerfPath 'RandomerForest/Results/Sparse_parity_transformations2.mat'],...
+save([rerfPath 'RandomerForest/Results/Sparse_parity_transformations.mat'],...
     'dims','sem_rf','var_rf','mean_err_rf','sem_rerf','var_rerf','mean_err_rerf',...
     'sem_rerfdn','var_rerfdn','mean_err_rerfdn','sem_rerfr','var_rerfr','mean_err_rerfr',...
     'sem_rf_rot','var_rf_rot','mean_err_rf_rot','sem_frc','var_frc','mean_err_frc')

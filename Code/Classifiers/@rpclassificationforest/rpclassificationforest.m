@@ -286,7 +286,7 @@ classdef rpclassificationforest
                 missing = isnan(ensemblepredictions);
                 predictions = Labels(ensemblepredictions(~missing));
                 wrong = ~strcmp(predictions,Y(~missing));
-                err = mean(wrong);         
+                err = mean(wrong);       
             end
             %if length(unique(Y)) == 2
             %    pos = num2str(max(str2num(char(Y))));
@@ -486,5 +486,54 @@ classdef rpclassificationforest
                 end
             end
         end
+        
+        function [predcell,err] = oobpredict2(forest,X,Y)
+            if nargin == 3
+                OutSpec = 'average';
+            end
+            
+            %Convert to double if not already
+            if ~isa(X,'double')
+                X = double(X);
+            end
+            
+            if forest.Robust
+                %X = passtorank(X);
+                X = tiedrank(X);
+            end
+            nrows = size(X,1);
+            predmat = NaN(nrows,forest.nTrees);
+            predcell = cell(nrows,forest.nTrees);
+            err = NaN(1,forest.nTrees);
+            OOBIndices = forest.oobidx;
+            trees = forest.Tree;
+            Labels = forest.classname;
+            rotate = ~isempty(forest.rotmat);
+            if ~forest.RandomForest
+                parfor i = 1:forest.nTrees
+                    if rotate
+                        Xtree = X*forest.rotmat(:,:,i);
+                    else
+                        Xtree = X;
+                    end
+                    pred_i = cell(nrows,1);
+                    pred_i(OOBIndices{i}) = rptreepredict(trees{i},Xtree(OOBIndices{i},:));
+                    predcell(:,i) = pred_i;
+                    err(i) = sum(~strcmp(pred_i(OOBIndices{i}),Y(OOBIndices{i})))/length(OOBIndices{i});
+                end
+            else
+                parfor i = 1:forest.nTrees
+                    if rotate
+                        Xtree = X*forest.rotmat(:,:,i);
+                    else
+                        Xtree = X;
+                    end
+                    pred_i = cell(nrows,1);
+                    pred_i(OOBIndices{i}) = eval(trees{i},Xtree(OOBIndices{i},:));
+                    predcell(:,i) = pred_i;
+                    err(i) = sum(~strcmp(pred_i(OOBIndices{i}),Y(OOBIndices{i})))/length(OOBIndices{i});
+                end
+            end
+        end     %function oobpredict2       
     end     %methods
 end     %classdef
