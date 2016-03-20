@@ -17,8 +17,10 @@ for i = 1:length(dims)
     fprintf('dimension %d\n',d)
     if d <= 5
         mtrys = [1:d ceil(d.^[1.5 2])];
-    else
+    elseif d > 5 && d <= 10
         mtrys = ceil(d.^[0 1/4 1/2 3/4 1 1.5 2]);
+    else
+        mtrys = [ceil(d.^[0 1/4 1/2 3/4 1]) 5*d 10*d];
     end
     
     if d >= 6
@@ -195,8 +197,8 @@ for i = 1:length(dims)
         end
     end
 
-    if length(mtrys) < 5
-        emptyCol = 5 - length(mtrys);
+    if length(mtrys) < 7
+        emptyCol = 7 - length(mtrys);
         
         %Untransformed
         sem_rf.Untransformed(:,1:length(mtrys),i) = std(err_rf.Untransformed,[],3)/sqrt(ntrials);
@@ -204,33 +206,33 @@ for i = 1:length(dims)
         sem_rerfr.Untransformed(:,1:length(mtrys),i) = std(err_rerfr.Untransformed,[],3)/sqrt(ntrials);
         sem_rerfdn.Untransformed(:,1:length(mtrys),i) = std(err_rerfdn.Untransformed,[],3)/sqrt(ntrials);
         sem_rf_rot.Untransformed(:,1:length(mtrys),i) = std(err_rf_rot.Untransformed,[],3)/sqrt(ntrials);
-        sem_rf.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerf.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerfr.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerfdn.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rf_rot.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        sem_rf.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerf.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerfr.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerfdn.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rf_rot.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
 
         var_rf.Untransformed(:,1:length(mtrys),i) = var(err_rf.Untransformed,0,3);
         var_rerf.Untransformed(:,1:length(mtrys),i) = var(err_rerf.Untransformed,0,3);
         var_rerfr.Untransformed(:,1:length(mtrys),i) = var(err_rerfr.Untransformed,0,3);
         var_rerfdn.Untransformed(:,1:length(mtrys),i) = var(err_rerfdn.Untransformed,0,3);
         var_rf_rot.Untransformed(:,1:length(mtrys),i) = var(err_rf_rot.Untransformed,0,3);
-        var_rf.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerf.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerfr.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerfdn.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rf_rot.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        var_rf.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerf.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerfr.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerfdn.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rf_rot.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
 
         mean_err_rf.Untransformed(:,1:length(mtrys),i) = mean(err_rf.Untransformed,3);
         mean_err_rerf.Untransformed(:,1:length(mtrys),i) = mean(err_rerf.Untransformed,3);
         mean_err_rerfr.Untransformed(:,1:length(mtrys),i) = mean(err_rerfr.Untransformed,3);
         mean_err_rerfdn.Untransformed(:,1:length(mtrys),i) = mean(err_rerfdn.Untransformed,3);
         mean_err_rf_rot.Untransformed(:,1:length(mtrys),i) = mean(err_rf_rot.Untransformed,3);
-        mean_err_rf.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerf.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerfr.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerfdn.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rf_rot.Untransformed(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        mean_err_rf.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerf.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerfr.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerfdn.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rf_rot.Untransformed(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
         
         %Rotated
         sem_rf.Rotated(:,1:length(mtrys),i) = std(err_rf.Rotated,[],3)/sqrt(ntrials);
@@ -238,33 +240,33 @@ for i = 1:length(dims)
         sem_rerfr.Rotated(:,1:length(mtrys),i) = std(err_rerfr.Rotated,[],3)/sqrt(ntrials);
         sem_rerfdn.Rotated(:,1:length(mtrys),i) = std(err_rerfdn.Rotated,[],3)/sqrt(ntrials);
         sem_rf_rot.Rotated(:,1:length(mtrys),i) = std(err_rf_rot.Rotated,[],3)/sqrt(ntrials);
-        sem_rf.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerf.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerfr.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerfdn.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rf_rot.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        sem_rf.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerf.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerfr.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerfdn.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rf_rot.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
 
         var_rf.Rotated(:,1:length(mtrys),i) = var(err_rf.Rotated,0,3);
         var_rerf.Rotated(:,1:length(mtrys),i) = var(err_rerf.Rotated,0,3);
         var_rerfr.Rotated(:,1:length(mtrys),i) = var(err_rerfr.Rotated,0,3);
         var_rerfdn.Rotated(:,1:length(mtrys),i) = var(err_rerfdn.Rotated,0,3);
         var_rf_rot.Rotated(:,1:length(mtrys),i) = var(err_rf_rot.Rotated,0,3);
-        var_rf.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerf.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerfr.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerfdn.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rf_rot.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        var_rf.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerf.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerfr.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerfdn.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rf_rot.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
 
         mean_err_rf.Rotated(:,1:length(mtrys),i) = mean(err_rf.Rotated,3);
         mean_err_rerf.Rotated(:,1:length(mtrys),i) = mean(err_rerf.Rotated,3);
         mean_err_rerfr.Rotated(:,1:length(mtrys),i) = mean(err_rerfr.Rotated,3);
         mean_err_rerfdn.Rotated(:,1:length(mtrys),i) = mean(err_rerfdn.Rotated,3);
         mean_err_rf_rot.Rotated(:,1:length(mtrys),i) = mean(err_rf_rot.Rotated,3);
-        mean_err_rf.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerf.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerfr.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerfdn.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rf_rot.Rotated(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        mean_err_rf.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerf.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerfr.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerfdn.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rf_rot.Rotated(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
         
         %Scaled
         sem_rf.Scaled(:,1:length(mtrys),i) = std(err_rf.Scaled,[],3)/sqrt(ntrials);
@@ -272,33 +274,33 @@ for i = 1:length(dims)
         sem_rerfr.Scaled(:,1:length(mtrys),i) = std(err_rerfr.Scaled,[],3)/sqrt(ntrials);
         sem_rerfdn.Scaled(:,1:length(mtrys),i) = std(err_rerfdn.Scaled,[],3)/sqrt(ntrials);
         sem_rf_rot.Scaled(:,1:length(mtrys),i) = std(err_rf_rot.Scaled,[],3)/sqrt(ntrials);
-        sem_rf.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerf.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerfr.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerfdn.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rf_rot.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        sem_rf.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerf.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerfr.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerfdn.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rf_rot.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
 
         var_rf.Scaled(:,1:length(mtrys),i) = var(err_rf.Scaled,0,3);
         var_rerf.Scaled(:,1:length(mtrys),i) = var(err_rerf.Scaled,0,3);
         var_rerfr.Scaled(:,1:length(mtrys),i) = var(err_rerfr.Scaled,0,3);
         var_rerfdn.Scaled(:,1:length(mtrys),i) = var(err_rerfdn.Scaled,0,3);
         var_rf_rot.Scaled(:,1:length(mtrys),i) = var(err_rf_rot.Scaled,0,3);
-        var_rf.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerf.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerfr.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerfdn.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rf_rot.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        var_rf.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerf.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerfr.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerfdn.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rf_rot.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
 
         mean_err_rf.Scaled(:,1:length(mtrys),i) = mean(err_rf.Scaled,3);
         mean_err_rerf.Scaled(:,1:length(mtrys),i) = mean(err_rerf.Scaled,3);
         mean_err_rerfr.Scaled(:,1:length(mtrys),i) = mean(err_rerfr.Scaled,3);
         mean_err_rerfdn.Scaled(:,1:length(mtrys),i) = mean(err_rerfdn.Scaled,3);
         mean_err_rf_rot.Scaled(:,1:length(mtrys),i) = mean(err_rf_rot.Scaled,3);
-        mean_err_rf.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerf.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerfr.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerfdn.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rf_rot.Scaled(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        mean_err_rf.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerf.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerfr.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerfdn.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rf_rot.Scaled(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
         
         %Affine
         sem_rf.Affine(:,1:length(mtrys),i) = std(err_rf.Affine,[],3)/sqrt(ntrials);
@@ -306,33 +308,33 @@ for i = 1:length(dims)
         sem_rerfr.Affine(:,1:length(mtrys),i) = std(err_rerfr.Affine,[],3)/sqrt(ntrials);
         sem_rerfdn.Affine(:,1:length(mtrys),i) = std(err_rerfdn.Affine,[],3)/sqrt(ntrials);
         sem_rf_rot.Affine(:,1:length(mtrys),i) = std(err_rf_rot.Affine,[],3)/sqrt(ntrials);
-        sem_rf.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerf.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerfr.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerfdn.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rf_rot.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        sem_rf.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerf.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerfr.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerfdn.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rf_rot.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
 
         var_rf.Affine(:,1:length(mtrys),i) = var(err_rf.Affine,0,3);
         var_rerf.Affine(:,1:length(mtrys),i) = var(err_rerf.Affine,0,3);
         var_rerfr.Affine(:,1:length(mtrys),i) = var(err_rerfr.Affine,0,3);
         var_rerfdn.Affine(:,1:length(mtrys),i) = var(err_rerfdn.Affine,0,3);
         var_rf_rot.Affine(:,1:length(mtrys),i) = var(err_rf_rot.Affine,0,3);
-        var_rf.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerf.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerfr.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerfdn.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rf_rot.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        var_rf.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerf.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerfr.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerfdn.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rf_rot.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
 
         mean_err_rf.Affine(:,1:length(mtrys),i) = mean(err_rf.Affine,3);
         mean_err_rerf.Affine(:,1:length(mtrys),i) = mean(err_rerf.Affine,3);
         mean_err_rerfr.Affine(:,1:length(mtrys),i) = mean(err_rerfr.Affine,3);
         mean_err_rerfdn.Affine(:,1:length(mtrys),i) = mean(err_rerfdn.Affine,3);
         mean_err_rf_rot.Affine(:,1:length(mtrys),i) = mean(err_rf_rot.Affine,3);
-        mean_err_rf.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerf.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerfr.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerfdn.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rf_rot.Affine(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        mean_err_rf.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerf.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerfr.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerfdn.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rf_rot.Affine(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
         
         %Outlier
         sem_rf.Outlier(:,1:length(mtrys),i) = std(err_rf.Outlier,[],3)/sqrt(ntrials);
@@ -340,33 +342,33 @@ for i = 1:length(dims)
         sem_rerfr.Outlier(:,1:length(mtrys),i) = std(err_rerfr.Outlier,[],3)/sqrt(ntrials);
         sem_rerfdn.Outlier(:,1:length(mtrys),i) = std(err_rerfdn.Outlier,[],3)/sqrt(ntrials);
         sem_rf_rot.Outlier(:,1:length(mtrys),i) = std(err_rf_rot.Outlier,[],3)/sqrt(ntrials);
-        sem_rf.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerf.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerfr.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rerfdn.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        sem_rf_rot.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        sem_rf.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerf.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerfr.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rerfdn.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        sem_rf_rot.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
 
         var_rf.Outlier(:,1:length(mtrys),i) = var(err_rf.Outlier,0,3);
         var_rerf.Outlier(:,1:length(mtrys),i) = var(err_rerf.Outlier,0,3);
         var_rerfr.Outlier(:,1:length(mtrys),i) = var(err_rerfr.Outlier,0,3);
         var_rerfdn.Outlier(:,1:length(mtrys),i) = var(err_rerfdn.Outlier,0,3);
         var_rf_rot.Outlier(:,1:length(mtrys),i) = var(err_rf_rot.Outlier,0,3);
-        var_rf.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerf.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerfr.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rerfdn.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        var_rf_rot.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        var_rf.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerf.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerfr.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rerfdn.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        var_rf_rot.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
 
         mean_err_rf.Outlier(:,1:length(mtrys),i) = mean(err_rf.Outlier,3);
         mean_err_rerf.Outlier(:,1:length(mtrys),i) = mean(err_rerf.Outlier,3);
         mean_err_rerfr.Outlier(:,1:length(mtrys),i) = mean(err_rerfr.Outlier,3);
         mean_err_rerfdn.Outlier(:,1:length(mtrys),i) = mean(err_rerfdn.Outlier,3);
         mean_err_rf_rot.Outlier(:,1:length(mtrys),i) = mean(err_rf_rot.Outlier,3);
-        mean_err_rf.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerf.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerfr.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rerfdn.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
-        mean_err_rf_rot.Outlier(:,length(mtrys)+1:5,i) = NaN(ntrees,emptyCol);
+        mean_err_rf.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerf.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerfr.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rerfdn.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
+        mean_err_rf_rot.Outlier(:,length(mtrys)+1:7,i) = NaN(ntrees,emptyCol);
     else
         %Untransformed
         sem_rf.Untransformed(:,:,i) = std(err_rf.Untransformed,[],3)/sqrt(ntrials);
