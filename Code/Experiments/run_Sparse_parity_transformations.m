@@ -477,57 +477,57 @@ for i = 1:length(dims)
     end
 
     if d < 6
-        emptyCol = 25 - length(mtrys)*length(nmixs);
+        emptyCol = 35 - length(mtrys)*length(nmixs);
         
         %Untransformed
         sem_frc.Untransformed(:,1:length(mtrys)*length(nmixs),i) = std(err_frc.Untransformed,[],3)/sqrt(ntrials);
-        sem_frc.Untransformed(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        sem_frc.Untransformed(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
 
         var_frc.Untransformed(:,1:length(mtrys)*length(nmixs),i) = var(err_frc.Untransformed,0,3);
-        var_frc.Untransformed(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        var_frc.Untransformed(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
 
         mean_err_frc.Untransformed(:,1:length(mtrys)*length(nmixs),i) = mean(err_frc.Untransformed,3);
-        mean_err_frc.Untransformed(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        mean_err_frc.Untransformed(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
         
         %Rotated
         sem_frc.Rotated(:,1:length(mtrys)*length(nmixs),i) = std(err_frc.Rotated,[],3)/sqrt(ntrials);
-        sem_frc.Rotated(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        sem_frc.Rotated(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
 
         var_frc.Rotated(:,1:length(mtrys)*length(nmixs),i) = var(err_frc.Rotated,0,3);
-        var_frc.Rotated(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        var_frc.Rotated(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
 
         mean_err_frc.Rotated(:,1:length(mtrys)*length(nmixs),i) = mean(err_frc.Rotated,3);
-        mean_err_frc.Rotated(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        mean_err_frc.Rotated(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
         
         %Scaled
         sem_frc.Scaled(:,1:length(mtrys)*length(nmixs),i) = std(err_frc.Scaled,[],3)/sqrt(ntrials);
-        sem_frc.Scaled(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        sem_frc.Scaled(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
 
         var_frc.Scaled(:,1:length(mtrys)*length(nmixs),i) = var(err_frc.Scaled,0,3);
-        var_frc.Scaled(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        var_frc.Scaled(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
 
         mean_err_frc.Scaled(:,1:length(mtrys)*length(nmixs),i) = mean(err_frc.Scaled,3);
-        mean_err_frc.Scaled(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        mean_err_frc.Scaled(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
         
         %Affine
         sem_frc.Affine(:,1:length(mtrys)*length(nmixs),i) = std(err_frc.Affine,[],3)/sqrt(ntrials);
-        sem_frc.Affine(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        sem_frc.Affine(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
 
         var_frc.Affine(:,1:length(mtrys)*length(nmixs),i) = var(err_frc.Affine,0,3);
-        var_frc.Affine(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        var_frc.Affine(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
 
         mean_err_frc.Affine(:,1:length(mtrys)*length(nmixs),i) = mean(err_frc.Affine,3);
-        mean_err_frc.Affine(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        mean_err_frc.Affine(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
         
         %Outlier
         sem_frc.Outlier(:,1:length(mtrys)*length(nmixs),i) = std(err_frc.Outlier,[],3)/sqrt(ntrials);
-        sem_frc.Outlier(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        sem_frc.Outlier(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
 
         var_frc.Outlier(:,1:length(mtrys)*length(nmixs),i) = var(err_frc.Outlier,0,3);
-        var_frc.Outlier(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        var_frc.Outlier(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
 
         mean_err_frc.Outlier(:,1:length(mtrys)*length(nmixs),i) = mean(err_frc.Outlier,3);
-        mean_err_frc.Outlier(:,length(mtrys)*length(nmixs)+1:25,i) = NaN(ntrees,emptyCol);
+        mean_err_frc.Outlier(:,length(mtrys)*length(nmixs)+1:35,i) = NaN(ntrees,emptyCol);
     else
         %Untransformed
         sem_frc.Untransformed(:,:,i) = std(err_frc.Untransformed,[],3)/sqrt(ntrials);
