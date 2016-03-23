@@ -25,11 +25,9 @@ for i = 5:5
     fprintf('d = %d\n',d)
     
     if d <= 5
-        mtrys = [1:d ceil(d.^[1.5 2])];
-    elseif d > 5 && d <= 50
-        mtrys = ceil(d.^[0 1/4 1/2 3/4 1 1.5 2]);
+        mtrys = 1:d;
     else
-        mtrys = [ceil(d.^[0 1/4 1/2 3/4 1]) 5*d 10*d];
+        mtrys = ceil(d.^[0 1/2 1 1.5 2]);
     end
     
     if d >= 6
