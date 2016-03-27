@@ -1,0 +1,9 @@
+\documentclass{article}
+
+Dear Reviewers,
+
+We graciously thank you for your feedback and criticisms. We have carefully taken your comments into consideration and would like to respond to some of the major concerns.
+
+Comment: ``The method is explained clearly and tested on both synthetic data and a large number of data sets. But it seems to me that the novelty is too small.''
+
+Response: A major point of this work is to emphasize that it is possible to construct a decison forest with the same ease-of-use and time/space complexity as random forest, while simultaneously empirically outperforming random forest on a variety of synthetic and real-world datasets. While various oblique decision forests have been proposed over the past decade and a half, RF still remains the most widely used. We speculate that part of this is due to its relative simplicity compared with other learning algorithms. This is supported by the fact that while even Breiman suggests that his oblique Forest-RC demonstrates superior performance to axis-aligned RF when tuned properly, it remains relatively unused in the scientific community. A second reason RF is still the most widely used decision forest algorithm is due to its superior emprical performance, as demonstrated by two recent benchmark studies \cite{Delgado; Caruana}. In both of these studies, which evaluated a variety of axis-aligned and oblique decision forest methods, RF was found to be the best overall classifier. In our work, we used the same benchmark datasets as in \cite{Delgado}, even prepocessed in the same exact way, and demonstrate that RerF outperforms RF. Although the method presented is relatively simple, we believe our findings to be significant to the scientific community. Furthermore, we believe that the simplicity in our oblique method makes it amenable to theoretical analysis, as has been done recently for axis-aligned RF \cite{Scornet}.
