@@ -170,6 +170,16 @@ Figure \ref{robustness} demonstrates the utility of passing to ranks and using s
 \vskip -0.2in
 \end{figure}
 
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{../Figures/pdf/error_vs_sparsity}}
+\caption{Error rate as a function of density of random projections and number of random projections sampled}
+\label{robustness}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
 \section{Conclusion and Future Work}
 
 We have proposed novel methods for constructing decision forests, which we call RerFs. We view these methods as special cases of a more general random projection forest, which include Breiman's original Forest-IC and Forest-RC, as well as previously proposed oblique decision forests. We have demonstrated in simulations that RerFs are especially well-suited for classification problems in which axis-parallel splits are suboptimal, and at the same time, have a large number of irrelevant features relative to relevant ones. This could explain RerF's excellent empirical performance on a suite of over 100 benchmark datasets, as real data often has the properties just described. Moreover, RerF, unlike other oblique decision forests, preserves the time and space complexity of Forest-IC, and is only marginally sensitive to scaling. Lastly, we propose two additional modifications. One involves supplementing sparse random projections with a particular form of fast supervised projections in the construction of candidate split directions. The other involves passing the data to ranks with the goal of making the classifier more robust to outliers.
