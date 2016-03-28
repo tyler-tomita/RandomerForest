@@ -44,7 +44,7 @@ runSims = false;
 if runSims
     run_Sparse_parity_transformations
 else
-    load Sparse_parity_transformations2.mat
+    load Sparse_parity_transformations.mat
 end
 
 Transformations = fieldnames(mean_err_rf);
@@ -83,8 +83,8 @@ for j = 1:length(Transformations)
     if j == 1
         xlabel('p')
         ylabel({'\bf{Sparse Parity}';'\rm{Error Rate}'})
-        ax.XTick = [5 10 25 50];
-        ax.XTickLabel = {'5';'10';'25';'50'};
+        ax.XTick = [5 10 25 50 100];
+        ax.XTickLabel = {'5';'10';'25';'50';'100'};
     else
         ax.XTick = [];
         ax.YTick = [];
@@ -95,9 +95,9 @@ for j = 1:length(Transformations)
     ax.Units = 'inches';
     ax.Position = [axLeft(j) axBottom(j) axWidth axHeight];
     ax.Box = 'off';
-    ax.XLim = [0 55];
+    ax.XLim = [0 105];
     ax.XScale = 'log';
-    ax.YLim = [0 .55];
+    ax.YLim = [0 .6];
 end
 
 
