@@ -15,12 +15,14 @@ ntrees = 500;
 nmixs = 2:6;
 NWorkers = 2;
 
-for i = 5:5
+for i = 3:3
 
     d = dims(i);
     
     if d <= 5
         mtrys = 1:d;
+    elseif d <= 50
+        mtrys = ceil(d.^[0 1 2]);
     else
         mtrys = [d.^[0 1] 10*d];
     end
@@ -64,7 +66,7 @@ ax = subplot(3,1,1);
 errorbar(mtrys,mean(strength),std(strength)/sqrt(ntrials),'LineWidth',2)
 xlabel('mtry')
 ylabel('strength')
-title('Trunk (n = 100, p = 500)')
+title(sprintf('Trunk (n = %d, p = %d)',n,d))
 ax.XScale = 'log';
 
 ax = subplot(3,1,2);
@@ -79,4 +81,4 @@ xlabel('mtry')
 ylabel('ensemble error rate')
 ax.XScale = 'log';
 
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/Trunk_strength_and_diversity_vs_mtry'])
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Trunk_strength_and_diversity_vs_mtry_n' num2str(n) '_d' num2str(d)])
