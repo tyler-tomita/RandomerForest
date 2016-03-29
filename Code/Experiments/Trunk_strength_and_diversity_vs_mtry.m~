@@ -21,7 +21,9 @@ for i = 5:5
     
     if d <= 5
         mtrys = 1:d;
-    else
+    elseif d <= 50
+        mtrys = ceil(d.^[0 1 2]);
+        
         mtrys = [d.^[0 1] 10*d];
     end
     
@@ -51,32 +53,32 @@ for i = 5:5
                 Y{i}(:,trial),'sparsemethod','sparse',...
                 'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
             
-            Lhat(j) = oobpredict(rerf,X{i}(:,:,trial),Y{i}(:,trial),'last');
+            Lhat(trial,j) = oobpredict(rerf,X{i}(:,:,trial),Y{i}(:,trial),'last');
 
             [Yhats,err(j,:)] = oobpredict2(rerf,X{i}(:,:,trial),Y{i}(:,trial));
-            dv(j) = diversity(Yhats);
+            dv(trial,j) = diversity(Yhats);
         end
+        strength(trial,:) = 1 - mean(err,2)';
     end
-    strength(:,trial) = 1 - mean(err,2)';
 end
 
 ax = subplot(3,1,1);
-plot(mtrys,strength','LineWidth',2)
+errorbar(mtrys,mean(strength),std(strength)/sqrt(ntrials),'LineWidth',2)
 xlabel('mtry')
 ylabel('strength')
 title('Trunk (n = 100, p = 500)')
 ax.XScale = 'log';
 
 ax = subplot(3,1,2);
-plot(mtrys,dv,'LineWidth',2)
+errorbar(mtrys,mean(dv),std(dv)/sqrt(ntrials),'LineWidth',2)
 xlabel('mtry')
 ylabel('diversity')
 ax.XScale = 'log';
 
 ax = subplot(3,1,3);
-plot(mtrys,Lhat,'LineWidth',2)
+errorbar(mtrys,mean(Lhat),std(Lhat)/sqrt(ntrials),'LineWidth',2)
 xlabel('mtry')
 ylabel('ensemble error rate')
 ax.XScale = 'log';
 
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/Trunk_strength_and_diversity_vs_mtry'])
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Trunk_strength_and_diversity_vs_mtry_n100_p500'])
