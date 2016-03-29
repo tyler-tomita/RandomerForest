@@ -1,0 +1,37 @@
+Dear Reviewers,
+
+We graciously thank you for your feedback and criticisms. We have carefully taken your comments into consideration and would like to respond to some of the major concerns.
+
+First off, we acknowledge that our proposed method is not entirely novel. From a general standpoint, both Breiman's Forest-RC and our proposal construct ensembles of oblique decision trees through the use of random projections at split nodes. We would like to emphasize that the significance of our work is two-fold. First, we provide a novel analysis highlighting the fact that methods such as the one we proposed, as well as Forest-RC which Breiman proposed concurrently with his axis-aligned RF a decade and a half ago, have not garnered the attention they deserve from the machine learning community. Second, we provide a favorable alternative to Forest-RC that requires less parameter tuning and is more robust to affine transformations. We expand more thoroughly on both of these points in counterpoint to specific reviewers' comments below.
+
+Reviewer's Comment:
+
+``So, as admitted by the authors in several parts of the paper, the current proposal is highly similar to Breiman’s Forest-RC. More specifically, the only difference is that Forest-RC sets the number of nonzero in each column of A to be fixed and set by a parameter, while the current proposal randomly sets this number. Now this seems a very narrow difference, i.e. it renders the current proposal as something very incremental compared to Forest-RC. To further aggravate the problem of this incrementality Forest-RC is not included in the experimental comparisons. This means in the end we have a new system that is marginally different from Forest-RC and we do not know if the (small) differences bring any advantage at all… This seems too short to me for a conference like ICML.''
+
+Response:
+
+We have included a comparison of Forest-RC to our method. Our results suggest that they achieve comparable classification performance, with our method requiring significantly less training time than Forest-RC due to one less hyperparameter that has to be tuned.
+
+Reviewer's Comment: 
+
+``The method is explained clearly and tested on both synthetic data and a large number of data sets. But it seems to me that the novelty is too small.''
+
+Response:
+
+To our knowledge, no study has extensively compared such random projection forests to RF or other classfication methods. Oddly enough, two recent studies (Delgado 2014; Caruana 2008) that found RF to be the overall best performing classification method among a variety of other methods on a variety of benchmark datasets did not include Forest-RC in the comparisons. Our comparisons, which use the benchmark datasets from the Delgado study, show that both our method and Forest-RC significantly outperform RF (We would like to note that in our analysis presented in the submission, we only tried values of the parameter d up to p, which is the maximum possible value for RF, but not for our method. We have now discovered that larger values of d in many cases gives better classification performance for our method. Therefore, the results supplied in the submission actually underestimate the superior performance of our method relative to RF). These results suggest that our method and Forest-RC are most likely to perform the best on a randomly selected dataset compared to other classification algorithms that we did not directly evaluate in our study. Being just as easy to use and as scalable as RF, we strongly advocate that our method should be considered as a viable alternative to RF. Additionally, our work highlights the use of random projections to construct and select partitions of the feature space, which makes it amenable to theoretical analysis. Random projections have been extensively studied and have attractive properties. Therefore, developing a theoretical grounding for our proposed method seems tractable, and we firmly believe that we can extend recent consistency results of RF (Scornet 2015) to our method. Lastly, we would like to again underscore the utility of rank transformations in oblique decision forests. In addition to what has been presented in the initial submission, we now have results that more strongly highlight the ability of rank transforming the data to render oblique forests less sensitive to affine transformations.
+
+Reviewer's Comment:
+
+``The paper is fairly lacking in a proper introduction of random projection. Merely leaving a pointer to Li et al., 2006 without even briefly reviewing its basic ideas and properties leaves the paper far from being self-contained.''
+
+Response: 
+
+We will provide a more thorough review of the principle and properties of random projections, including the Johnson-Lindenstrauss lemma and applications to dimensionality reduction.
+
+Reviewer's Comment:
+
+``The way random projection is used in this paper is fairly straightforward. And without any analysis, whether theoretical or empirical, about its effect on the bias/variance of the learnt random forest, the blending of two seems almost ad-hoc and not well grounded.''
+
+Response:
+
+We have emprical results comparing the bias and variance of RF with our proposed method. Intuitively, random projections, as opposed to variable subsampling, tends to reduce bias by relaxing the geometric constraint of axis-aligned splits, leading to stronger indvidual trees on average. Furthermore, theoretical results by (Louppe2015) suggest that random projections decrease variance of the ensemble by reducing correlation among trees. Our results support this intuition. A rigorous treatment, both empirical and theoretical, will be included in the final version.
