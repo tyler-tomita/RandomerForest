@@ -15,7 +15,7 @@ ntrees = 500;
 nmixs = 2:6;
 NWorkers = 2;
 
-for i = 3:3
+for i = 4:4
 
     d = dims(i);
     
