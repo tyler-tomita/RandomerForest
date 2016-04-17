@@ -1,11 +1,12 @@
 function p =  gmm_class_post(X,Mu,Sigma,Priors)
 %GMM_CLASS_POST    Posterior probability of belonging to each mixture
 %component in a multivariate gaussian mixture model
+%
 %   P = GMM_CLASS_POST(X,MU,SIGMA) returns the posterior probabilities of
 %   class memberships in a gaussian mixture model specified by mean MU,
 %   covariance SIGMA, and uniform class priors. Rows of the N-by-D matrix X
 %   correspond to observations or points, and columns correspond to
-%   variables or coordinates. Mu is a K-by-D vector, in which rows
+%   variables or coordinates. MU is a K-by-D vector, in which rows
 %   designate the means for each of the K classes. SIGMA is a D-by-D-by-K
 %   matrix, in which pages of SIGMA designate the covariances for each of
 %   the K classes. P is an N-by-K vector.

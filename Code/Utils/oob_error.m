@@ -1,15 +1,15 @@
-function err = oob_error(predictions,Y,treenum)
+function err = oob_error(Predictions,Y,treenum)
     if nargin == 3
         treenum = 'last';
     end
 
     nrows = size(Y,1);
-    ntrees = size(predictions,2);
+    ntrees = size(Predictions,2);
     predmat = NaN(nrows,ntrees);
     Labels = unique(Y);
 
     for j = 1:length(Labels)
-        predmat(strcmp(predictions,Labels{j})) = j;
+        predmat(strcmp(Predictions,Labels{j})) = j;
     end
 
     if strcmp(treenum,'every')

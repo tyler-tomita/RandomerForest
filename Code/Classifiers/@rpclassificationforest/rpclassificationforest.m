@@ -402,11 +402,13 @@ classdef rpclassificationforest
                 end
                 X = interpolate_rank(Xtrain,X);
             end
+            
             n = size(X,1);
             predmat = NaN(n,forest.nTrees);
             YTree = cell(n,forest.nTrees);
             Tree = forest.Tree;
             rotate = ~isempty(forest.rotmat);
+            
             if ~forest.RandomForest
                 parfor i = 1:forest.nTrees
                     if rotate
