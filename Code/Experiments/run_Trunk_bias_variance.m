@@ -27,7 +27,7 @@ rng(1);
 load Trunk_partitioned_data
 
 ntrees = 500;
-NWorkers = 2;
+NWorkers = 24;
 Stratified = true;
 Classifiers = {'rf' 'rerf' 'rf_rot' 'frc2' 'frc3' 'frc4' 'frc5' 'frc6'};
 ParameterNames = {'RandomForest' 'SparseMethod' 'mtry' 'nmix' 'ntrees' ...
