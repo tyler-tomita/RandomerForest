@@ -24,10 +24,10 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load Trunk_partitioned_data
+load Sparse_parity_partitioned_data
 
 ntrees = 500;
-NWorkers = 2;
+NWorkers = 16;
 Stratified = true;
 Classifiers = {'rf' 'rerf' 'rf_rot' 'frc2' 'frc3' 'frc4' 'frc5' 'frc6'};
 ParameterNames = {'RandomForest' 'SparseMethod' 'mtry' 'nmix' 'ntrees' ...
@@ -100,7 +100,7 @@ for i = 1:length(dims)
         else
             if d <= 5
                 Params.(cl).mtry{i} = [1:d ceil(d.^[1.5 2])];
-            elseif d > 5 && d <= 50
+            elseif d > 5 && d <= 10
                 Params.(cl).mtry{i} = ceil(d.^[0 1/4 1/2 3/4 1 1.5 2]);
             else
                 Params.(cl).mtry{i} = [ceil(d.^[0 1/4 1/2 3/4 1]) 5*d 10*d];
@@ -132,3 +132,8 @@ for i = 1:length(dims)
             V.(cl){i} = [];
             B.(cl){i} = [];
         end
+    end
+end
+
+save([rerfPath 'RandomerForest/Results/Sparse_parity_bias_variance.mat'],...
+    'GE','V','B','Params')
