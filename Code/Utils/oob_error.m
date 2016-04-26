@@ -1,5 +1,5 @@
 function err = oob_error(Predictions,Y,treenum)
-    if nargin == 3
+    if nargin < 3
         treenum = 'last';
     end
 

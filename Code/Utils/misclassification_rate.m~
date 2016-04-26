@@ -32,6 +32,3 @@ end
 
 if Weighted
     L = nanmean(Wrong(:));
-else
-    L = nanmean(nanmean(Wrong));
-end
