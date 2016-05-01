@@ -92,7 +92,7 @@ for i = 1:length(contents)
             if length(Summary.NMIX.(cl)) <= 0
                 plot(Summary.MTRY.(cl),Summary.(Metric).(cl),...
                     'Color',Colors.(cl),'LineWidth',LineWidth.(cl))
-                LineNames = [LineNames,ClassifierNames(cl)];
+                LineNames = [LineNames,{ClassifierNames(cl)}];
             else
                 for k = 1:length(Summary.NMIX.(cl))
                     clname = [ClassifierNames(cl),...
@@ -100,7 +100,7 @@ for i = 1:length(contents)
                     plot(Summary.MTRY.(cl),Summary.(Metric).(cl)(:,k),...
                         'Color',Colors.(cl),...
                         'LineWidth',LineWidth.([cl,num2str(Summary.NMIX.(cl)(k))]))
-                    LineNames = [LineNames,clname];
+                    LineNames = [LineNames,{clname}];
                 end
             end
         end
@@ -120,7 +120,7 @@ for i = 1:length(contents)
             l = legend(LineNames);
             l.Units = 'inches';
             l.Position = [legLeft,legBottom,legWidth,legHeight];
-            leg.Box = 'off';
+            l.Box = 'off';
         end
     end
     save_fig(gcf,[OutPath,BenchmarkName,'_summary'])
