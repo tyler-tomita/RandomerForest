@@ -1,0 +1,104 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{Breiman2001}
+\citation{Delgado2014,Caruana2008}
+\citation{Heath1993}
+\citation{Menze2011}
+\citation{Heath1993,Tan2005}
+\citation{Ho1998,Rodriguez2006}
+\citation{Menze2011}
+\citation{Blaser2015}
+\citation{Blaser2015}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}}
+\newlabel{intro}{{I}{1}{Introduction}{section.1}{}}
+\@writefile{brf}{\backcite{Breiman2001}{{1}{I}{section.1}}}
+\@writefile{brf}{\backcite{Caruana2008}{{1}{I}{section.1}}}
+\@writefile{brf}{\backcite{Delgado2014}{{1}{I}{section.1}}}
+\@writefile{brf}{\backcite{Heath1993}{{1}{I}{section.1}}}
+\@writefile{brf}{\backcite{Menze2011}{{1}{I}{section.1}}}
+\@writefile{brf}{\backcite{Heath1993}{{1}{I}{section.1}}}
+\@writefile{brf}{\backcite{Tan2005}{{1}{I}{section.1}}}
+\@writefile{brf}{\backcite{Ho1998}{{1}{I}{section.1}}}
+\@writefile{brf}{\backcite{Rodriguez2006}{{1}{I}{section.1}}}
+\@writefile{brf}{\backcite{Menze2011}{{1}{I}{section.1}}}
+\@writefile{brf}{\backcite{Blaser2015}{{1}{I}{section.1}}}
+\@writefile{brf}{\backcite{Blaser2015}{{2}{I}{section.1}}}
+\@writefile{toc}{\contentsline {section}{\numberline {II}Random Projection Forests}{2}{section.2}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Psuedocode for Random Projection Forests, which generalizes a wide range of previously proposed decision forests.\relax }}{2}{algorithm.1}}
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{pseudo}{{1}{2}{Psuedocode for Random Projection Forests, which generalizes a wide range of previously proposed decision forests.\relax }{algorithm.1}{}}
+\citation{Li2006}
+\citation{Li2006}
+\citation{Trunk1979}
+\citation{Blaser2015}
+\@writefile{toc}{\contentsline {section}{\numberline {III}Randomer Forests}{3}{section.3}}
+\@writefile{brf}{\backcite{Li2006}{{3}{III}{Item.3}}}
+\@writefile{brf}{\backcite{Li2006}{{3}{III}{Item.3}}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Experimental Results}{3}{section.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {IV.A}Simulations Involving Compressive Signals}{3}{subsection.4.1}}
+\newlabel{section: sims}{{IV.A}{3}{Simulations Involving Compressive Signals}{subsection.4.1}{}}
+\@writefile{brf}{\backcite{Trunk1979}{{3}{IV.A}{subsection.4.1}}}
+\@writefile{brf}{\backcite{Blaser2015}{{3}{IV.A}{subsection.4.1}}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Class posteriors for the sparse parity problem in the first two dimensions (refer to section \ref  {section: sims} for details). (A): True posteriors. (B) - (D): Posterior estimates for RF, RerF, and RotRF, respectively. Comparing panels B-D with A, it is evident that RerF produces better estimates of the posteriors than does RF or RotRF\relax }}{4}{figure.caption.1}}
+\newlabel{posteriors}{{1}{4}{Class posteriors for the sparse parity problem in the first two dimensions (refer to section \ref {section: sims} for details). (A): True posteriors. (B) - (D): Posterior estimates for RF, RerF, and RotRF, respectively. Comparing panels B-D with A, it is evident that RerF produces better estimates of the posteriors than does RF or RotRF\relax }{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {IV.B}Theoretical Space and Time Complexity}{5}{subsection.4.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {IV.C}Effects of Transformations and Outliers}{5}{subsection.4.3}}
+\newlabel{section: trans}{{IV.C}{5}{Effects of Transformations and Outliers}{subsection.4.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Sparse parity (A-C) and Trunk (D-F) simulations (see section \ref  {section: sims} for details). (A) and (D): Scatterplots of sampled points in the first two dimensions. (B) and (E): Error rates of RerF and RotRF relative to RF across different values of p. (C) and (F): Same as (B) and (E) except absolute training time is plotted on the y-axis instead. The cyan, green, and magenta lines correspond to RF, RerF, and RotRF, respectively. This color coding is adopted in figures \ref  {transformations} and \ref  {benchmark} that follow. Both RerF and RotRF do better than RF when the number of irrelevant features is sufficiently small, due to their ability to generate oblique parititions. However, when the number of irrelevant features becomes large enough, performance of RotRF rapidly degrades. Training times show that RerF scales identically with RF, while RotRF scales poorly with large p (note that in panels E and F, RotRF is only plotted up to $p = 500$ due to computational constraints.\relax }}{6}{figure.caption.2}}
+\newlabel{simulations}{{2}{6}{Sparse parity (A-C) and Trunk (D-F) simulations (see section \ref {section: sims} for details). (A) and (D): Scatterplots of sampled points in the first two dimensions. (B) and (E): Error rates of RerF and RotRF relative to RF across different values of p. (C) and (F): Same as (B) and (E) except absolute training time is plotted on the y-axis instead. The cyan, green, and magenta lines correspond to RF, RerF, and RotRF, respectively. This color coding is adopted in figures \ref {transformations} and \ref {benchmark} that follow. Both RerF and RotRF do better than RF when the number of irrelevant features is sufficiently small, due to their ability to generate oblique parititions. However, when the number of irrelevant features becomes large enough, performance of RotRF rapidly degrades. Training times show that RerF scales identically with RF, while RotRF scales poorly with large p (note that in panels E and F, RotRF is only plotted up to $p = 500$ due to computational constraints.\relax }{figure.caption.2}{}}
+\citation{Delgado2014}
+\citation{Dolan2002}
+\citation{Heath1993}
+\@writefile{toc}{\contentsline {subsection}{\numberline {IV.D}Benchmark Data}{7}{subsection.4.4}}
+\newlabel{section: benchmark}{{IV.D}{7}{Benchmark Data}{subsection.4.4}{}}
+\@writefile{brf}{\backcite{Delgado2014}{{7}{IV.D}{subsection.4.4}}}
+\@writefile{brf}{\backcite{Dolan2002}{{7}{IV.D}{subsection.4.4}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {IV.E}Rank Transforming the Data and Fast Supervised Projections}{7}{subsection.4.5}}
+\newlabel{section: additions}{{IV.E}{7}{Rank Transforming the Data and Fast Supervised Projections}{subsection.4.5}{}}
+\@writefile{brf}{\backcite{Heath1993}{{7}{IV.E}{subsection.4.5}}}
+\citation{biau2008}
+\citation{zheng15flashgraph}
+\bibdata{RandomerForest}
+\bibcite{biau2008}{{1}{2008}{{Biau et~al.}}{{Biau, Devroye, and Lugosi}}}
+\bibcite{Blaser2015}{{2}{2015}{{Blaser \& Fryzlewicz}}{{Blaser and Fryzlewicz}}}
+\bibcite{Breiman2001}{{3}{2001}{{Breiman}}{{}}}
+\bibcite{Caruana2008}{{4}{2008}{{Caruana et~al.}}{{Caruana, Karampatziakis, and Yessenalina}}}
+\bibcite{Dolan2002}{{5}{2008}{{Dolan \& Mor\'e}}{{Dolan and Mor\'e}}}
+\bibcite{Delgado2014}{{6}{2014}{{Fernandez-Delgado et~al.}}{{Fernandez-Delgado, Cernadas, Barro, and Amorim}}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Conclusion and Future Work}{8}{section.5}}
+\@writefile{brf}{\backcite{biau2008}{{8}{V}{section.5}}}
+\@writefile{brf}{\backcite{zheng15flashgraph}{{8}{V}{section.5}}}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Bibliography}{8}{section.6}}
+\bibcite{Heath1993}{{7}{1993}{{Heath et~al.}}{{Heath, Kasif, and Salzberg}}}
+\bibcite{Ho1998}{{8}{1998}{{Ho}}{{}}}
+\bibcite{Li2006}{{9}{2006}{{Li et~al.}}{{Li, Hastie, and Church}}}
+\bibcite{Menze2011}{{10}{2011}{{Menze et~al.}}{{Menze, Kelm, Splitthoff, Koethe, and Hamprecht}}}
+\bibcite{Rodriguez2006}{{11}{2006}{{Rodriguez et~al.}}{{Rodriguez, Kuncheva, and Alonso}}}
+\bibcite{Tan2005}{{12}{2005}{{Tan \& Dowe}}{{Tan and Dowe}}}
+\bibcite{Trunk1979}{{13}{1979}{{Trunk}}{{}}}
+\bibcite{zheng15flashgraph}{{14}{2015}{{Zheng et~al.}}{{Zheng, Mhembere, Burns, Vogelstein, Priebe, and Szalay}}}
+\bibstyle{IEEEtran}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces The effects of different transformations applied to the sparse parity (A-E) and Trunk (F-J) simulations on classification performance (see section \ref  {section: trans} for details). Specifically, we consider rotations, scalings, affine transformations, as well as the addition of outliers. RerF and RotRF outperform RF on sparse parity. The trunk simulations demonstrate clearly that RotRF, while invariant to rotation, is sensitive to affine transformations.\relax }}{10}{figure.caption.3}}
+\newlabel{transformations}{{3}{10}{The effects of different transformations applied to the sparse parity (A-E) and Trunk (F-J) simulations on classification performance (see section \ref {section: trans} for details). Specifically, we consider rotations, scalings, affine transformations, as well as the addition of outliers. RerF and RotRF outperform RF on sparse parity. The trunk simulations demonstrate clearly that RotRF, while invariant to rotation, is sensitive to affine transformations.\relax }{figure.caption.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Classification (panels A-D) and speed (panels E-H) performance profiles on benchmarks with various transformations applied (see section \ref  {section: benchmark} for details). AUC denotes the area under the curve. In terms of classification accuracy, RerF outperforms RF in all five data settings and only loses to RotRF when the data is rotated. RF and RerF have comparable training time performance, while RotRF tends to be slower.\relax }}{11}{figure.caption.4}}
+\newlabel{benchmark}{{4}{11}{Classification (panels A-D) and speed (panels E-H) performance profiles on benchmarks with various transformations applied (see section \ref {section: benchmark} for details). AUC denotes the area under the curve. In terms of classification accuracy, RerF outperforms RF in all five data settings and only loses to RotRF when the data is rotated. RF and RerF have comparable training time performance, while RotRF tends to be slower.\relax }{figure.caption.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The utility of supplementing RerF with supervised projections and rank transforming the data prior to inducing trees (see section \ref  {section: additions} for details). The effect of various transformations on classification performance of RF, RerF, RerF(d), RerF(d+r), and RotRF for the Trunk simulation are shown in panels A-E, respectively. Panel D shows that RerF(d+r), which supplements RerF with supervised projections, and passes the data to ranks, is more robust to affine transformations than the other methods.\relax }}{11}{figure.caption.5}}
+\newlabel{robustness}{{5}{11}{The utility of supplementing RerF with supervised projections and rank transforming the data prior to inducing trees (see section \ref {section: additions} for details). The effect of various transformations on classification performance of RF, RerF, RerF(d), RerF(d+r), and RotRF for the Trunk simulation are shown in panels A-E, respectively. Panel D shows that RerF(d+r), which supplements RerF with supervised projections, and passes the data to ranks, is more robust to affine transformations than the other methods.\relax }{figure.caption.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Error rate as a function of density of random projections and number of random projections sampled\relax }}{12}{figure.caption.6}}
+\newlabel{robustness}{{6}{12}{Error rate as a function of density of random projections and number of random projections sampled\relax }{figure.caption.6}{}}

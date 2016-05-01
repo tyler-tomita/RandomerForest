@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99d (TeX Live 2014)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: icml2016_RandomerForest.aux
+The style file: icml2016.bst
+Database file #1: icml2016_RandomerForest.bib
+Warning--empty journal in Blaser2015
+Warning--there's a number but no volume in Trunk1979
+You've used 14 entries,
+            2773 wiz_defined-function locations,
+            701 strings with 7367 characters,
+and the built_in function-call counts, 7242 in all, are:
+= -- 664
+> -- 401
+< -- 10
++ -- 135
+- -- 121
+* -- 606
+:= -- 1096
+add.period$ -- 52
+call.type$ -- 14
+change.case$ -- 81
+chr.to.int$ -- 14
+cite$ -- 30
+duplicate$ -- 330
+empty$ -- 591
+format.name$ -- 141
+if$ -- 1541
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 14
+newline$ -- 84
+num.names$ -- 58
+pop$ -- 155
+preamble$ -- 1
+purify$ -- 67
+quote$ -- 0
+skip$ -- 243
+stack$ -- 0
+substring$ -- 316
+swap$ -- 49
+text.length$ -- 4
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 154
+warning$ -- 2
+while$ -- 64
+width$ -- 0
+write$ -- 202
+(There were 2 warnings)
