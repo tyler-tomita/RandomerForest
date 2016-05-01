@@ -116,6 +116,7 @@ for i = 1:length(contents)
         ax.Units = 'inches';
         ax.Position = [axLeft(m),axBottom(m),axWidth,axHeight];
         ax.Box = 'off';
+        ax.XScale = 'log';
         if m == length(Metrics)
             l = legend(LineNames);
             l.Units = 'inches';
