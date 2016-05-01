@@ -109,7 +109,6 @@ for i = 1:length(contents)
         end
         xlabel('mtry')
         ylabel(MetricNames(m))
-        legend(LineNames)
         ax.LineWidth = 2;
         ax.FontUnits = 'inches';
         ax.FontSize = FontSize;
