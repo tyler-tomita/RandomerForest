@@ -63,7 +63,7 @@ for i = 1:length(contents)
         hold on
         LineNames = [];
         for c = 1:length(Classifiers)
-            cl = Classifiers(c);
+            cl = Classifiers{c};
             if length(Summary.NMIX.(cl)) <= 0
                 plot(Summary.MTRY.(cl),Summary.(Metric).(cl),...
                     'Color',Colors.(cl),'LineWidth',LineWidth.(cl))
