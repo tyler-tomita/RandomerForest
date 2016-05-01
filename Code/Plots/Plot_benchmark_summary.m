@@ -88,6 +88,6 @@ for i = 1:length(contents)
         ylabel(MetricNames(m))
         legend(LineNames)
     end
-    save_fig(gcf,[BenchmarkName,'_summary'])
+    save_fig(gcf,[OutPath,BenchmarkName,'_summary'])
     close
 end
