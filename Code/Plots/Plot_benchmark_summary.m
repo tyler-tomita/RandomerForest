@@ -25,6 +25,29 @@ LineWidth.frc4 = 3;
 LineWidth.frc5 = 3.5;
 LineWidth.frc6 = 4;
 
+FontSize = .16;
+axWidth = 1.3;
+axHeight = 1.3;
+axLeft = [FontSize*5,FontSize*8+axWidth,FontSize*11+axWidth*2,...
+    FontSize*14+axWidth*3,FontSize*5,FontSize*8+axWidth,...
+    FontSize*11+axWidth*2,FontSize*14+axWidth*3];
+axBottom = [FontSize*8+axHeight,FontSize*8+axHeight,FontSize*8+axHeight...
+    ,FontSize*8+axHeight,FontSize*4,FontSize*4,FontSize*4,FontSize*4];
+legWidth = .25;
+legHeight = axHeight/2;
+legLeft = axLeft(end) + axWidth + FontSize;
+legBottom = axBottom;
+figWidth = legLeft(end) + legWidth + FontSize*4;
+figHeight = axBottom(1) + axHeight + FontSize*3;
+
+
+fig = figure;
+fig.Units = 'inches';
+fig.PaperUnits = 'inches';
+fig.Position = [0 0 figWidth figHeight];
+fig.PaperPosition = [0 0 figWidth figHeight];
+fig.PaperSize = [figWidth figHeight];
+
 load('../Data/Benchmark_data.mat','n','d')
 
 min_d = 1;
@@ -46,7 +69,7 @@ contents = dir([InPath,'*.mat']);
 OutPath = '../Figures/Untransformed/';
 
 Metrics = {'MR','S','V','B'};
-MetricNames = {'Misclassification Rate','Tree Strength','Tree Variance',...
+MetricNames = {'Forest Error','Tree Error','Tree Variance',...
     'Tree Bias'};
 
 ClassifierNames = containers.Map({'rf','rerf','rf_rot','rerfr','frc'},...
@@ -87,6 +110,18 @@ for i = 1:length(contents)
         xlabel('mtry')
         ylabel(MetricNames(m))
         legend(LineNames)
+        ax.LineWidth = 2;
+        ax.FontUnits = 'inches';
+        ax.FontSize = FontSize;
+        ax.Units = 'inches';
+        ax.Position = [axLeft(m),axBottom(m),axWidth,axHeight];
+        ax.Box = 'off';
+        if m == length(Metrics)
+            l = legend(LineNames);
+            l.Units = 'inches';
+            l.Position = [legLeft,legBottom,legWidth,legHeight];
+            leg.Box = 'off';
+        end
     end
     save_fig(gcf,[OutPath,BenchmarkName,'_summary'])
     close
