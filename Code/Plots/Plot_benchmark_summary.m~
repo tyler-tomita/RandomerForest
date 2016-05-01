@@ -54,7 +54,7 @@ ClassifierNames = containers.Map({'rf','rerf','rf_rot','rerfr','frc'},...
 
 
 for i = 1:length(contents)
-    BenchmarkName = strsplit(contents(i).name,'_untransformed_summary.mat');
+    BenchmarkName = strsplit(contents(i).name,'_untransformed_summary.mat')
     InFile = [InPath,contents(i).name];
     load(InFile)
     for m = 1:length(Metrics)
@@ -81,12 +81,12 @@ for i = 1:length(contents)
             end
         end
         if m == 1
-            title(sprintf('%s (n = %d, p = %d)',BenchmarkName,n(i),d(i)))
+            title(sprintf('%s (n = %d, p = %d)',contents(i).name,n(i),d(i)))
         end
         xlabel('mtry')
         ylabel(MetricNames(m))
         legend(LineNames)
     end
-    save_fig(gcf,[BenchmarkName,'_summary'])
+    save_fig(gcf,[OutPath,contents(i).name,'_summary'])
     close
 end
