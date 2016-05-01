@@ -34,9 +34,9 @@ axLeft = [FontSize*5,FontSize*8+axWidth,FontSize*11+axWidth*2,...
 axBottom = [FontSize*8+axHeight,FontSize*8+axHeight,FontSize*8+axHeight...
     ,FontSize*8+axHeight,FontSize*4,FontSize*4,FontSize*4,FontSize*4];
 legWidth = .25;
-legHeight = axHeight/2;
+legHeight = axHeight;
 legLeft = axLeft(end) + axWidth + FontSize;
-legBottom = axBottom;
+legBottom = axBottom(end);
 figWidth = legLeft(end) + legWidth + FontSize*4;
 figHeight = axBottom(1) + axHeight + FontSize*3;
 

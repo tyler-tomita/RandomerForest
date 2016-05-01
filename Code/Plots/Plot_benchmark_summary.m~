@@ -36,7 +36,7 @@ axBottom = [FontSize*8+axHeight,FontSize*8+axHeight,FontSize*8+axHeight...
 legWidth = .25;
 legHeight = axHeight/2;
 legLeft = axLeft(end) + axWidth + FontSize;
-legBottom = axBottom;
+legBottom = axBottom(;
 figWidth = legLeft(end) + legWidth + FontSize*4;
 figHeight = axBottom(1) + axHeight + FontSize*3;
 
@@ -119,7 +119,9 @@ for i = 1:length(contents)
         if m == length(Metrics)
             l = legend(LineNames);
             l.Units = 'inches';
-            l.Position = [leg
+            l.Position = [legLeft,legBottom,legWidth,legHeight];
+            leg.Box = 'off';
+        end
     end
     save_fig(gcf,[OutPath,BenchmarkName,'_summary'])
     close
