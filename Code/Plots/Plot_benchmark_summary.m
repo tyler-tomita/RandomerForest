@@ -55,6 +55,7 @@ ClassifierNames = containers.Map({'rf','rerf','rf_rot','rerfr','frc'},...
 
 for i = 1:length(contents)
     BenchmarkName = strsplit(contents(i).name,'_untransformed_summary.mat');
+    BenchmarkName = BenchmarkName{1};
     InFile = [InPath,contents(i).name];
     load(InFile)
     for m = 1:length(Metrics)
