@@ -48,7 +48,6 @@ OutPath = '../Figures/Untransformed/';
 Metrics = {'MR','S','V','B'};
 MetricNames = {'Misclassification Rate','Tree Strength','Tree Variance',...
     'Tree Bias'};
-Metrics = containers.Map(Metrics,MetricNames);
 
 ClassifierNames = containers.Map({'rf','rerf','rf_rot','rerfr','frc'},...
     {'RF','RerF','RotRF','RerF(rank)','F-RC'});
