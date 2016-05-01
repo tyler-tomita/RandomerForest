@@ -57,7 +57,7 @@ for i = 1:length(contents)
     InFile = [InPath,contents(i).name];
     load(InFile)
     for m = 1:length(Metrics)
-        Metric = Metrics(m);
+        Metric = Metrics{m};
         Classifiers = fieldnames(Summary.(Metric));
         ax = subplot(1,length(Metrics),m);
         hold on
