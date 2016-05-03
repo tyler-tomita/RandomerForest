@@ -37,7 +37,7 @@ We sample a matrix $A \sim f_A(\mc{D}^n)$, where $A \in \Real^{p \times d}$, pos
   \caption{Psuedocode for Random Projection Forests, which generalizes a wide range of previously proposed decision forests.}
   \label{pseudo}
 \begin{algorithmic}
-  \STATE {\bfseries Input:} data: $\mc{D}^n = (X_i,y_i) \in (\Real^p \times \mc{Y})$ for $i \in [n]$, tree rules (stopping criteria, rules for sampling data points per tree, etc.), distributions on $d \times p$ matrices}: $A \sim f_A(\mc{D}^n)$, preprocessing rules
+  \STATE {\bfseries Input:} data: $\mc{D}^n = (X_i,y_i) \in (\Real^p \times \mc{Y})$ for $i \in [n]$, tree rules (stopping criteria, rules for sampling data points per tree, etc.), distributions on $d \times p$ matrices: $A \sim f_A(\mc{D}^n)$, preprocessing rules
   \STATE {\bfseries Output:} decision trees, predictions, out of bag errors, etc. 
   \STATE Preprocess according to rule
   \FOR{each tree}
@@ -87,7 +87,7 @@ Figure \ref{posteriors} depicts the true class posteriors in the first two dimen
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
-\centerline{\includegraphics[width=\columnwidth]{../Figures/pdf/Sparse_parity_posteriors}}
+\centerline{\includegraphics[width=\columnwidth]{../../Figures/pdf/Sparse_parity_posteriors}}
 \caption{Class posteriors for the sparse parity problem in the first two dimensions (refer to section \ref{section: sims} for details). (A): True posteriors. (B) - (D): Posterior estimates for RF, RerF, and RotRF, respectively. Comparing panels B-D with A, it is evident that RerF produces better estimates of the posteriors than does RF or RotRF}
 \label{posteriors}
 \end{center}
@@ -101,7 +101,7 @@ In panel B, RerF performs as well as or better than both RF and RotRF for all va
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
-\centerline{\includegraphics[width=\columnwidth]{../Figures/pdf/Fig2_simulations}}
+\centerline{\includegraphics[width=\columnwidth]{../../Figures/pdf/Fig2_simulations}}
 \caption{Sparse parity (A-C) and Trunk (D-F) simulations (see section \ref{section: sims} for details). (A) and (D): Scatterplots of sampled points in the first two dimensions. (B) and (E): Error rates of RerF and RotRF relative to RF across different values of p. (C) and (F): Same as (B) and (E) except absolute training time is plotted on the y-axis instead. The cyan, green, and magenta lines correspond to RF, RerF, and RotRF, respectively. This color coding is adopted in figures \ref{transformations} and \ref{benchmark} that follow. Both RerF and RotRF do better than RF when the number of irrelevant features is sufficiently small, due to their ability to generate oblique parititions. However, when the number of irrelevant features becomes large enough, performance of RotRF rapidly degrades. Training times show that RerF scales identically with RF, while RotRF scales poorly with large p (note that in panels E and F, RotRF is only plotted up to $p = 500$ due to computational constraints.}
 \label{simulations}
 \end{center}
@@ -126,7 +126,7 @@ Figure \ref{transformations} shows the effect of these transformations and outli
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
-\centerline{\includegraphics[width=\columnwidth]{../Figures/pdf/Fig3_transformations}}
+\centerline{\includegraphics[width=\columnwidth]{../../Figures/pdf/Fig3_transformations}}
 \caption{The effects of different transformations applied to the sparse parity (A-E) and Trunk (F-J) simulations on classification performance (see section \ref{section: trans} for details). Specifically, we consider rotations, scalings, affine transformations, as well as the addition of outliers. RerF and RotRF outperform RF on sparse parity. The trunk simulations demonstrate clearly that RotRF, while invariant to rotation, is sensitive to affine transformations.}
 \label{transformations}
 \end{center}
@@ -143,7 +143,7 @@ Since the simulations in section \ref{section: sims} revealed that the speed of 
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
-\centerline{\includegraphics[width=\columnwidth]{../Figures/pdf/Fig4_benchmark}}
+\centerline{\includegraphics[width=\columnwidth]{../../Figures/pdf/Fig4_benchmark}}
 \caption{Classification (panels A-D) and speed (panels E-H) performance profiles on benchmarks with various transformations applied (see section \ref{section: benchmark} for details). AUC denotes the area under the curve. In terms of classification accuracy, RerF outperforms RF in all five data settings and only loses to RotRF when the data is rotated. RF and RerF have comparable training time performance, while RotRF tends to be slower.}
 \label{benchmark}
 \end{center}
@@ -163,22 +163,22 @@ Figure \ref{robustness} demonstrates the utility of passing to ranks and using s
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
-\centerline{\includegraphics[width=\columnwidth]{../Figures/pdf/Fig5_robustness}}
+\centerline{\includegraphics[width=\columnwidth]{../../Figures/pdf/Fig5_robustness}}
 \caption{The utility of supplementing RerF with supervised projections and rank transforming the data prior to inducing trees (see section \ref{section: additions} for details). The effect of various transformations on classification performance of RF, RerF, RerF(d), RerF(d+r), and RotRF for the Trunk simulation are shown in panels A-E, respectively. Panel D shows that RerF(d+r), which supplements RerF with supervised projections, and passes the data to ranks, is more robust to affine transformations than the other methods.}
 \label{robustness}
 \end{center}
 \vskip -0.2in
 \end{figure}
 
-\begin{figure}[ht]
-\vskip 0.2in
-\begin{center}
-\centerline{\includegraphics[width=\columnwidth]{../Figures/pdf/error_vs_sparsity}}
-\caption{Error rate as a function of density of random projections and number of random projections sampled}
-\label{robustness}
-\end{center}
-\vskip -0.2in
-\end{figure}
+%\begin{figure}[ht]
+%\vskip 0.2in
+%\begin{center}
+%\centerline{\includegraphics[width=\columnwidth]{../../Figures/pdf/error_vs_sparsity}}
+%\caption{Error rate as a function of density of random projections and number of random projections sampled}
+%\label{robustness}
+%\end{center}
+%\vskip -0.2in
+%\end{figure}
 
 \section{Conclusion and Future Work}
 

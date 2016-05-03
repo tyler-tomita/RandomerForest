@@ -7,9 +7,28 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-n = 4000;
+n = 500;
 d = 2;
 ntrials = 10;
+
+xmin = -1;
+xmax = 1;
+ymin = xmin;
+ymax = xmax;
+npoints = 50;
+[xgv,ygv] = meshgrid(linspace(xmin,xmax,npoints),linspace(ymin,ymax,npoints));
+Xpost{1} = xgv(:);
+Ypost{1} = ygv(:);
+Zpost{1} = zeros(npoints^2,d-2);
+xmin = -sqrt(2);
+xmax = sqrt(2);
+ymin = xmin;
+ymax = xmax;
+npoints = 50;
+[xgv,ygv] = meshgrid(linspace(xmin,xmax,npoints),linspace(ymin,ymax,npoints));
+Xpost{2} = xgv(:);
+Ypost{2} = ygv(:);
+Zpost{2} = zeros(npoints^2,d-2);
 
 ntrees = 500;
 NWorkers = 2;
@@ -80,7 +99,7 @@ for trial = 1:ntrials
 
             if isempty(Params.(cl).nmix) || Params.(cl).nmix <= d
                 for j = 1:length(Params.(cl).mtry{i})
-                    Forest = rpclassificationforest(Params.(cl).ntrees,...
+                    Forest.(cl){i}{trial,j} = rpclassificationforest(Params.(cl).ntrees,...
                         X.train{i},Y.train,...
                         'RandomForest',Params.(cl).RandomForest,...
                         'sparsemethod',Params.(cl).SparseMethod,...
@@ -90,9 +109,13 @@ for trial = 1:ntrials
                         'Stratified',Stratified,...
                         'NWorkers',NWorkers);
 
-                    Predictions = predict(Forest,X.test{i});
+                    Predictions = predict(Forest.(cl){i}{trial,j},X.test{i});
                     GE.(cl){i}(trial,j) = misclassification_rate(Predictions,Y.test);
-                end        
+                end
+                [~,MinIdx.(cl){i}(trial)] = min(GE.(cl){i}(trial,:));
+                Posteriors.(cl){i}(:,:,trial) =...
+                    rerf_classprob(Forest.(cl){i}{trial,MinIdx.(cl){i}(trial)},...
+                    [Xpost{i},Ypost{i}]);
             else
                GE.(cl){i} = [];
             end
@@ -104,22 +127,28 @@ for i = 1:length(X.train)
     for c = 1:length(Classifiers)
         cl = Classifiers{c};
         SEM.(cl){i} = std(GE.(cl){i})/sqrt(ntrials);
-        M.(cl){i} = mean(GE.(cl){i});
+        GE.(cl){i} = mean(GE.(cl){i});
+        Posteriors.(cl){i} = mean(Posteriors.(cl){i},3);
     end
 end
-subplot(1,2,1)
-hold on
-errorbar(1:2,M.rf{1},SEM.rf{1})
-errorbar(1:4,M.rerf{1},SEM.rerf{1})
-title('XOR')
-xlabel('mtry')
-ylabel('misclassification rate')
-legend(Classifiers)
-subplot(1,2,2)
-hold on
-errorbar(1:2,M.rf{2},SEM.rf{2})
-errorbar(1:4,M.rerf{2},SEM.rerf{2})
-title('Rotated XOR')
-xlabel('mtry')
-ylabel('misclassification rate')
-legend(Classifiers)
+
+
+% subplot(1,2,1)
+% hold on
+% errorbar(1:2,M.rf{1},SEM.rf{1})
+% errorbar(1:4,M.rerf{1},SEM.rerf{1})
+% title('XOR')
+% xlabel('mtry')
+% ylabel('misclassification rate')
+% legend(Classifiers)
+% subplot(1,2,2)
+% hold on
+% errorbar(1:2,M.rf{2},SEM.rf{2})
+% errorbar(1:4,M.rerf{2},SEM.rerf{2})
+% title('Rotated XOR')
+% xlabel('mtry')
+% ylabel('misclassification rate')
+% legend(Classifiers)
+
+save([rerfPath 'RandomerForest/Results/Square_XOR_posteriors_npoints_50.mat'],...
+    'Posteriors','SEM','GE','Xpost','Ypost','Zpost')
