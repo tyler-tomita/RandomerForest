@@ -45,11 +45,11 @@ ax = subplot(2,4,1);
 hold on
 
 xmin = 1;
-xmax = 4;
+xmax = 3;
 ymin = .7;
 ymax = 1.04;
 
-for i = 1:length(clnames)-1
+for i = 1:length(clnames)
      plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
@@ -65,7 +65,7 @@ ax.Position = [axLeft(1) axBottom(1) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [xmin xmax];
 ax.YLim = [ymin ymax];
-ax.XTick = [1 2 3 4];
+ax.XTick = [1 2 3];
 ax.YTick = [.7 .8 .9 1];
 % l = legend(sprintf('AUC = %0.2f',AUC.rf),['\bf{}' sprintf('AUC = %0.2f',AUC.rerf)],sprintf('AUC = %0.2f',AUC.rf_rot));
 % l.Location = 'southeast';
@@ -82,11 +82,11 @@ ax = subplot(2,4,2);
 hold on
 
 xmin = 1;
-xmax = 4;
+xmax = 3;
 ymin = .7;
 ymax = 1.04;
 
-for i = 1:length(clnames)-1
+for i = 1:length(clnames)
      plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
@@ -117,11 +117,11 @@ ax = subplot(2,4,3);
 hold on
 
 xmin = 1;
-xmax = 10;
+xmax = 3;
 ymin = .8;
-ymax = 1.03;
+ymax = .95;
 
-for i = 1:length(clnames)-1
+for i = 1:length(clnames)
      plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
@@ -137,7 +137,6 @@ ax.Position = [axLeft(3) axBottom(3) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [xmin xmax];
 ax.YLim = [ymin ymax];
-ax.XTick = 2:2:10;
 ax.YTick = [.8 .9 1];
 % l = legend(sprintf('AUC = %0.2f',AUC.rf),['\bf{}' sprintf('AUC = %0.2f',AUC.rerf)],sprintf('AUC = %0.2f',AUC.rf_rot));
 % l.Location = 'southeast';
@@ -155,10 +154,10 @@ hold on
 xmin = 1;
 xmax = 4;
 ymin = .8;
-ymax = 1.02;
+ymax = .95;
 
 
-for i = 1:length(clnames)-1
+for i = 1:length(clnames)
      plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
@@ -193,7 +192,7 @@ xmax = 2;
 ymin = 0;
 ymax = 1.17;
 
-for i = 1:length(clnames)-1
+for i = 1:length(clnames)
      plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
@@ -232,7 +231,7 @@ xmax = 1.5;
 ymin = 0;
 ymax = 1.17;
 
-for i = 1:length(clnames)-1
+for i = 1:length(clnames)
      plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
@@ -267,7 +266,7 @@ xmax = 2;
 ymin = 0;
 ymax = 1.17;
 
-for i = 1:length(clnames)-1
+for i = 1:length(clnames)
      plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 
@@ -303,7 +302,7 @@ ymin = 0;
 ymax = 1.17;
 
 
-for i = 1:length(clnames)-1
+for i = 1:length(clnames)
      plot(tau,rho_ps(:,i),'LineWidth',LineWidth,'Color',Colors.(clnames{i}))
 end
 

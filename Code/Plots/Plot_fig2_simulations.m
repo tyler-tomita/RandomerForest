@@ -42,8 +42,33 @@ else
     load Sparse_parity.mat
 end
 
+% Only keep frc results for nmix = 2
+for i = 1:length(dims)
+    d = dims(i);
+    if d <= 5
+        mtrys = 1:d;
+    else
+        mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
+    end
+    
+    if d >= 6
+        nmixs = 2:6;
+    else
+        nmixs = 2:d;
+    end
+    
+    for j = 1:length(mtrys)
+        mtry = mtrys(j);
+        for k = 1:length(nmixs)
+            nmix = nmixs(k);
+            if nmix ~= 2;
+                Lhat.frc(i,length(nmixs)*(j-1)+k,:) = NaN;
+            end
+        end
+    end
+end
+
 classifiers = fieldnames(Lhat);
-classifiers(strcmp(classifiers,'frc')) = [];
 
 ax = subplot(2,3,1);
 
@@ -114,6 +139,32 @@ ax.XTickLabel = {'1' '10' '100'};
 
 load Sparse_parity
 
+% Only keep frc results for nmix = 2
+for i = 1:length(dims)
+    d = dims(i);
+    if d <= 5
+        mtrys = 1:d;
+    else
+        mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
+    end
+    
+    if d >= 6
+        nmixs = 2:6;
+    else
+        nmixs = 2:d;
+    end
+    
+    for j = 1:length(mtrys)
+        mtry = mtrys(j);
+        for k = 1:length(nmixs)
+            nmix = nmixs(k);
+            if nmix ~= 2;
+                trainTime.frc(i,length(nmixs)*(j-1)+k,:) = NaN;
+            end
+        end
+    end
+end
+
 ax = subplot(2,3,3);
 
 for i = 1:length(classifiers)
@@ -149,7 +200,6 @@ else
 end
 
 classifiers = fieldnames(Lhat);
-classifiers(strcmp(classifiers,'frc')) = [];
 
 ax = subplot(2,3,4);
 
@@ -198,8 +248,33 @@ end
 
 load Trunk_rerfr_frc
 
+% Only keep frc results for nmix = 2
+for i = 1:length(dims)
+    d = dims(i);
+    if d <= 5
+        mtrys = 1:d;
+    else
+        mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
+    end
+    
+    if d >= 6
+        nmixs = 2:6;
+    else
+        nmixs = 2:d;
+    end
+    
+    for j = 1:length(mtrys)
+        mtry = mtrys(j);
+        for k = 1:length(nmixs)
+            nmix = nmixs(k);
+            if nmix ~= 2;
+                Lhat.frc(i,length(nmixs)*(j-1)+k,:) = NaN;
+            end
+        end
+    end
+end
+
 classifiers = fieldnames(Lhat);
-classifiers(strcmp(classifiers,'frc')) = [];
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
@@ -229,7 +304,6 @@ ax.XTickLabel = {'1';'10';'100';'1000'};
 load Trunk
 
 classifiers = fieldnames(Lhat);
-classifiers(strcmp(classifiers,'frc')) = [];
 
 ax = subplot(2,3,6);
 
@@ -237,6 +311,9 @@ for i = 1:length(classifiers)
     cl = classifiers{i};
     if ~strcmp(cl,'rerfdn')
         trainTime.(cl) = nansum(trainTime.(cl),2);
+        if strcmp(cl,'rf_rot')
+            trainTime.(cl)(end,:,:) = NaN;
+        end
         hTrainTime(i) = errorbar(dims,mean(trainTime.(cl),3),std(trainTime.(cl),0,3)/sqrt(size(trainTime.(cl),3)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
@@ -244,8 +321,33 @@ end
 
 load Trunk_rerfr_frc
 
+% Only keep frc results for nmix = 2
+for i = 1:length(dims)
+    d = dims(i);
+    if d <= 5
+        mtrys = 1:d;
+    else
+        mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
+    end
+    
+    if d >= 6
+        nmixs = 2:6;
+    else
+        nmixs = 2:d;
+    end
+    
+    for j = 1:length(mtrys)
+        mtry = mtrys(j);
+        for k = 1:length(nmixs)
+            nmix = nmixs(k);
+            if nmix ~= 2;
+                trainTime.frc(i,length(nmixs)*(j-1)+k,:) = NaN;
+            end
+        end
+    end
+end
+
 classifiers = fieldnames(Lhat);
-classifiers(strcmp(classifiers,'frc')) = [];
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
@@ -269,7 +371,7 @@ ax.XLim = [1 1100];
 ax.XScale = 'log';
 ax.XTick = logspace(0,3,4);
 ax.XTickLabel = {'1';'10';'100';'1000'};
-l = legend('RF','RerF','RotRF','RerF(r)');
+l = legend('RF','RerF','RotRF','RerF(r)','F-RC');
 l.Location = 'southwest';
 l.Box = 'off';
 l.FontSize = 12;

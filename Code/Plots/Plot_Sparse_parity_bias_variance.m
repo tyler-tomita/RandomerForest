@@ -23,11 +23,11 @@ C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
 Colors.rf = C(1,:);
 Colors.rerf = C(2,:);
 Colors.rf_rot = C(3,:);
-Colors.frc2 = C(4,:);
-Colors.frc3 = C(4,:);
-Colors.frc4 = C(4,:);
-Colors.frc5 = C(4,:);
-Colors.frc6 = C(4,:);
+Colors.frc2 = C(5,:);
+Colors.frc3 = C(5,:);
+Colors.frc4 = C(5,:);
+Colors.frc5 = C(5,:);
+Colors.frc6 = C(5,:);
 
 axWidth = 1;
 axHeight = 1;
