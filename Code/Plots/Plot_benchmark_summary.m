@@ -24,7 +24,7 @@ LineWidth.frc = 2;
 FontSize = .16;
 axWidth = 1.5;
 axHeight = 1.5;
-axLeft = [FontSize*5,FontSize*8+axWidth,FontSize*11+axWidth*2,FontSize*46+axWidth*3];
+axLeft = [FontSize*5,FontSize*8+axWidth,FontSize*11+axWidth*2,FontSize*14+axWidth*3];
 axBottom = [FontSize*4,FontSize*4,FontSize*4,FontSize*4];
 figWidth = axLeft(end) + axWidth + FontSize*4;
 figHeight = axBottom(1) + axHeight + FontSize*4;
@@ -99,12 +99,6 @@ for i = 1:length(contents)
         ax.Position = [axLeft(m),axBottom(m),axWidth,axHeight];
         ax.Box = 'off';
         ax.XScale = 'log';
-        if m == length(Metrics)
-            l = legend(LineNames);
-            l.Units = 'inches';
-            l.Position = [legLeft,legBottom,legWidth,legHeight];
-            l.Box = 'off';
-        end
     end
     save_fig(gcf,[OutPath,BenchmarkName,'_summary'])
     close
