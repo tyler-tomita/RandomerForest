@@ -86,7 +86,6 @@ for i = 1:length(contents)
                     'Color',Colors.(cl),...
 		    'LineWidth',LineWidth.(cl))
                 LineNames = [LineNames,{clname}];
-                end
             end
         end
         if m == 1
