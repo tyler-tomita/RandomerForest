@@ -19,27 +19,15 @@ LineWidth.rf = 2;
 LineWidth.rerf = 2;
 LineWidth.rf_rot = 2;
 LineWidth.rerfr = 2;
-LineWidth.frc2 = 2;
-LineWidth.frc3 = 2.5;
-LineWidth.frc4 = 3;
-LineWidth.frc5 = 3.5;
-LineWidth.frc6 = 4;
+LineWidth.frc = 2;
 
 FontSize = .16;
-axWidth = 1.3;
-axHeight = 1.3;
-axLeft = [FontSize*5,FontSize*8+axWidth,FontSize*11+axWidth*2,...
-    FontSize*14+axWidth*3,FontSize*5,FontSize*8+axWidth,...
-    FontSize*11+axWidth*2,FontSize*14+axWidth*3];
-axBottom = [FontSize*8+axHeight,FontSize*8+axHeight,FontSize*8+axHeight...
-    ,FontSize*8+axHeight,FontSize*4,FontSize*4,FontSize*4,FontSize*4];
-legWidth = .25;
-legHeight = axHeight;
-legLeft = axLeft(end) + axWidth + FontSize;
-legBottom = axBottom(end);
-figWidth = legLeft(end) + legWidth + FontSize*4;
-figHeight = axBottom(1) + axHeight + FontSize*3;
-
+axWidth = 1.5;
+axHeight = 1.5;
+axLeft = [FontSize*5,FontSize*8+axWidth,FontSize*11+axWidth*2,FontSize*46+axWidth*3];
+axBottom = [FontSize*4,FontSize*4,FontSize*4,FontSize*4];
+figWidth = axLeft(end) + axWWidth + FontSize*4;
+figHeight = axBottom(1) + axHeight + FontSize*4;
 
 fig = figure;
 fig.Units = 'inches';
@@ -94,13 +82,10 @@ for i = 1:length(contents)
                     'Color',Colors.(cl),'LineWidth',LineWidth.(cl))
                 LineNames = [LineNames,{ClassifierNames(cl)}];
             else
-                for k = 1:length(Summary.NMIX.(cl))
-                    clname = [ClassifierNames(cl),...
-                        num2str(Summary.NMIX.(cl)(k))];
-                    plot(Summary.MTRY.(cl),Summary.(Metric).(cl)(:,k),...
-                        'Color',Colors.(cl),...
-                        'LineWidth',LineWidth.([cl,num2str(Summary.NMIX.(cl)(k))]))
-                    LineNames = [LineNames,{clname}];
+                plot(Summary.MTRY.(cl),Summary.(Metric).(cl)(:,1),...
+                    'Color',Colors.(cl),...
+		    'LineWidth',LineWidth.(cl))
+                LineNames = [LineNames,{clname}];
                 end
             end
         end
