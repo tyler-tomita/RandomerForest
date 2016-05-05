@@ -80,13 +80,12 @@ for i = 1:length(contents)
             if length(Summary.NMIX.(cl)) <= 0
                 plot(Summary.MTRY.(cl),Summary.(Metric).(cl),...
                     'Color',Colors.(cl),'LineWidth',LineWidth.(cl))
-                LineNames = [LineNames,{ClassifierNames(cl)}];
             else
                 plot(Summary.MTRY.(cl),Summary.(Metric).(cl)(:,1),...
                     'Color',Colors.(cl),...
 		    'LineWidth',LineWidth.(cl))
-                LineNames = [LineNames,{clname}];
             end
+            LineNames = [LineNames,{ClassifierNames(cl)}];
         end
         if m == 1
             title(sprintf('%s (n = %d, p = %d)',BenchmarkName,n(i),d(i)))
