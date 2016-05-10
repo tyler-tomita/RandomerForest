@@ -138,8 +138,8 @@ Win.frc = MinMR.frc < MinMR.rf;
 WinFraction.rerf = mean(Win.rerf);
 WinFraction.frc = mean(Win.frc);
 Subset = [Datasets(HasSummary).p];
-BigMTRY.rerf = Win.rerf && BestMTRY.rerf > Subset;
-BigMTRY.frc = Win.frc && BestMTRY.frc > Subset;
+BigMTRY.rerf = Win.rerf & BestMTRY.rerf > Subset;
+BigMTRY.frc = Win.frc & BestMTRY.frc > Subset;
 
 %Bar plot of fraction of times each of Rerf and FRC did better than RF
 bar([WinFraction.rerf,WinFraction,frc],0.5,'FaceColor',[0 .5 .5],...
@@ -164,3 +164,8 @@ xlabel('p')
 ylabel('frequency')
 title('Cases where mtry > p is optimal (F-RC)')
 save_fig(gcf,[OutPath,'Mtry_FRC'])
+
+pval.rerf = signrank(MinMR.rf,MinMR.rerf,'tail','right');
+pval.frc = signrank(MinMR.rf,MinMR.frc,'tail','right');
+
+save('../Results/pvalues_untransformed',pval)
