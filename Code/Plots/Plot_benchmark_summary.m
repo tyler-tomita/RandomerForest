@@ -141,8 +141,8 @@ p = plotSpread({MRDiff.rerf,MRDiff.frc},'distributionMarkers',{'.','.'},...
     'distributionColors',{'g','k'},'xNames',{'RerF','F-RC'});
 ax = p{end};
 ch = allchild(ax);
-ch(1).MarkerSize = 8;
-ch(2).MarkerSize = 8;
+ch(1).MarkerSize = 10;
+ch(2).MarkerSize = 10;
 hold on
 plot(ax.XLim,[0,0],'r--')
 ylabel('Error (relative to RF)')
@@ -182,7 +182,8 @@ ax.XTickLabel = xName;
 xlabel('p')
 ylabel('Fraction')
 title('Fraction of cases where mtry > p is optimal')
-legend('RerF','F-RC','Location','northwest')
+l = legend('RerF','F-RC','Location','northwest');
+l.Box = 'off';
 save_fig(gcf,[OutPath,'Mtry_binned'])
 
 % Unbinned fraction of times mtry > p resulted in best performance
