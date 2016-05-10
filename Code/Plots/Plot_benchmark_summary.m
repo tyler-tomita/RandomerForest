@@ -133,24 +133,44 @@ for i = 1:length(Datasets)
     end
 end
 
-Win.rerf = MinMR.rerf < MinMR.rf;
-Win.frc = MinMR.frc < MinMR.rf;
-WinFraction.rerf = mean(Win.rerf);
-WinFraction.frc = mean(Win.frc);
-Subset = [Datasets(HasSummary).p];
-BigMTRY.rerf = Win.rerf & BestMTRY.rerf > Subset;
-BigMTRY.frc = Win.frc & BestMTRY.frc > Subset;
+%Plot distributions of differences in Lhats
+MRDiff.rerf = MinMR.rerf - MinMR.rf;
+MRDiff.frc = MinMR.frc - MinMR.rf;
 
-%Bar plot of fraction of times each of Rerf and FRC did better than RF
-bar([WinFraction.rerf,WinFraction.frc],0.5,'FaceColor',[0 .5 .5],...
-    'EdgeColor',[0 .5 .5])
-ylabel('Fraction')
+plotSpread({MRDiff.rerf,MRDiff,frc},'distributionMarkers',{'.','.'},...
+    'distributionColors',{'g','k'},'xNames',{'RerF','F-RC'})
+ylabel('Error (relative to RF)')
 ax = gca;
-ax.XTickLabel = {'RerF','F-RC'};
-title('Fraction of times > RF')
-save_fig(gcf,[OutPath,'Win_fraction'])
+save_fig(gcf,[OutPath,'Error_difference_histogram'])
 
 %Histogram of p when mtry > p resulted in best performance
+Win.rerf = MRDiff.rerf < 0;
+Win.frc = MRDiff.frc < 0;
+Subset = [Datasets(HasSummary).p];
+
+binWidth = 20;
+bins = floor(min(Subset(Win.rerf))/binWidth)*binWidth:binWidth:...
+    ceil(max(Subset(Win.rerf))/binWidth)*binWidth;
+for i = 1:length(bins)-1
+    lb = bins(i);
+    ub = bins(i+1);
+    inBin = Subset > lb & Subset <= ub;
+    Fraction.rerf(i) = sum(Win.rerf & BestMTRY.rerf > Subset & inBin)/...
+        sum(Win.rerf & inBin);
+    Fraction.frc(i) = sum(Win.frc & BestMTRY.frc > Subset & inBin)/...
+        sum(Win.frc & inBin);
+    xName{i} = sprintf('%d - %d',lb+1,ub);
+end
+
+figure;
+b = bar([Fraction.rerf',Fraction.frc']);
+b(1).FaceColor = 'g';
+b(1).EdgeColor = 'g';
+b(2).FaceColor = 'k';
+b(2).EdgeColor = 'k';
+ax = gca;
+ax.XTickLabel = xName;
+
 histogram(Subset(BigMTRY.rerf),'FaceColor',[0 .5 .5],...
     'EdgeColor',[0 .5 .5])
 xlabel('p')
