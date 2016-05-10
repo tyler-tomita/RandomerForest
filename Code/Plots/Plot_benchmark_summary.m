@@ -177,11 +177,12 @@ b(1).EdgeColor = 'g';
 b(2).FaceColor = 'k';
 b(2).EdgeColor = 'k';
 ax = gca;
+ax.Box = 'off';
 ax.XTickLabel = xName;
 xlabel('p')
 ylabel('Fraction')
 title('Fraction of cases where mtry > p is optimal')
-legend('RerF','F-RC')
+legend('RerF','F-RC','Location','northwest')
 save_fig(gcf,[OutPath,'Mtry_binned'])
 
 % Unbinned fraction of times mtry > p resulted in best performance
@@ -189,6 +190,7 @@ Fraction.rerf = sum(Win.rerf & BestMTRY.rerf > Subset)/sum(Win.rerf);
 Fraction.frc = sum(Win.frc & BestMTRY.frc > Subset)/sum(Win.frc);
 figure;
 ax = gca;
+ax.Box = 'off';
 hold on
 YData = [Fraction.rerf,Fraction.frc];
 bar(1,YData(1),'FaceColor','g','EdgeColor','g');
