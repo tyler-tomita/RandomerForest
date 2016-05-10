@@ -170,20 +170,10 @@ b(2).FaceColor = 'k';
 b(2).EdgeColor = 'k';
 ax = gca;
 ax.XTickLabel = xName;
-
-histogram(Subset(BigMTRY.rerf),'FaceColor',[0 .5 .5],...
-    'EdgeColor',[0 .5 .5])
 xlabel('p')
-ylabel('frequency')
-title('Cases where mtry > p is optimal (RerF)')
-save_fig(gcf,[OutPath,'Mtry_RerF'])
-
-histogram(Subset(BigMTRY.frc),'FaceColor',[0 .5 .5],...
-    'EdgeColor',[0 .5 .5])
-xlabel('p')
-ylabel('frequency')
-title('Cases where mtry > p is optimal (F-RC)')
-save_fig(gcf,[OutPath,'Mtry_FRC'])
+ylabel('fraction')
+title('Fraction of cases where mtry > p is optimal')
+save_fig(gcf,[OutPath,'Mtry'])
 
 pval.rerf = signrank(MinMR.rf,MinMR.rerf,'tail','right');
 pval.frc = signrank(MinMR.rf,MinMR.frc,'tail','right');
