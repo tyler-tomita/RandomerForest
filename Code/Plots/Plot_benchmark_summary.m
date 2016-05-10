@@ -142,7 +142,7 @@ BigMTRY.rerf = Win.rerf & BestMTRY.rerf > Subset;
 BigMTRY.frc = Win.frc & BestMTRY.frc > Subset;
 
 %Bar plot of fraction of times each of Rerf and FRC did better than RF
-bar([WinFraction.rerf,WinFraction,frc],0.5,'FaceColor',[0 .5 .5],...
+bar([WinFraction.rerf,WinFraction.frc],0.5,'FaceColor',[0 .5 .5],...
     'EdgeColor',[0 .5 .5])
 ylabel('Fraction')
 ax = gca;
