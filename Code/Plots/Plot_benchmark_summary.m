@@ -49,6 +49,7 @@ ClassifierNames = containers.Map({'rf','rerf','rf_rot','rerfr','frc'},...
     {'RF','RerF','RotRF','RerF(rank)','F-RC'});
 
 HasSummary = [];
+ii = 1;
 for i = 1:length(Datasets)
     InFile = [InPath,Datasets(i).Name,'_untransformed_summary.mat'];
     if exist(InFile)
@@ -121,13 +122,14 @@ for i = 1:length(Datasets)
         for c = 1:length(Classifiers)
             cl = Classifiers{c};
             if isempty(Summary.NMIX.(cl))
-                [MinMR.(cl)(i),MinIdx] = min(Summary.MR.(cl));
-                BestMTRY.(cl)(i) = Summary.MTRY.(cl)(MinIdx);
+                [MinMR.(cl)(ii),MinIdx] = min(Summary.MR.(cl));
+                BestMTRY.(cl)(ii) = Summary.MTRY.(cl)(MinIdx);
             else
-                [MinMR.(cl)(i),MinIdx] = min(Summary.MR.(cl)(:,1));
-                BestMTRY.(cl)(i) = Summary.MTRY.(cl)(MinIdx);
+                [MinMR.(cl)(ii),MinIdx] = min(Summary.MR.(cl)(:,1));
+                BestMTRY.(cl)(ii) = Summary.MTRY.(cl)(MinIdx);
             end
         end
+        ii = ii + 1;
     end
 end
 
