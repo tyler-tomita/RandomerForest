@@ -115,7 +115,7 @@ for i = 1:length(Datasets)
             ax.YLim = [min_y,max_y];
             end
         end
-        save_fig(gcf,[OutPath,BenchmarkName,'_summary'])
+        save_fig(gcf,[OutPath,Datasets(i).Name,'_summary'])
         close
 
         Classifiers = fieldnames(Summary.MR);
