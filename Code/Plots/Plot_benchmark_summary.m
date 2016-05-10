@@ -179,7 +179,7 @@ b(2).EdgeColor = 'k';
 ax = gca;
 ax.XTickLabel = xName;
 xlabel('p')
-ylabel('fraction')
+ylabel('Fraction')
 title('Fraction of cases where mtry > p is optimal')
 legend('RerF','F-RC')
 save_fig(gcf,[OutPath,'Mtry_binned'])
@@ -188,13 +188,14 @@ save_fig(gcf,[OutPath,'Mtry_binned'])
 Fraction.rerf = sum(Win.rerf & BestMTRY.rerf > Subset)/sum(Win.rerf);
 Fraction.frc = sum(Win.frc & BestMTRY.frc > Subset)/sum(Win.frc);
 figure;
-b = bar([Fraction.rerf,Fraction.frc]);
-b(1).FaceColor = 'g';
-b(1).EdgeColor = 'g';
-b(2).FaceColor = 'k';
-b(2).EdgeColor = 'k';
+ax = gca;
+hold on
+YData = [Fraction.rerf,Fraction.frc];
+bar(1,YData(1),'FaceColor','g','EdgeColor','g');
+bar(2,YData(2),'FaceColor','k','EdgeColor','k');
+ax.XTick = 1:length(YData);
 ax.XTickLabel = {'RerF','F-RC'};
-ylabel('fraction')
+ylabel('Fraction')
 title('Fraction of cases where mtry > p is optimal')
 save_fig(gcf,[OutPath,'Mtry'])
 
