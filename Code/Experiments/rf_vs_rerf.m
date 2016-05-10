@@ -74,3 +74,4 @@ title('2-component GMM, one informative dimension, p = 2')
 legend('RF','RerF','Bayes')
 ax = gca;
 ax.XScale = 'log';
+save_fig(gcf,'~/RandomerForest/Figures/rf_vs_rerf_marginal')
