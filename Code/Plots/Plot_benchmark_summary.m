@@ -39,7 +39,7 @@ fig.PaperSize = [figWidth figHeight];
 InPath = '../Results/Summary/Untransformed/';
 OutPath = '../Figures/Untransformed/';
 
-load('../Data/Matlab/Benchmark_data.mat','n','d')
+load('../Data/Matlab/Benchmark_data.mat')
 
 Metrics = {'MR','S','V','B'};
 MetricNames = {'Forest Error','Tree Error','Tree Variance',...
