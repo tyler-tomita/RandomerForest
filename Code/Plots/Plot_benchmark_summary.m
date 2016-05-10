@@ -82,10 +82,9 @@ for i = 1:length(Datasets)
                     max_y = [max_y max(Summary.(Metric).(cl))];
                 else
                     plot(Summary.MTRY.(cl),Summary.(Metric).(cl)(:,1),...
-                        'Color',Colors.(cl),...
-                'LineWidth',LineWidth.(cl))
-                    min_x = [min_x min(Summary.MTRY.(cl)(:,1))];
-                    max_x = [max_x max(Summary.MTRY.(cl)(:,1))];
+                        'Color',Colors.(cl),'LineWidth',LineWidth.(cl))
+                    min_x = [min_x min(Summary.MTRY.(cl))];
+                    max_x = [max_x max(Summary.MTRY.(cl))];
                     min_y = [min_y min(Summary.(Metric).(cl)(:,1))];
                     max_y = [max_y max(Summary.(Metric).(cl)(:,1))];
                 end
@@ -126,7 +125,7 @@ for i = 1:length(Datasets)
                 BestMTRY.(cl)(i) = Summary.MTRY.(cl)(MinIdx);
             else
                 [MinMR.(cl)(i),MinIdx] = min(Summary.MR.(cl)(:,1));
-                BestMTRY.(cl)(i) = Summary.MTRY.(cl)(MinIdx,1);
+                BestMTRY.(cl)(i) = Summary.MTRY.(cl)(MinIdx);
             end
         end
     end
