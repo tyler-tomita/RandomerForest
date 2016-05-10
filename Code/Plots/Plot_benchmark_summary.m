@@ -36,25 +36,10 @@ fig.Position = [0 0 figWidth figHeight];
 fig.PaperPosition = [0 0 figWidth figHeight];
 fig.PaperSize = [figWidth figHeight];
 
-load('../Data/Benchmark_data.mat','n','d')
-
-min_d = 1;
-max_d = 100;
-min_n = 1;
-max_n = 50000;
-
-rmidx = [];
-for i = 1:length(n)
-    if ~(n(i) >= min_n && n(i) < max_n && d(i) >= min_d && d(i) < max_d)
-        rmidx = [rmidx i];
-    end
-end
-n(rmidx) = [];
-d(rmidx) = [];
-
 InPath = '../Results/Summary/Untransformed/';
-contents = dir([InPath,'*.mat']);
 OutPath = '../Figures/Untransformed/';
+
+load('../Data/Matlab/Benchmark_data.mat','n','d')
 
 Metrics = {'MR','S','V','B'};
 MetricNames = {'Forest Error','Tree Error','Tree Variance',...
@@ -63,11 +48,8 @@ MetricNames = {'Forest Error','Tree Error','Tree Variance',...
 ClassifierNames = containers.Map({'rf','rerf','rf_rot','rerfr','frc'},...
     {'RF','RerF','RotRF','RerF(rank)','F-RC'});
 
-
-for i = 1:length(contents)
-    BenchmarkName = strsplit(contents(i).name,'_untransformed_summary.mat');
-    BenchmarkName = BenchmarkName{1};
-    InFile = [InPath,contents(i).name];
+for i = 1:length(Datasets)
+    InFile = [InPath,Datasets(i).Name,'untransformed_summary.mat'];
     load(InFile)
     fig = figure;
     fig.Units = 'inches';
@@ -130,4 +112,21 @@ for i = 1:length(contents)
     end
     save_fig(gcf,[OutPath,BenchmarkName,'_summary'])
     close
+
+    Classifiers = fieldnames(Summary.MR);
+    for c = 1:length(Classifiers)
+        cl = Classifiers{c};
+        if length(Summary.NMIX.(cl)) == 0
+            [MinMR.(cl)(i),MinIdx] = min(Summary.MR.(cl));
+            MinMTRY.(cl)(i) = Summary.MTRY.(cl)(MinIdx);
+	else
+	    [MinMR.(cl)(i),MinIdx] = min(Summary.MR.(cl)(:,1));
+            MinMTRY.(cl)(i) = Summary.MTRY.(cl)(MinIdx,1);
+        end
+    end
 end
+
+Win.rerf = MinMR.rerf < MinMR.rf;
+Win.frc = MinMR.frc < MinMR.rf;
+WinFraction.rerf = mean(Win.rerf);
+WinFraction.frc = mean(Win.frc);
