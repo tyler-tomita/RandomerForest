@@ -50,7 +50,7 @@ ClassifierNames = containers.Map({'rf','rerf','rf_rot','rerfr','frc'},...
 
 HasSummary = [];
 for i = 1:length(Datasets)
-    InFile = [InPath,Datasets(i).Name,'untransformed_summary.mat'];
+    InFile = [InPath,Datasets(i).Name,'_untransformed_summary.mat'];
     if exist(InFile)
         fprintf('Dataset %d: %s\n',i,Datasets(i).Name)
         load(InFile)
