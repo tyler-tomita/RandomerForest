@@ -137,7 +137,7 @@ end
 MRDiff.rerf = MinMR.rerf - MinMR.rf;
 MRDiff.frc = MinMR.frc - MinMR.rf;
 
-plotSpread({MRDiff.rerf,MRDiff,frc},'distributionMarkers',{'.','.'},...
+plotSpread({MRDiff.rerf,MRDiff.frc},'distributionMarkers',{'.','.'},...
     'distributionColors',{'g','k'},'xNames',{'RerF','F-RC'})
 ylabel('Error (relative to RF)')
 ax = gca;
@@ -149,8 +149,11 @@ Win.frc = MRDiff.frc < 0;
 Subset = [Datasets(HasSummary).p];
 
 binWidth = 20;
-bins = floor(min(Subset(Win.rerf))/binWidth)*binWidth:binWidth:...
+bins.rerf = floor(min(Subset(Win.rerf))/binWidth)*binWidth:binWidth:...
     ceil(max(Subset(Win.rerf))/binWidth)*binWidth;
+bins.frc = floor(min(Subset(Win.frc))/binWidth)*binWidth:binWidth:...
+    ceil(max(Subset(Win.frc))/binWidth)*binWidth;
+bins = min(bins.rerf(1),bins.frc(1)):binWidth:max(bins.rerf(end),bins.frc(end));
 for i = 1:length(bins)-1
     lb = bins(i);
     ub = bins(i+1);
