@@ -137,13 +137,18 @@ end
 MRDiff.rerf = MinMR.rerf - MinMR.rf;
 MRDiff.frc = MinMR.frc - MinMR.rf;
 
-plotSpread({MRDiff.rerf,MRDiff.frc},'distributionMarkers',{'.','.'},...
-    'distributionColors',{'g','k'},'xNames',{'RerF','F-RC'})
+p = plotSpread({MRDiff.rerf,MRDiff.frc},'distributionMarkers',{'.','.'},...
+    'distributionColors',{'g','k'},'xNames',{'RerF','F-RC'});
+ax = p{end};
+ch = allchild(ax);
+ch(1).MarkerSize = 8;
+ch(2).MarkerSize = 8;
+hold on
+plot(ax.XLim,[0,0],'r--')
 ylabel('Error (relative to RF)')
-ax = gca;
 save_fig(gcf,[OutPath,'Error_difference_histogram'])
 
-%Histogram of p when mtry > p resulted in best performance
+%Fraction of times mtry > p resulted in best performance binned by p
 Win.rerf = MRDiff.rerf < 0;
 Win.frc = MRDiff.frc < 0;
 Subset = [Datasets(HasSummary).p];
@@ -176,9 +181,24 @@ ax.XTickLabel = xName;
 xlabel('p')
 ylabel('fraction')
 title('Fraction of cases where mtry > p is optimal')
+legend('RerF','F-RC')
+save_fig(gcf,[OutPath,'Mtry_binned'])
+
+% Unbinned fraction of times mtry > p resulted in best performance
+Fraction.rerf = sum(Win.rerf & BestMTRY.rerf > Subset)/sum(Win.rerf);
+Fraction.frc = sum(Win.frc & BestMTRY.frc > Subset)/sum(Win.frc);
+figure;
+b = bar([Fraction.rerf,Fraction.frc]);
+b(1).FaceColor = 'g';
+b(1).EdgeColor = 'g';
+b(2).FaceColor = 'k';
+b(2).EdgeColor = 'k';
+ax.XTickLabel = {'RerF','F-RC'};
+ylabel('fraction')
+title('Fraction of cases where mtry > p is optimal')
 save_fig(gcf,[OutPath,'Mtry'])
 
 pval.rerf = signrank(MinMR.rf,MinMR.rerf,'tail','right');
 pval.frc = signrank(MinMR.rf,MinMR.frc,'tail','right');
 
-save('../Results/pvalues_untransformed',pval)
+save('../Results/pvalues_untransformed','pval')
