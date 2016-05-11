@@ -177,16 +177,19 @@ for i = 1:length(f);
     xlabel('n')
     ylabel('Relative Error')
     ax.YGrid = 'on';
+    ax.XScale = 'log';
     ax = subplot(1,3,2);
     plot([Datasets(HasSummary).p],MRDiff.(f{i}),'.','MarkerSize',10)
     xlabel('p')
     title(Names{i})
     ax.YGrid = 'on';
+    ax.XScale = 'log';
     ax = subplot(1,3,3);
     plot([Datasets(HasSummary).n]./[Datasets(HasSummary).p],...
         MRDiff.(f{i}),'.')
     xlabel('n/p')
     ax.YGrid = 'on';
+    ax.XScale = 'log';
     save_fig(gcf,[OutPath,'Error_difference_scatter_',num2str(i)])
 end
 
