@@ -161,6 +161,7 @@ for i = 1:length(ch)
     plot([min(ch(i).XData),max(ch(i).XData)],median(ch(i).YData)*ones(1,2),...
         'm--','LineWidth',2)
 end
+ax.YLim = [-.1,.1];
 ax.YGrid = 'on';
 ax.Box = 'off';
 ylabel('Relative Error Rate')
@@ -175,18 +176,18 @@ for i = 1:length(f);
     plot([Datasets(HasSummary).n],MRDiff.(f{i}),'.','MarkerSize',10)
     xlabel('n')
     ylabel('Relative Error')
-    title(Names{i})
     ax.YGrid = 'on';
     ax = subplot(1,3,2);
     plot([Datasets(HasSummary).p],MRDiff.(f{i}),'.','MarkerSize',10)
     xlabel('p')
+    title(Names{i})
     ax.YGrid = 'on';
     ax = subplot(1,3,3);
     plot([Datasets(HasSummary).n]./[Datasets(HasSummary).p],...
         MRDiff.(f{i}),'.')
     xlabel('n/p')
     ax.YGrid = 'on';
-    save_fig(gcf,[OutPath,'Error_difference_scatter_',i])
+    save_fig(gcf,[OutPath,'Error_difference_scatter_',num2str(i)])
 end
 
 %Fraction of times mtry > p resulted in best performance binned by p
