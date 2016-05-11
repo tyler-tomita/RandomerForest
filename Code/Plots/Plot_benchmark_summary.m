@@ -124,6 +124,12 @@ for i = 1:length(Datasets)
             if isempty(Summary.NMIX.(cl))
                 [MinMR.(cl)(ii),MinIdx] = min(Summary.MR.(cl));
                 BestMTRY.(cl)(ii) = Summary.MTRY.(cl)(MinIdx);
+                if strcmp(cl,'rerf')
+                    BigMtryMR.(cl)(ii) = min(Summary.MR.(cl)...
+                        (Summary.MTRY.(cl)>Datasets(i).p));
+                    SmallMtryMR.(cl)(ii) = min(Summary.MR.(cl)...
+                        (Summary.MTRY.(cl)<=Datasets(i).p));
+                end
             else
                 [MinMR.(cl)(ii),MinIdx] = min(Summary.MR.(cl)(:,1));
                 BestMTRY.(cl)(ii) = Summary.MTRY.(cl)(MinIdx);
@@ -136,17 +142,52 @@ end
 %Plot distributions of differences in Lhats
 MRDiff.rerf = MinMR.rerf - MinMR.rf;
 MRDiff.frc = MinMR.frc - MinMR.rf;
+MRDiff.rerf_frc = MinMR.rerf - MinMR.frc;
+MRDiff.mtry = BigMtryMR.rerf - SmallMtryMR.rerf;
+Data = {MRDiff.rerf',MRDiff.frc',MRDiff.rerf_frc',MRDiff.mtry'};
+Markers = {'.','.','.','.'};
+Colors = {'c','c','c','c'};
+Names = {'Rerf - RF','F-RC - RF','RerF - F-RC',...
+    'RerF(Mtry>p) - RerF(Mtry<=p)'};
 
-p = plotSpread({MRDiff.rerf,MRDiff.frc},'distributionMarkers',{'.','.'},...
-    'distributionColors',{'g','k'},'xNames',{'RerF','F-RC'});
+p = plotSpread(Data,'distributionMarkers',Markers,...
+    'distributionColors',Colors,'xNames',Names);
 ax = p{end};
-ch = allchild(ax);
-ch(1).MarkerSize = 10;
-ch(2).MarkerSize = 10;
 hold on
-plot(ax.XLim,[0,0],'r--')
-ylabel('Error (relative to RF)')
+ch = allchild(ax);
+for i = 1:length(ch)
+    ch(i).MarkerSize = 10;
+    med = median(ch(i).YData);
+    plot([min(ch(i).XData),max(ch(i).XData)],median(ch(i).YData)*ones(1,2),...
+        'm--','LineWidth',2)
+end
+ax.YGrid = 'on';
+ax.Box = 'off';
+ylabel('Relative Error Rate')
 save_fig(gcf,[OutPath,'Error_difference_histogram'])
+hold off
+
+%Plot error differences as a function of n, p, and n/p
+
+f = fieldnames(MRDiff);
+for i = 1:length(f);
+    ax = subplot(1,3,1);
+    plot([Datasets(HasSummary).n],MRDiff.(f{i}),'.','MarkerSize',10)
+    xlabel('n')
+    ylabel('Relative Error')
+    title(Names{i})
+    ax.YGrid = 'on';
+    ax = subplot(1,3,2);
+    plot([Datasets(HasSummary).p],MRDiff.(f{i}),'.','MarkerSize',10)
+    xlabel('p')
+    ax.YGrid = 'on';
+    ax = subplot(1,3,3);
+    plot([Datasets(HasSummary).n]./[Datasets(HasSummary).p],...
+        MRDiff.(f{i}),'.')
+    xlabel('n/p')
+    ax.YGrid = 'on';
+    save_fig(gcf,[OutPath,'Error_difference_scatter_',i])
+end
 
 %Fraction of times mtry > p resulted in best performance binned by p
 Win.rerf = MRDiff.rerf < 0;
