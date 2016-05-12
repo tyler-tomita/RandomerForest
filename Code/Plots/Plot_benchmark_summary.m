@@ -176,18 +176,27 @@ for i = 1:length(f);
     plot([Datasets(HasSummary).n],MRDiff.(f{i}),'.','MarkerSize',10)
     xlabel('n')
     ylabel('Relative Error')
+    min_x = min([Datasets(HasSummary).n]);
+    max_x = max([Datasets(HasSummary).n]);
+    ax.XLim = [min_x,max_x];
     ax.YGrid = 'on';
     ax.XScale = 'log';
     ax = subplot(1,3,2);
     plot([Datasets(HasSummary).p],MRDiff.(f{i}),'.','MarkerSize',10)
     xlabel('p')
     title(Names{i})
+    min_x = min([Datasets(HasSummary).p]);
+    max_x = max([Datasets(HasSummary).p]);
+    ax.XLim = [min_x,max_x];
     ax.YGrid = 'on';
     ax.XScale = 'log';
     ax = subplot(1,3,3);
     plot([Datasets(HasSummary).n]./[Datasets(HasSummary).p],...
-        MRDiff.(f{i}),'.')
+        MRDiff.(f{i}),'.','MarkerSize',10)
     xlabel('n/p')
+    min_x = min([Datasets(HasSummary).n]./[Datasets(HasSummary).p]);
+    max_x = max([Datasets(HasSummary).n]./[Datasets(HasSummary).p]);
+    ax.XLim = [min_x,max_x];
     ax.YGrid = 'on';
     ax.XScale = 'log';
     save_fig(gcf,[OutPath,'Error_difference_scatter_',num2str(i)])
