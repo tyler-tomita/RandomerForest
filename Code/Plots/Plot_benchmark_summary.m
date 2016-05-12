@@ -178,27 +178,36 @@ for i = 1:length(f);
     ylabel('Relative Error')
     min_x = min([Datasets(HasSummary).n]);
     max_x = max([Datasets(HasSummary).n]);
+    XTicks = 10.^(ceil(log10(min_x)):floor(log10(max_x)));
     ax.XLim = [min_x,max_x];
     ax.YGrid = 'on';
     ax.XScale = 'log';
+    ax.XTick = XTicks;
+    
     ax = subplot(1,3,2);
     plot([Datasets(HasSummary).p],MRDiff.(f{i}),'.','MarkerSize',10)
     xlabel('p')
     title(Names{i})
     min_x = min([Datasets(HasSummary).p]);
     max_x = max([Datasets(HasSummary).p]);
+    XTicks = 10.^(ceil(log10(min_x)):floor(log10(max_x)));
     ax.XLim = [min_x,max_x];
     ax.YGrid = 'on';
     ax.XScale = 'log';
+    ax.XTick = XTicks;
+    
+    
     ax = subplot(1,3,3);
     plot([Datasets(HasSummary).n]./[Datasets(HasSummary).p],...
         MRDiff.(f{i}),'.','MarkerSize',10)
     xlabel('n/p')
     min_x = min([Datasets(HasSummary).n]./[Datasets(HasSummary).p]);
     max_x = max([Datasets(HasSummary).n]./[Datasets(HasSummary).p]);
+    XTicks = 10.^(ceil(log10(min_x)):floor(log10(max_x)));
     ax.XLim = [min_x,max_x];
     ax.YGrid = 'on';
     ax.XScale = 'log';
+    ax.XTick = XTicks;
     save_fig(gcf,[OutPath,'Error_difference_scatter_',num2str(i)])
 end
 
