@@ -267,5 +267,7 @@ save_fig(gcf,[OutPath,'Mtry'])
 
 pval.rerf = signrank(MinMR.rf,MinMR.rerf,'tail','right');
 pval.frc = signrank(MinMR.rf,MinMR.frc,'tail','right');
+pval.rerf_frc = signrank(MinMR.rerf,MinMR.frc);
+pval.mtry = signrank(BigMtryMR.rerf,SmallMtryMR.rerf);
 
 save('../Results/pvalues_untransformed','pval')
