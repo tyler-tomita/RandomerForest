@@ -10,11 +10,9 @@ function p = posterior_map(X,Y,posteriors)
     p.ZData = zeros(npoints,npoints);
     p.CData = C;
     colormap(gray)
-    caxis([min(p.CData(:)) max(p.CData(:))])
     p.LineStyle = 'none';
     axis([xmin xmax ymin ymax])
     view(2)
-    colorbar
     grid off
     
 end
