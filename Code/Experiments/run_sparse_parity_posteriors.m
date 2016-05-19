@@ -189,9 +189,13 @@ rf_rot.Lhat = zeros(ntrees,sum(mtrys<=d),ntrials);
 
 theta = pi/4;
 R = [cos(theta) sin(theta);-sin(theta) cos(theta)];
-Xr = [Xpost Ypost]*R;
-Xrpost = Xr(:,1);
-Yrpost = Xr(:,2);
+xmin = -sqrt(2);
+xmax = sqrt(2);
+ymin = xmin;
+ymax = xmax;
+[xgv,ygv] = meshgrid(linspace(xmin,xmax,npoints),linspace(ymin,ymax,npoints));
+Xrpost = xgv(:);
+Yrpost = ygv(:);
 Zrpost = Zpost;
 fprintf('Scaled\n')
 for trial = 1:ntrials
