@@ -241,11 +241,11 @@ for trial = 1:ntrials
     [~,rerfdn.minIdx(trial)] = min(rerfdn.Lhat(end,:,trial));
     [~,rf_rot.minIdx(trial)] = min(rf_rot.Lhat(end,:,trial));
 
-    rf.posteriors(:,:,trial) = rerf_classprob(rf.cl{rf.minIdx(trial)},[Xspost Yspost Zspost]);
-    rerf.posteriors(:,:,trial) = rerf_classprob(rerf.cl{rerf.minIdx(trial)},[Xspost Yspost Zspost]);
-    rerfr.posteriors(:,:,trial) = rerf_classprob(rerfr.cl{rerf.minIdx(trial)},[Xspost Yspost Zspost],'last',x);
-    rerfdn.posteriors(:,:,trial) = rerf_classprob(rerfdn.cl{rerfdn.minIdx(trial)},[Xspost Yspost Zspost]);
-    rf_rot.posteriors(:,:,trial) = rerf_classprob(rf_rot.cl{rf_rot.minIdx(trial)},[Xspost Yspost Zspost]);
+    rf.posteriors(:,:,trial) = rerf_classprob(rf.cl{rf.minIdx(trial)},[Xrpost Yrpost Zrpost]);
+    rerf.posteriors(:,:,trial) = rerf_classprob(rerf.cl{rerf.minIdx(trial)},[Xrpost Yrpost Zrpost]);
+    rerfr.posteriors(:,:,trial) = rerf_classprob(rerfr.cl{rerf.minIdx(trial)},[Xrpost Yrpost Zrpost],'last',x);
+    rerfdn.posteriors(:,:,trial) = rerf_classprob(rerfdn.cl{rerfdn.minIdx(trial)},[Xrpost Yrpost Zrpost]);
+    rf_rot.posteriors(:,:,trial) = rerf_classprob(rf_rot.cl{rf_rot.minIdx(trial)},[Xrpost Yrpost Zrpost]);
     
     rf = rmfield(rf,'cl');
     rerf = rmfield(rerf,'cl');
