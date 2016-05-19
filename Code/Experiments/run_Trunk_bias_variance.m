@@ -82,7 +82,7 @@ for c = 1:length(Classifiers)
     Params.(Classifiers{c}).NWorkers = NWorkers;
 end
 
-for i = 1:length(dims)
+for i = 4:length(dims)
     
     d = dims(i);
     fprintf('dimension %d\n',d)
@@ -135,5 +135,5 @@ for i = 1:length(dims)
     end
 end
 
-save([rerfPath 'RandomerForest/Results/Trunk_bias_variance.mat'],'GE','V',...
+save([rerfPath 'RandomerForest/Results/Trunk_bias_variance_second_half.mat'],'GE','V',...
     'B','Params')
