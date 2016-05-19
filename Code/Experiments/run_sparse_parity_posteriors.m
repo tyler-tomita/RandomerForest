@@ -16,7 +16,7 @@ n = 1000;
 d = 15;
 dgood = 3;
 ntrees = 500;
-ntrials = 3;
+ntrials = 10;
 NWorkers = 2;
 mtrys = ceil(d.^[0 1/4 1/2 3/4 1 1.5 2]);
 rf.Lhat = zeros(ntrees,sum(mtrys<=d),ntrials);
