@@ -41,6 +41,8 @@ fig.PaperSize = [figWidth figHeight];
 
 runSims = false;
 
+%% Sparse parity
+
 if runSims
     run_Sparse_parity_transformations
 else
@@ -115,7 +117,7 @@ for j = 1:length(Transformations)
         ax.XTickLabel = {'5';'10';'25';'50';'100'};
     else
         ax.XTick = [];
-        ax.YTick = [];
+        ax.YTickLabel = {};
     end
     ax.LineWidth = LineWidth;
     ax.FontUnits = 'inches';
@@ -126,10 +128,15 @@ for j = 1:length(Transformations)
     ax.XLim = [0 105];
     ax.XScale = 'log';
     ax.YLim = [0 .6];
+    ax.YGrid = 'on';
+    ax.YMinorGrid = 'on';
+    ax.GridLineStyle = ':';
 end
 
 
 clear Lhat sem minIdx
+
+%% Trunk
 
 if runSims
     run_Trunk_transformations
@@ -206,6 +213,9 @@ for j = 1:length(Transformations)
     ax.Box = 'off';
     ax.XLim = [1 600];
     ax.YLim = [0.02 .17];
+    ax.YGrid = 'on';
+    ax.YMinorGrid = 'on';
+    ax.GridLineStyle = ':';
     ax.XScale = 'log';
     if j+5 == 6
         xlabel('p')
@@ -214,7 +224,7 @@ for j = 1:length(Transformations)
         ax.XTickLabel = {'1';'10';'100';'500'};
     else
         ax.XTick = [];
-        ax.YTick = [];
+        ax.YTickLabel = {};
     end
 end
 
