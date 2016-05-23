@@ -7,7 +7,7 @@ clc
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
-d = 20;
+d = 15;
 dgood = 3;
 NWorkers = 2;
 if d <= 5
