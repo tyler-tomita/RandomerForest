@@ -11,19 +11,19 @@ load Sparse_parity_data
 
 ntrees = 500;
 ntrials = 25;
-NWorkers = 2;
+NWorkers = 24;
 Class = [0;1];
-Lhat.rf = NaN(length(dims),7,ntrials);
+Lhat.rf = NaN(length(dims),5,ntrials);
 Lhat.rerf = NaN(length(dims),7,ntrials);
 Lhat.rerfr = NaN(length(dims),7,ntrials);
 Lhat.rerfdn = NaN(length(dims),7,ntrials);
-Lhat.rf_rot = NaN(length(dims),7,ntrials);
+Lhat.rf_rot = NaN(length(dims),5,ntrials);
 Lhat.frc = NaN(length(dims),7,ntrials);
-trainTime.rf = NaN(length(dims),7,ntrials);
+trainTime.rf = NaN(length(dims),5,ntrials);
 trainTime.rerf = NaN(length(dims),7,ntrials);
 trainTime.rerfr = NaN(length(dims),7,ntrials);
 trainTime.rerfdn = NaN(length(dims),7,ntrials);
-trainTime.rf_rot = NaN(length(dims),7,ntrials);
+trainTime.rf_rot = NaN(length(dims),5,ntrials);
 trainTime.frc = NaN(length(dims),7,ntrials);
 
 for j = 1:length(dims)
@@ -33,7 +33,7 @@ for j = 1:length(dims)
     
     if d <= 5
         mtrys = [1:d ceil(d.^[1.5 2])];
-    elseif d > 5 && d <= 10
+    elseif d > 5 && d <= 25
         mtrys = ceil(d.^[0 1/4 1/2 3/4 1 1.5 2]);
     else
         mtrys = [ceil(d.^[0 1/4 1/2 3/4 1]) 5*d 10*d];
@@ -58,11 +58,13 @@ for j = 1:length(dims)
                 parpool('local',NWorkers);
             end
 
-            tic;
-            cl.rf = rpclassificationforest(ntrees,X{j}(:,:,trial),Y{j}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            trainTime.rf(j,i,trial) = toc;
-            Predictions = oobpredict(cl.rf,X{j}(:,:,trial),Y{j}(:,trial));
-            Lhat.rf(j,i,trial) = oob_error(Predictions,Y{j}(:,trial),'last');
+            if mtry <= d
+                tic;
+                cl.rf = rpclassificationforest(ntrees,X{j}(:,:,trial),Y{j}(:,trial),'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+                trainTime.rf(j,i,trial) = toc;
+                Predictions = oobpredict(cl.rf,X{j}(:,:,trial),Y{j}(:,trial));
+                Lhat.rf(j,i,trial) = oob_error(Predictions,Y{j}(:,trial),'last');
+            end
 
             tic;
             cl.rerf = rpclassificationforest(ntrees,X{j}(:,:,trial),Y{j}(:,trial),'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
@@ -82,11 +84,13 @@ for j = 1:length(dims)
             Predictions = oobpredict(cl.rerfdn,X{j}(:,:,trial),Y{j}(:,trial));
             Lhat.rerfdn(j,i,trial) = oob_error(Predictions,Y{j}(:,trial),'last');
 
-            tic;
-            cl.rf_rot = rpclassificationforest(ntrees,X{j}(:,:,trial),Y{j}(:,trial),'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            trainTime.rf_rot(j,i,trial) = toc;
-            Predictions = oobpredict(cl.rf_rot,X{j}(:,:,trial),Y{j}(:,trial));
-            Lhat.rf_rot(j,i,trial) = oob_error(Predictions,Y{j}(:,trial),'last');
+            if mtry <= d
+                tic;
+                cl.rf_rot = rpclassificationforest(ntrees,X{j}(:,:,trial),Y{j}(:,trial),'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+                trainTime.rf_rot(j,i,trial) = toc;
+                Predictions = oobpredict(cl.rf_rot,X{j}(:,:,trial),Y{j}(:,trial));
+                Lhat.rf_rot(j,i,trial) = oob_error(Predictions,Y{j}(:,trial),'last');
+            end
             
             tic;
             cl.frc = rpclassificationforest(ntrees,X{j}(:,:,trial),Y{j}(:,trial),'sparsemethod','frc','nmix',nmix,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
