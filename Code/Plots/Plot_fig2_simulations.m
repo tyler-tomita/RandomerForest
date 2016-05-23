@@ -25,7 +25,7 @@ axLeft = [FontSize*4 FontSize*8+axWidth FontSize*12+axWidth*2 FontSize*4,...
 axBottom = [FontSize*7+axHeight FontSize*7+axHeight FontSize*7+axHeight,...
     FontSize*4 FontSize*4 FontSize*4];
 figWidth = axLeft(end) + axWidth + FontSize*4;
-figHeight = axBottom(1) + axHeight + FontSize*4;
+figHeight = axBottom(1) + axHeight + FontSize*2;
 
 fig = figure;
 fig.Units = 'inches';
@@ -89,9 +89,9 @@ Y = mod(nones,2);
 plot(X(Y==0,1),X(Y==0,2),'b.',X(Y==1,1),X(Y==1,2),'r.','MarkerSize',MarkerSize)
 
 title('(A)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
-text(0.5,1.05,'Scatterplot','FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
+% text(0.5,1.05,'Scatterplot','FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('X_1')
-ylabel({'\bf{Sparse Parity}';'\rm{X_1}'})
+ylabel({'\bf{Sparse Parity}';'\rm{X_2}'})
 l = legend('Class 1','Class 2');
 l.Location = 'southwest';
 l.Box = 'off';
@@ -122,9 +122,9 @@ for i = 1:length(classifiers)
 end
 
 title('(B)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
-text(0.5,1.05,{'Error Rate';'(relative to RF)'},'FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
+% text(0.5,1.05,{'Error Rate';'(relative to RF)'},'FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('p')
-ylabel('Error')
+ylabel('Relative Error')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -177,9 +177,9 @@ for i = 1:length(classifiers)
 end
 
 title('(C)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
-text(0.5,1.05,'Training Time','FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
+% text(0.5,1.05,'Training Time','FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('p')
-ylabel('Time (s)')
+ylabel('Train Time (s)')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -288,7 +288,7 @@ end
 
 title('(E)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 xlabel('p')
-ylabel('Error')
+ylabel('Relative Error')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -360,7 +360,7 @@ end
 
 title('(F)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 xlabel('p')
-ylabel('Time (s)')
+ylabel('Train Time (s)')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
