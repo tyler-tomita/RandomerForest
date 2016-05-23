@@ -8,7 +8,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 rng(1);
 
 n = 1000;
-dims = [2 5 10 25 50 100];
+dims = [2 5 10 15 25 50 100];
 ndims = length(dims);
 ntrials = 25;
 Class = [0;1];
