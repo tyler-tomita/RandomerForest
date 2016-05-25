@@ -11,7 +11,7 @@ load Trunk_data
 
 ntrees = 1000;
 ntrials = 25;
-NWorkers = 16;
+NWorkers = 24;
 Class = [0;1];
 Lhat.rf = NaN(length(dims),5,ntrials);
 Lhat.rerf = NaN(length(dims),7,ntrials);
