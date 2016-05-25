@@ -84,7 +84,7 @@ for j = 1:length(dims)
             Predictions = oobpredict(cl.rerfdn,X{j}(:,:,trial),Y{j}(:,trial));
             Lhat.rerfdn(j,i,trial) = oob_error(Predictions,Y{j}(:,trial),'last');
 
-            if mtry <= d
+            if mtry <= d && d <= 500
                 tic;
                 cl.rf_rot = rpclassificationforest(ntrees,X{j}(:,:,trial),Y{j}(:,trial),'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
                 trainTime.rf_rot(j,i,trial) = toc;
