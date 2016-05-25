@@ -97,6 +97,8 @@ for j = 1:length(dims)
             trainTime.frc(j,i,trial) = toc;
             Predictions = oobpredict(cl.frc,X{j}(:,:,trial),Y{j}(:,trial));
             Lhat.frc(j,i,trial) = oob_error(Predictions,Y{j}(:,trial),'last');
+
+            clear cl
         end
     end
 end
