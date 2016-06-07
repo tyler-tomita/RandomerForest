@@ -29,7 +29,6 @@ trainTime.frc = NaN(length(dims),7,ntrials);
 for j = 1:length(dims)
     
     d = dims(j);
-    dgood = min(3,d);
     
     if d <= 5
         mtrys = [1:d ceil(d.^[1.5 2])];

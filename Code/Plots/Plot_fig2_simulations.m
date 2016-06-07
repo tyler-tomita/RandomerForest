@@ -34,42 +34,6 @@ fig.Position = [0 0 figWidth figHeight];
 fig.PaperPosition = [0 0 figWidth figHeight];
 fig.PaperSize = [figWidth figHeight];
 
-runSims = false;
-
-if runSims
-    run_Sparse_parity
-else
-    load Sparse_parity.mat
-end
-
-% Only keep frc results for nmix = 2
-for i = 1:length(dims)
-    d = dims(i);
-    if d <= 5
-        mtrys = 1:d;
-    else
-        mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
-    end
-    
-    if d >= 6
-        nmixs = 2:6;
-    else
-        nmixs = 2:d;
-    end
-    
-    for j = 1:length(mtrys)
-        mtry = mtrys(j);
-        for k = 1:length(nmixs)
-            nmix = nmixs(k);
-            if nmix ~= 2;
-                Lhat.frc(i,length(nmixs)*(j-1)+k,:) = NaN;
-            end
-        end
-    end
-end
-
-classifiers = fieldnames(Lhat);
-
 ax = subplot(2,3,1);
 
 n = 1000;
@@ -109,6 +73,16 @@ ax.YTick = [-2 0 2];
 ax.XTickLabel = {'-2';'0';'2'};
 ax.YTickLabel = {'-2';'0';'2'};
 
+runSims = false;
+
+if runSims
+    run_Sparse_parity
+else
+    load Sparse_parity
+end
+
+classifiers = fieldnames(Lhat);
+
 ax = subplot(2,3,2);
 
 for i = 1:length(classifiers)
@@ -137,34 +111,6 @@ ax.XTick = [1 10 100];
 ax.XTickLabel = {'1' '10' '100'};
 % ax.YLim = [0 .5];
 
-load Sparse_parity
-
-% Only keep frc results for nmix = 2
-for i = 1:length(dims)
-    d = dims(i);
-    if d <= 5
-        mtrys = 1:d;
-    else
-        mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
-    end
-    
-    if d >= 6
-        nmixs = 2:6;
-    else
-        nmixs = 2:d;
-    end
-    
-    for j = 1:length(mtrys)
-        mtry = mtrys(j);
-        for k = 1:length(nmixs)
-            nmix = nmixs(k);
-            if nmix ~= 2;
-                trainTime.frc(i,length(nmixs)*(j-1)+k,:) = NaN;
-            end
-        end
-    end
-end
-
 ax = subplot(2,3,3);
 
 for i = 1:length(classifiers)
@@ -192,14 +138,6 @@ ax.XTickLabel = {'1' '10' '100'};
 ax.XScale = 'log';
 
 clear hLhat hTrainTime Lhat minLhat trainTime
-
-if runSims
-    run_Trunk
-else
-    load Trunk.mat
-end
-
-classifiers = fieldnames(Lhat);
 
 ax = subplot(2,3,4);
 
@@ -234,6 +172,14 @@ ax.XTick = [-5 0 5];
 ax.XTickLabel = {'-5';'0';'5'};
 %ax.YTickLabel = {'-5';'0';'5'};
 
+if runSims
+    run_Trunk
+else
+    load Trunk
+end
+
+classifiers = fieldnames(Lhat);
+
 ax = subplot(2,3,5);
 
 for i = 1:length(classifiers)
@@ -244,46 +190,6 @@ for i = 1:length(classifiers)
         hLhat(i) = errorbar(dims,mean(LhatDiff,3),std(LhatDiff,0,3)/sqrt(size(LhatDiff,3)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
-end
-
-load Trunk_rerfr_frc
-
-% Only keep frc results for nmix = 2
-for i = 1:length(dims)
-    d = dims(i);
-    if d <= 5
-        mtrys = 1:d;
-    else
-        mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
-    end
-    
-    if d >= 6
-        nmixs = 2:6;
-    else
-        nmixs = 2:d;
-    end
-    
-    for j = 1:length(mtrys)
-        mtry = mtrys(j);
-        for k = 1:length(nmixs)
-            nmix = nmixs(k);
-            if nmix ~= 2;
-                Lhat.frc(i,length(nmixs)*(j-1)+k,:) = NaN;
-            end
-        end
-    end
-end
-
-classifiers = fieldnames(Lhat);
-
-for i = 1:length(classifiers)
-    cl = classifiers{i};
-    [minLhat.(cl),minLhatIdx.(cl)] = min(Lhat.(cl),[],2);
-    LhatDiff = minLhat.(cl)-minLhat.(classifiers{1});
-    if i > 1
-        hLhat(i) = errorbar(dims,mean(LhatDiff,3),std(LhatDiff,0,3)/sqrt(size(LhatDiff,3)),'LineWidth',LineWidth,'Color',Colors.(cl));
-    end
-    hold on
 end
 
 title('(E)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
@@ -301,10 +207,6 @@ ax.XScale = 'log';
 ax.XTick = logspace(0,3,4);
 ax.XTickLabel = {'1';'10';'100';'1000'};
 
-load Trunk
-
-classifiers = fieldnames(Lhat);
-
 ax = subplot(2,3,6);
 
 for i = 1:length(classifiers)
@@ -317,45 +219,6 @@ for i = 1:length(classifiers)
         hTrainTime(i) = errorbar(dims,mean(trainTime.(cl),3),std(trainTime.(cl),0,3)/sqrt(size(trainTime.(cl),3)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
-end
-
-load Trunk_rerfr_frc
-
-% Only keep frc results for nmix = 2
-for i = 1:length(dims)
-    d = dims(i);
-    if d <= 5
-        mtrys = 1:d;
-    else
-        mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
-    end
-    
-    if d >= 6
-        nmixs = 2:6;
-    else
-        nmixs = 2:d;
-    end
-    
-    for j = 1:length(mtrys)
-        mtry = mtrys(j);
-        for k = 1:length(nmixs)
-            nmix = nmixs(k);
-            if nmix ~= 2;
-                trainTime.frc(i,length(nmixs)*(j-1)+k,:) = NaN;
-            end
-        end
-    end
-end
-
-classifiers = fieldnames(Lhat);
-
-for i = 1:length(classifiers)
-    cl = classifiers{i};
-    trainTime.(cl) = nansum(trainTime.(cl),2);
-    if i > 1
-        hTrainTime(i) = errorbar(dims,mean(trainTime.(cl),3),std(trainTime.(cl),0,3)/sqrt(size(trainTime.(cl),3)),'LineWidth',LineWidth,'Color',Colors.(cl));
-    end
-    hold on
 end
 
 title('(F)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
