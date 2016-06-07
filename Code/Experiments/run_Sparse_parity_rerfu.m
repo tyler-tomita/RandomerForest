@@ -11,7 +11,7 @@ load Sparse_parity_data
 
 ntrees = 500;
 ntrials = 25;
-NWorkers = 18;
+NWorkers = 16;
 Class = [0;1];
 
 Lhat.rerfu = NaN(length(dims),7,ntrials);
