@@ -1039,6 +1039,18 @@ function M = srpmat(d,k,method,varargin)
         M(nzs(~npos))=-1;
         M = M(:,any(M));
         M = M(:,1:min(k,size(M,2)));
+    elseif strcmp(method,'sparse-uniform')
+        s = varargin{1};
+        kk = round(k/(1-1/exp(1)));
+        M = sparse(d,kk);
+        nnzs = round(kk*d*s);
+        nzs=randperm(d*kk,nnzs);
+        M(nzs) = rand(1,nnzs);
+        npos = rand(nnzs,1) > 0.5;
+        M(nzs(npos))=1;
+        M(nzs(~npos))=-1;
+        M = M(:,any(M));
+        M = M(:,1:min(k,size(M,2)));
     elseif strcmp(method,'frc')
         nmix = varargin{2};
         M = sparse(d,k);
