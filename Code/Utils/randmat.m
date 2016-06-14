@@ -33,6 +33,25 @@ function M = randmat(d,k,method,varargin)
         M(nzs(npos))=1;
         M(nzs(~npos))=-1;
         M = M(:,any(M));
+        M = M(:,1:min(k,size(M,2)));        
+    elseif strcmp(method,'sparse2')
+        s = varargin{1};
+        M = sparse(d,k);
+        nnzs = round(k*d*s);
+        nzs=randperm(d*k,nnzs);
+        npos = rand(nnzs,1) > 0.5;
+        M(nzs(npos))=1;
+        M(nzs(~npos))=-1;
+    elseif strcmp(method,'sparse-adjusted')
+        s = varargin{1};
+        kk = varargin{2};
+        M = sparse(d,kk);
+        nnzs = round(kk*d*s);
+        nzs=randperm(d*kk,nnzs);
+        npos = rand(nnzs,1) > 0.5;
+        M(nzs(npos))=1;
+        M(nzs(~npos))=-1;
+        M = unique(M(:,any(M))','rows','stable')';
         M = M(:,1:min(k,size(M,2)));
     elseif strcmp(method,'sparse-uniform')
         s = varargin{1};
