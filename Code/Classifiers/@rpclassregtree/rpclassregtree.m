@@ -412,16 +412,16 @@ okargs =   {'priorprob'   'cost'  'splitcriterion' ...
             'splitmin' 'minparent' 'minleaf' ...
             'nvartosample' 'mergeleaves' 'categorical' 'prune' 'method' ...
             'qetoler' 'names' 'weights' 'surrogate' 'skipchecks' ...
-            'stream' 's'    'mdiff' 'sparsemethod'  'nmix'  'p'};
+            'stream' 's'    'mdiff' 'sparsemethod'  'nmix'  'p' 'dprime'};
 defaults = {[]            []      'gdi'                        ...
             []         []          1                          ...
             'all'          'on'          []            'off'    Method      ...
             1e-6      {}       []        'off'      false ...
-            []  3   'off'   'sparse' 2   []};
+            []  3   'off'   'sparse' 2   [] []};
 
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
-    skipchecks,Stream,s,mdiff,sparsemethod,nmix,p,~,extra] = ...
+    skipchecks,Stream,s,mdiff,sparsemethod,nmix,p,dprime,~,extra] = ...
     internal.stats.parseArgs(okargs,defaults,varargin{:});
 
 % For backwards compatibility. 'catidx' is a synonym for 'categorical'
@@ -754,7 +754,7 @@ while(tnode < nextunusednode)
             end
         end
       if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
-          promat = srpmat(nvars,nusevars,sparsemethod,s,nmix);    %random projection matrix
+          promat = srpmat(nvars,nusevars,sparsemethod,s,nmix,dprime);    %random projection matrix
           md_ind = rand(size(mu_diff,2),1) <= p;
           promat = cat(2,mu_diff(:,md_ind),promat);
           md_idx = 1:sum(md_ind);   %Indices of where the mean difference vectors are in the matrix
@@ -762,7 +762,7 @@ while(tnode < nextunusednode)
           %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
           nvarsplit = cat(2,zeros(1,sum(md_ind)),nvarsplit);
       else
-          promat = srpmat(nvars,nusevars,sparsemethod,s,nmix);    %random projection matrix
+          promat = srpmat(nvars,nusevars,sparsemethod,s,nmix,dprime);    %random projection matrix
           iscat2 = iscat;
           %nvarsplit2 = nvarsplit;
       end
@@ -1041,7 +1041,7 @@ function M = srpmat(d,k,method,varargin)
         M = M(:,1:min(k,size(M,2)));
     elseif strcmp(method,'sparse-adjusted')
         s = varargin{1};
-        kk = varargin{2};
+        kk = varargin{3};
         M = sparse(d,kk);
         nnzs = round(kk*d*s);
         nzs=randperm(d*kk,nnzs);
