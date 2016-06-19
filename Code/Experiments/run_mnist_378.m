@@ -20,11 +20,11 @@ load Random_matrix_adjustment_factor
 
 ntrees = 500;
 Stratified = true;
-NWorkers = 2;
+NWorkers = 24;
 
 
 %% Structured RerF %%
-Fs = [2 4 8 16];
+Fs = [2 4 8 12 16];
 Lhat.srerf = NaN(length(Fs),7);
 
 fprintf('Structured RerF\n')
@@ -61,7 +61,7 @@ fprintf('\nRerF\n')
 
 Lhat.rerf = NaN(1,7);
 
-ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 5*p 10*p];
+ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 25*p];
 
 for j = 1:length(ds)
     d = ds(j);
