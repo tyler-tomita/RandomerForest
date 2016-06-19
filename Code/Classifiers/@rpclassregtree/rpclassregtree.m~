@@ -413,16 +413,16 @@ okargs =   {'priorprob'   'cost'  'splitcriterion' ...
             'nvartosample' 'mergeleaves' 'categorical' 'prune' 'method' ...
             'qetoler' 'names' 'weights' 'surrogate' 'skipchecks' ...
             'stream' 's'    'mdiff' 'sparsemethod'  'nmix'  'p' 'dprime' ...
-            'Image' 'ih'    'iw'    'F'};
+            'ih'    'iw'    'F'};
 defaults = {[]            []      'gdi'                        ...
             []         []          1                          ...
             'all'          'on'          []            'off'    Method      ...
             1e-6      {}       []        'off'      false ...
-            []  3   'off'   'sparse' 2   [] []  false  []  []  []};
+            []  3   'off'   'sparse' 2   [] []  []  []  []};
 
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
-    skipchecks,Stream,s,mdiff,sparsemethod,nmix,p,dprime,Image,ih,iw,F,~,extra] = ...
+    skipchecks,Stream,s,mdiff,sparsemethod,nmix,p,dprime,ih,iw,F,~,extra] = ...
     internal.stats.parseArgs(okargs,defaults,varargin{:});
 
 % For backwards compatibility. 'catidx' is a synonym for 'categorical'
@@ -764,16 +764,16 @@ while(tnode < nextunusednode)
             TopLeftIdx = sub2ind([ih,iw],randi(y_max,1),randi(x_max,1));
 
             % Map pixel locations to column indices of X
-            ColIdx = repmat((TopLeftIdx:TopLeftIdx+F-1)',1,F) + repmat(0:ih:(F-1)*ih,F,1);
+            ColIdx = repmat((TopLeftIdx:TopLeftIdx+F-1)',1,F) + repmat(0:h:(F-1)*h,F,1);
             ColIdx = ColIdx(:);
 
             % Sample random matrix
             S = srpmat(F^2,nusevars,sparsemethod,s,nmix,dprime);
             promat = sparse(nvars,size(S,2));
-            promat(ColIdx,:) = S;
+            promat(ColIdx,
 
             % Project X onto random subpsace
-            Xnode = Xnode*promat;
+            Xnode = Xnode(:,ColIdx)*promat;
         else
         
             if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
