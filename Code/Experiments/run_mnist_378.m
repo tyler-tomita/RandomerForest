@@ -35,7 +35,7 @@ for k = 1:length(ns)
 
     %% Structured RerF %%
     Fs = [2 4 8 12 20];
-    Lhat.srerf = NaN(length(Fs),7);
+    Lhat.srerf{k} = NaN(length(Fs),7);
 
     fprintf('Structured RerF\n')
     
