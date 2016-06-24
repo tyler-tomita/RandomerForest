@@ -33,21 +33,18 @@ NWorkers = 24;
 for k = 1:length(ns)
     nTrain = ns(k);
     fprintf('n = %d\n',nTrain)
-    
+
     TrainIdx = [];
     for l = 1:length(Labels)
         TrainIdx = [TrainIdx randsample(find(Y==Labels(l)),round(nTrain/length(Labels)))'];
     end
-    
+
     %% Structured RerF %%
-    Fs = [2 4 8 12 16];
-    Lhat.srerf{k} = NaN(length(Fs),7);
+    Fs = [2 4 8 12 20];
+    Lhat.srerf = NaN(length(Fs),7);
 
     fprintf('Structured RerF\n')
-
-    I = zeros(ih,iw,length(Fs));
-    S = I;
-
+    
     for i = 1:length(Fs)
         F = Fs(i);
 
@@ -81,7 +78,7 @@ for k = 1:length(ns)
 
     Lhat.rerf{k} = NaN(1,7);
 
-    ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 25*p];
+    ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 15*p];
 
     for j = 1:length(ds)
         d = ds(j);
