@@ -11,7 +11,6 @@ ns = [100 300 1000 3000 10000];
 X = loadMNISTImages('train-images-idx3-ubyte');
 X = sparse(X');
 Y = loadMNISTLabels('train-labels-idx1-ubyte');
-Ystr = cellstr(num2str(Y));
 Labels = [3,7,8];
 TrainIdx = [];
 for l = 1:length(Labels)
@@ -32,12 +31,6 @@ NWorkers = 24;
 
 for k = 1:length(ns)
     nTrain = ns(k);
-    fprintf('n = %d\n',nTrain)
-    
-    TrainIdx = [];
-    for l = 1:length(Labels)
-        TrainIdx = [TrainIdx randsample(find(Y==Labels(l)),round(nTrain/length(Labels)))'];
-    end
     
     %% Structured RerF %%
     Fs = [2 4 8 12 16];
@@ -67,13 +60,18 @@ for k = 1:length(ns)
 
             dprime = ceil(d^(1/interp1(ps,slope,p)));
 
-            srerf = rpclassificationforest(ntrees,X(TrainIdx,:),Ystr(TrainIdx),...
+            srerf = rpclassificationforest(ntrees,X(TrainIdx,:),Y(TrainIdx),...
                 'Image',true,'ih',ih,'iw',iw,'F',F,'sparsemethod',...
                 'sparse-adjusted','nvartosample',d,'dprime',dprime,...
                 'NWorkers',NWorkers,'Stratified',Stratified);
-            Predictions = oobpredict(srerf,X(TrainIdx,:),Ystr(TrainIdx));
-            Lhat.srerf{k}(i,j) = oob_error(Predictions,Ystr(TrainIdx),'last');
+            Predictions = oobpredict(srerf,X(TrainIdx,:),Y(TrainIdx));
+            Lhat.srerf(i,j) = oob_error(Predictions,Y(TrainIdx),'last');
         end
+
+    %     I(:,:,i) = reshape(full(srerf.Tree{1}.rpm{1}),ih,iw);
+    %     S(:,:,i) = int8(I(:,:,i)~=0);
+    %     figure;
+    %     imshow(S(:,:,i))
     end
 
     %% RerF %%
@@ -90,11 +88,11 @@ for k = 1:length(ns)
 
         dprime = ceil(d^(1/interp1(ps,slope,p)));
 
-        rerf = rpclassificationforest(ntrees,X(TrainIdx,:),Ystr(TrainIdx),'sparsemethod',...
+        rerf = rpclassificationforest(ntrees,X(TrainIdx,:),Y(TrainIdx),'sparsemethod',...
             'sparse-adjusted','nvartosample',d,'dprime',dprime,'NWorkers',NWorkers,...
             'Stratified',Stratified);
-        Predictions = oobpredict(rerf,X(TrainIdx,:),Ystr(TrainIdx));
-        Lhat.rerf{k}(j) = oob_error(Predictions,Ystr(TrainIdx),'last');
+        Predictions = oobpredict(rerf,X(TrainIdx,:),Y(TrainIdx));
+        Lhat.rerf(j) = oob_error(Predictions,Y(TrainIdx),'last');
     end
 
     %% RF %%
@@ -109,12 +107,9 @@ for k = 1:length(ns)
 
         fprintf('d = %d\n',d)
 
-        rf = rpclassificationforest(ntrees,X(TrainIdx,:),Ystr(TrainIdx),'RandomForest',true,...
+        rf = rpclassificationforest(ntrees,X(TrainIdx,:),Y(TrainIdx),'RandomForest',true,...
             'nvartosample',d,'NWorkers',NWorkers,'Stratified',Stratified);
-        Predictions = oobpredict(rf,X(TrainIdx,:),Ystr(TrainIdx));
-        Lhat.rf{k}(j) = oob_error(Predictions,Ystr(TrainIdx),'last');
+        Predictions = oobpredict(rf,X(TrainIdx,:),Y(TrainIdx));
+        Lhat.rf(j) = oob_error(Predictions,Y(TrainIdx),'last');
     end
 end
-
-save([rerfPath 'RandomerForest/Results/mnist_378_vary_n.mat'],'ns',...
-    'ntrees','Fs','Lhat')
