@@ -13,12 +13,6 @@ X = sparse(X');
 Y = loadMNISTLabels('train-labels-idx1-ubyte');
 Ystr = cellstr(num2str(Y));
 Labels = [3,7,8];
-TrainIdx = [];
-for l = 1:length(Labels)
-    TrainIdx = [TrainIdx randsample(find(Y==Labels(l)),round(nTrain/length(Labels)))'];
-end
-Y = cellstr(num2str(Y));
-
 [n,p] = size(X);
 ih = sqrt(p);
 iw = ih;
