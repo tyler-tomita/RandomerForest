@@ -699,11 +699,6 @@ if strcmp(mdiff,'all') && K > 1
     end
 end
 
-if Image
-    x_max = iw-F+1;
-    y_max = ih-F+1;
-end
-
 while(tnode < nextunusednode)
    % Record information about this node
    noderows = assignednode{tnode};
@@ -761,36 +756,26 @@ while(tnode < nextunusednode)
         end
         
         if Image
-            TopLeftIdx = sub2ind([ih,iw],randi(y_max,1),randi(x_max,1));
-
-            % Map pixel locations to column indices of X
-            ColIdx = repmat((TopLeftIdx:TopLeftIdx+F-1)',1,F) + repmat(0:ih:(F-1)*ih,F,1);
-            ColIdx = ColIdx(:);
-
-            % Sample random matrix
-            S = srpmat(F^2,nusevars,sparsemethod,s,nmix,dprime);
-            promat = sparse(nvars,size(S,2));
-            promat(ColIdx,:) = S;
-
-            % Project X onto random subpsace
-            Xnode = Xnode*promat;
+            promat = structured_rp(ih,iw,[],[],nusevars);
         else
-        
             if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
-              promat = srpmat(nvars,nusevars,sparsemethod,s,nmix,dprime);    %random projection matrix
-              md_ind = rand(size(mu_diff,2),1) <= p;
-              promat = cat(2,mu_diff(:,md_ind),promat);
-              md_idx = 1:sum(md_ind);   %Indices of where the mean difference vectors are in the matrix
-              iscat2 = cat(1,false(sum(md_ind),1),iscat);
-              %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
-              nvarsplit = cat(2,zeros(1,sum(md_ind)),nvarsplit);
+                promat = srpmat(nvars,nusevars,sparsemethod,s,nmix,dprime);    %random projection matrix
+                md_ind = rand(size(mu_diff,2),1) <= p;
+                promat = cat(2,mu_diff(:,md_ind),promat);
+                md_idx = 1:sum(md_ind);   %Indices of where the mean difference vectors are in the matrix
+                iscat2 = cat(1,false(sum(md_ind),1),iscat);
+                %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
+                nvarsplit = cat(2,zeros(1,sum(md_ind)),nvarsplit);
             else
-              promat = srpmat(nvars,nusevars,sparsemethod,s,nmix,dprime);    %random projection matrix
-              iscat2 = iscat;
-              %nvarsplit2 = nvarsplit;
+                promat = srpmat(nvars,nusevars,sparsemethod,s,nmix,dprime);    %random projection matrix
+                iscat2 = iscat;
+                %nvarsplit2 = nvarsplit;
             end
-            Xnode = Xnode*promat; %project Xnode onto random bases of promat
         end
+        
+        % Project X onto random subpsace
+        Xnode = Xnode*promat;
+            
         bestvar = 0;
         bestcut = 0;
       
