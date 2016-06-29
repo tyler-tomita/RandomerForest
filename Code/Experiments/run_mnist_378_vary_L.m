@@ -71,7 +71,7 @@ end
 %% RerF %%
 fprintf('\nRerF\n')
 
-Lhat.rerf{k} = NaN(1,7,length(Ls));
+Lhat.rerf = NaN(1,7,length(Ls));
 
 ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 15*p];
 
