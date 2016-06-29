@@ -23,13 +23,15 @@ for i = 1:d
     TileWidth = randi(MaxWidth);
     
     % sample random coordinates for the top-left of the tile
-    PossibleIdx = repmat((1:ImHeight-TileHeight+1)',1,ImWidth-TileWidth+1) + repmat(0:ImHeight:ImHeight*(ImWidth-TileWidth),ImHeight-TileHeight+1,1);
-    Element = randi(numel(PossibleIdx));
-    TopLeftIdx = PossibleIdx(Element);
+%     RowIdx = randi(ImHeight-TileHeight+1);
+%     ColIdx = randi(ImWidth-TileWidth+1);
+%     [r,c] = meshgrid(RowIdx:RowIdx+TileHeight-1,ColIdx:ColIdx+TileWidth-1);
+%     nnzs = sub2ind([ImHeight,ImWidth],r(:),c(:));
+%     A(nnzs,i) = round(rand(length(nnzs),1))*2-1;
     
-    %Sample -1 or +1 for each nonzero coordinate
-    NzIdx = repmat((TopLeftIdx:TopLeftIdx+TileHeight-1)',1,TileWidth) + repmat(0:ImHeight:ImHeight*(TileWidth-1),TileHeight,1);
+%     TopLeftIdx = sub2ind([ImHeight,ImWidth],RowIdx,ColIdx);
+    PossibleIdx = repmat((1:ImHeight-TileHeight+1)',1,ImWidth-TileWidth+1) + repmat(0:Tile
+    TopLeftIdx = randsample(repmat((1:ImHeight-TileHeight+1)'
+    NzIdx = repmat((TopLeftIdx:TopLeftIdx+TileHeight-1)',1,TileWidth) + repmat(0:TileHeight:TileHeight*(TileWidth-1),TileHeight,1);
     A(NzIdx(:),i) = round(rand(numel(NzIdx),1))*2-1;
 end
-
-A = sparse(A);
