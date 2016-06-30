@@ -7,7 +7,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-ns = [100 300 1000 3000];
+ns = [100 300 1000 3000 10000];
 X = loadMNISTImages('train-images-idx3-ubyte');
 X = sparse(X');
 Y = loadMNISTLabels('train-labels-idx1-ubyte');
@@ -30,11 +30,12 @@ for k = 1:length(ns)
         fprintf('\nn = %d\n',nTrain)
         
         Lhat.srerf{k} = NaN(ntrials,7);
+        Lhat.srerfd{k} = NaN(ntrials,7);
         Lhat.rerf{k} = NaN(ntrials,7);
         Lhat.rf{k} = NaN(ntrials,5);
     
     for trial = 1:ntrials
-        fprintf('trial = %d\n',trial)
+        fprintf('\ntrial = %d\n',trial)
 
         TrainIdx = [];
         for l = 1:length(Labels)
@@ -45,7 +46,7 @@ for k = 1:length(ns)
 
         fprintf('\nStructured RerF\n')
 
-        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
+        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 15*p];
 
         for j = 1:length(ds)
             d = ds(j);
@@ -57,11 +58,28 @@ for k = 1:length(ns)
             Predictions = oobpredict(srerf,X(TrainIdx,:),Ystr(TrainIdx));
             Lhat.srerf{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx),'last');
         end
+        
+        %% Structured RerF w/ mean difference %%
+
+        fprintf('\nStructured RerF(d)\n')
+
+        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 15*p];
+
+        for j = 1:length(ds)
+            d = ds(j);
+            fprintf('d = %d\n',d)
+
+            srerfd = rpclassificationforest(ntrees,X(TrainIdx,:),Ystr(TrainIdx),...
+                'Image',true,'ih',ih,'iw',iw,'mdiff','node',...
+                'nvartosample',d,'NWorkers',NWorkers,'Stratified',Stratified);
+            Predictions = oobpredict(srerfd,X(TrainIdx,:),Ystr(TrainIdx));
+            Lhat.srerfd{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx),'last');
+        end
 
         %% RerF %%
         fprintf('\nRerF\n')
 
-        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
+        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 15*p];
 
         for j = 1:length(ds)
             d = ds(j);
