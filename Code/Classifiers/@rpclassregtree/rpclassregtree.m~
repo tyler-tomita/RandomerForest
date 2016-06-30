@@ -756,9 +756,10 @@ while(tnode < nextunusednode)
         end
         
         if Image
-            promat = 
+            if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
+                
+            promat = structured_rp(ih,iw,[],[],nusevars);
         else
-        
             if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
                 promat = srpmat(nvars,nusevars,sparsemethod,s,nmix,dprime);    %random projection matrix
                 md_ind = rand(size(mu_diff,2),1) <= p;
