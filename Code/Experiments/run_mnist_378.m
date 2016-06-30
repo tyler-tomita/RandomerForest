@@ -46,7 +46,7 @@ for k = 1:length(ns)
 
         fprintf('\nStructured RerF\n')
 
-        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 15*p];
+        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
 
         for j = 1:length(ds)
             d = ds(j);
@@ -63,7 +63,7 @@ for k = 1:length(ns)
 
         fprintf('\nStructured RerF(d)\n')
 
-        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 15*p];
+        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
 
         for j = 1:length(ds)
             d = ds(j);
@@ -79,7 +79,7 @@ for k = 1:length(ns)
         %% RerF %%
         fprintf('\nRerF\n')
 
-        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 15*p];
+        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
 
         for j = 1:length(ds)
             d = ds(j);
