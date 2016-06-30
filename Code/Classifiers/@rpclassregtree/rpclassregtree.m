@@ -858,7 +858,7 @@ while(tnode < nextunusednode)
          nodenumber(nextunusednode+(0:1)) = nextunusednode+(0:1)';
          parent(nextunusednode+(0:1)) = tnode;
          rpm{tnode} = promat(:,bestvar);
-         if strcmp(mdiff,'all') || strcmp(mdiff,'node') && K > 1
+         if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1 && ~Image
              if ~isempty(md_idx)
                 isdelta(tnode) = bestvar <= max(md_idx);
              end
