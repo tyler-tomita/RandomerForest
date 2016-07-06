@@ -11,12 +11,15 @@ load mnist_378_vary_n
 
 fn = fieldnames(Lhat);
 
-keys = {'srerf' 'rerf' 'rf'};
-values = {'Structured RerF' 'RerF' 'RF'};
-clNames = containers.Map(keys,values);
+fn = {'srerf' 'rerf' 'rf'};
+clNames = {'Structured RerF' 'RerF' 'RF'};
 
-for i = 1:length(clNames.keys)
-    cl = clNames.keys{i};
+Colors.srerf = 'g';
+Colors.rerf = 'c';
+Colors.rf = 'm';
+
+for i = 1:length(fn)
+    cl = fn{i};
     meanError = NaN(1,length(ns));
     semError = NaN(1,length(ns));
     for j = 1:length(ns)
@@ -24,14 +27,18 @@ for i = 1:length(clNames.keys)
         meanError(j) = mean(minError);
         semError(j) = std(minError)/sqrt(length(minError));
     end
-    errorbar(ns,meanError,semError,'LineWidth',2)
+    errorbar(ns,meanError,semError,'LineWidth',2,'Color',Colors.(cl))
     hold on
 end
-legend(clNames.values)
+l = legend(clNames);
+l.Box = 'off';
 ax = gca;
 ax.XScale = 'log';
+% ax.XLim = [10^(log10(min(ns))-1),10^(log10(max(ns))+1)];
+ax.XLim = [10^(log10(min(ns))-1),max(ns)];
 xlabel('n')
-ylabel('Out-of-Bag Error')
+ylabel('Out-of-Bag Error (avg over 10 trials)')
 title('MNIST (Digits 3, 7, & 8)')
+ax.Box = 'off';
 
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/MNIST'])
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/MNIST_378'])
