@@ -418,7 +418,7 @@ defaults = {[]            []      'gdi'                        ...
             []         []          1                          ...
             'all'          'on'          []            'off'    Method      ...
             1e-6      {}       []        'off'      false ...
-            []  3   'off'   'sparse' 2   [] []  false  []  []  []};
+            []  3   'off'   'sparse' 2   [] []  'off'  []  []  []};
 
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
@@ -755,12 +755,14 @@ while(tnode < nextunusednode)
             end
         end
         
-        if Image
+        if strcmp(Image,'on')
             if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
-                promat = structured_rp(ih,iw,[],[],nusevars,mu_diff);
+                promat = structured_rp(ih,iw,[],[],nusevars,mu_diff,false);
             else
-                promat = structured_rp(ih,iw,[],[],nusevars,[]);
+                promat = structured_rp(ih,iw,[],[],nusevars,[],false);
             end
+        elseif strcmp(Image,'control')
+            promat = structured_rp(ih,iw,[],[],nusevars,[],true);
         else
             if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
                 promat = srpmat(nvars,nusevars,sparsemethod,s,nmix,dprime);    %random projection matrix
@@ -858,7 +860,7 @@ while(tnode < nextunusednode)
          nodenumber(nextunusednode+(0:1)) = nextunusednode+(0:1)';
          parent(nextunusednode+(0:1)) = tnode;
          rpm{tnode} = promat(:,bestvar);
-         if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1 && ~Image
+         if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1 && strcmp(Image,'off')
              if ~isempty(md_idx)
                 isdelta(tnode) = bestvar <= max(md_idx);
              end
