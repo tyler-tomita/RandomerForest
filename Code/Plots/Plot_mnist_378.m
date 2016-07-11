@@ -30,6 +30,7 @@ for i = 1:length(fn)
     errorbar(ns,meanError,semError,'LineWidth',2,'Color',Colors.(cl))
     hold on
 end
+
 l = legend(clNames);
 l.Box = 'off';
 ax = gca;
