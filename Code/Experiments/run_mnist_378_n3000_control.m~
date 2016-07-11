@@ -18,12 +18,13 @@ iw = ih;
 
 load mnist_378_data
 
+load Random_matrix_adjustment_factor
+
 ntrees = 500;
 Stratified = true;
 NWorkers = 24;
 
-
-for k = 1:length(ns)-1
+for k = 4:4
         nTrain = ns(k);
         fprintf('\nn = %d\n',nTrain)
         
@@ -32,7 +33,7 @@ for k = 1:length(ns)-1
     
     for trial = 1:ntrials
         fprintf('\ntrial = %d\n',trial)
-
+        
         %% Structured RerF %%
 
         fprintf('\nStructured RerF\n')
@@ -48,7 +49,7 @@ for k = 1:length(ns)-1
                 NWorkers,'Stratified',Stratified);
             Predictions = oobpredict(srerf,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
             Lhat.srerf{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
-        end
+        end        
         
         %% RerF controlled for density%%
         fprintf('\nRerF control\n')
@@ -69,5 +70,5 @@ for k = 1:length(ns)-1
     end
 end
 
-save([rerfPath 'RandomerForest/Results/mnist_378_vary_n_control.mat'],'ns',...
+save([rerfPath 'RandomerForest/Results/mnist_378_n3000_control.mat'],'ns',...
     'ntrees','Lhat')
