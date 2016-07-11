@@ -34,25 +34,7 @@ for k = 4:4
     
     for trial = 1:ntrials
         fprintf('\ntrial = %d\n',trial)
-
-        %% Structured RerF %%
-
-        fprintf('\nStructured RerF\n')
-
-        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
-
-        for j = 1:length(ds)
-            d = ds(j);
-            fprintf('d = %d\n',d)
-
-            srerf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
-                'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
-                NWorkers,'Stratified',Stratified);
-            Predictions = oobpredict(srerf,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
-            Lhat.srerf{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
-        end
         
-
         %% RerF controlled for density%%
         fprintf('\nRerF control\n')
 
