@@ -104,10 +104,9 @@ for k = 1:length(ns)
             Predictions = oobpredict(rf,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
             Lhat.rf{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
         end
+        save([rerfPath 'RandomerForest/Results/image_simulation.mat'],...
+            'ntrees','Lhat')
     end
 end
 
 fclose(FileID);
-
-save([rerfPath 'RandomerForest/Results/image_simulation.mat'],'ntrees',...
-    'Lhat')
