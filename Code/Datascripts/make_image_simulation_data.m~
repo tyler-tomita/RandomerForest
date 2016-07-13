@@ -8,7 +8,7 @@ fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 n = 100;
-ns = [10 20 50];
+ns = [10 20 50 100];
 ih = 20;
 iw = ih;
 
