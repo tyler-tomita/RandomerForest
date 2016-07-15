@@ -8,7 +8,7 @@ fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 n = 100;
-ns = [10 20 50 100];
+ns = [10 20 50];
 ih = 20;
 iw = ih;
 
@@ -16,12 +16,16 @@ X_image = zeros(ih,iw,n);
 Y = zeros(n,1);
 
 %Class 0
-X_image(:,1:iw/2,1:n/2) = rand(ih,iw/2,n/2)<1/3;
-X_image(:,iw/2+1:end,1:n/2) = rand(ih,iw/2,n/2)>1/3;
+for i = 1:n/2
+    rws = randperm(ih,5);
+    X_image(rws,:,i) = 1;
+end
 
 %Class 1
-X_image(:,1:iw/2,n/2+1:end) = rand(ih,iw/2,n/2)>1/3;
-X_image(:,iw/2+1:end,n/2+1:end) = rand(ih,iw/2,n/2)<1/3;
+for i = n/2+1:n
+    cls = randperm(iw,5);
+    X_image(:,cls,i) = 1;
+end
 Y(n/2+1:end) = 1;
 
 NewOrdering = randperm(n);
@@ -44,5 +48,5 @@ for k = 1:length(ns)
     end
 end
 
-save([rerfPath 'RandomerForest/Data/image_simulation_data.mat'],'ns','ntrials',...
+save([rerfPath 'RandomerForest/Data/image_stripes_data.mat'],'ns','ntrials',...
     'TrainIdx','X_image','Y')
