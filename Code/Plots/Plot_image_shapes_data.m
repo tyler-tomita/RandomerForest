@@ -7,7 +7,7 @@ clc
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
-load image_stripes_data
+load image_shapes_data
 
 X0 = X_image(:,:,Y==0);
 X1 = X_image(:,:,Y==1);
@@ -26,4 +26,4 @@ for i = 1:3
         ylabel('Class 1','FontSize',14)
     end
 end
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/Image_stripes_data'])
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Image_shapes_data'])

@@ -37,10 +37,12 @@ l = legend(clNames);
 l.Box = 'off';
 ax = gca;
 ax.XScale = 'log';
-% ax.XLim = [10^(log10(min(ns))-1),10^(log10(max(ns))+1)];
 ax.XLim = [10^(log10(min(ns))-0.1),10^(log10(max(ns))+0.1)];
+ax.XTick = [10 20 50];
+ax.XTickLabel = cellstr(num2str(ax.XTick'))';
 xlabel('n')
-ylabel('Out-of-Bag Error (avg over 10 trials)')
+ylabel('Out-of-Bag Error')
 ax.Box = 'off';
+ax.FontSize = 14;
 
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/Image_stripes'])
