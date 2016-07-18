@@ -7,7 +7,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load image_simulation_data
+load image_shapes_data
 
 [ih,iw,n] = size(X_image);
 p = ih*iw;
@@ -20,13 +20,11 @@ load Random_matrix_adjustment_factor
 
 ntrees = 500;
 Stratified = true;
-NWorkers = 16;
-
-FileID = fopen('~/image_simulation.out','w');
+NWorkers = 24;
 
 for k = 1:length(ns)
         nTrain = ns(k);
-        fprintf(FileID,'\nn = %d\n',nTrain);
+        fprintf('\nn = %d\n',nTrain);
         
         Lhat.srerf{k} = NaN(ntrials,7);
         Lhat.control{k} = NaN(ntrials,7);
@@ -34,17 +32,17 @@ for k = 1:length(ns)
         Lhat.rf{k} = NaN(ntrials,5);
     
     for trial = 1:ntrials
-        fprintf(FileID,'\ntrial = %d\n',trial);
+        fprintf('\ntrial = %d\n',trial);
 
         %% Structured RerF %%
 
-        fprintf(FileID,'\nStructured RerF\n');
+        fprintf('\nStructured RerF\n');
 
         ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
 
         for j = 1:length(ds)
             d = ds(j);
-%             fprintf(FileID,'d = %d\n',d);
+            fprintf('d = %d\n',d);
 
             srerf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
                 'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
@@ -54,14 +52,14 @@ for k = 1:length(ns)
         end
         
         %% RerF controlled for density%%
-        fprintf(FileID,'\nRerF control\n');
+        fprintf('\nRerF control\n');
 
         ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
 
         for j = 1:length(ds)
             d = ds(j);
 
-            fprintf(FileID,'d = %d\n',d);
+            fprintf('d = %d\n',d);
 
             control = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
                 'Image','control','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
@@ -71,14 +69,14 @@ for k = 1:length(ns)
         end
 
         %% RerF %%
-        fprintf(FileID,'\nRerF\n');
+        fprintf('\nRerF\n');
 
         ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
 
         for j = 1:length(ds)
             d = ds(j);
 
-            fprintf(FileID,'d = %d\n',d);
+            fprintf('d = %d\n',d);
 
             dprime = ceil(d^(1/interp1(ps,slope,p)));
 
@@ -90,23 +88,21 @@ for k = 1:length(ns)
         end
 
         %% RF %%
-        fprintf(FileID,'\nRandom Forest\n');
+        fprintf('\nRandom Forest\n');
 
         ds = ceil(p.^[0 1/4 1/2 3/4 1]);
 
         for j = 1:length(ds)
             d = ds(j);
 
-            fprintf(FileID,'d = %d\n',d);
+            fprintf('d = %d\n',d);
 
             rf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),'RandomForest',true,...
                 'nvartosample',d,'NWorkers',NWorkers,'Stratified',Stratified);
             Predictions = oobpredict(rf,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
             Lhat.rf{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
         end
-        save([rerfPath 'RandomerForest/Results/image_simulation.mat'],...
+        save([rerfPath 'RandomerForest/Results/image_shapes.mat'],...
             'ntrees','Lhat')
     end
 end
-
-fclose(FileID);

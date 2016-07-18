@@ -21,7 +21,7 @@ for i = 1:length(fn)
     cl = fn{i};
     meanError = NaN(1,length(ns));
     semError = NaN(1,length(ns));
-    for j = 1:length(ns)-1
+    for j = 1:length(ns)
         minError = min(Lhat.(cl){j},[],2);
         meanError(j) = mean(minError);
         semError(j) = std(minError)/sqrt(length(minError));
@@ -35,7 +35,7 @@ l.Box = 'off';
 ax = gca;
 ax.XScale = 'log';
 % ax.XLim = [10^(log10(min(ns))-1),10^(log10(max(ns))+1)];
-ax.XLim = [10^(log10(min(ns))-1),max(ns)];
+ax.XLim = [10^(log10(min(ns))-.1),10^(log10(max(ns))+.1)];
 xlabel('n')
 ylabel('Out-of-Bag Error (avg over 10 trials)')
 title('MNIST (Digits 3, 7, & 8)')
