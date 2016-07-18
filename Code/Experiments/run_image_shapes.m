@@ -22,9 +22,11 @@ ntrees = 500;
 Stratified = true;
 NWorkers = 24;
 
+FileID = fopen('~/shapes.out','w');
+
 for k = 1:length(ns)
         nTrain = ns(k);
-        fprintf('\nn = %d\n',nTrain);
+        fprintf(FileID,'\nn = %d\n',nTrain);
         
         Lhat.srerf{k} = NaN(ntrials,7);
         Lhat.control{k} = NaN(ntrials,7);
@@ -32,17 +34,17 @@ for k = 1:length(ns)
         Lhat.rf{k} = NaN(ntrials,5);
     
     for trial = 1:ntrials
-        fprintf('\ntrial = %d\n',trial);
+        fprintf(FileID,'\ntrial = %d\n',trial);
 
         %% Structured RerF %%
 
-        fprintf('\nStructured RerF\n');
+        fprintf(FileID,'\nStructured RerF\n');
 
         ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
 
         for j = 1:length(ds)
             d = ds(j);
-            fprintf('d = %d\n',d);
+            fprintf(FileID,'d = %d\n',d);
 
             srerf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
                 'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
@@ -52,14 +54,14 @@ for k = 1:length(ns)
         end
         
         %% RerF controlled for density%%
-        fprintf('\nRerF control\n');
+        fprintf(FileID,'\nRerF control\n');
 
         ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
 
         for j = 1:length(ds)
             d = ds(j);
 
-            fprintf('d = %d\n',d);
+            fprintf(FileID,'d = %d\n',d);
 
             control = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
                 'Image','control','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
@@ -69,14 +71,14 @@ for k = 1:length(ns)
         end
 
         %% RerF %%
-        fprintf('\nRerF\n');
+        fprintf(FileID,'\nRerF\n');
 
         ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
 
         for j = 1:length(ds)
             d = ds(j);
 
-            fprintf('d = %d\n',d);
+            fprintf(FileID,'d = %d\n',d);
 
             dprime = ceil(d^(1/interp1(ps,slope,p)));
 
@@ -88,14 +90,14 @@ for k = 1:length(ns)
         end
 
         %% RF %%
-        fprintf('\nRandom Forest\n');
+        fprintf(FileID,'\nRandom Forest\n');
 
         ds = ceil(p.^[0 1/4 1/2 3/4 1]);
 
         for j = 1:length(ds)
             d = ds(j);
 
-            fprintf('d = %d\n',d);
+            fprintf(FileID,'d = %d\n',d);
 
             rf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),'RandomForest',true,...
                 'nvartosample',d,'NWorkers',NWorkers,'Stratified',Stratified);
