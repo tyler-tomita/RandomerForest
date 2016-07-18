@@ -80,7 +80,7 @@ for k = 1:length(ns)
 
             fprintf(FileID,'d = %d\n',d);
 
-            dprime = ceil(d^(1/interp1(ps,slope,p)));
+            dprime = ceil(d^(1/interp1(ps,slope,p,'linear','extrap')));
 
             rerf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),'sparsemethod',...
                 'sparse-adjusted','nvartosample',d,'dprime',dprime,'NWorkers',NWorkers,...
