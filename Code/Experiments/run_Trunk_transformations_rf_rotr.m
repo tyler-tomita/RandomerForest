@@ -9,7 +9,7 @@ rng(1);
 
 load Trunk_transformations_data
 ntrees = 1000;
-NWorkers = 16;
+
 
 for i = 1:length(dims)
     
@@ -235,5 +235,5 @@ for i = 1:length(dims)
     end
     
     save([rerfPath 'RandomerForest/Results/Trunk_transformations_rf_rotr.mat'],...
-        'dims','sem_rf','var_rf','mean_err_rf','sem_rf_rotr','var_rf_rotr','mean_err_rf_rotr')
+        'dims','sem_rfr','var_rfr','mean_err_rfr','sem_rf_rotr','var_rf_rotr','mean_err_rf_rotr')
 end
