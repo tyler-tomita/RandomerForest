@@ -9,6 +9,7 @@ rng(1);
 
 load Trunk_transformations_data
 ntrees = 1000;
+NWorkers = 16;
 
 
 for i = 1:length(dims)
