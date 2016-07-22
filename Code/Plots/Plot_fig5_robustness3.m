@@ -28,7 +28,7 @@ fig.PaperPosition = [0 0 figWidth figHeight];
 fig.PaperSize = [figWidth figHeight];
 
 Titles = {'RF' 'RerF' 'RerF(d)' 'RerF(d+r)' 'Rotation RF' 'RF(r)'...
-    'Rotation RF(r)'};
+    'Rotation RF(r)' 'F-RC' 'F-RC(r)'};
 
 runSims = false;
 
@@ -38,6 +38,7 @@ else
     load Trunk_transformations.mat
     load Trunk_transformations_rankRerFd.mat
     load Trunk_transformations_rf_rotr.mat
+    load Trunk_transformations_frcr.mat
 end
 
 Transformations = fieldnames(mean_err_rf);
@@ -52,6 +53,8 @@ for j = 1:length(Transformations)
     [Lhat.rf_rot,minIdx.rf_rot] = min(mean_err_rf_rot.(Transform)(end,:,:),[],2);
     [Lhat.rfr,minIdx.rfr] = min(mean_err_rfr.(Transform)(end,:,:),[],2);
     [Lhat.rf_rotr,minIdx.rf_rotr] = min(mean_err_rf_rotr.(Transform)(end,:,:),[],2);
+    [Lhat.frc,minIdx.frc] = min(mean_err_frc.(Transform)(end,:,:),[],2);
+    [Lhat.frcr,minIdx.frcr] = min(mean_err_frcr.(Transform)(end,:,:),[],2);
 
     for i = 1:length(dims)
         sem.rf(i) = sem_rf.(Transform)(end,minIdx.rf(i),i);
@@ -66,6 +69,8 @@ for j = 1:length(Transformations)
             sem.rfr(i) = NaN;
             sem.rf_rotr(i) = NaN;
         end
+        sem.frc(i) = sem_frc.(Transform)(end,minIdx.frc(i),i);
+        sem.frcr(i) = sem_frcr.(Transform)(end,minIdx.frcr(i),i);
     end
     
     Lhat.rfr(:,:,5) = NaN;
@@ -117,4 +122,4 @@ l.Location = 'northeast';
 l.Box = 'off';
 l.FontSize = 10;
 
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig5_robustness2'])
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig5_robustness3'])
