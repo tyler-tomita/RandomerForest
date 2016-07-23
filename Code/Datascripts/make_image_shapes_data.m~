@@ -42,9 +42,9 @@ X_image = X_image(:,:,NewOrdering);
 Y = Y(NewOrdering);
 Labels = unique(Y);
 
-Train = false(n,1);
-Train(1:nTrain) = true;
-Test = ~Train;
+Train = false(n
+Train = 1:nTrain;
+Test = 1:nTest + nTrain;
 
 ntrials = 10;
 
@@ -55,7 +55,7 @@ for k = 1:length(ns)
 
         Idx = [];
         for l = 1:length(Labels)
-            Idx = [Idx randsample(find(Y==Labels(l)&Train),round(nsub/length(Labels)))'];
+            Idx = [Idx randsample(find(Y(Train)==Labels(l)),round(nsub/length(Labels)))'];
         end
         TrainIdx{k}(trial,:) = Idx(randperm(length(Idx)));
     end
