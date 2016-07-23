@@ -20,7 +20,7 @@ load Random_matrix_adjustment_factor
 
 ntrees = 500;
 Stratified = true;
-NWorkers = 2;
+NWorkers = 24;
 
 FileID = fopen('~/shapes.out','w');
 
