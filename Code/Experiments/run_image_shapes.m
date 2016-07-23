@@ -46,12 +46,18 @@ for k = 1:length(ns)
             d = ds(j);
             fprintf(FileID,'d = %d\n',d);
 
-            srerf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
+            srerf{j} = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
                 'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
                 NWorkers,'Stratified',Stratified);
-            Predictions = oobpredict(srerf,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
+            Predictions = oobpredict(srerf{j},X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
             Lhat.srerf{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
         end
+        
+        [~,BestIdx] = min(Lhat.srerf{k}(trial,:),[],2);
+        Predictions = predict(srerf{BestIdx},X(Test,:));
+        TestError.srerf{k}(trial) = misclassification_rate(Predictions,Ystr(Test),false);
+        
+        clear srerf
         
         %% RerF controlled for density%%
         fprintf(FileID,'\nRerF control\n');
@@ -63,12 +69,18 @@ for k = 1:length(ns)
 
             fprintf(FileID,'d = %d\n',d);
 
-            control = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
+            control{j} = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
                 'Image','control','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
                 NWorkers,'Stratified',Stratified);
-            Predictions = oobpredict(control,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
+            Predictions = oobpredict(control{j},X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
             Lhat.control{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
         end
+        
+        [~,BestIdx] = min(Lhat.control{k}(trial,:),[],2);
+        Predictions = predict(control{BestIdx},X(Test,:));
+        TestError.control{k}(trial) = misclassification_rate(Predictions,Ystr(Test),false);
+        
+        clear control
 
         %% RerF %%
         fprintf(FileID,'\nRerF\n');
@@ -82,12 +94,18 @@ for k = 1:length(ns)
 
             dprime = ceil(d^(1/interp1(ps,slope,p,'linear','extrap')));
 
-            rerf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),'sparsemethod',...
+            rerf{j} = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),'sparsemethod',...
                 'sparse-adjusted','nvartosample',d,'dprime',dprime,'NWorkers',NWorkers,...
                 'Stratified',Stratified);
-            Predictions = oobpredict(rerf,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
+            Predictions = oobpredict(rerf{j},X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
             Lhat.rerf{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
         end
+        
+        [~,BestIdx] = min(Lhat.rerf{k}(trial,:),[],2);
+        Predictions = predict(rerf{BestIdx},X(Test,:));
+        TestError.rerf{k}(trial) = misclassification_rate(Predictions,Ystr(Test),false);
+        
+        clear rerf
 
         %% RF %%
         fprintf(FileID,'\nRandom Forest\n');
@@ -99,12 +117,19 @@ for k = 1:length(ns)
 
             fprintf(FileID,'d = %d\n',d);
 
-            rf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),'RandomForest',true,...
+            rf{j} = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),'RandomForest',true,...
                 'nvartosample',d,'NWorkers',NWorkers,'Stratified',Stratified);
-            Predictions = oobpredict(rf,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
+            Predictions = oobpredict(rf{j},X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
             Lhat.rf{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
         end
+        
+        [~,BestIdx] = min(Lhat.rf{k}(trial,:),[],2);
+        Predictions = predict(rf{BestIdx},X(Test,:));
+        TestError.rf{k}(trial) = misclassification_rate(Predictions,Ystr(Test),false);
+        
+        clear rf
+        
         save([rerfPath 'RandomerForest/Results/image_shapes.mat'],...
-            'ntrees','Lhat')
+            'ntrees','Lhat','TestError')
     end
 end
