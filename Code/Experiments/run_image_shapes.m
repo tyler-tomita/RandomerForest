@@ -130,6 +130,6 @@ for k = 1:length(ns)
         clear rf
         
         save([rerfPath 'RandomerForest/Results/image_shapes.mat'],...
-            'ntrees','Lhat')
+            'ntrees','Lhat','TestError')
     end
 end
