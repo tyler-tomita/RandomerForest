@@ -15,7 +15,7 @@ X = reshape(X_image,p,n)';
 Ystr = cellstr(num2str(Y));
 
 Xtrain = X(TrainIdx{1}(1,:),:);
-Ytrain = Ystr(TrainIdx{k}(1,:));
+Ytrain = Ystr(TrainIdx{1}(1,:));
 
 clear X_image
 
