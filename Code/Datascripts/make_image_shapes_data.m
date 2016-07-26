@@ -7,10 +7,11 @@ rng(1);
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
-nTrain = 10000;
-nTest = 10000;
-n = nTrain + nTest;
-ns = [50 100 500 1000];
+Train = 1:10000;
+HoldOut = Train + 10000;
+Test = HoldOut + 10000;
+n = length(Train) + length(HoldOut) + length(Test);
+ns = [50 100 200];
 ih = 32;
 iw = ih;
 p = ih*iw;
@@ -42,9 +43,14 @@ X_image = X_image(:,:,NewOrdering);
 Y = Y(NewOrdering);
 Labels = unique(Y);
 
-Train = false(n,1);
-Train(1:nTrain) = true;
-Test = ~Train;
+%Col 1==Train, 2=HoldOut, 3=Test
+GrpIdx = false(n,3);
+GrpIdx(Train,1) = true;
+GrpIdx(HoldOut,2) = true;
+GrpIdx(Test,3) = true;
+Train = GrpIdx(:,1);
+HoldOut = GrpIdx(:,2);
+Test = GrpIdx(:,3);
 
 ntrials = 10;
 
@@ -55,11 +61,11 @@ for k = 1:length(ns)
 
         Idx = [];
         for l = 1:length(Labels)
-            Idx = [Idx randsample(find(Y==Labels(l)&Train),round(nsub/length(Labels)))'];
+            Idx = [Idx randsample(find(Y==Labels(l)&GrpIdx(:,1)),round(nsub/length(Labels)))'];
         end
         TrainIdx{k}(trial,:) = Idx(randperm(length(Idx)));
     end
 end
 
 save([rerfPath 'RandomerForest/Data/image_shapes_data.mat'],'ns','ntrials',...
-    'X_image','Y','TrainIdx','Test')
+    'X_image','Y','TrainIdx','HoldOut','Test')

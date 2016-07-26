@@ -40,21 +40,36 @@ for k = 1:length(ns)
 
         fprintf(FileID,'\nStructured RerF\n');
 
-        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
+        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p];
 
         for j = 1:length(ds)
             d = ds(j);
-            fprintf(FileID,'d = %d\n',d);
+%             fprintf(FileID,'d = %d\n',d);
 
             srerf{j} = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
                 'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
                 NWorkers,'Stratified',Stratified);
+%             Predictions = predict(srerf{j},X(HoldOut,:));
+%             Lhat.srerf{k}(trial,j) = misclassification_rate(Predictions,Ystr(HoldOut),false);
             Predictions = oobpredict(srerf{j},X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
             Lhat.srerf{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
+%             err(:,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'every');
+
         end
         
-        [~,BestIdx] = min(Lhat.srerf{k}(trial,:),[],2);
-        Predictions = predict(srerf{BestIdx},X(Test,:));
+        minLhat = min(Lhat.srerf{k}(trial,:),[],2);
+        BestIdx = find(Lhat.srerf{k}(trial,:)==minLhat);
+        
+        if length(BestIdx) > 1
+            d_best = round(mean(ds(BestIdx)));
+            srerf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
+                    'Image','on','ih',ih,'iw',iw,'nvartosample',d_best,'NWorkers',...
+                    NWorkers,'Stratified',Stratified);
+            Predictions = predict(srerf,X(Test,:));
+        else
+            Predictions = predict(srerf{BestIdx},X(Test,:));
+        end
+        
         TestError.srerf{k}(trial) = misclassification_rate(Predictions,Ystr(Test),false);
         
         clear srerf
