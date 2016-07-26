@@ -7,10 +7,11 @@ rng(1);
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
-nTrain = 10000;
-nTest = 10000;
-n = nTrain + nTest;
-ns = [50 100 500 1000];
+Train = 1:10000;
+HoldOut = Train + 10000;
+Test = HoldOut + 10000;
+n = length(Train) + length(HoldOut) + length(Test);
+ns = [50 100 200];
 ih = 32;
 iw = ih;
 p = ih*iw;
@@ -42,9 +43,9 @@ X_image = X_image(:,:,NewOrdering);
 Y = Y(NewOrdering);
 Labels = unique(Y);
 
-Train = false(n
-Train = 1:nTrain;
-Test = 1:nTest + nTrain;
+%1==Train, 2=HoldOut, 3=Test
+GrpIdx = ones(n,1);
+GrpIdx(n
 
 ntrials = 10;
 
@@ -55,7 +56,7 @@ for k = 1:length(ns)
 
         Idx = [];
         for l = 1:length(Labels)
-            Idx = [Idx randsample(find(Y(Train)==Labels(l)),round(nsub/length(Labels)))'];
+            Idx = [Idx randsample(find(Y==Labels(l)&Train),round(nsub/length(Labels)))'];
         end
         TrainIdx{k}(trial,:) = Idx(randperm(length(Idx)));
     end
