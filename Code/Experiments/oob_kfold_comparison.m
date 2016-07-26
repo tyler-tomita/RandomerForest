@@ -15,7 +15,8 @@ X = reshape(X_image,p,n)';
 Ystr = cellstr(num2str(Y));
 
 Xtrain = X(TrainIdx{1}(1,:),:);
-Ytrain = Ystr(TrainIdx{1}(1,:));
+Ytrain = Y(TrainIdx{1}(1,:));
+Ytrain_str = Ystr(TrainIdx{1}(1,:));
 
 clear X_image
 
@@ -34,22 +35,22 @@ for trial = 1:ntrials
     
     fprintf('trial %d\n',trial)
     fprintf('out of bag')
-    srerf = rpclassificationforest(ntrees,Xtrain,Ytrain,...
+    srerf = rpclassificationforest(ntrees,Xtrain,Ytrain_str,...
         'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
         NWorkers,'Stratified',Stratified);
-    Predictions = oobpredict(srerf,Xtrain,Ytrain);
-    BaggedError(trial) = oob_error(Predictions,Ytrain,'last');
+    Predictions = oobpredict(srerf,Xtrain,Ytrain_str);
+    BaggedError(trial) = oob_error(Predictions,Ytrain_str,'last');
     
     Fold = stratified_cv(Ytrain,K);
     
     fprintf('10-fold')
     for i = 1:K
         fprintf('fold %d\n',i)
-        srerf = rpclassificationforest(ntrees,Xtrain(Fold~=i,:),Ytrain(Fold~=i),...
+        srerf = rpclassificationforest(ntrees,Xtrain(Fold~=i,:),Ytrain_str(Fold~=i),...
             'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
             NWorkers,'Stratified',Stratified);
         Predictions = predict(srerf,X(Fold==i,:));
-        CVError(trial) = misclassification_rate(Predictions,Ytrain(Fold==i),false);
+        CVError(trial) = misclassification_rate(Predictions,Ytrain_str(Fold==i),false);
     end
 end
 
