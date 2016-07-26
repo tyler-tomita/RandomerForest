@@ -31,6 +31,9 @@ K = 10;
 BaggedError = NaN(ntrials,1);
 CVError = NaN(ntrials,1);
 for trial = 1:ntrials
+    
+    fprintf('trial %d\n',trial)
+    fprintf('out of bag')
     srerf = rpclassificationforest(ntrees,Xtrain,Ytrain,...
         'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
         NWorkers,'Stratified',Stratified);
@@ -39,7 +42,9 @@ for trial = 1:ntrials
     
     Fold = stratified_cv(Ytrain,K);
     
+    fprintf('10-fold')
     for i = 1:K
+        fprintf('fold %d\n',i)
         srerf = rpclassificationforest(ntrees,Xtrain(Fold~=i,:),Ytrain(Fold~=i),...
             'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
             NWorkers,'Stratified',Stratified);
