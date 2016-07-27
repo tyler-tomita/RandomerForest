@@ -23,7 +23,7 @@ clear X_image
 ntrees = 500;
 Stratified = true;
 NWorkers = 24;
-ntrials = 8;
+ntrials = 10;
 
 nTrain = ns(1);
 d = 1;
@@ -44,14 +44,16 @@ for trial = 1:ntrials
     Fold = stratified_cv(Ytrain,K);
     
     fprintf('10-fold\n')
+    FoldError = NaN(K,1e);
     for i = 1:K
         fprintf('fold %d\n',i)
         srerf = rpclassificationforest(ntrees,Xtrain(Fold~=i,:),Ytrain_str(Fold~=i),...
             'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
             NWorkers,'Stratified',Stratified);
         Predictions = predict(srerf,Xtrain(Fold==i,:));
-        CVError(trial) = misclassification_rate(Predictions,Ytrain_str(Fold==i),false);
+        FoldError(i) = misclassification_rate(Predictions,Ytrain_str(Fold==i),false);
     end
+    CVError(trial) = mean(FoldError);
 end
 
 save([rerfPath 'RandomerForest/Results/oob_kfold_comparison.mat'],...
