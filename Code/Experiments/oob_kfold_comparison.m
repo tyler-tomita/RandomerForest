@@ -23,7 +23,7 @@ clear X_image
 ntrees = 500;
 Stratified = true;
 NWorkers = 24;
-ntrials = 5;
+ntrials = 8;
 
 nTrain = ns(1);
 d = 1;
@@ -49,7 +49,7 @@ for trial = 1:ntrials
         srerf = rpclassificationforest(ntrees,Xtrain(Fold~=i,:),Ytrain_str(Fold~=i),...
             'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
             NWorkers,'Stratified',Stratified);
-        Predictions = predict(srerf,X(Fold==i,:));
+        Predictions = predict(srerf,Xtrain(Fold==i,:));
         CVError(trial) = misclassification_rate(Predictions,Ytrain_str(Fold==i),false);
     end
 end
