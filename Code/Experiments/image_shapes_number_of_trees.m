@@ -23,21 +23,22 @@ clear X_image
 ntrees = 2000;
 Stratified = true;
 NWorkers = 24;
-ntrials = 5;
 
 nTrain = ns(1);
-d = 1;
 
-BaggedError = NaN(ntrials,ntrees);
-for trial = 1:ntrials
+ds = ceil(p.^[0 1/4 1/2 3/4 1]);
+
+BaggedError = NaN(ntrees,length(ds));
+for i = 1:length(ds)
+    d = ds(i);
     
-    fprintf('trial %d\n',trial)
+    fprintf('d = %d\n',d)
     
     srerf = rpclassificationforest(ntrees,Xtrain,Ytrain_str,...
         'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
         NWorkers,'Stratified',Stratified);
     Predictions = oobpredict(srerf,Xtrain,Ytrain_str);
-    BaggedError(trial,:) = oob_error(Predictions,Ytrain_str,'every')';
+    BaggedError(:,i) = oob_error(Predictions,Ytrain_str,'every');
 end
 
 save([rerfPath 'RandomerForest/Results/image_shapes_number_of_trees.mat'],...
