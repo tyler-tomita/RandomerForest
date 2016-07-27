@@ -40,5 +40,5 @@ for trial = 1:ntrials
     BaggedError(trial,:) = oob_error(Predictions,Ytrain_str,'every')';
 end
 
-save([rerfPath 'RandomerForest/Results/oob_kfold_comparison.mat'],...
+save([rerfPath 'RandomerForest/Results/image_shapes_number_of_trees.mat'],...
     'BaggedError')
