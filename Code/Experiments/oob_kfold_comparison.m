@@ -44,7 +44,7 @@ for trial = 1:ntrials
     Fold = stratified_cv(Ytrain,K);
     
     fprintf('10-fold\n')
-    FoldError = NaN(K,1e);
+    FoldError = NaN(K,1);
     for i = 1:K
         fprintf('fold %d\n',i)
         srerf = rpclassificationforest(ntrees,Xtrain(Fold~=i,:),Ytrain_str(Fold~=i),...
