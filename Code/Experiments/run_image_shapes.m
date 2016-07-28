@@ -154,7 +154,7 @@ for k = 1:length(ns)
 
             rf{j} = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),'RandomForest',true,...
                 'nvartosample',d,'NWorkers',NWorkers,'Stratified',Stratified);
-            Scores = rf_oob_classprob(rf{j},Xtrain(TrainIdx{k}(trial,:),:),'last');
+            Scores = rerf_oob_classprob(rf{j},Xtrain(TrainIdx{k}(trial,:),:),'last');
             Predictions = predict_class(Scores,rf{j}.classname);
             BaggedError.rf{k}(trial,j) = misclassification_rate(Predictions,...
                 Ytrain(TrainIdx{k}(trial,:)),false);
@@ -166,7 +166,7 @@ for k = 1:length(ns)
             BestIdx = BestIdx(end);
         end
         
-        Scores = rf_classprob(rf{BestIdx},Xtest,'last');
+        Scores = rerf_classprob(rf{BestIdx},Xtest,'last');
         Predictions = predict_class(Scores,rf{BestIdx}.classname);
         TestError.rf{k}(trial) = misclassification_rate(Predictions,...
             Ytest,false);
