@@ -44,8 +44,6 @@ for trial = 1:ntrials
         Scores = rerf_oob_classprob(rf,Xtrain,'last');
         Predictions = predict_class(Scores,rf.classname);
         BaggedError(trial,i) = misclassification_rate(Predictions,Ytrain_str);
-        Yb = binarize_labels(Ytrain,unique(Y));
-        Scores = reshape(Scores',numel(Scores),1);
         [~,~,~,AUC(trial,i)] = perfcurve(Ytrain_str,Scores(:,2),'1');
     end
 
