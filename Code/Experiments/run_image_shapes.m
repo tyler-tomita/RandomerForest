@@ -31,14 +31,14 @@ for k = 1:length(ns)
         nTrain = ns(k);
         fprintf(FileID,'\nn = %d\n\n',nTrain);
         
-        BaggedError.srerf{k} = NaN(ntrials,7);
-        BaggedError.control{k} = NaN(ntrials,7);
-        BaggedError.rerf{k} = NaN(ntrials,7);
-        BaggedError.rf{k} = NaN(ntrials,5);
-        AUC.srerf{k} = NaN(ntrials,7);
-        AUC.control{k} = NaN(ntrials,7);
-        AUC.rerf{k} = NaN(ntrials,7);
-        AUC.rf{k} = NaN(ntrials,5);
+        BaggedError.srerf{k} = NaN(ntrials,5);
+        BaggedError.control{k} = NaN(ntrials,5);
+        BaggedError.rerf{k} = NaN(ntrials,5);
+        BaggedError.rf{k} = NaN(ntrials,4);
+        AUC.srerf{k} = NaN(ntrials,5);
+        AUC.control{k} = NaN(ntrials,5);
+        AUC.rerf{k} = NaN(ntrials,5);
+        AUC.rf{k} = NaN(ntrials,4);
     
     for trial = 1:ntrials
         fprintf(FileID,'trial = %d\n',trial);
@@ -79,7 +79,7 @@ for k = 1:length(ns)
         %% RerF controlled for density%%
         fprintf(FileID,'RerF control\n');
 
-        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
+        ds = [ceil(p.^[1/4 1/2 3/4 1]) 10*p];
 
         for j = 1:length(ds)
             d = ds(j);
@@ -111,7 +111,7 @@ for k = 1:length(ns)
         %% RerF %%
         fprintf(FileID,'RerF\n');
 
-        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
+        ds = [ceil(p.^[1/4 1/2 3/4 1]) 10*p];
 
         for j = 1:length(ds)
             d = ds(j);
@@ -145,7 +145,7 @@ for k = 1:length(ns)
         %% RF %%
         fprintf(FileID,'Random Forest\n');
 
-        ds = ceil(p.^[0 1/4 1/2 3/4 1]);
+        ds = ceil(p.^[1/4 1/2 3/4 1]);
 
         for j = 1:length(ds)
             d = ds(j);
