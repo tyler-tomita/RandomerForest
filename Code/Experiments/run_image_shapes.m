@@ -86,7 +86,7 @@ for k = 1:length(ns)
 
             fprintf(FileID,'d = %d\n',d);
 
-            control{j} = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
+            control{j} = rpclassificationforest(ntrees,Xtrain(TrainIdx{k}(trial,:),:),Ytrain(TrainIdx{k}(trial,:)),...
                 'Image','control','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
                 NWorkers,'Stratified',Stratified);
             Scores = rerf_oob_classprob(control{j},Xtrain(TrainIdx{k}(trial,:),:),'last');
@@ -120,7 +120,7 @@ for k = 1:length(ns)
 
             dprime = ceil(d^(1/interp1(ps,slope,p,'linear','extrap')));
 
-            rerf{j} = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),'sparsemethod',...
+            rerf{j} = rpclassificationforest(ntrees,Xtrain(TrainIdx{k}(trial,:),:),Ytrain(TrainIdx{k}(trial,:)),'sparsemethod',...
                 'sparse-adjusted','nvartosample',d,'dprime',dprime,'NWorkers',NWorkers,...
                 'Stratified',Stratified);
             Scores = rerf_oob_classprob(rerf{j},Xtrain(TrainIdx{k}(trial,:),:),'last');
@@ -152,7 +152,7 @@ for k = 1:length(ns)
 
             fprintf(FileID,'d = %d\n',d);
 
-            rf{j} = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),'RandomForest',true,...
+            rf{j} = rpclassificationforest(ntrees,Xtrain(TrainIdx{k}(trial,:),:),Ytrain(TrainIdx{k}(trial,:)),'RandomForest',true,...
                 'nvartosample',d,'NWorkers',NWorkers,'Stratified',Stratified);
             Scores = rerf_oob_classprob(rf{j},Xtrain(TrainIdx{k}(trial,:),:),'last');
             Predictions = predict_class(Scores,rf{j}.classname);
