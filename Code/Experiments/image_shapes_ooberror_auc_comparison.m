@@ -45,10 +45,8 @@ for trial = 1:ntrials
         Predictions = predict_class(Scores,rf.classname);
         BaggedError(trial,i) = misclassification_rate(Predictions,Ytrain_str);
         Yb = binarize_labels(Ytrain,unique(Y));
-        Yb = reshape(Yb',numel(Yb),1);
         Scores = reshape(Scores',numel(Scores),1);
-        [~,~,~,AUC(trial,i)] = perfcurve(reshape(Yb',numel(Yb),1),...
-            reshape(Scores',numel(Scores),1),1);
+        [~,~,~,AUC(trial,i)] = perfcurve(Ytrain_str,Scores(:,2),'1');
     end
 
     save([rerfPath 'RandomerForest/Results/image_shapes_ooberror_auc_comparison.mat'],...
