@@ -1,4 +1,4 @@
-%% Plot out of bag error vs n on mnist dataset
+open%% Plot out of bag error vs n on mnist dataset
 
 clear
 close all
