@@ -27,7 +27,7 @@ NWorkers = 24;
 
 FileID = fopen('~/shapes.out','w');
 
-for k = 1:length(ns)
+for k = 2:length(ns)
         nTrain = ns(k);
         fprintf(FileID,'\nn = %d\n\n',nTrain);
         
