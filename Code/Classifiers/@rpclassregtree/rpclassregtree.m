@@ -412,16 +412,17 @@ okargs =   {'priorprob'   'cost'  'splitcriterion' ...
             'splitmin' 'minparent' 'minleaf' ...
             'nvartosample' 'mergeleaves' 'categorical' 'prune' 'method' ...
             'qetoler' 'names' 'weights' 'surrogate' 'skipchecks' ...
-            'stream' 's'    'mdiff' 'sparsemethod'  'nmix'  'p' 'dprime'};
+            'stream' 's'    'mdiff' 'sparsemethod'  'nmix'  'p' 'dprime' ...
+            'Image' 'ih'    'iw'    'F'};
 defaults = {[]            []      'gdi'                        ...
             []         []          1                          ...
             'all'          'on'          []            'off'    Method      ...
             1e-6      {}       []        'off'      false ...
-            []  3   'off'   'sparse' 2   [] []};
+            []  3   'off'   'sparse' 2   [] []  'off'  []  []  []};
 
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
-    skipchecks,Stream,s,mdiff,sparsemethod,nmix,p,dprime,~,extra] = ...
+    skipchecks,Stream,s,mdiff,sparsemethod,nmix,p,dprime,Image,ih,iw,F,~,extra] = ...
     internal.stats.parseArgs(okargs,defaults,varargin{:});
 
 % For backwards compatibility. 'catidx' is a synonym for 'categorical'
@@ -753,22 +754,36 @@ while(tnode < nextunusednode)
                 %mu_diff(:,i) = mu_diff(:,i)./transpose(mean(cat(1,std(X(Y==Labels(pairs(i,1)),:)),std(X(Y==Labels(pairs(i,2)),:)))));
             end
         end
-      if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
-          promat = srpmat(nvars,nusevars,sparsemethod,s,nmix,dprime);    %random projection matrix
-          md_ind = rand(size(mu_diff,2),1) <= p;
-          promat = cat(2,mu_diff(:,md_ind),promat);
-          md_idx = 1:sum(md_ind);   %Indices of where the mean difference vectors are in the matrix
-          iscat2 = cat(1,false(sum(md_ind),1),iscat);
-          %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
-          nvarsplit = cat(2,zeros(1,sum(md_ind)),nvarsplit);
-      else
-          promat = srpmat(nvars,nusevars,sparsemethod,s,nmix,dprime);    %random projection matrix
-          iscat2 = iscat;
-          %nvarsplit2 = nvarsplit;
-      end
-      Xnode = Xnode*promat; %project Xnode onto random bases of promat
-      bestvar = 0;
-      bestcut = 0;
+        
+        if strcmp(Image,'on')
+            if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
+                promat = structured_rp(ih,iw,[],[],nusevars,mu_diff,false);
+            else
+                promat = structured_rp(ih,iw,[],[],nusevars,[],false);
+            end
+        elseif strcmp(Image,'control')
+            promat = structured_rp(ih,iw,[],[],nusevars,[],true);
+        else
+            if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
+                promat = srpmat(nvars,nusevars,sparsemethod,s,nmix,dprime);    %random projection matrix
+                md_ind = rand(size(mu_diff,2),1) <= p;
+                promat = cat(2,mu_diff(:,md_ind),promat);
+                md_idx = 1:sum(md_ind);   %Indices of where the mean difference vectors are in the matrix
+                iscat2 = cat(1,false(sum(md_ind),1),iscat);
+                %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
+                nvarsplit = cat(2,zeros(1,sum(md_ind)),nvarsplit);
+            else
+                promat = srpmat(nvars,nusevars,sparsemethod,s,nmix,dprime);    %random projection matrix
+                iscat2 = iscat;
+                %nvarsplit2 = nvarsplit;
+            end
+        end
+        
+        % Project X onto random subpsace
+        Xnode = Xnode*promat;
+            
+        bestvar = 0;
+        bestcut = 0;
       
       % Find the best of all possible splits
       for jvar=1:size(Xnode,2)
@@ -845,7 +860,7 @@ while(tnode < nextunusednode)
          nodenumber(nextunusednode+(0:1)) = nextunusednode+(0:1)';
          parent(nextunusednode+(0:1)) = tnode;
          rpm{tnode} = promat(:,bestvar);
-         if strcmp(mdiff,'all') || strcmp(mdiff,'node') && K > 1
+         if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1 && strcmp(Image,'off')
              if ~isempty(md_idx)
                 isdelta(tnode) = bestvar <= max(md_idx);
              end
