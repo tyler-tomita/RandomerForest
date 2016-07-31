@@ -8,10 +8,10 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 rng(1);
 
 ntrain = 100;
-ntest = 10000;
+ntest = 1000;
 dims = [2 10 50 100 500 1000];
 ndims = length(dims);
-ntrials = 10;
+ntrials = 25;
 Class = [0;1];
 Xtrain = cell(1,ndims);
 Ytrain = cell(1,ndims);
@@ -34,9 +34,7 @@ for i = 1:ndims
     end
     Xtrain{i} = x;
     Ytrain{i} = y;
-    [Xtest{i},idx] = random(obj,ntest);
-    Ytest{i} = cellstr(num2str(Class(idx)));
+    Xtest{i} = 
 end
 
-save([rerfPath 'RandomerForest/Data/Trunk_data.mat'],'Xtrain','Ytrain',...
-    'Xtest','Ytest','ntrain','ntest','dims','ntrials')
+save([rerfPath 'RandomerForest/Results/Trunk_data.mat'],'X','Y','n','dims','ntrials')
