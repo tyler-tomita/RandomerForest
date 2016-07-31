@@ -27,7 +27,7 @@ NWorkers = 24;
 
 FileID = fopen('~/shapes.out','w');
 
-for k = 2:length(ns)
+for k = 3:length(ns)
         nTrain = ns(k);
         fprintf(FileID,'\nn = %d\n\n',nTrain);
         
@@ -173,7 +173,7 @@ for k = 2:length(ns)
         
         clear rf
         
-        save([rerfPath 'RandomerForest/Results/image_shapes.mat'],...
+        save([rerfPath 'RandomerForest/Results/image_shapes_n200.mat'],...
             'ntrees','BaggedError','AUC','TestError')
     end
 end
