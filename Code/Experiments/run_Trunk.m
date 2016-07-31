@@ -187,7 +187,7 @@ for j = 1:length(dims)
                 perfcurve(Ytrain{j}(:,trial),Scores(:,2),'1');
         end
         
-        BestIdx = hp_optimize(BaggedError.rerfdn(j,:,trial),AUC.rf(j,:,trial));
+        BestIdx = hp_optimize(BaggedError.rerfdn(j,:,trial),AUC.rerfdn(j,:,trial));
         if length(BestIdx)>1
             BestIdx = BestIdx(end);
         end
