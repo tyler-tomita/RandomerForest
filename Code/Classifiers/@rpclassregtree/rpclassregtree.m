@@ -1087,9 +1087,6 @@ function M = srpmat(d,k,method,varargin)
         kk = round(4*k/p);
         go = true;
         while go
-            fprintf('d = %d\n',d)
-            fprintf('nmix = %d\n',nmix)
-            fprintf('kk = %d\n',kk)
             idx = randi(d,nmix,kk);
             idx = idx(:,all(diff(sort(idx)),1));
             go = size(idx,2) < k;
