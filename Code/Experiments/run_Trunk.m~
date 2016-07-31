@@ -11,7 +11,7 @@ load Trunk_data
 load Random_matrix_adjustment_factor
 
 ntrees = 1000;
-NWorkers = 2;
+NWorkers = 16;
 Class = [0;1];
 BaggedError.rf = NaN(length(dims),5,ntrials);
 BaggedError.rerf = NaN(length(dims),7,ntrials);
@@ -25,6 +25,12 @@ AUC.rerfr = NaN(length(dims),7,ntrials);
 AUC.rerfdn = NaN(length(dims),7,ntrials);
 AUC.rf_rot = NaN(length(dims),5,ntrials);
 AUC.frc = NaN(length(dims),7,ntrials);
+TestError.rf = NaN(ntrials,length(dims));
+TestError.rerf = NaN(ntrials,length(dims));
+TestError.rerfr = NaN(ntrials,length(dims));
+TestError.rerfdn = NaN(ntrials,length(dims));
+TestError.rf_rot = NaN(ntrials,length(dims));
+TestError.frc = NaN(ntrials,length(dims));
 trainTime.rf = NaN(length(dims),5,ntrials);
 trainTime.rerf = NaN(length(dims),7,ntrials);
 trainTime.rerfr = NaN(length(dims),7,ntrials);
@@ -57,13 +63,14 @@ for j = 1:length(dims)
             parpool('local',NWorkers);
         end
         
+        fprintf('RF\n')
         for i = 1:length(mtrys)
             
             mtry = mtrys(i);
 
-            fprintf('mtry = %d\n',mtry)
-
             if mtry <= d
+                fprintf('mtry = %d\n',mtry)
+
                 tic;
                 rf{i} = rpclassificationforest(ntrees,Xtrain{j}(:,:,trial),...
                     Ytrain{j}(:,trial),'RandomForest',true,'nvartosample',...
@@ -90,10 +97,13 @@ for j = 1:length(dims)
         
         clear rf
         
+        fprintf('RerF\n')
         for i = 1:length(mtrys)
             
             mtry = mtrys(i);
             dprime = ceil(mtry^(1/interp1(ps,slope,d)));
+            
+            fprintf('mtry = %d\n',mtry)
 
             tic;
             rerf{i} = rpclassificationforest(ntrees,Xtrain{j}(:,:,trial),...
@@ -121,10 +131,13 @@ for j = 1:length(dims)
         
         clear rerf
         
+        fprintf('RerF(r)\n')
         for i = 1:length(mtrys)
             
             mtry = mtrys(i);
             dprime = ceil(mtry^(1/interp1(ps,slope,d)));
+
+            fprintf('mtry = %d\n',mtry)
             
             tic;
             rerfr{i} = rpclassificationforest(ntrees,Xtrain{j}(:,:,trial),...
@@ -145,17 +158,20 @@ for j = 1:length(dims)
             BestIdx = BestIdx(end);
         end
         
-        Scores = rerf_classprob(rerfr{BestIdx},Xtest{j},'last');
+        Scores = rerf_classprob(rerfr{BestIdx},Xtest{j},'last',Xtrain{j}(:,:,trial));
         Predictions = predict_class(Scores,rerfr{BestIdx}.classname);
         TestError.rerfr(trial,j) = misclassification_rate(Predictions,...
             Ytest{j},false);
         
         clear rerfr
         
+        fprintf('RerF(d)\n')
         for i = 1:length(mtrys)
 
             mtry = mtrys(i);
             dprime = ceil(mtry^(1/interp1(ps,slope,d)));
+
+            fprintf('mtry = %d\n',mtry)
 
             tic;
             rerfdn{i} = rpclassificationforest(ntrees,Xtrain{j}(:,:,trial),...
@@ -171,7 +187,7 @@ for j = 1:length(dims)
                 perfcurve(Ytrain{j}(:,trial),Scores(:,2),'1');
         end
         
-        BestIdx = hp_optimize(BaggedError.rerfdn(j,:,trial),AUC.rf(j,:,trial));
+        BestIdx = hp_optimize(BaggedError.rerfdn(j,:,trial),AUC.rerfdn(j,:,trial));
         if length(BestIdx)>1
             BestIdx = BestIdx(end);
         end
@@ -183,9 +199,12 @@ for j = 1:length(dims)
         
         clear rerfdn
         
+        fprintf('RR-RF\n')
         for i = 1:length(mtrys)
 
             mtry = mtrys(i);
+
+            fprintf('mtry = %d\n',mtry)
 
             if mtry <= d && d <= 500
                 tic;
@@ -214,9 +233,12 @@ for j = 1:length(dims)
         
         clear rf_rot
         
+        fprintf('FR-C\n')
         for i = 1:length(mtrys)
 
             mtry = mtrys(i);
+
+            fprintf('mtry = %d\n',mtry)
 
             tic;
             frc{i} = rpclassificationforest(ntrees,Xtrain{j}(:,:,trial),...
@@ -243,7 +265,6 @@ for j = 1:length(dims)
         
         clear frc
     end
+    save([rerfPath 'RandomerForest/Results/Trunk.mat'],'dims',...
+        'BaggedError','AUC','TestError','trainTime')
 end
-
-save([rerfPath 'RandomerForest/Results/Trunk.mat'],'dims','BaggedError',...
-    'AUC','TestError','trainTime')
