@@ -7,10 +7,10 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load Sparse_parity_data
+load Trunk_data
 load Random_matrix_adjustment_factor
 
-ntrees = 500;
+ntrees = 1000;
 NWorkers = 16;
 Class = [0;1];
 BaggedError.rf = NaN(length(dims),5,ntrials);
@@ -38,13 +38,13 @@ trainTime.rerfdn = NaN(length(dims),7,ntrials);
 trainTime.rf_rot = NaN(length(dims),5,ntrials);
 trainTime.frc = NaN(length(dims),7,ntrials);
 
-for j = 5:length(dims)
+for j = length(dims):length(dims)
     
     d = dims(j);
     
     if d <= 5
         mtrys = [1:d ceil(d.^[1.5 2])];
-    elseif d > 5 && d <= 25
+    elseif d > 5 && d <= 100
         mtrys = ceil(d.^[0 1/4 1/2 3/4 1 1.5 2]);
     else
         mtrys = [ceil(d.^[0 1/4 1/2 3/4 1]) 5*d 10*d];
@@ -200,6 +200,8 @@ for j = 5:length(dims)
         clear rerfdn
         
         fprintf('RR-RF\n')
+        
+        
         for i = 1:length(mtrys)
 
             mtry = mtrys(i);
@@ -233,7 +235,7 @@ for j = 5:length(dims)
         
         clear rf_rot
         
-        fprintf('FR-C\n')
+        fprintf('F-RC\n')
         for i = 1:length(mtrys)
 
             mtry = mtrys(i);
@@ -264,8 +266,7 @@ for j = 5:length(dims)
             Ytest{j},false);
         
         clear frc
-        
-        save([rerfPath 'RandomerForest/Results/Sparse_parity.mat'],'dims',...
-            'BaggedError','AUC','TestError','trainTime')
     end
+    save([rerfPath 'RandomerForest/Results/Trunk.mat'],'dims',...
+        'BaggedError','AUC','TestError','trainTime')
 end

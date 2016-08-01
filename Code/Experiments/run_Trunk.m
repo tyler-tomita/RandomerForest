@@ -38,7 +38,7 @@ trainTime.rerfdn = NaN(length(dims),7,ntrials);
 trainTime.rf_rot = NaN(length(dims),5,ntrials);
 trainTime.frc = NaN(length(dims),7,ntrials);
 
-for j = 1:length(dims)
+for j = length(dims):length(dims)
     
     d = dims(j);
     
@@ -76,12 +76,12 @@ for j = 1:length(dims)
                     Ytrain{j}(:,trial),'RandomForest',true,'nvartosample',...
                     mtry,'NWorkers',NWorkers,'Stratified',true);
                 trainTime.rf(j,i,trial) = toc;
-            Scores = rerf_oob_classprob(rf{i},Xtrain{j}(:,:,trial),'last');
-            Predictions = predict_class(Scores,rf{i}.classname);
-            BaggedError.rf(j,i,trial) = ...
-                misclassification_rate(Predictions,Ytrain{j}(:,trial),false);
-            [~,~,~,AUC.rf(j,i,trial)] = ...
-                perfcurve(Ytrain{j}(:,trial),Scores(:,2),'1');
+                Scores = rerf_oob_classprob(rf{i},Xtrain{j}(:,:,trial),'last');
+                Predictions = predict_class(Scores,rf{i}.classname);
+                BaggedError.rf(j,i,trial) = ...
+                    misclassification_rate(Predictions,Ytrain{j}(:,trial),false);
+                [~,~,~,AUC.rf(j,i,trial)] = ...
+                    perfcurve(Ytrain{j}(:,trial),Scores(:,2),'1');
             end          
         end
         
@@ -200,40 +200,43 @@ for j = 1:length(dims)
         clear rerfdn
         
         fprintf('RR-RF\n')
-        for i = 1:length(mtrys)
+        
+        if d <= 500
+            for i = 1:length(mtrys)
 
-            mtry = mtrys(i);
+                mtry = mtrys(i);
 
-            fprintf('mtry = %d\n',mtry)
+                fprintf('mtry = %d\n',mtry)
 
-            if mtry <= d && d <= 500
-                tic;
-                rf_rot{i} = rpclassificationforest(ntrees,Xtrain{j}(:,:,trial),...
-                    Ytrain{j}(:,trial),'RandomForest',true,'rotate',true,...
-                    'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-                trainTime.rf_rot(j,i,trial) = toc;
-                Scores = rerf_oob_classprob(rf_rot{i},Xtrain{j}(:,:,trial),'last');
-                Predictions = predict_class(Scores,rf_rot{i}.classname);
-                BaggedError.rf_rot(j,i,trial) = misclassification_rate(Predictions,...
-                    Ytrain{j}(:,trial),false);
-                [~,~,~,AUC.rf_rot(j,i,trial)] = ...
-                    perfcurve(Ytrain{j}(:,trial),Scores(:,2),'1');
+                if mtry <= d
+                    tic;
+                    rf_rot{i} = rpclassificationforest(ntrees,Xtrain{j}(:,:,trial),...
+                        Ytrain{j}(:,trial),'RandomForest',true,'rotate',true,...
+                        'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
+                    trainTime.rf_rot(j,i,trial) = toc;
+                    Scores = rerf_oob_classprob(rf_rot{i},Xtrain{j}(:,:,trial),'last');
+                    Predictions = predict_class(Scores,rf_rot{i}.classname);
+                    BaggedError.rf_rot(j,i,trial) = misclassification_rate(Predictions,...
+                        Ytrain{j}(:,trial),false);
+                    [~,~,~,AUC.rf_rot(j,i,trial)] = ...
+                        perfcurve(Ytrain{j}(:,trial),Scores(:,2),'1');
+                end
             end
+
+            BestIdx = hp_optimize(BaggedError.rf_rot(j,:,trial),AUC.rf_rot(j,:,trial));
+            if length(BestIdx)>1
+                BestIdx = BestIdx(end);
+            end
+
+            Scores = rerf_classprob(rf_rot{BestIdx},Xtest{j},'last');
+            Predictions = predict_class(Scores,rf_rot{BestIdx}.classname);
+            TestError.rf_rot(trial,j) = misclassification_rate(Predictions,...
+                Ytest{j},false);
+        
+            clear rf_rot
         end
         
-        BestIdx = hp_optimize(BaggedError.rf_rot(j,:,trial),AUC.rf_rot(j,:,trial));
-        if length(BestIdx)>1
-            BestIdx = BestIdx(end);
-        end
-        
-        Scores = rerf_classprob(rf_rot{BestIdx},Xtest{j},'last');
-        Predictions = predict_class(Scores,rf_rot{BestIdx}.classname);
-        TestError.rf_rot(trial,j) = misclassification_rate(Predictions,...
-            Ytest{j},false);
-        
-        clear rf_rot
-        
-        fprintf('FR-C\n')
+        fprintf('F-RC\n')
         for i = 1:length(mtrys)
 
             mtry = mtrys(i);
