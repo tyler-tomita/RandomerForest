@@ -173,7 +173,7 @@ for k = 3:length(ns)
         
         clear rf
         
-        save([rerfPath 'RandomerForest/Results/image_shapes_n200_trials_9_10.mat'],...
+        save([rerfPath 'RandomerForest/Results/image_shapes_n200.mat'],...
             'ntrees','BaggedError','AUC','TestError')
     end
 end
