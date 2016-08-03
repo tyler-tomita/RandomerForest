@@ -7,106 +7,175 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-X = loadMNISTImages('train-images-idx3-ubyte');
-X = sparse(X');
-Y = loadMNISTLabels('train-labels-idx1-ubyte');
-Ystr = cellstr(num2str(Y));
-Labels = [3,7,8];
-[n,p] = size(X);
+load MNIST_train
+load MNIST_test
+load MNIST_378_train_indices
+load Random_matrix_adjustment_factor
+
+[ntrain,p] = size(Xtrain);
 ih = sqrt(p);
 iw = ih;
 
-load mnist_378_data
+Ytrain = cellstr(num2str(Ytrain));
+Xtest = Xtest(Ytest==3|Ytest==7|Ytest==8,:);
+Ytest = cellstr(num2str(Ytest(Ytest==3|Ytest==7|Ytest==8)));
+Labels = unique(Ytest);
 
-load Random_matrix_adjustment_factor
-
-ntrees = 500;
+ntrees = 2000;
 Stratified = true;
-NWorkers = 24;
-
+NWorkers = 2;
 
 for k = 1:length(ns)
         nTrain = ns(k);
-        fprintf('\nn = %d\n',nTrain)
+        fprintf('\nn = %d\n\n',nTrain);
         
-        Lhat.srerf{k} = NaN(ntrials,7);
-%         Lhat.srerfd{k} = NaN(ntrials,7);
-        Lhat.rerf{k} = NaN(ntrials,7);
-        Lhat.rf{k} = NaN(ntrials,5);
+        BaggedError.srerf{k} = NaN(ntrials,5);
+        BaggedError.control{k} = NaN(ntrials,5);
+        BaggedError.rerf{k} = NaN(ntrials,5);
+        BaggedError.rf{k} = NaN(ntrials,4);
+        AUC.srerf{k} = NaN(ntrials,5);
+        AUC.control{k} = NaN(ntrials,5);
+        AUC.rerf{k} = NaN(ntrials,5);
+        AUC.rf{k} = NaN(ntrials,4);
     
     for trial = 1:ntrials
-        fprintf('\ntrial = %d\n',trial)
+        fprintf('trial = %d\n',trial);
 
         %% Structured RerF %%
 
-        fprintf('\nStructured RerF\n')
+        fprintf('Structured RerF\n');
 
-        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
-
+        ds = [ceil(p.^[1/4 1/2 3/4 1]) 10*p];
         for j = 1:length(ds)
             d = ds(j);
-            fprintf('d = %d\n',d)
+            
+            fprintf('d = %d\n',d);
 
-            srerf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
-                'Image',true,'ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
+            srerf{j} = rpclassificationforest(ntrees,...
+                Xtrain(TrainIdx{k}(trial,:),:),Ytrain(TrainIdx{k}(trial,:)),...
+                'Image','on','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
                 NWorkers,'Stratified',Stratified);
-            Predictions = oobpredict(srerf,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
-            Lhat.srerf{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
+            Scores = rerf_oob_classprob(srerf{j},Xtrain(TrainIdx{k}(trial,:),:),'last');
+            Predictions = predict_class(Scores,srerf{j}.classname);
+            BaggedError.srerf{k}(trial,j) = misclassification_rate(Predictions,...
+                Ytrain(TrainIdx{k}(trial,:)),false);
+            Yb = binarize_labels(Ytrain(TrainIdx{k}(trial,:)),srerf{j}.classname);
+            [~,~,~,AUC.srerf{k}(trial,j)] = perfcurve(Yb(:),Scores(:),1);
         end
         
-%         %% Structured RerF w/ mean difference %%
-% 
-%         fprintf('\nStructured RerF(d)\n')
-% 
-%         ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
-% 
-%         for j = 1:length(ds)
-%             d = ds(j);
-%             fprintf('d = %d\n',d)
-% 
-%             srerfd = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),...
-%                 'Image',true,'ih',ih,'iw',iw,'mdiff','node',...
-%                 'nvartosample',d,'NWorkers',NWorkers,'Stratified',Stratified);
-%             Predictions = oobpredict(srerfd,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
-%             Lhat.srerfd{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
-%         end
+        BestIdx = hp_optimize(BaggedError.srerf{k}(trial,:),AUC.srerf{k}(trial,:));
+        if length(BestIdx)>1
+            BestIdx = BestIdx(end);
+        end
+        
+        Scores = rerf_classprob(srerf{BestIdx},Xtest,'last');
+        Predictions = predict_class(Scores,srerf{BestIdx}.classname);
+        TestError.srerf{k}(trial) = misclassification_rate(Predictions,...
+            Ytest,false);
+        
+        clear srerf
+        
+        %% RerF controlled for density%%
+        fprintf('RerF control\n');
+
+        ds = [ceil(p.^[1/4 1/2 3/4 1]) 10*p];
+
+        for j = 1:length(ds)
+            d = ds(j);
+
+            fprintf('d = %d\n',d);
+
+            control{j} = rpclassificationforest(ntrees,Xtrain(TrainIdx{k}(trial,:),:),Ytrain(TrainIdx{k}(trial,:)),...
+                'Image','control','ih',ih,'iw',iw,'nvartosample',d,'NWorkers',...
+                NWorkers,'Stratified',Stratified);
+            Scores = rerf_oob_classprob(control{j},Xtrain(TrainIdx{k}(trial,:),:),'last');
+            Predictions = predict_class(Scores,control{j}.classname);
+            BaggedError.control{k}(trial,j) = misclassification_rate(Predictions,...
+                Ytrain(TrainIdx{k}(trial,:)),false);
+            Yb = binarize_labels(Ytrain(TrainIdx{k}(trial,:)),control{j}.classname);
+            [~,~,~,AUC.control{k}(trial,j)] = perfcurve(Yb(:),Scores(:),1);
+        end
+        
+        BestIdx = hp_optimize(BaggedError.control{k}(trial,:),AUC.control{k}(trial,:));
+        if length(BestIdx)>1
+            BestIdx = BestIdx(end);
+        end
+        
+        Scores = rerf_classprob(control{BestIdx},Xtest,'last');
+        Predictions = predict_class(Scores,control{BestIdx}.classname);
+        TestError.control{k}(trial) = misclassification_rate(Predictions,...
+            Ytest,false);
+        
+        clear control
 
         %% RerF %%
-        fprintf('\nRerF\n')
+        fprintf('RerF\n');
 
-        ds = [ceil(p.^[0 1/4 1/2 3/4 1]) 10*p 20*p];
+        ds = [ceil(p.^[1/4 1/2 3/4 1]) 10*p];
 
         for j = 1:length(ds)
             d = ds(j);
 
-            fprintf('d = %d\n',d)
+            fprintf('d = %d\n',d);
 
-            dprime = ceil(d^(1/interp1(ps,slope,p)));
+            dprime = ceil(d^(1/interp1(ps,slope,p,'linear','extrap')));
 
-            rerf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),'sparsemethod',...
+            rerf{j} = rpclassificationforest(ntrees,Xtrain(TrainIdx{k}(trial,:),:),Ytrain(TrainIdx{k}(trial,:)),'sparsemethod',...
                 'sparse-adjusted','nvartosample',d,'dprime',dprime,'NWorkers',NWorkers,...
                 'Stratified',Stratified);
-            Predictions = oobpredict(rerf,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
-            Lhat.rerf{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
+            Scores = rerf_oob_classprob(rerf{j},Xtrain(TrainIdx{k}(trial,:),:),'last');
+            Predictions = predict_class(Scores,rerf{j}.classname);
+            BaggedError.rerf{k}(trial,j) = misclassification_rate(Predictions,...
+                Ytrain(TrainIdx{k}(trial,:)),false);
+            Yb = binarize_labels(Ytrain(TrainIdx{k}(trial,:)),rerf{j}.classname);
+            [~,~,~,AUC.rerf{k}(trial,j)] = perfcurve(Yb(:),Scores(:),1);
         end
+        
+        BestIdx = hp_optimize(BaggedError.rerf{k}(trial,:),AUC.rerf{k}(trial,:));
+        if length(BestIdx)>1
+            BestIdx = BestIdx(end);
+        end
+        
+        Scores = rerf_classprob(rerf{BestIdx},Xtest,'last');
+        Predictions = predict_class(Scores,rerf{BestIdx}.classname);
+        TestError.rerf{k}(trial) = misclassification_rate(Predictions,...
+            Ytest,false);
+        
+        clear rerf
 
         %% RF %%
-        fprintf('\nRandom Forest\n')
+        fprintf('Random Forest\n');
 
-        ds = ceil(p.^[0 1/4 1/2 3/4 1]);
+        ds = ceil(p.^[1/4 1/2 3/4 1]);
 
         for j = 1:length(ds)
             d = ds(j);
 
-            fprintf('d = %d\n',d)
+            fprintf('d = %d\n',d);
 
-            rf = rpclassificationforest(ntrees,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)),'RandomForest',true,...
+            rf{j} = rpclassificationforest(ntrees,Xtrain(TrainIdx{k}(trial,:),:),Ytrain(TrainIdx{k}(trial,:)),'RandomForest',true,...
                 'nvartosample',d,'NWorkers',NWorkers,'Stratified',Stratified);
-            Predictions = oobpredict(rf,X(TrainIdx{k}(trial,:),:),Ystr(TrainIdx{k}(trial,:)));
-            Lhat.rf{k}(trial,j) = oob_error(Predictions,Ystr(TrainIdx{k}(trial,:)),'last');
+            Scores = rerf_oob_classprob(rf{j},Xtrain(TrainIdx{k}(trial,:),:),'last');
+            Predictions = predict_class(Scores,rf{j}.classname);
+            BaggedError.rf{k}(trial,j) = misclassification_rate(Predictions,...
+                Ytrain(TrainIdx{k}(trial,:)),false);
+            Yb = binarize_labels(Ytrain(TrainIdx{k}(trial,:)),rf{j}.classname);
+            [~,~,~,AUC.rf{k}(trial,j)] = perfcurve(Yb(:),Scores(:),1);
         end
+        
+        BestIdx = hp_optimize(BaggedError.rf{k}(trial,:),AUC.rf{k}(trial,:));
+        if length(BestIdx)>1
+            BestIdx = BestIdx(end);
+        end
+        
+        Scores = rerf_classprob(rf{BestIdx},Xtest,'last');
+        Predictions = predict_class(Scores,rf{BestIdx}.classname);
+        TestError.rf{k}(trial) = misclassification_rate(Predictions,...
+            Ytest,false);
+        
+        clear rf
+        
+        save([rerfPath 'RandomerForest/Results/mnist_378.mat'],...
+            'ntrees','BaggedError','AUC','TestError')
     end
 end
-
-save([rerfPath 'RandomerForest/Results/mnist_378_vary_n.mat'],'ns',...
-    'ntrees','Lhat')

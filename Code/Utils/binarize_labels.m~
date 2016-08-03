@@ -3,18 +3,15 @@ function Yb = binarize_labels(Y,Labels)
 % n_classes binary matrix Yb. Labels is the set of unique class labels. The
 % columns of Yb reflect the order of Labels.
 
+if iscell(Y) && iscell(Labels)
+    Y = grp2idx(Y);
+
 n_classes = length(Labels);
 
 Yb = zeros(length(Y),n_classes);
 
-if iscell(Y) && iscell(Labels)
-    for i = 1:n_classes
-        Yb(strcmp(Y,Labels{i}),i) = 1;
-    end
-else
-    for i = 1:n_classes
-        Yb(Y==Labels(i),i) = 1;
-    end
+for i = 1:n_classes
+    Yb(Y==Labels(i),i) = 1;
 end
 
 end

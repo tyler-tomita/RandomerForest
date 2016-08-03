@@ -2,11 +2,15 @@ close all
 clear
 clc
 
+fpath = mfilename('fullpath');
+rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
+
 rng(1);
 
 load MNIST_train
 
 ns = [100 300 1000 3000];
+Ystr = cellstr(num2str(Y));
 Labels = [3,7,8];
 
 ntrials = 10;
@@ -24,5 +28,5 @@ for k = 1:length(ns)
     end
 end
 
-save('~/Documents/MATLAB/Data/MNIST_378_train_indices.mat','ns','ntrials',...
+save([rerfPath 'RandomerForest/Data/mnist_378_data.mat'],'ns','ntrials',...
     'TrainIdx')
