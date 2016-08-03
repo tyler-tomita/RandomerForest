@@ -23,7 +23,7 @@ Labels = unique(Ytest);
 
 ntrees = 2000;
 Stratified = true;
-NWorkers = 2;
+NWorkers = 24;
 
 for k = 1:length(ns)
         nTrain = ns(k);
