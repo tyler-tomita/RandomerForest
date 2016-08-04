@@ -17,27 +17,27 @@ p = size(Xtrain,2);
 
 % set defaults if empty
 
-if ~isfield(Params.nTrees)
+if ~isfield(Params,'nTrees')
     Params.nTrees = 500;
 end
 
-if ~isfield(Params.RandomForest)
+if ~isfield(Params,'RandomForest')
     Params.RandomForest = false;
 end
 
-if ~isfield(Params.Method)
+if ~isfield(Params,'Method')
     Params.Method = 'sparse-adjusted';
 end
 
-if ~isfield(Params.Rotate)
+if ~isfield(Params,'Rotate')
     Params.Rotate = false;
 end
 
-if ~isfield(Params.mdiff)
+if ~isfield(Params,'mdiff')
     Params.mdiff = 'off';
 end
 
-if ~isfield(Params.d)
+if ~isfield(Params,'d')
     if Params.RandomForest
         if p <= 5
             Params.d = 1:p;
@@ -55,26 +55,26 @@ if ~isfield(Params.d)
     end
 end
 
-if ~isfield(Params.dprime)
+if ~isfield(Params,'dprime')
     load Random_matrix_adjustment_factor
     for i = 1:length(Params.d)
         Params.dprime(i) = ceil(Params.d(i)^(1/interp1(ps,slope,p)));
     end
 end
 
-if ~isfield(Params.nmix)
+if ~isfield(Params,'nmix')
     Params.nmix = 2;
 end
 
-if ~isfield(Params.Robust)
+if ~isfield(Params,'Robust')
     Params.Robust = false;
 end
 
-if ~isfield(Params.Stratified)
+if ~isfield(Params,'Stratified')
     Params.Stratified = true;
 end
 
-if ~isfield(Params.NWorkers)
+if ~isfield(Params,'NWorkers')
     Params.NWorkers = 2;
 end
 
