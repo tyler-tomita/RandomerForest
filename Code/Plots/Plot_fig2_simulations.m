@@ -82,16 +82,14 @@ else
     load Sparse_parity
 end
 
-classifiers = fieldnames(Lhat);
+classifiers = fieldnames(TestError);
 
 ax = subplot(2,3,2);
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
     if ~strcmp(cl,'rerfdn')
-        [minLhat.(cl),minLhatIdx.(cl)] = min(Lhat.(cl),[],2);
-        LhatDiff = minLhat.(cl)-minLhat.(classifiers{1});
-        hLhat(i) = errorbar(dims,mean(LhatDiff,3),std(LhatDiff,0,3)/sqrt(size(LhatDiff,3)),'LineWidth',LineWidth,'Color',Colors.(cl));
+        hTestError(i) = errorbar(dims,mean(TestError.(cl)),std(TestError.(cl))/sqrt(size(TestError.(cl),1)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
 end
@@ -110,7 +108,7 @@ ax.XLim = [1 105];
 ax.XScale = 'log';
 ax.XTick = [1 10 100];
 ax.XTickLabel = {'1' '10' '100'};
-% ax.YLim = [0 .5];
+ax.YLim = [0 .5];
 
 ax = subplot(2,3,3);
 
@@ -138,7 +136,7 @@ ax.XTick = [1 10 100];
 ax.XTickLabel = {'1' '10' '100'};
 ax.XScale = 'log';
 
-clear hLhat hTrainTime Lhat minLhat trainTime
+clear hTestError hTrainTime TestError minTestError trainTime
 
 ax = subplot(2,3,4);
 
@@ -179,16 +177,14 @@ else
     load Trunk
 end
 
-classifiers = fieldnames(Lhat);
+classifiers = fieldnames(TestError);
 
 ax = subplot(2,3,5);
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
     if ~strcmp(cl,'rerfdn')
-        [minLhat.(cl),minLhatIdx.(cl)] = min(Lhat.(cl),[],2);
-        LhatDiff = minLhat.(cl)-minLhat.(classifiers{1});
-        hLhat(i) = errorbar(dims,mean(LhatDiff,3),std(LhatDiff,0,3)/sqrt(size(LhatDiff,3)),'LineWidth',LineWidth,'Color',Colors.(cl));
+        hTestError(i) = errorbar(dims,mean(TestError.(cl)),std(TestError.(cl))/sqrt(size(TestError.(cl),1)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
 end
@@ -203,7 +199,7 @@ ax.Units = 'inches';
 ax.Position = [axLeft(5) axBottom(5) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [1 1100];
-% ax.YLim = [0 .15];
+ax.YLim = [0 .15];
 ax.XScale = 'log';
 ax.XTick = logspace(0,3,4);
 ax.XTickLabel = {'1';'10';'100';'1000'};
@@ -235,7 +231,7 @@ ax.XLim = [1 1100];
 ax.XScale = 'log';
 ax.XTick = logspace(0,3,4);
 ax.XTickLabel = {'1';'10';'100';'1000'};
-l = legend('RF','RerF','RR-RF','RerF(r)','F-RC','RerF(u)');
+l = legend('RF','RerF','RerF(r)','RR-RF','F-RC');
 l.Location = 'southwest';
 l.Box = 'off';
 l.FontSize = 12;
