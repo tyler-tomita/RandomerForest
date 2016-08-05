@@ -269,36 +269,47 @@ classdef rpclassificationforest
             end
         end     %function oobpredict
         
-        function scores = rerf_oob_classprob(forest,X,treenum)
+        function scores = rerf_oob_classprob(forest,Xtrain,treenum)
             if nargin == 2
                 treenum = 'last';
             end
             
             %Convert to double if not already
-            if ~isa(X,'double')
-                X = double(X);
+            if ~isa(Xtrain,'double')
+                Xtrain = double(Xtrain);
             end
             
             if forest.Robust
-                X = tiedrank(X);
+                Xtrain = tiedrank(Xtrain);
             end
-            nrows = size(X,1);
+            nrows = size(Xtrain,1);
             
             Labels = forest.classname;
             nclasses = length(Labels);
             scoremat = NaN(nrows,nclasses,forest.nTrees);
             OOBIndices = forest.oobidx;
             trees = forest.Tree;
+            rotate = ~isempty(forest.rotmat);
             if ~forest.RandomForest
                 parfor i = 1:forest.nTrees
+                    if rotate
+                        Xtree = Xtrain(OOBIndices{i},:)*forest.rotmat(:,:,i);
+                    else
+                        Xtree = Xtrain(OOBIndices{i},:);
+                    end
                     score_i = NaN(nrows,nclasses);
-                    score_i(OOBIndices{i},:) = rpclassprob(trees{i},X(OOBIndices{i},:))
+                    score_i(OOBIndices{i},:) = rpclassprob(trees{i},Xtree)
                     scoremat(:,:,i) = score_i;
                 end
             else
                 parfor i = 1:forest.nTrees
+                    if rotate
+                        Xtree = Xtrain(OOBIndices{i},:)*forest.rotmat(:,:,i);
+                    else
+                        Xtree = Xtrain(OOBIndices{i},:);
+                    end
                     score_i = NaN(nrows,nclasses,1);
-                    score_i(OOBIndices{i},:,1) = rfclassprob(trees{i},X(OOBIndices{i},:));
+                    score_i(OOBIndices{i},:,1) = rfclassprob(trees{i},Xtree);
                     scoremat(:,:,i) = score_i;
                 end
             end
