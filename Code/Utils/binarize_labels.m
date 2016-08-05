@@ -7,8 +7,14 @@ n_classes = length(Labels);
 
 Yb = zeros(length(Y),n_classes);
 
-for i = 1:n_classes
-    Yb(Y==Labels(i),i) = 1;
+if iscell(Y) && iscell(Labels)
+    for i = 1:n_classes
+        Yb(strcmp(Y,Labels{i}),i) = 1;
+    end
+else
+    for i = 1:n_classes
+        Yb(Y==Labels(i),i) = 1;
+    end
 end
 
 end
