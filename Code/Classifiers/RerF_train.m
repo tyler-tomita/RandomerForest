@@ -1,4 +1,4 @@
-function [Forest,Params] = RerF_train(Xtrain,Ytrain,Params)
+function [Forest,Params,TrainTime] = RerF_train(Xtrain,Ytrain,Params)
 % Params is a structure specifying algorithm parameters with fields:
 %   nTrees: number of trees
 %   RandomForest: logical true indicates do regular random forest
@@ -78,9 +78,12 @@ if ~isfield(Params,'NWorkers')
     Params.NWorkers = 2;
 end
 
+TrainTime = NaN(1,length(Params.d));
+
 %train classifier for all values of Params.d
 
 for i = 1:length(Params.d)
+    tic;
     Forest{i} = rpclassificationforest(Xtrain,Ytrain,...
         'nTrees',Params.nTrees,...
         'RandomForest',Params.RandomForest,...
@@ -93,4 +96,5 @@ for i = 1:length(Params.d)
         'Robust',Params.Robust,...
         'Stratified',Params.Stratified,...
         'NWorkers',Params.NWorkers);
+    TrainTime(i) = toc;
 end
