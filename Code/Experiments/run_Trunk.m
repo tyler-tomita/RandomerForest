@@ -119,9 +119,9 @@ for i = 1:length(dims)
 
             clear Forest
 
-            fprintf('%s complete\n',Classifiers{c})
             save([rerfPath 'RandomerForest/Results/Trunk.mat'],'dims',...
                 'OOBError','OOBAUC','TestError','TrainTime')
         end
+        fprintf('%s complete\n',Classifiers{c})
     end   
 end
