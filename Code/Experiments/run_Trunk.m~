@@ -28,7 +28,7 @@ for i = 1:length(dims)
     for c = 1:length(Classifiers)
         Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
-        Params{i}.(Classifiers{c}).NWorkers = 16;
+        Params{i}.(Classifiers{c}).NWorkers = 24;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                 'rerfr') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'rr_rfr')
@@ -114,7 +114,7 @@ for i = 1:length(dims)
                     'last',Xtrain{i}(:,:,trial));
             end
             Predictions = predict_class(Scores,Forest{BestIdx}.classname);
-            TestError{i}.(Classifiers{c})(trial) = misclassification_rate(Predictions,...
+            TestError{i}.(Classifiers{c}) = misclassification_rate(Predictions,...
                 Ytest{i},false);
 
             clear Forest
