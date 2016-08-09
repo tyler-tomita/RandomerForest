@@ -12,7 +12,7 @@ load Random_matrix_adjustment_factor
 
 Classifiers = {'rf' 'rfr' 'rerf' 'rerfr' 'rerfd' 'frc' 'frcr' 'rr_rf' 'rr_rfr'}; 
 
-for i = 1:length(dims)
+for i = 3:length(dims)
     p = dims(i);
     fprintf('p = %d\n',p)
       
