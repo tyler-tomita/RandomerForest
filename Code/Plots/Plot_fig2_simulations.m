@@ -88,7 +88,7 @@ ax = subplot(2,3,2);
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
-    if ~strcmp(cl,'rerfdn')
+    if ~strcmp(cl,'rerfd')
         hTestError(i) = errorbar(dims,mean(TestError.(cl)),std(TestError.(cl))/sqrt(size(TestError.(cl),1)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
@@ -114,7 +114,7 @@ ax = subplot(2,3,3);
 
 for i = 1:length(classifiers)
     cl = classifiers{i};
-    if ~strcmp(cl,'rerfdn')
+    if ~strcmp(cl,'rerfd')
         trainTime.(cl) = nansum(trainTime.(cl),2);
         hTrainTime(i) = errorbar(dims,mean(trainTime.(cl),3),std(trainTime.(cl),0,3)/sqrt(size(trainTime.(cl),3)),'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
@@ -181,10 +181,27 @@ classifiers = fieldnames(TestError);
 
 ax = subplot(2,3,5);
 
-for i = 1:length(classifiers)
-    cl = classifiers{i};
-    if ~strcmp(cl,'rerfdn')
-        hTestError(i) = errorbar(dims,mean(TestError.(cl)),std(TestError.(cl))/sqrt(size(TestError.(cl),1)),'LineWidth',LineWidth,'Color',Colors.(cl));
+for i = 1:length(TestError)
+    Classifiers = fieldnames(TestError{i});
+    for j = 1:length(Classifiers)
+        for trial = 1:ntrials
+            BestIdx = hp_optimize(OOBError{i}.(Classifiers{j})(trial,:),...
+                OOBAUC{i}.(Classifiers{j})(trial,:));
+            if length(BestIdx) > 1
+                BestIdx = BestIdx(end);
+            end
+            PlotTime.(Classifiers{j})(trial,i) = ...
+                TrainTime{i}.(Classifiers{j})(trial,BestIdx);
+            PlotError.(Classifiers{j})(trial,i) = ...
+                TestError{i}.(Classifiers{j})(trial);
+        end
+    end
+end
+
+for i = 1:length(Classifiers)
+    cl = Classifiers{i};
+    if ~strcmp(cl,'rerfd')
+        hTestError(i) = errorbar(dims,mean(PlotError.(cl)),std(PlotError.(cl))/sqrt(size(PlotError.(cl),1)),'LineWidth',LineWidth);%,'Color',Colors.(cl));
         hold on
     end
 end
@@ -206,14 +223,10 @@ ax.XTickLabel = {'1';'10';'100';'1000'};
 
 ax = subplot(2,3,6);
 
-for i = 1:length(classifiers)
-    cl = classifiers{i};
-    if ~strcmp(cl,'rerfdn')
-        trainTime.(cl) = nansum(trainTime.(cl),2);
-        if strcmp(cl,'rf_rot')
-            trainTime.(cl)(end,:,:) = NaN;
-        end
-        hTrainTime(i) = errorbar(dims,mean(trainTime.(cl),3),std(trainTime.(cl),0,3)/sqrt(size(trainTime.(cl),3)),'LineWidth',LineWidth,'Color',Colors.(cl));
+for i = 1:length(Classifiers)
+    cl = Classifiers{i};
+    if ~strcmp(cl,'rerfd')
+        hTrainTime(i) = errorbar(dims,mean(PlotTime.(cl)),std(PlotTime.(cl))/sqrt(size(PlotTime.(cl),1)),'LineWidth',LineWidth);%,'Color',Colors.(cl));
         hold on
     end
 end
