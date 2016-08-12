@@ -10,7 +10,7 @@ rng(1);
 load Trunk_data
 load Random_matrix_adjustment_factor
 
-for i = 1:length(dims)
+for i = length(dims):length(dims)
     p = dims(i);
     fprintf('p = %d\n',p)
       
@@ -38,6 +38,8 @@ for i = 1:length(dims)
     TrainTime{i}.rerfu = NaN(ntrials,length(Params{i}.rerfu.d));
 
     for trial = 1:ntrials
+        
+        fprintf('trial %d\n',trial)
 
         % train classifier
         poolobj = gcp('nocreate');
@@ -46,7 +48,6 @@ for i = 1:length(dims)
                 'IdleTimeout',360);
         end
 
-        tic;
         [Forest,~,TrainTime{i}.rerfu(trial,:)] = ...
             RerF_train(Xtrain{i}(:,:,trial),Ytrain{i}(:,trial),...
             Params{i}.rerfu);
@@ -86,7 +87,7 @@ for i = 1:length(dims)
 
         clear Forest
 
-        save([rerfPath 'RandomerForest/Results/Trunk_rerfu.mat'],'dims',...
+        save([rerfPath 'RandomerForest/Results/Trunk_rerfu_p1000.mat'],'dims',...
             'OOBError','OOBAUC','TestError','TrainTime')
     end
 end

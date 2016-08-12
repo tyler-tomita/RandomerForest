@@ -10,10 +10,10 @@ rng(1);
 C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
 Colors.rf = C(1,:);
 Colors.rerf = C(2,:);
-Colors.rf_rot = C(3,:);
+Colors.rr_rf = C(3,:);
 Colors.rerfr = C(4,:);
 Colors.frc = C(5,:);
-% Colors.rerfdn = C(6,:);
+% Colors.rerfd = C(6,:);
 Colors.rerfu = C(6,:);
 LineWidth = 2;
 MarkerSize = 12;
@@ -82,14 +82,34 @@ else
     load Sparse_parity
 end
 
-classifiers = fieldnames(TestError);
-
 ax = subplot(2,3,2);
 
-for i = 1:length(classifiers)
-    cl = classifiers{i};
+for i = 1:length(TestError)
+    Classifiers = fieldnames(TestError{i});
+    for j = 1:length(Classifiers)
+        ntrials = length(TestError{i}.(Classifiers{j}));
+        for trial = 1:ntrials
+            BestIdx = hp_optimize(OOBError{i}.(Classifiers{j})(trial,:),...
+                OOBAUC{i}.(Classifiers{j})(trial,:));
+            if length(BestIdx) > 1
+                BestIdx = BestIdx(end);
+            end
+            PlotTime.(Classifiers{j})(trial,i) = ...
+                TrainTime{i}.(Classifiers{j})(trial,BestIdx);
+            PlotError.(Classifiers{j})(trial,i) = ...
+                TestError{i}.(Classifiers{j})(trial);
+        end
+    end
+end
+
+Classifiers = {'rerf' 'rerfu' 'rf' 'frc' 'rr_rf'};
+
+for i = 1:length(Classifiers)
+    cl = Classifiers{i};
     if ~strcmp(cl,'rerfd')
-        hTestError(i) = errorbar(dims,mean(TestError.(cl)),std(TestError.(cl))/sqrt(size(TestError.(cl),1)),'LineWidth',LineWidth,'Color',Colors.(cl));
+        hTestError(i) = errorbar(dims,mean(PlotError.(cl)),...
+            std(PlotError.(cl))/sqrt(size(PlotError.(cl),1)),...
+            'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
 end
@@ -112,11 +132,12 @@ ax.YLim = [0 .5];
 
 ax = subplot(2,3,3);
 
-for i = 1:length(classifiers)
-    cl = classifiers{i};
+for i = 1:length(Classifiers)
+    cl = Classifiers{i};
     if ~strcmp(cl,'rerfd')
-        trainTime.(cl) = nansum(trainTime.(cl),2);
-        hTrainTime(i) = errorbar(dims,mean(trainTime.(cl),3),std(trainTime.(cl),0,3)/sqrt(size(trainTime.(cl),3)),'LineWidth',LineWidth,'Color',Colors.(cl));
+        hTrainTime(i) = errorbar(dims,mean(PlotTime.(cl)),...
+            std(PlotTime.(cl))/sqrt(size(PlotTime.(cl),1)),...
+            'LineWidth',LineWidth,'Color',Colors.(cl));
         hold on
     end
 end
@@ -177,13 +198,14 @@ else
     load Trunk
 end
 
-classifiers = fieldnames(TestError);
-
 ax = subplot(2,3,5);
+
+clear PlotError PlotTime
 
 for i = 1:length(TestError)
     Classifiers = fieldnames(TestError{i});
     for j = 1:length(Classifiers)
+        ntrials = length(TestError{i}.(Classifiers{j}));
         for trial = 1:ntrials
             BestIdx = hp_optimize(OOBError{i}.(Classifiers{j})(trial,:),...
                 OOBAUC{i}.(Classifiers{j})(trial,:));
@@ -198,10 +220,20 @@ for i = 1:length(TestError)
     end
 end
 
+Classifiers = {'rerf' 'rerfu' 'rf' 'frc' 'rr_rf'};
+
 for i = 1:length(Classifiers)
     cl = Classifiers{i};
     if ~strcmp(cl,'rerfd')
-        hTestError(i) = errorbar(dims,mean(PlotError.(cl)),std(PlotError.(cl))/sqrt(size(PlotError.(cl),1)),'LineWidth',LineWidth);%,'Color',Colors.(cl));
+        if strcmp(cl,'rr_rf') || strcmp(cl,'rerfu')
+            hTestError(i) = errorbar(dims(1:end-1),mean(PlotError.(cl)),...
+                std(PlotError.(cl))/sqrt(size(PlotError.(cl),1)),...
+                'LineWidth',LineWidth,'Color',Colors.(cl));
+        else
+            hTestError(i) = errorbar(dims,mean(PlotError.(cl)),...
+                std(PlotError.(cl))/sqrt(size(PlotError.(cl),1)),...
+                'LineWidth',LineWidth,'Color',Colors.(cl));
+        end
         hold on
     end
 end
@@ -215,8 +247,8 @@ ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft(5) axBottom(5) axWidth axHeight];
 ax.Box = 'off';
-ax.XLim = [1 1100];
-ax.YLim = [0 .15];
+ax.XLim = [9 1100];
+ax.YLim = [0.02 0.1];
 ax.XScale = 'log';
 ax.XTick = logspace(0,3,4);
 ax.XTickLabel = {'1';'10';'100';'1000'};
@@ -226,7 +258,15 @@ ax = subplot(2,3,6);
 for i = 1:length(Classifiers)
     cl = Classifiers{i};
     if ~strcmp(cl,'rerfd')
-        hTrainTime(i) = errorbar(dims,mean(PlotTime.(cl)),std(PlotTime.(cl))/sqrt(size(PlotTime.(cl),1)),'LineWidth',LineWidth);%,'Color',Colors.(cl));
+        if strcmp(cl,'rr_rf') || strcmp(cl,'rerfu')
+            hTrainTime(i) = errorbar(dims(1:end-1),mean(PlotTime.(cl)),...
+                std(PlotTime.(cl))/sqrt(size(PlotTime.(cl),1)),...
+                'LineWidth',LineWidth,'Color',Colors.(cl));
+        else
+            hTrainTime(i) = errorbar(dims,mean(PlotTime.(cl)),...
+                std(PlotTime.(cl))/sqrt(size(PlotTime.(cl),1)),...
+                'LineWidth',LineWidth,'Color',Colors.(cl));
+        end
         hold on
     end
 end
@@ -240,11 +280,11 @@ ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft(6) axBottom(6) axWidth axHeight];
 ax.Box = 'off';
-ax.XLim = [1 1100];
+ax.XLim = [9 1100];
 ax.XScale = 'log';
 ax.XTick = logspace(0,3,4);
 ax.XTickLabel = {'1';'10';'100';'1000'};
-l = legend('RF','RerF','RerF(r)','RR-RF','F-RC');
+l = legend('RerF','RerF(u)','RF','F-RC','RR-RF');
 l.Location = 'southwest';
 l.Box = 'off';
 l.FontSize = 12;
