@@ -1058,7 +1058,6 @@ function M = srpmat(d,k,method,varargin)
         M(idx) = rand(1,nmix*k)*2 - 1;
     elseif strcmp(method,'uniform-nnzs')
         nmix = varargin{2};
-        M = sparse(d,k);
         min_nmix = min(nmix);
         max_nmix = max(nmix);
         M = sparse(d,k);

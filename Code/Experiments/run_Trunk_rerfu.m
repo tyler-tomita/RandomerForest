@@ -27,7 +27,11 @@ for i = 1:length(dims)
     Params{i}.rerfu.NWorkers = 16;
     Params{i}.rerfu.d = mtrys;
     Params{i}.rerfu.Method = 'uniform-nnzs';
-    Params{i}.rerfu.nmix = 1:5;
+    if p <5
+        Params{i}.rerfu.nmix = 1:p;
+    else
+        Params{i}.rerfu.nmix = 1:5;
+    end
 
     OOBError{i}.rerfu = NaN(ntrials,length(Params{i}.rerfu.d));
     OOBAUC{i}.rerfu = NaN(ntrials,length(Params{i}.rerfu.d));
