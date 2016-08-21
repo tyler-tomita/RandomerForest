@@ -17,6 +17,7 @@ Transformations = fieldnames(Xtrain);
 Transformations(strcmp(Transformations,'Untransformed')) = [];
 
 dims = [2 5 10 15 25 50 100];
+ntrials = 10;
 
 for i = 1:length(dims)
     p = dims(i);
