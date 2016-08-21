@@ -16,6 +16,8 @@ Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
 Transformations = fieldnames(Xtrain);
 Transformations(strcmp(Transformations,'Untransformed')) = [];
 
+dims = [2 5 10 15 25 50 100];
+
 for i = 1:length(dims)
     p = dims(i);
     fprintf('p = %d\n',p)
