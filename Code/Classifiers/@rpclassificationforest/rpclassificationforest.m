@@ -6,7 +6,7 @@ classdef rpclassificationforest
         nTrees = []; %number of trees in the ensemble
         classname;
         RandomForest;
-        Robust;
+        Rescale;
 %         NumVars = [];
         priors = [];
         rotmat = [];
@@ -48,7 +48,7 @@ classdef rpclassificationforest
                 %RandomForest: logical true or false (default). Setting to
                 %true performs traditional random forest
                 %
-                %Robust: logical true or false (default). Setting to true
+                %Rescale: logical true or false (default). Setting to true
                 %passes the data to marginal ranks prior to any computing
                 %
                 %NWorkers: number of workers for parallel computing
@@ -88,17 +88,17 @@ classdef rpclassificationforest
                         'qetoler'   'names'   'weights' 'surrogate'...
                         'skipchecks'    'stream'    'fboot'...
                         'SampleWithReplacement' 's' 'mdiff' 'sparsemethod'...
-                        'RandomForest'   'Robust'   'NWorkers'  'Stratified'...
+                        'RandomForest'   'Rescale'   'NWorkers'  'Stratified'...
                         'nmix'  'rotate'    'p' 'dprime'    'nTrees'};
-            defaults = {[]  []  'gdi'   []  []  1   ceil(size(X,2)^(2/3))...
+            defaults = {[]  []  'gdi'   []  2  1   ceil(size(X,2)^(2/3))...
                         'off'    []  'off'    'classification'  1e-6    {}...
                         []  'off'   false  []  1    true   1/size(X,2)    'off'   'sparse'...
-                        false false 1   true   2   false  []    []  500};
+                        false 'off' 1   true   2   false  []    []  500};
             [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
                 nvartosample,Merge,categ,Prune,Method,qetoler,names,W,...
                 surrogate,skipchecks,Stream,fboot,...
                 SampleWithReplacement,s,mdiff,sparsemethod,RandomForest,...
-                Robust,NWorkers,Stratified,nmix,rotate,p,dprime,nTrees,~,extra] = ...
+                Rescale,NWorkers,Stratified,nmix,rotate,p,dprime,nTrees,~,extra] = ...
                 internal.stats.parseArgs(okargs,defaults,varargin{:});
             
             %Convert to double if not already
@@ -106,12 +106,11 @@ classdef rpclassificationforest
                 X = double(X);
             end
             
-            if Robust
-                %X = passtorank(X);
-                X = tiedrank(X);
-                forest.Robust = true;
+            if ~strcmp(Rescale,'off')
+                X = rescale(X,[],Rescale);
+                forest.Rescale = Rescale;
             else
-                forest.Robust = false;
+                forest.Rescale = 'off';
             end
             
             [n,d] = size(X);
@@ -232,9 +231,8 @@ classdef rpclassificationforest
                 X = double(X);
             end
             
-            if forest.Robust
-                %X = passtorank(X);
-                X = tiedrank(X);
+            if ~strcmp(forest.Rescale,'off')
+                X = rescale(X,[],forest.Rescale);
             end
             nrows = size(X,1);
             predcell = cell(nrows,forest.nTrees);
@@ -279,8 +277,8 @@ classdef rpclassificationforest
                 Xtrain = double(Xtrain);
             end
             
-            if forest.Robust
-                Xtrain = tiedrank(Xtrain);
+            if ~strcmp(forest.Rescale,'off')
+                Xtrain = rescale(Xtrain,[],forest.Rescale);
             end
             nrows = size(Xtrain,1);
             
@@ -342,11 +340,11 @@ classdef rpclassificationforest
                 end
             end
             
-            if forest.Robust
+            if ~strcmp(forest.Rescale,'off')
                 if nargin < 4
                     error('Training data is required as third input argument for predicting')
                 end
-                Xtest = interpolate_rank(Xtrain,Xtest);
+                Xtest = rescale(Xtrain,Xtest,forest.Rescale);
             end
             
             %Convert to double if not already
@@ -407,11 +405,11 @@ classdef rpclassificationforest
                 end
             end
             
-            if forest.Robust
+            if ~strcmp(forest.Rescale,'off')
                 if nargin < 3
                     error('Training data is required as third input argument for predicting')
                 end
-                X = interpolate_rank(Xtrain,X);
+                X = rescale(Xtrain,X,forest.Rescale);
             end
             
             n = size(X,1);

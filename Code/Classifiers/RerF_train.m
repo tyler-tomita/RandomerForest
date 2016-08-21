@@ -66,8 +66,8 @@ if ~isfield(Params,'nmix')
     Params.nmix = 2;
 end
 
-if ~isfield(Params,'Robust')
-    Params.Robust = false;
+if ~isfield(Params,'Rescale')
+    Params.Rescale = 'off';
 end
 
 if ~isfield(Params,'Stratified')
@@ -93,7 +93,7 @@ for i = 1:length(Params.d)
         'nvartosample',Params.d(i),...
         'dprime',Params.dprime(i),...
         'nmix',Params.nmix,...
-        'Robust',Params.Robust,...
+        'Rescale',Params.Rescale,...
         'Stratified',Params.Stratified,...
         'NWorkers',Params.NWorkers);
     TrainTime(i) = toc;

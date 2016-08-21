@@ -7,64 +7,55 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-n = 1000;
-dims = [2 5 10 15 25 50 100];
-ndims = length(dims);
-ntrials = 10;
-Class = [0;1];
-X = cell(1,ndims);
-X_rot = cell(1,ndims);
-X_scale = cell(1,ndims);
-X_affine = cell(1,ndims);
-X_out = cell(1,ndims);
-Y = cell(1,ndims);
-Y_out = cell(1,ndims);
-scaleFactor = [-5 0 5];
+load Sparse_parity_data
 
-for i = 1:ndims
-    d = dims(i);
-    dgood = min(3,d);
-    x = zeros(n,d,ntrials);
-    x_rot = zeros(n,d,ntrials);
-    x_scale = zeros(n,d,ntrials);
-    x_affine = zeros(n,d,ntrials);
-    y = cell(n,ntrials);
-    Sigma = 1/32*ones(1,d);
+for i = 1:length(Xtrain)
+    S(i).Untransformed = Xtrain{i};
+    SS(i).Untransformed = Xtest{i};
+    T(i).Untransformed = Ytrain{i};
+    TT(i).Untransformed = Ytest{i};
+end
+Xtrain = S;
+Xtest = SS;
+Ytrain = T;
+Ytest = TT;
+
+n_out = round(0.2*ntrain);
+
+for i = 1:length(Xtrain)
+    dgood = min(3,dims(i));
+    Mu = [-1./sqrt(1:dims(i));1./sqrt(1:dims(i))];
+    Sigma = 1/32*ones(1,dims(i));
+    Sigma_outlier = 4*Sigma;
     for trial = 1:ntrials
-        Mu = sparse(n,d);
-        for jj = 1:n
-            Mu(jj,:) = binornd(1,0.5,1,d);
-            x(jj,:,trial) = mvnrnd(Mu(jj,:),Sigma);
-        end
-        nones = sum(Mu(:,1:dgood),2);
-        y(:,trial) = cellstr(num2str(mod(nones,2)));
-        R = random_rotation(d);
-        S = 10.^random_scaling(n,d,-5,5);
-        S(:,1:dgood) = repmat(10.^scaleFactor(1:dgood),n,1);
-        Sigma_outlier = 4*Sigma;
-        x_rot(:,:,trial) = x(:,:,trial)*R;
-        x_scale(:,:,trial) = x(:,:,trial).*S;
-        x_affine(:,:,trial) = (x(:,:,trial)*R).*S;
-        n_out = round(0.2*n);
-        xx_out = zeros(n_out,d);
-        Mu_out = zeros(n_out,d);
+        R = random_rotation(dims(i));
+        S = 10.^random_scaling(ntrain+ntest,dims(i),-5,5);
+        Xtrain(i).Rotated(:,:,trial) = Xtrain(i).Untransformed(:,:,trial)*R;
+        Xtest(i).Rotated(:,:,trial) = Xtest(i).Untransformed*R;
+        Ytrain(i).Rotated(:,trial) = Ytrain(i).Untransformed(:,trial);
+        Ytest(i).Rotated(:,trial) = Ytest(i).Untransformed;
+        Xtrain(i).Scaled(:,:,trial) = Xtrain(i).Untransformed(:,:,trial).*S(1:ntrain,:);
+        Xtest(i).Scaled(:,:,trial) = Xtest(i).Untransformed.*S(ntrain+1:end,:);
+        Ytrain(i).Scaled(:,trial) = Ytrain(i).Untransformed(:,trial);
+        Ytest(i).Scaled(:,trial) = Ytest(i).Untransformed;
+        Xtrain(i).Affine(:,:,trial) = (Xtrain(i).Untransformed(:,:,trial)*R).*S(1:ntrain,:);
+        Xtest(i).Affine(:,:,trial) = (Xtest(i).Untransformed*R).*S(ntrain+1:end,:);
+        Ytrain(i).Affine(:,trial) = Ytrain(i).Untransformed(:,trial);
+        Ytest(i).Affine(:,trial) = Ytest(i).Untransformed;
+        x_out = zeros(n_out,dims(i));
+        Mu_out = zeros(n_out,dims(i));
         for jj = 1:n_out
-            Mu_out(jj,:) = binornd(1,0.5,1,d);
-            xx_out(jj,:) = mvnrnd(Mu_out(jj,:),Sigma_outlier);
+            Mu_out(jj,:) = binornd(1,0.5,1,dims(i));
+            x_out(jj,:) = mvnrnd(Mu_out(jj,:),Sigma_outlier);
         end
+        Xtrain(i).Outlier(:,:,trial) = [Xtrain(i).Untransformed(:,:,trial);x_out];
+        Xtest(i).Outlier(:,:,trial) = Xtest(i).Untransformed;
         nones_out = sum(Mu_out(:,1:dgood),2);
-        yy_out = cellstr(num2str(mod(nones_out,2)));
-        x_out(:,:,trial) = cat(1,x(:,:,trial),xx_out);
-        y_out(:,trial) = cat(1,y(:,trial),yy_out);
+        y_out = cellstr(num2str(mod(nones_out,2)));
+        Ytrain(i).Outlier(:,trial) = [Ytrain(i).Untransformed(:,trial);y_out];
+        Ytest(i).Outlier(:,trial) = Ytest(i).Untransformed;
     end
-    X{i} = x;
-    X_rot{i} = x_rot;
-    X_scale{i} = x_scale;
-    X_affine{i} = x_affine;
-    X_out{i} = x_out;
-    Y{i} = y;
-    Y_out{i} = y_out;
-    clear x_out y_out
 end
 
-save([rerfPath 'RandomerForest/Results/Sparse_parity_transformations_data.mat'],'X','X_rot','X_scale','X_affine','X_out','Y','Y_out','n','dims','ntrials')
+save('~/Documents/MATLAB/Data/Sparse_parity_transformations_data.mat','Xtrain',...
+    'Ytrain','Xtest','Ytest','-v7.3')
