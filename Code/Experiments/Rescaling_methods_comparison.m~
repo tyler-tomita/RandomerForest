@@ -9,8 +9,7 @@ LineWidth = 2;
 FontSize = 14;
 MarkerSize = 12;
 
-figWidth = 11;
-figHeight = 8;
+figWidth = 
 
 load Sparse_parity_data
 
@@ -89,19 +88,14 @@ xp(:,2) = xr*u';
 xp(:,3) = xn*u';
 xp(:,4) = xz*u';
 
-fig = figure;
-fig.Units = 'inches';
-fig.PaperUnits = 'inches';
-fig.Position = [0 0 figWidth figHeight];
-fig.PaperPosition = [0 0 figWidth figHeight];
-fig.PaperSize = [figWidth figHeight];
+figure;
 
 for i = 1:size(xp,2)
     [SplitValue(i),DeltaImpurity(i),Splits] = find_split_value(xp(:,i),y);
     ax(i) = subplot(2,2,i);
     plot(xp(y==0,i),zeros(size(xp(y==0,i))),'b.',xp(y==1,i),...
         ones(size(xp(y==1,i))),'r.',SplitValue(i)*ones(1,2),...
-        [-1 2],'k--','MarkerSize',MarkerSize,'LineWidth',LineWidth)
+        [-1 2],'k--','MarkerSize',MarkerSize)
     xlabel('Projection onto [1 1]')
     ylabel('Class Label (0 or 1)')
     title(sprintf('%s (Delta Impurity = %0.4f)',Titles{i},DeltaImpurity(i)))
