@@ -1,4 +1,4 @@
-function [SplitValue,DeltaImpurity] = find_split_value(X,Y)
+function [SplitValue,DeltaImpurity,Splits] = find_split_value(X,Y)
 
     n = length(Y);
     [Xsorted,Idx] = sort(X);
@@ -6,7 +6,7 @@ function [SplitValue,DeltaImpurity] = find_split_value(X,Y)
     isdiff = logical(diff(Ysorted));
     LowerIdx = [isdiff;false];
     UpperIdx = [false;isdiff];
-    Splits = mean([Xsorted(LowerIdx),Xsorted(UpperIdx)]);
+    Splits = mean([Xsorted(LowerIdx),Xsorted(UpperIdx)],2);
     ParentImpurity = gini_impurity(Y);
     
     DeltaImpurity = zeros(length(Splits),1);
