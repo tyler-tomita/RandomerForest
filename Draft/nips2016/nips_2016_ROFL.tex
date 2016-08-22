@@ -1,0 +1,199 @@
+\documentclass{article}
+\input{preamble.tex}
+
+
+\title{Robust Oblique Forests}
+
+% The \author macro works with any number of authors. There are two
+% commands used to separate the names and addresses of multiple
+% authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to
+% break the lines. Using \AND forces a line break at that point. So,
+% if LaTeX puts 3 of 4 authors names on the first line, and the last
+% on the second line, try using \AND instead of \And before the third
+% author name.
+
+\author{
+  Tyler M.~Tomita \\
+  Department of Biomedical Engineering\\
+  Johns Hopkins University \\
+  Baltimore, MD 21218 \\
+  \texttt{ttomita@jhu.edu} \\
+  %% examples of more authors
+  \And
+  Mauro~Maggioni \\
+  Departments of Mathematics \\
+  Duke University \\
+  Durham, NC 27708 \\
+  \texttt{mauro@math.duke.edu} \\
+  \And
+  Joshua T.~Vogelstein \\
+  Johns Hopkins University \\
+  Department of Biomedical Engineering \\
+  Johns Hopkins University \\
+  Baltimore, MD 21218\\
+  \texttt{jovo@jhu.edu} \\
+}
+
+\begin{document}
+% \nipsfinalcopy is no longer used
+
+\maketitle
+
+\begin{abstract}
+Random Forest (RF) remains one of the most widely used general purpose classification methods, due to its tendency to perform well in a variety of settings. One of its main limitations, however, is that it is restricted to only axis-aligned recursive partitions of the feature space. Consequently, RF is particularly sensitive to the orientation of the data. Several studies have proposed ``oblique'' decision forest methods to address this limitation. However, the ways in which these methods address this issue compromise many of the nice properties that RF possesses. In particular, unlike RF, these methods either don't deal with incommensurate predictors, aren't well-adapted to problems in which the number of irrelevant features are overwhelming, have a time and space complexity significantly greater than RF, or require additional hyperparameters to be tuned, rendering training of the classifier more difficult. In this work, we establish a generalized forest building scheme, random projection forests. Random forests and many other currently existing decision forest algorithms can be viewed as special cases of this scheme. With this scheme in mind, we propose some special cases which we call randomer forests (RerFs). We demonstrate that RerF emprically outperforms RF and other oblique methods on simulations and on benchmark data, and that one variant of RerF is especially robust to affine transformations of the data. We also show that RerF scales comparably to RF in terms of time and space complexity.  We conclude that RerF is a competitive alternative to RF and existing oblique forest methods. Open source code will be available.
+\end{abstract}
+
+\section{Introduction}
+% \paragraph{Opportunity} 
+Data science is becoming increasingly important as our ability to collect and process data continues to increase. Supervised learning---the act of using predictors to make a prediction about some target data---is of special interest to many applications, ranging from science to government to industry. Classification, a special case of supervised learning, in which the target data is categorical, is one of the most fundamental learning problems, and has been the subject of much study. A simple Pubmed search for the term ``classifier'' reveals nearly 10,000 publications. One of the most popular and best performing classifiers is random forests (RFs) \cite{Breiman2001}. Two recent benchmark papers assess the performance of many different classification algorithms on many different datasets \cite{Delgado2014,Caruana2008}, and both concluded the same thing: RFs are the best classifier.
+
+
+% \paragraph{Challenge}
+RF typically refers to Breiman's Forest-RI, which uses axis-parallel \cite{Heath1993}, or orthogonal trees \cite{Menze2011}. That is, the feature space is recursively split along directions parallel to the axes of the feature space. Thus, in cases in which the classes seem inseparable along any single dimension, RF may be suboptimal. To address this, Breiman also proposed and characterized Forest-RC (F-RC), which used linear combinations of coordinates rather than individual coordinates, to split along. Others have studied several different variants of ``oblique'' decision forests, including efforts to learn good projections \cite{Heath1993,Tan2005}, using principal components analysis to find the directions of maximal variance \cite{Ho1998,Rodriguez2006}, or directly learning good discriminant directions \cite{Menze2011}. Another recently proposed method, called random rotation RF (RR-RF), uniformly randomly rotates the data for every decision tree in the ensemble prior to inducing the tree \cite{Blaser2016}. While all of these recent approaches deal with rotational invariance, they fail to address several important issues:
+
+\begin{enumerate}
+\item By linearly combining variables when generating candidate oblique splits, unit and scale invariance is lost.
+\item In real world data, the proportion of features that are irrelevant is often large, especially for high dimensional data, giving rise to optimal decision boundaries that are sparse. In such cases, we say that the signal is \emph{compressive}. To our knowledge, all of the proposed oblique decision forests, with the exception of Forest-RC if tuned appropriately, do not impose a constraint on the sparsity of recursive partitions of the feature space. Therefore, such methods may be suboptimal in cases in which the signal is compressive.
+\item As our ability to collect and process data continues to increase, we are encountering increasingly massive datasets. Therefore, time- and space-efficient methods are becoming more and more important. With the exception of F-RC, all oblique methods require expensive computation and/or storage.
+\end{enumerate}
+
+There is therefore a gap that calls for the construction of a scalable oblique decision forest classifier that maintains scale invariance and performs well in the presence of an overwhelming number of irrelevant features. 
+
+% \paragraph{Action}
+To address this, we first state a generalized forest building scheme, random projection forests, which includes all of the above algorithms as special cases. This enables us to formally state our objective, and provides a lens that enables us to propose a few novel special cases, which we refer to as ``{\em{Randomer Forests}}'' (RerFs), for reasons that will become clear in the sequel. We show empirically that our methods are robust to affine transformations and outperform both RF and RR-RF on both synthetic datasets and a suite of benchmark datasets. Additionally we both theoretically and empirically demonstrate that our methods have the same time and space complexity as random forests. To conclude, we propose RerFs as a competitive alternative to RF and other oblique decision forest methods. Open source code will be made available.
+
+\section{Random Projection Forests}
+Let $\mathbf{X} \in \Real^p$ be a vector of $p$ random predictor variables and $Y \in \mc{Y} = \{\mt{y}_1,\ldots,\mt{y}_C\}$ be a categorical random variable. Suppose $\mathbf{X}$ and $Y$ are jointly distributed according to some unknown distribution and we observe a training set $\mc{D}^n=\{(\mathbf{x}_i,y_i): i \in [n]\}$. A classification forest $\bar{g}(\mathbf{x} | \mc{D}^n)$ is an ensemble of $L$ decision trees, where each tree $g^l(\mathbf{x} | \mc{D}^l)$ is trained on a subset of the data $\mc{D}^l \subset \mc{D}^n$. Random projection forests are a special case of classification forests that subsume all of the strategies mentioned above (see Pseudocode \ref{pseudo}). The key idea of all of them is that at each node of each tree, we have a set of predictor data points, $\underline{X}^{(k)}=\{\mathbf{x}_s\}_{s \in \mc{S}^l_{k}} \in \Real^{p \times S^l_{k}}$ , where  $S^l_{k}=|\mc{S}^l_{k}|$ is the cardinality of the set of predictor data points at the $k^{th}$ node of the $l^{th}$ tree.
+We sample a matrix $A \sim f_A(\mc{D}^l)$, where $A \in \Real^{p \times d}$, possibly in a data dependent fashion, which we use to project the predictor matrix $\underline{X}^{(k)}$ onto a lower dimensional subspace, yielding $\mt{X}^{(k)} = A\T \underline{X}^{(k)} \in \Real^{d \times S^l_{ij}}$, where $d \leq p$ is the dimensionality of the subspace. Breiman's original RF algorithm can be characterized as a special case of random projection forests. In particular, in RF one constructs $A$ such that for each of the $d$ columns, we sample a coordinate (without replacement), and put a 1 in that coordinate, and zeros elsewhere. Breiman's F-RC constructs $A$ by sampling a fixed number of coordinates (without replacement) for each of the $d$ columns, and puts a value uniformly sampled from [-1,1] in each of those coordinates. Blaser's RR-RF defines $A$ by first uniformly randomly rotating the feature space prior to fitting each tree, then subsampling variables at each node as RF does.
+
+\begin{algorithm}
+  \caption{Psuedocode for Random Projection Forests}
+  \label{pseudo}
+\begin{algorithmic}[1]
+ \STATEx {\bfseries Input:} data: $\mc{D}^n = (\mathbf{x}_i,y_i) \in (\Real^p \times \mc{Y})$ for $i \in [n]$, tree rules (stopping criteria, rules for sampling data points per tree, etc.), distributions on $d \times p$ matrices: $A \sim f_A(\mc{D}^l)$, preprocessing rules
+ \STATEx {\bfseries Output:} decision trees, predictions, out of bag errors, etc.
+  \STATEx
+  \STATE Preprocess according to rule
+  \FOR{each tree}
+  \STATE Subsample data to obtain $\underline{X}$ and $\underline{y}$
+  \FOR{each leaf node $k$ in tree}
+  \STATE Let $\mt{X}^{(k)} =  A\T \underline{X}^{(k)} \in \Real^{d \times s}$, where $A \sim f_A(\mc{D}^l)$
+  \STATE Find the ``best'' split coordinate $i^* \in [d]$ in $\mt{X}^{(k)}$ and ``best'' split value $t^*(i^*)$ for this coordinate
+  \STATE Split $\mt{X}^{(k)}$ according to whether $\mt{X}^{(k)}(i*) > t^*(i^*)$
+  \STATE Assign each child node as a leaf or terminal  node according to stopping criteria
+  \ENDFOR
+  \ENDFOR
+  \STATE Prune trees according to rule
+\end{algorithmic}
+\end{algorithm}
+
+The goal of this work is to find a random projection forest that shares RF's scalability and ability to perform well when many irrelevant predictors are present, yet is able to find decision boundaries that are less biased by geometrical constraints (i.e. not constrained to be axis-aligned), by changing the distribution $f_A$. Furthermore, we desire the random projection forest to be robust to incommensurability of the predictor variables. The result we call randomer forests (RerFs).
+
+\section{Randomer Forests}
+
+Our choice in $f_A$ is based on the following three ideas:
+\begin{enumerate}
+  \item As mentioned previously it's frequently the case that axis-aligned splits are suboptimal, and oblique splits may be desired. Therefore, we desire the construction of A to be such that columns of A are allowed to have more than a single nonzero.
+  \item RF often does well when the signal is compressive, which may be attributed, in part, to the extreme sparsity constraint on the columns of A. Therefore, we desire A to be sparse.
+  \item Except for F-RC, existing oblique decision forest algorithms involve expensive computations to identify and select splits, rendering them less space and time efficient than RF or F-RC. An oblique decision forest having a space and time complexity comparable to RF or F-RC is desirable. This is further motivation to have A be sparse, since sparse matrix multiplication can be much faster and require less storage.
+\end{enumerate}
+
+To this end, we employ very {\bf{sparse random projections}} \cite{Li2006}. Rather than sampling $d$ non-zero elements of $A$ and enforcing that each column gets a single non-zero number (without replacement) as RF does, we relax these constraints and select $d$ non-zero numbers from $\{-1,+1\}$ with equal probabilities and distribute uniformly at random in $A$.
+
+We note that this construction bares a resemblance to Forest-RC, yet there are several key differences. In Forest-RC, the number of nonzeros in each column of $A$ is fixed to be the same across $A$ and for every split node, and its optimal value has to be found through parameter selection. Our construction circumvents selection of this parameter by randomizing the number of nonzeros in each column of $A$. Furthermore, our algorithm allows $A$ to have columns of varying sparsity, which may promote more diversity in the ensemble. To our knowledge, this property does not exist in any of the proposed random projection forest algorithms. Additionally, rather than the nonzeros being uniform random numbers in the interval $[-1,1]$, nonzeros in our proposed construction are either exactly -1 or 1, thereby improving computational efficiency. Lastly, we note that our construction of $A$ preserves distances between points with high probability \cite{Li2006} and has ties to matrix sketching \cite{Liberty2013}.
+
+When combining predictor variables in this way, the decision forest is sensitive to the incommensurability of predictor variables. In fact, all previously proposed oblique methods that we are aware of also have this issue. We note that RFs, on the other hand, possess the property that they are invariant to monotonic transformations applied to each predictor variable. They are effectively operating on the order statistics, rather than actual magnitudes, of predictors.Therefore, we can adopt the same policy and \textbf{rank transform} prior to inducing the forest. We call RerFs that do this RerF(r).
+
+\section{Experimental Results}
+
+\subsection{Simulations}
+\label{section: sims}
+
+Many classification problems arise in which the signal is compressive and the optimal split directions are not axis-aligned. We constructed two synthetic datasets with both of these properties to compare classification performance and training time of RF, RerF, RerF(r), RR-RF, and F-RC:
+% \begin{compactenum}
+
+\textbf{Sparse parity} is a variation of the noisy parity problem. The noisy parity problem is a multivariate generalization of the noisy XOR problem and is one of the hardest constructed binary classification problems. In the noisy parity problem, a given sample has a mean whose elements are Bernoulli samples with probability 1/2, and then Gaussian noise is independently added to each dimension with the same variance.  A sample's class label is equal to the parity of its mean. Sparse parity is an adaption of this problem in which the sample's class label is equal to the parity of only the first $p^*$ elements of the mean, rendering the remaining $p - p^*$ dimensions as noise.
+
+\textbf{Trunk} is a well-known binary classification in which each class is distributed as a p-dimensional multivariate Gaussian with identity covariance matrices \cite{Trunk1979}. The means of the two classes are $\mu_1 = (1,\frac{1}{\sqrt{2}},\frac{1}{\sqrt{3}},...,\frac{1}{\sqrt{p}})$ and $\mu_2 = -\mu_1$. It follows from this that the signal-to-noise ratio of the $ith$ dimension asymptotically decreases to zero with increasing $i$.
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+\begin{center}
+\includegraphics[width=0.38\textwidth] {Fig1_posteriors}
+\caption{Posteriors and classifier estimates of posteriors for the sparse parity problem. Oblique forests are sensitive to relative scale of predictor variables, unlike RF. RerF(r), which rank transforms the data, is more robust to scale.}
+\label{posteriors}
+\end{center}
+\end{wrapfigure}
+
+RR-RF is an oblique decision forest method that has been recently proposed in \cite{Blaser2016}. Uniformly random rotations of the feature space imply that in general, splits will not be sparse. Therefore, we conjecture that RR-RF will perform increasingly poorly as the ratio of the number of irrelevant features to the number of relevant features becomes larger, while RF and RerF will be relatively more robust to the increasing presence of irrelevant features. Furthermore, we suspect that RR-RF will be especially sensitive to the relative scales of the predictor variables, since it is linearly combining a large number of features.
+
+Figure \ref{posteriors} depicts both the true class posterior probabilities and estimates of the posteriors for RF, RerF, and RR-RF in two different representations of the sparse parity simulation. The left column is the native sparse parity simulation and the right column is the sparse parity simulation with dimensions randomly scaled by factors sampled uniformly from $[10^{-5},10^5]$. For this simulation, $p = 15$, $p^* = 3$, and $n = 1000$, where $p$ is the total number of dimensions, $p^*$ is the number of relevant dimensions, and n is the number of sampled data points. The number of trees used for all three algorithms was 500. Various values of $d$, the number of columns in the random projection matrix $A$, were tried and the best for each algorithm was selected. 
+
+Comparing panels C, E, G, and I with panel A shows that RerF gives estimates of the posteriors closest to the true posteriors, followed by RerF(r). RF produces poor estimates because the linearly combinations of predictors are more informative than single predictors. RR-RF produces poor estimates because the proportion of irrelevant predictor variables is large, so that rotating the data is likely to obscure the signal. Comparing panels C and D show that RF isn't affected by scale. Comparing panel E with F and I with J show that both RerF and RR-RF are sensitive to scale. Panels G and H demonstrate that RerF(r), on the other hand, maintains ability to produce reasonable estimates of the class posteriors.
+
+The left panels of Figure \ref{simulations} show two-dimensional scatter plots from each of the two example simulations (using the first two coordinate dimensions). The middle panels show the error rate relative to RF against the number of observed dimensions $p$. Relative error was computed as the difference between the error of either RerF, RerF(r), F-RC, and RR-RF and that of RF. The error of RF relative to itself is shown for reference. The right panels show training time against $p$ for all classifiers. The number of trees used for each method in the sparse parity and Trunk simulations were 500 and 1000, respectively. In all methods, trees were pruned and the minimum number of data points at a node in order to be considered for splitting was 10. The split criteria used was Gini impurity. The only hyperparameter tuned was $d$, the number of candidate split directions evaluated at each split node. When $p \leq 5$, each classifier was trained for all $d \in [p]$. When $p > 5$, each classifier was trained for all $d \in \{1,p^{1/4},p^{1/2},p^{3/4},p\}$ Additionally, RerF, RerF(r), and F-RC were trained for $d \in {p^{3/2},p^2}$. Note that for RF and RR-RF, $d$ is restricted to be no greater than $p$ by definition. For F-RC, the hyperparameter K, which denotes the number of predictor variables to linearly combine when forming candidate splits, was fixed to two. Errors for each classifier were selected as the lowest achieved from the different values of $d$ tried. Training times for each classifier are the average given by all values of $d$ tried. For sparse parity, $n$ was fixed at 1000 and classifiers were evaluated for $p \in \{2,5,10,25,50,100\}$. The relevant number of features $p*$ was fixed at a value of 3. For Trunk, $n$ was fixed at 100 and RF and RerF were evaluated for $p \in \{2,10,50,100,500,1000\}$. RR-RF was not evaluated for $p = 1000$ due to computational burden. Relative error and training times plotted are the average of 25 trials, and error bars represent the standard error of the mean.
+
+In panel B, both RerF and F-RC perform as well as or better than both RF and RR-RF for all values of $p$. RerF(r) performs better than RF when $p = 10$ and performs about the same otherwise. RR-RF performs as well as or better than RF except for when $p = 25$. As conjectured, RR-RF performs better than RF when $p$ is small because oblique splits provide an advantage over axis-aligned splits in the sparse parity problem. As $p$ increases and the ratio $p^*/p$ decreases, RerF begins to outperform RR-RF. Ultimately, when this ratio is small enough, RR-RF performs even worse than RF. RerF and F-RC's ability to perform relatively well can be attributed to the sparsity of oblique splits. In panel E, RerF, RerF(r), and F-RC outperform RF for all values of $p$. This is because linear combinations of a few features can yield a higher signal-to-noise ratio than any single feature. RR-RF exhibits superior performance up to $p = 100$. RR-RF is able to perform better than RerF, RerF(r), and F-RC in these cases because a larger number of features can be linearly combined to yield an even higher signal-to-noise ratio. When $p = 500$, classification performance of RR-RF significantly degrades and exhibits the highest error rate. This can be explained by the fact that when $p$ is large enough, RR-RF often samples linear combinations of many features each having a low signal-to-noise ratio. Such projections will yield a lower signal-to-noise ratio than any single feature. In panels C and F, training times are comparable when $p$ is small. As panel F indicates, training time of RR-RF is significantly longer than the others when $p = 500$.
+
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{Fig2_simulations}}
+\caption{Sparse parity (A-C) and Trunk (D-F) simulations (see section \ref{section: sims} for details). (A) and (D): Scatterplots of sampled points in the first two dimensions. (B) and (E): Error rates of various random projection forest classifiers relative to RF across different values of p. (C) and (F): Same as (B) and (E) except absolute training time is plotted on the y-axis instead. All oblique methods do better than RF when the number of irrelevant features is sufficiently small, due to their ability to generate oblique parititions. However, when the number of irrelevant features becomes large enough, performance of RR-RF rapidly degrades. Training times show that RerF, RerF(r), and F-RC scales comparably with RF, while RR-RF scales poorly with large p (note that in panels E and F, RR-RF is only plotted up to $p = 500$ due to computational constraints. \emph{Note}: the color-coding here is adopted in figures \ref{transformations} and \ref{benchmark} that follow.}
+\label{simulations}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
+\subsection{Theoretical Space and Time Complexity}
+
+For a RF, assume there are $L$ trees. If there are $m$ data points per tree, and each tree grows until terminal nodes have only $\mc O(1)$ data points with $p$ coordinates in them, there are $\mc O(m)$ nodes.
+Then the complexity of constructing the random forest, disregarding cross-validation or other randomization techniques for preventing overfitting, is $\mc O(Lm^2p\log m)$. In practice the trees are shallower and stop much earlier than when nodes have $\mc O(1)$ points, so ``in practice'' the complexity often appears to be $\mc O(Lmp\log m)$. Storing RF requires $\mc{O}(L m\log m)$ because each node can be represented by the index of the nonzero coordinate. The only additional space constraint is storing which indices are positive, and which are negative, which is merely another constant.
+
+RerF has a very similar time and space complexity, unlike many of the other oblique random forest variants.  Specifically, assume that RerF also has $L$ trees, and $m$ data points per tree, and no pruning, so $\mc O(m)$ nodes. Let $m_k$ be the number of data points at node $k$ of the tree. Like RF, RerF requires $\mc{O}(p)$ time to sample $p$ non-zero numbers, and $\mc{O}(pm_k)$ time to obtain the new matrix, $\mt{X}$, because it is a sparse matrix multiplication, in node $k$ with $\mc O(m_k)$ points. RerF also takes another $\mc{O}(p/m\log(p/m))=\mc O(1)$ time to find the best dimension. Thus, in total, in the case of well-balanced trees, RerF also requires only $\mc{O}(Lpm^2\log m)$ time to train.  To store the resulting RerF, like RF, requires $\mc{O}(L m\log m)$, because each node can be represented by the indices of the coordinates that received a non-zero element, and the expected number of such indices is $\mc O(1)$. Note that these numbers are in stark contrast to other oblique methods. RR-RFs, in particular, require a QR decomposition having a time complexity of $\mc O(p^3)$ in order to generate random rotation matrix for each tree. Rotating the data matrix prior to inducing each tree additionally requires $\mc O(mp^2)$. Therefore, RR-RF becomes very expensive to compute when $p$ is large. This can explain the trend seen in Figure \ref{simulations}(F). In addition to storing all of the decision trees, RR-RF has to store a rotation matrix for each tree, which requires $\mc O(p^2)$.
+
+\subsection{Effects of Transformations and Outliers}
+\label{section: trans}
+
+We next want to compare the robustness classifier robustness to various data transformations across a variety of simulation settings. To do so, we consider several different modifications to the simulation settings described in the previous section: rotation, scale, affine, and outliers. To rotate the data, we simply generate rotation matrices uniformly and apply them to the data. To scale, we applied a scaling factor sampled from a uniform distribution on the interval $[10^{-5},10^5]$ to each dimension. Affine transformations were performed by applying a rotation followed by scaling as just described. Additionally, we examined the effects of introducing outliers. Outliers were introduced by sampling points from the distributions as previously described but instead using covariance matrices scaled up by a factor of four. Empirically, an addition of 20 points from these outlier models to the original 100 points was found to produce a noticeable but not overwhelming effect on classifier performance.
+
+Figure \ref{transformations} shows the effect of these transformations and outliers on the sparse parity (panels A-E) and Trunk (panels F-J) problems. Comparing panel B with A shows that all methods except for RR-RF and RF are affected by rotations, by noting that their error rates are noticeably shifted up for $p \geq 25$. Comparing panel G with F shows that when $p = 500$ all classifiers except for RR-RF incur a loss in performance when the data is rotated. Comparing panel C with A and panel H with F show that F-RC and RR-RF suffer an increase in error rate when the data is  scaled (error rate of RR-RF in panel H exceeds the y-axis limits), RerF is slightly hurt, and RerF(r) and RF are unaffected. In panels D and I, all classifiers are sensitive to affine transformations. However, RerF is more robust than F-RC and RR-RF, and RerF(r) is even more robust. Panels E and J show that all methods are slightly affected by the introduction of outliers. 
+
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{Fig3_transformations2}}
+\caption{The effects of different transformations applied to the sparse parity (A-E) and Trunk (F-J) simulations on classification performance (see section \ref{section: trans} for details). Specifically, we consider rotations, scalings, affine transformations, as well as the addition of outliers. RR-RF and F-RC are severely affected by random scaling of the predictor variables, and therefore, also affected by affine transformations. RerF is slightly affected by scale, while RerF(r) is unaffected. When a general affine transformation is applied, RerF(r) is the most robust.}
+\label{transformations}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
+\subsection{Benchmark Data}
+\label{section: benchmark}
+
+In addition to the simulations, RF, RerF, F-RC, and RR-RF were evaluated on 113 of the 121 datasets as described in \cite{Delgado2014}. The eight remaining datasets were not used because their high dimensionality and large number of data points rendered the classifiers both time and space costly, particularly for RR-RF. As in the previous section, transformations, with the exception of outliers, were applied to the datasets to observe their affects on performance of the three algorithms. Classifiers were trained on the entire training sets provided. For each data set, error rates were again estimated by out of bag error. The number of trees used in each algorithm was 1000 for datasets having at most 1000 data points and 500 for datasets having greater than 1000 data points. When $p \leq 5$, each algorithm was trained for all $d \in [p]$. When $p > 5$, each algorithm was trained for all $d \in \{1,p^{1/4},p^{1/2},p^{3/4},p\}$. Error rates for each algorithm were selected as the minimum given by the five. For each dataset, relative performance ratios for each algorithm were computed by dividing the error rate of each algorithm by the minimum error rate of the three. The empirical cumulative distribution functions of relative performance ratios for each algorithm were computed and plotted in Figure \ref{benchmark}. Such plots are called performance profiles \cite{Dolan2002}. Performance profiles are useful in visualizing how frequently a particular algorithm wins, and when it loses, how frequently it loses by a certain amount. For instance, a value of 0.9 on the y-axis and a value of 2.0 on the x-axis means that the error of that classifier was at most twice the error of the best performing classifier on a given dataset in 90$\%$ of all benchmark datasets. 
+
+In panel A of Figure \ref{benchmark}, F-RC, RerF, and RerF(r) outperform RF, while RR-RF exhibits inferior performance. Panel B shows that when the benchmark datasets are rotated, RR-RF and F-RC perform the best, followed by RerF and RerF(r), and lastly RF. Panel C shows that RerF(r) performs the best when the predictors are randomly scaled, while RF, RerF, and F-RC are approximately the same. Lastly, panel D shows that RerF(r) performs the best when affine transformations are applied, while F-RC and RR-RF perform very poorly. 
+
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{Fig4_benchmark}}
+\caption{Classification performance profiles on benchmarks with various transformations applied (see section \ref{section: benchmark} for details). In terms of classification accuracy, RerF performs as well as or better than RF in all settings except for when affine transformations are applied to the data. RerF, RerF(r), and F-RC outperform RR-RF for all settings except for when the data is rotated. RR-RF performs terribly when scale or affine transformations are applied, and F-RC also performs poorly when affine transformations are applied. RerF(r) dominates all others in the face of affine transformations.}
+\label{benchmark}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
+\section{Conclusion and Future Work}
+
+We have proposed novel methods for constructing decision forests, which we call RerFs. We view these methods as special cases of a more general random projection forest, which include Breiman's original Forest-RI and Forest-RC, as well as previously proposed oblique decision forests. Our proposed method bares some similarity to Forest-RC, but is different in important ways. The choice of $f_A(\mc{D}_l)$ we propose produces a decision forest that is more computationally efficient. Additionally, it can be viewed as a generalization of both RF and F-RC by noting that we don't restrict the number of nonzeros per column to be fixed across A. Instead, we have columns of varying sparsity. This imparts more diversity into the decision forest and can enhance performance. We have demonstrated in simulations that RerFs are especially well-suited for classification problems in which axis-parallel splits are suboptimal, and at the same time, have a large number of irrelevant features relative to relevant ones. This could explain RerF's excellent empirical performance on a suite of 113 benchmark datasets, as real data often has the properties just described. Moreover, RerF preserves the time and space complexity of Forest-RI, and is more robust to affine transformations than are other oblique methods, especially the variant RerF(r).
+
+The simplicity of RerFs and the nice properties of very sparse random projections \cite{Li2006} suggest that they will be amenable to theoretical investigation, extending the work of Scornet et al. (2015) to the RerF setting \cite{Scornet2015}. Moreover, we hope that theoretical investigations will yield more insight into which distributions $f_A(\mc{D}_l)$ will be optimal under different distributional settings, both asymptotically and under finite sample assumptions. Even under the currently proposed $f_A(\mc{D}_l)$, our implementation has room for improvement. Although it has the same space and time complexity as RF, we will determine explicit constants, and improve our implementation accordingly. Indeed, our current implementation is a proof-of-concept MATLAB implementation. We will utilize recent GPU and semi-external memory methods to significantly speed up RerF \cite{zheng15flashgraph}. As with all decision forests, multiclass classification is but one exploitation task they can be used for; therefore, we will also extend this work to enable regression, density estimation, clustering, and hashing. We will provide open source code to enable more rigorous and extended analyses by the machine learning community.
+
+\bibliography{nips_2016_ROFL}
+\bibliographystyle{abbrv}
+
+\end{document}
