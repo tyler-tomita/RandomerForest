@@ -1,5 +1,8 @@
 function [SplitValue,DeltaImpurity,Splits] = find_split_value(X,Y)
 
+    if iscell(Y)
+        Y = grp2idx(Y);
+    end
     n = length(Y);
     [Xsorted,Idx] = sort(X);
     Ysorted = Y(Idx);

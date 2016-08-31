@@ -54,7 +54,7 @@ for i = 3:5
     mtrys_rf = mtrys(mtrys<=p);
 
     for c = 1:length(Classifiers)
-        fprintf('%s start\n',Classifiers{c})
+        fprintf('%s co\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 500;
         Params{i}.(Classifiers{c}).Stratified = true;
         Params{i}.(Classifiers{c}).NWorkers = 2;
@@ -108,14 +108,12 @@ for i = 3:5
         end
         
         for t = 1:length(Transformations)
-            fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             OOBAUC{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             TrainTime{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
 
             for trial = 1:ntrials
-                fprintf('Trial %d\n',trial)
 
                 % train classifier
                 poolobj = gcp('nocreate');

@@ -97,7 +97,7 @@ fig.PaperPosition = [0 0 figWidth figHeight];
 fig.PaperSize = [figWidth figHeight];
 
 for i = 1:size(xp,2)
-    [SplitValue(i),DeltaImpurity(i),Splits] = find_split_value(xp(:,i),y);
+    [SplitValue(i),DeltaImpurity(i)] = find_split_value(xp(:,i),y);
     ax(i) = subplot(2,2,i);
     plot(xp(y==0,i),zeros(size(xp(y==0,i))),'b.',xp(y==1,i),...
         ones(size(xp(y==1,i))),'r.',SplitValue(i)*ones(1,2),...

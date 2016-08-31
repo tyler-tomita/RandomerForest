@@ -24,12 +24,13 @@ n_out = round(0.2*ntrain);
 
 for i = 1:length(Xtrain)
     dgood = min(3,dims(i));
-    Mu = [-1./sqrt(1:dims(i));1./sqrt(1:dims(i))];
-    Sigma = 1/32*ones(1,dims(i));
-    Sigma_outlier = 4*Sigma;
     for trial = 1:ntrials
         R = random_rotation(dims(i));
-        S = 10.^random_scaling(ntrain+ntest,dims(i),-5,5);
+        S = 10.^zeros(ntrain+ntest,dims(i));
+        Exponents = [-5 0 5];
+        for j = 1:dgood
+            S(:,j) = 10^Exponents(j);
+        end
         Xtrain(i).Rotated(:,:,trial) = Xtrain(i).Untransformed(:,:,trial)*R;
         Xtest(i).Rotated(:,:,trial) = Xtest(i).Untransformed*R;
         Ytrain(i).Rotated(:,trial) = Ytrain(i).Untransformed(:,trial);
@@ -42,17 +43,14 @@ for i = 1:length(Xtrain)
         Xtest(i).Affine(:,:,trial) = (Xtest(i).Untransformed*R).*S(ntrain+1:end,:);
         Ytrain(i).Affine(:,trial) = Ytrain(i).Untransformed(:,trial);
         Ytest(i).Affine(:,trial) = Ytest(i).Untransformed;
-        x_out = zeros(n_out,dims(i));
-        Mu_out = zeros(n_out,dims(i));
-        for jj = 1:n_out
-            Mu_out(jj,:) = binornd(1,0.5,1,dims(i));
-            x_out(jj,:) = mvnrnd(Mu_out(jj,:),Sigma_outlier);
-        end
-        Xtrain(i).Outlier(:,:,trial) = [Xtrain(i).Untransformed(:,:,trial);x_out];
+        OutlierProportion = 0.1;
+        nOutlier = ceil(OutlierProportion*numel(Xtrain(i).Untransformed(:,:,trial)));
+        Xtrain(i).Outlier(:,:,trial) = Xtrain(i).Untransformed(:,:,trial);
+        Ytrain(i).Outlier(:,trial) = Ytrain(i).Untransformed(:,trial);
+        Exponents = randsample(2:5,nOutlier,true)';
+        OutlierIdx = randperm(numel(Xtrain(i).Untransformed(:,:,trial)),nOutlier)' + numel(Xtrain(i).Untransformed(:,:,trial))*(trial-1);
+        Xtrain(i).Outlier(OutlierIdx) = Xtrain(i).Untransformed(OutlierIdx).*10.^(Exponents);
         Xtest(i).Outlier(:,:,trial) = Xtest(i).Untransformed;
-        nones_out = sum(Mu_out(:,1:dgood),2);
-        y_out = cellstr(num2str(mod(nones_out,2)));
-        Ytrain(i).Outlier(:,trial) = [Ytrain(i).Untransformed(:,trial);y_out];
         Ytest(i).Outlier(:,trial) = Ytest(i).Untransformed;
     end
 end
