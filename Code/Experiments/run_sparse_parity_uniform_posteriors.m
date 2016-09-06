@@ -14,9 +14,11 @@ rng(1);
 
 load('Sparse_parity_uniform_data.mat')
 
-Classifiers = {'rf' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
+% Classifiers = {'rf' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
+Classifiers = {'rf' 'frc'};
 
-Transformations = {'Untransformed' 'Scaled' 'Outlier'};
+% Transformations = {'Untransformed' 'Scaled' 'Outlier'};
+Transformations = {'Untransformed'};
 
 ntrials = 10;
 
@@ -34,11 +36,11 @@ Xpost.Outlier = Xpost.Untransformed;
 Ypost.Outlier = Ypost.Untransformed;
 
 
-for i = 3:4
+for i = 2:2
     p = dims(i);
     fprintf('p = %d\n',p)
     
-    Zpost{i}.Untransformed = zeros(npoints^2,p-2);
+    Zpost{i}.Untransformed = -1*ones(npoints^2,p-2);
     Zpost{i}.Scaled = Zpost{i}.Untransformed;
     Zpost{i}.Outlier = Zpost{i}.Untransformed;
       
