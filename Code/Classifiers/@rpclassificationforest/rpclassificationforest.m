@@ -5,7 +5,7 @@ classdef rpclassificationforest
         Tree = {};  %classification trees contained in the ensemble
         nTrees = []; %number of trees in the ensemble
         classname;
-        RandomForest;
+        ForestMethod;
         Rescale;
 %         NumVars = [];
         priors = [];
@@ -87,17 +87,17 @@ classdef rpclassificationforest
                         'mergeleaves'   'categorical' 'prune' 'method' ...
                         'qetoler'   'names'   'weights' 'surrogate'...
                         'skipchecks'    'stream'    'fboot'...
-                        'SampleWithReplacement' 's' 'mdiff' 'sparsemethod'...
-                        'RandomForest'   'Rescale'   'NWorkers'  'Stratified'...
+                        'SampleWithReplacement' 's' 'mdiff' 'ForestMethod'...
+                        'Rescale'   'NWorkers'  'Stratified'...
                         'nmix'  'rotate'    'p' 'dprime'    'nTrees'};
             defaults = {[]  []  'gdi'   []  2  1   ceil(size(X,2)^(2/3))...
                         'off'    []  'off'    'classification'  1e-6    {}...
                         []  'off'   false  []  1    true   1/size(X,2)    'off'   'sparse'...
-                        false 'off' 1   true   2   false  []    []  500};
+                        'off' 1   true   2   false  []    []  500};
             [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
                 nvartosample,Merge,categ,Prune,Method,qetoler,names,W,...
                 surrogate,skipchecks,Stream,fboot,...
-                SampleWithReplacement,s,mdiff,sparsemethod,RandomForest,...
+                SampleWithReplacement,s,mdiff,ForestMethod,...
                 Rescale,NWorkers,Stratified,nmix,rotate,p,dprime,nTrees,~,extra] = ...
                 internal.stats.parseArgs(okargs,defaults,varargin{:});
             
@@ -139,6 +139,11 @@ classdef rpclassificationforest
                 parpool('local',NWorkers,'IdleTimeout',360);
             end
             
+            %Reduce computational load for matrices with many zero elements
+            if ~strcmp(ForestMethod,'rf') && ~rotate && ~issparse(X) && nnz(X)/numel(X) <= 0.01
+                X = sparse(X);
+            end
+            
             parfor i = 1:nTrees
 
                 %Rotate data?
@@ -172,7 +177,7 @@ classdef rpclassificationforest
                     end
                 end
                 
-                if ~RandomForest
+                if ~strcmp(ForestMethod,'rf')
                     Tree{i} = rpclassregtree(Xtree(ibidx,:),Y(ibidx,:),...
                         'priorprob',Prior,'cost',Cost,'splitcriterion',...
                         Criterion,'splitmin',splitmin,'minparent',...
@@ -181,7 +186,7 @@ classdef rpclassificationforest
                         categ,'prune',Prune,'method',Method,'qetoler',...
                         qetoler,'names',names,'weights',W,'surrogate',...
                         surrogate,'skipchecks',skipchecks,'stream',Stream,...
-                        's',s,'mdiff',mdiff,'sparsemethod',sparsemethod,'nmix',nmix,...
+                        's',s,'mdiff',mdiff,'sparsemethod',ForestMethod,'nmix',nmix,...
                         'p',p,'dprime',dprime);
                 else
                     Tree{i} = classregtree2(Xtree(ibidx,:),Y(ibidx,:),...
@@ -216,7 +221,7 @@ classdef rpclassificationforest
             forest.Tree = Tree;
             forest.oobidx = oobidx;
             forest.nTrees = length(forest.Tree);
-            forest.RandomForest = RandomForest;
+            forest.ForestMethod = ForestMethod;
 %             forest.NumVars = NumVars;
             forest.priors = priors;
             if rotate
@@ -240,7 +245,7 @@ classdef rpclassificationforest
             OOBIndices = forest.oobidx;
             trees = forest.Tree;
             rotate = ~isempty(forest.rotmat);
-            if ~forest.RandomForest
+            if ~strcmp(forest.ForestMethod,'rf')
                 parfor i = 1:forest.nTrees
                     if rotate
                         Xtree = X*forest.rotmat(:,:,i);
@@ -288,7 +293,7 @@ classdef rpclassificationforest
             OOBIndices = forest.oobidx;
             trees = forest.Tree;
             rotate = ~isempty(forest.rotmat);
-            if ~forest.RandomForest
+            if ~strcmp(forest.ForestMethod,'rf')
                 parfor i = 1:forest.nTrees
                     if rotate
                         Xtree = Xtrain(OOBIndices{i},:)*forest.rotmat(:,:,i);
@@ -359,7 +364,7 @@ classdef rpclassificationforest
             scoremat = NaN(nrows,nclasses,forest.nTrees);
             trees = forest.Tree;
             rotate = ~isempty(forest.rotmat);
-            if ~forest.RandomForest
+            if ~strcmp(forest.ForestMethod,'rf')
                 parfor i = 1:forest.nTrees
                     if rotate
                         Xtree = Xtest*forest.rotmat(:,:,i);
@@ -418,7 +423,7 @@ classdef rpclassificationforest
             Tree = forest.Tree;
             rotate = ~isempty(forest.rotmat);
             
-            if ~forest.RandomForest
+            if ~strcmp(forest.ForestMethod,'rf')
                 parfor i = 1:forest.nTrees
                     if rotate
                         Xtree = X*forest.rotmat(:,:,i);
@@ -453,7 +458,7 @@ classdef rpclassificationforest
             sp = 0;
             for i = 1:forest.nTrees
                 Tree = forest.Tree{i};
-                if ~forest.RandomForest
+                if ~strcmp(forest.ForestMethod,'rf')
                     internalnodes = Tree.node(Tree.var~=0);
                     for node = internalnodes'
                         sp = sp + sum(Tree.rpm{node}~=0);

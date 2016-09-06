@@ -21,9 +21,6 @@ Ytrain = T;
 Ytest = TT;
 
 for i = 1:length(Xtrain)
-    Mu = [-1./sqrt(1:dims(i));1./sqrt(1:dims(i))];
-    Sigma = ones(1,dims(i));
-    Sigma_outlier = 16*Sigma;
     for trial = 1:ntrials
         R = random_rotation(dims(i));
         S = 10.^random_scaling(ntrain+ntest,dims(i),-5,5);
@@ -39,13 +36,14 @@ for i = 1:length(Xtrain)
         Xtest(i).Affine(:,:,trial) = (Xtest(i).Untransformed*R).*S(ntrain+1:end,:);
         Ytrain(i).Affine(:,trial) = Ytrain(i).Untransformed(:,trial);
         Ytest(i).Affine(:,trial) = Ytest(i).Untransformed;
-        outlier_model = gmdistribution(Mu,Sigma_outlier);
-        [x_out,idx_out] = random(outlier_model,0.05*ntrain);
-        Xtrain(i).Outlier(:,:,trial) = [Xtrain(i).Untransformed(:,:,trial);x_out];
+        OutlierProportion = 0.1;
+        nOutlier = ceil(OutlierProportion*numel(Xtrain(i).Untransformed(:,:,trial)));
+        Xtrain(i).Outlier(:,:,trial) = Xtrain(i).Untransformed(:,:,trial);
+        Ytrain(i).Outlier(:,trial) = Ytrain(i).Untransformed(:,trial);
+        Exponents = randsample(2:5,nOutlier,true)';
+        OutlierIdx = randperm(numel(Xtrain(i).Untransformed(:,:,trial)),nOutlier)' + numel(Xtrain(i).Untransformed(:,:,trial))*(trial-1);
+        Xtrain(i).Outlier(OutlierIdx) = Xtrain(i).Untransformed(OutlierIdx).*10.^(Exponents);
         Xtest(i).Outlier(:,:,trial) = Xtest(i).Untransformed;
-        Class = [0;1];
-        y_out = cellstr(num2str(Class(idx_out)));
-        Ytrain(i).Outlier(:,trial) = [Ytrain(i).Untransformed(:,trial);y_out];
         Ytest(i).Outlier(:,trial) = Ytest(i).Untransformed;
     end
 end

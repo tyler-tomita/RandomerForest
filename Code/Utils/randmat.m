@@ -64,7 +64,7 @@ function M = randmat(d,k,method,varargin)
         M = M(:,1:min(k,size(M,2)));
     elseif strcmp(method,'frc')
         nmix = varargin{2};
-        M = sparse(d,k);
+        M = zeros(d,k);
         p = 1;
         for i = 1:nmix-1
             p = p*(d-i)/d;
@@ -79,6 +79,7 @@ function M = randmat(d,k,method,varargin)
         idx = idx(:,1:k);
         idx = (ndgrid(1:k,1:nmix)'-1)*d + idx;
         M(idx) = rand(1,nmix*k)*2 - 1;
+        M = sparse(M);
     elseif strcmp(method,'uniform-nnzs')
         nmix = varargin{2};
         M = sparse(d,k);

@@ -9,12 +9,12 @@ rng(1);
 
 C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
 Colors.rf = C(1,:);
-Colors.rerf = C(2,:);
-Colors.rr_rf = C(3,:);
-Colors.rerfr = C(4,:);
-Colors.frc = C(5,:);
+Colors.rfr = C(2,:);
+Colors.frc = C(3,:);
+Colors.frcr = C(4,:);
+Colors.rr_rf = C(5,:);
 % Colors.rerfd = C(6,:);
-Colors.rerfu = C(6,:);
+Colors.rr_rfr = C(6,:);
 LineWidth = 2;
 MarkerSize = 12;
 FontSize = .2;
@@ -102,7 +102,7 @@ for i = 1:length(TestError)
     end
 end
 
-Classifiers = {'rerf' 'rerfu' 'rf' 'frc' 'rr_rf'};
+Classifiers = {'rf' 'rfr' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
 
 for i = 1:length(Classifiers)
     cl = Classifiers{i};
@@ -117,7 +117,7 @@ end
 title('(B)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 % text(0.5,1.05,{'Error Rate';'(relative to RF)'},'FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('p')
-ylabel('Relative Error')
+ylabel('Error Rate')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -220,12 +220,12 @@ for i = 1:length(TestError)
     end
 end
 
-Classifiers = {'rerf' 'rerfu' 'rf' 'frc' 'rr_rf'};
+Classifiers = {'rf' 'rfr' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
 
 for i = 1:length(Classifiers)
     cl = Classifiers{i};
     if ~strcmp(cl,'rerfd')
-        if strcmp(cl,'rr_rf') || strcmp(cl,'rerfu')
+        if strcmp(cl,'rr_rf') || strcmp(cl,'rr_rfr')
             hTestError(i) = errorbar(dims(1:end-1),mean(PlotError.(cl)),...
                 std(PlotError.(cl))/sqrt(size(PlotError.(cl),1)),...
                 'LineWidth',LineWidth,'Color',Colors.(cl));
@@ -240,7 +240,7 @@ end
 
 title('(E)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 xlabel('p')
-ylabel('Relative Error')
+ylabel('Error Rate')
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -258,7 +258,7 @@ ax = subplot(2,3,6);
 for i = 1:length(Classifiers)
     cl = Classifiers{i};
     if ~strcmp(cl,'rerfd')
-        if strcmp(cl,'rr_rf') || strcmp(cl,'rerfu')
+        if strcmp(cl,'rr_rf') || strcmp(cl,'rr_rfr')
             hTrainTime(i) = errorbar(dims(1:end-1),mean(PlotTime.(cl)),...
                 std(PlotTime.(cl))/sqrt(size(PlotTime.(cl),1)),...
                 'LineWidth',LineWidth,'Color',Colors.(cl));
@@ -284,7 +284,7 @@ ax.XLim = [9 1100];
 ax.XScale = 'log';
 ax.XTick = logspace(0,3,4);
 ax.XTickLabel = {'1';'10';'100';'1000'};
-l = legend('RerF','RerF(u)','RF','F-RC','RR-RF');
+l = legend('RF','RF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
 l.Location = 'southwest';
 l.Box = 'off';
 l.FontSize = 12;

@@ -12,18 +12,15 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load Sparse_parity_transformations_data
+load('Sparse_parity_transformations_data.mat','Xtrain','Ytrain')
+load Random_matrix_adjustment_factor
 
-[n,d,ntrials] = size(X{4});
-ntrees = 500;
-NWorkers = 24;
-mtrys = ceil(d.^[0 1/4 1/2 3/4 1 1.5 2]);
-rf.Lhat = zeros(ntrees,sum(mtrys<=d),ntrials);
-rerf.Lhat = zeros(ntrees,length(mtrys),ntrials);
-rerfr.Lhat = zeros(ntrees,length(mtrys),ntrials);
-rerfdn.Lhat = zeros(ntrees,length(mtrys),ntrials);
-rf_rot.Lhat = zeros(ntrees,sum(mtrys<=d),ntrials);
-Class = [0;1];
+Classifiers = {'rf' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
+
+Transformations = {'Untransformed' 'Scaled' 'Outlier'};
+
+dims = [2 5 10 15 25 50 100];
+ntrials = 10;
 
 xmin = -.5;
 xmax = 1.5;
@@ -31,233 +28,150 @@ ymin = xmin;
 ymax = xmax;
 npoints = 50;
 [xgv,ygv] = meshgrid(linspace(xmin,xmax,npoints),linspace(ymin,ymax,npoints));
-Xpost = xgv(:);
-Ypost = ygv(:);
-Zpost = zeros(npoints^2,d-2);
+Xpost.Untransformed = xgv(:);
+Ypost.Untransformed = ygv(:);
+Xpost.Scaled = Xpost.Untransformed*10^-5;
+Ypost.Scaled = Ypost.Untransformed;
+Xpost.Outlier = Xpost.Untransformed;
+Ypost.Outlier = Ypost.Untransformed;
 
-fprintf('Untransformed\n')
-for trial = 1:ntrials
-    fprintf('trial %d\n',trial)
+
+for i = 4:5
+    p = dims(i);
+    fprintf('p = %d\n',p)
     
-    x = X{4}(:,:,trial);
-    y = Y{4}(:,trial);
-
-    %% Train classifiers
-    i = 1;
-
-    for mtry = mtrys
-
-        fprintf('mtry = %d\n',mtry)
-
-        if mtry <= d
-            rf.cl{i} = rpclassificationforest(ntrees,x,y,'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            Predictions = oobpredict(rf.cl{i},x,y);
-            rf.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
-        end
-
-        rerf.cl{i} = rpclassificationforest(ntrees,x,y,'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-        Predictions = oobpredict(rerf.cl{i},x,y);
-        rerf.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
-        
-        rerfr.cl{i} = rpclassificationforest(ntrees,x,y,'sparsemethod','sparse','Robust',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-        Predictions = oobpredict(rerfr.cl{i},x,y);
-        rerfr.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
-
-        rerfdn.cl{i} = rpclassificationforest(ntrees,x,y,'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-        Predictions = oobpredict(rerfdn.cl{i},x,y);
-        rerfdn.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
-
-        if mtry <= d
-            rf_rot.cl{i} = rpclassificationforest(ntrees,x,y,'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            Predictions = oobpredict(rf_rot.cl{i},x,y);
-            rf_rot.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
-        end
-
-        i = i + 1;
+    Zpost{i}.Untransformed = zeros(npoints^2,p-2);
+    Zpost{i}.Scaled = Zpost{i}.Untransformed;
+    Zpost{i}.Outlier = Zpost{i}.Untransformed;
+      
+    if p <= 5
+        mtrys = [1:p ceil(p.^[1.5 2])];
+    elseif p > 5 && p <= 25
+        mtrys = ceil(p.^[0 1/4 1/2 3/4 1 1.5 2]);
+    else
+        mtrys = [ceil(p.^[0 1/4 1/2 3/4 1]) 5*p 10*p];
     end
+    mtrys_rf = mtrys(mtrys<=p);
 
-    %% Select best hyperparameters for each algorithm
-    [~,rf.minIdx(trial)] = min(rf.Lhat(end,:,trial));
-    [~,rerf.minIdx(trial)] = min(rerf.Lhat(end,:,trial));
-    [~,rerfr.minIdx(trial)] = min(rerfr.Lhat(end,:,trial));
-    [~,rerfdn.minIdx(trial)] = min(rerfdn.Lhat(end,:,trial));
-    [~,rf_rot.minIdx(trial)] = min(rf_rot.Lhat(end,:,trial));
-
-    rf.posteriors(:,:,trial) = rerf_classprob(rf.cl{rf.minIdx(trial)},[Xpost Ypost Zpost]);
-    rerf.posteriors(:,:,trial) = rerf_classprob(rerf.cl{rerf.minIdx(trial)},[Xpost Ypost Zpost]);
-    rerfr.posteriors(:,:,trial) = rerf_classprob(rerfr.cl{rerf.minIdx(trial)},[Xpost Ypost Zpost],'last',x);
-    rerfdn.posteriors(:,:,trial) = rerf_classprob(rerfdn.cl{rerfdn.minIdx(trial)},[Xpost Ypost Zpost]);
-    rf_rot.posteriors(:,:,trial) = rerf_classprob(rf_rot.cl{rf_rot.minIdx(trial)},[Xpost Ypost Zpost]);
-    
-    rf = rmfield(rf,'cl');
-    rerf = rmfield(rerf,'cl');
-    rerfr = rmfield(rerfr,'cl');
-    rerfdn = rmfield(rerfdn,'cl');
-    rf_rot = rmfield(rf_rot,'cl');
-end
-
-save([rerfPath 'RandomerForest/Results/Sparse_parity_posteriors_npoints_50.mat'],...
-    'n','d','dgood','ntrees','mtrys','rf','rerf','rerfr','rerfdn','rf_rot',...
-    'Xpost','Ypost','Zpost')
-
-%% Scaled
-clear rf rerf rerfr rerfdn rf_rot
-
-rf.Lhat = zeros(ntrees,sum(mtrys<=d),ntrials);
-rerf.Lhat = zeros(ntrees,length(mtrys),ntrials);
-rerfr.Lhat = zeros(ntrees,length(mtrys),ntrials);
-rerfdn.Lhat = zeros(ntrees,length(mtrys),ntrials);
-rf_rot.Lhat = zeros(ntrees,sum(mtrys<=d),ntrials);
-
-ScaleFactors = [-5,0,5];
-Xspost = Xpost*10^ScaleFactors(1);
-Yspost = Ypost*10^ScaleFactors(2);
-Zspost = Zpost;
-fprintf('Scaled\n')
-for trial = 1:ntrials
-    
-    fprintf('trial %d\n',trial)
-
-    x = X_scale{4}(:,:,trial);
-    y = Y{4}(:,trial);
-    %% Train classifiers
-    i = 1;
-
-    for mtry = mtrys
-
-        fprintf('mtry = %d\n',mtry)
-
-        if mtry <= d
-            rf.cl{i} = rpclassificationforest(ntrees,x,y,'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            Predictions = oobpredict(rf.cl{i},x,y);
-            rf.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
+    for c = 1:length(Classifiers)
+        fprintf('%s start\n',Classifiers{c})
+        Params{i}.(Classifiers{c}).nTrees = 500;
+        Params{i}.(Classifiers{c}).Stratified = true;
+        Params{i}.(Classifiers{c}).NWorkers = 2;
+        if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
+                'rerfr') || strcmp(Classifiers{c},'frcr') || ...
+                strcmp(Classifiers{c},'rr_rfr')
+            Params{i}.(Classifiers{c}).Rescale = 'rank';
+        elseif strcmp(Classifiers{c},'rfn') || strcmp(Classifiers{c},...
+                'rerfn') || strcmp(Classifiers{c},'frcn') || ...
+                strcmp(Classifiers{c},'rr_rfn')
+            Params{i}.(Classifiers{c}).Rescale = 'normalize';
+        elseif strcmp(Classifiers{c},'rfz') || strcmp(Classifiers{c},...
+                'rerfz') || strcmp(Classifiers{c},'frcz') || ...
+                strcmp(Classifiers{c},'rr_rfz')
+            Params{i}.(Classifiers{c}).Rescale = 'zscore';
+        else
+            Params{i}.(Classifiers{c}).Rescale = 'off';
         end
-
-        rerf.cl{i} = rpclassificationforest(ntrees,x,y,'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-        Predictions = oobpredict(rerf.cl{i},x,y);
-        rerf.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
+        if strcmp(Classifiers{c},'rerfd')
+            Params{i}.(Classifiers{c}).mdiff = 'node';
+        else
+            Params{i}.(Classifiers{c}).mdiff = 'off';
+        end
+        if strcmp(Classifiers{c},'rf') || strcmp(Classifiers{c},'rfr')...
+                || strcmp(Classifiers{c},'rfn') || strcmp(Classifiers{c},'rfz') || ...
+                strcmp(Classifiers{c},'rr_rf') || strcmp(Classifiers{c},'rr_rfr') || ...
+                strcmp(Classifiers{c},'rr_rfn') || strcmp(Classifiers{c},'rr_rfz')
+            Params{i}.(Classifiers{c}).RandomForest = true;
+            Params{i}.(Classifiers{c}).d = mtrys_rf;
+        else
+            Params{i}.(Classifiers{c}).RandomForest = false;
+            Params{i}.(Classifiers{c}).d = mtrys;
+        end
+        if strcmp(Classifiers{c},'rerf') || strcmp(Classifiers{c},'rerfr')...
+                || strcmp(Classifiers{c},'rerfn') || strcmp(Classifiers{c},'rerfz') || ...
+                strcmp(Classifiers{c},'rerfd')
+            Params{i}.(Classifiers{c}).Method = 'sparse-adjusted';
+            for j = 1:length(Params{i}.(Classifiers{c}).d)
+                Params{i}.(Classifiers{c}).dprime(j) = ...
+                    ceil(Params{i}.(Classifiers{c}).d(j)^(1/interp1(ps,...
+                    slope,p)));
+            end
+        elseif strcmp(Classifiers{c},'frc') || strcmp(Classifiers{c},'frcr') || ...
+                strcmp(Classifiers{c},'frcn') || strcmp(Classifiers{c},'frcz')
+            Params{i}.(Classifiers{c}).Method = 'frc';
+            Params{i}.(Classifiers{c}).nmix = 2;
+        end
+        if strcmp(Classifiers{c},'rr_rf') || strcmp(Classifiers{c},'rr_rfr') || ...
+                strcmp(Classifiers{c},'rr_rfn') || strcmp(Classifiers{c},'rr_rfz')
+            Params{i}.(Classifiers{c}).Rotate = true;
+        end
         
-        rerfr.cl{i} = rpclassificationforest(ntrees,x,y,'sparsemethod','sparse','Robust',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-        Predictions = oobpredict(rerfr.cl{i},x,y);
-        rerfr.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
+        for t = 1:length(Transformations)
+            fprintf('%s\n',Transformations{t})
 
-        rerfdn.cl{i} = rpclassificationforest(ntrees,x,y,'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-        Predictions = oobpredict(rerfdn.cl{i},x,y);
-        rerfdn.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
+            OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+            OOBAUC{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+            TrainTime{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
 
-        if mtry <= d
-            rf_rot.cl{i} = rpclassificationforest(ntrees,x,y,'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            Predictions = oobpredict(rf_rot.cl{i},x,y);
-            rf_rot.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
+            for trial = 1:ntrials
+                fprintf('Trial %d\n',trial)
+
+                % train classifier
+                poolobj = gcp('nocreate');
+                if isempty(poolobj)
+                    parpool('local',Params{i}.(Classifiers{c}).NWorkers,...
+                        'IdleTimeout',360);
+                end
+
+                tic;
+                [Forest,~,TrainTime{i}.(Classifiers{c}).(Transformations{t})(trial,:)] = ...
+                    RerF_train(Xtrain(i).(Transformations{t})(:,:,trial),...
+                    Ytrain(i).(Transformations{t})(:,trial),Params{i}.(Classifiers{c}));
+
+                % select best hyperparameter
+
+                for j = 1:length(Params{i}.(Classifiers{c}).d)
+                    Scores = rerf_oob_classprob(Forest{j},...
+                        Xtrain(i).(Transformations{t})(:,:,trial),'last');
+                    Predictions = predict_class(Scores,Forest{j}.classname);
+                    OOBError{i}.(Classifiers{c}).(Transformations{t})(trial,j) = ...
+                        misclassification_rate(Predictions,Ytrain(i).(Transformations{t})(:,trial),...
+                        false);
+                    if size(Scores,2) > 2
+                        Yb = binarize_labels(Ytrain(i).(Transformations{t})(:,trial),Forest{j}.classname);
+                        [~,~,~,OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,j)] = ...
+                            perfcurve(Yb(:),Scores(:),'1');
+                    else
+                        [~,~,~,OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,j)] = ...
+                            perfcurve(Ytrain(i).(Transformations{t})(:,trial),Scores(:,2),'1');
+                    end
+                end
+                BestIdx = hp_optimize(OOBError{i}.(Classifiers{c}).(Transformations{t})(trial,:),...
+                    OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,:));
+                if length(BestIdx)>1
+                    BestIdx = BestIdx(end);
+                end
+
+                if strcmp(Forest{BestIdx}.Rescale,'off')
+                    Phats{i}.(Classifiers{c}).(Transformations{t})(:,:,trial) ...
+                        = rerf_classprob(Forest{BestIdx},...
+                        [Xpost.(Transformations{t}),...
+                        Ypost.(Transformations{t}),...
+                        Zpost{i}.(Transformations{t})],'last');
+                else
+                    Phats{i}.(Classifiers{c}).(Transformations{t})(:,:,trial) ...
+                        = rerf_classprob(Forest{BestIdx},...
+                        [Xpost.(Transformations{t}),...
+                        Ypost.(Transformations{t}),...
+                        Zpost{i}.(Transformations{t})],...
+                        'last',Xtrain(i).(Transformations{t})(:,:,trial));
+                end
+                
+                save([rerfPath 'RandomerForest/Results/Sparse_parity_transformations_posteriors.mat'],'dims',...
+                    'Phats','Xpost','Ypost','Zpost')
+            end
         end
-
-        i = i + 1;
-    end
-
-    %% Select best hyperparameters for each algorithm
-    [~,rf.minIdx(trial)] = min(rf.Lhat(end,:,trial));
-    [~,rerf.minIdx(trial)] = min(rerf.Lhat(end,:,trial));
-    [~,rerfr.minIdx(trial)] = min(rerfr.Lhat(end,:,trial));
-    [~,rerfdn.minIdx(trial)] = min(rerfdn.Lhat(end,:,trial));
-    [~,rf_rot.minIdx(trial)] = min(rf_rot.Lhat(end,:,trial));
-
-    rf.posteriors(:,:,trial) = rerf_classprob(rf.cl{rf.minIdx(trial)},[Xspost Yspost Zspost]);
-    rerf.posteriors(:,:,trial) = rerf_classprob(rerf.cl{rerf.minIdx(trial)},[Xspost Yspost Zspost]);
-    rerfr.posteriors(:,:,trial) = rerf_classprob(rerfr.cl{rerf.minIdx(trial)},[Xspost Yspost Zspost],'last',x);
-    rerfdn.posteriors(:,:,trial) = rerf_classprob(rerfdn.cl{rerfdn.minIdx(trial)},[Xspost Yspost Zspost]);
-    rf_rot.posteriors(:,:,trial) = rerf_classprob(rf_rot.cl{rf_rot.minIdx(trial)},[Xspost Yspost Zspost]);
-    
-    rf = rmfield(rf,'cl');
-    rerf = rmfield(rerf,'cl');
-    rerfr = rmfield(rerfr,'cl');
-    rerfdn = rmfield(rerfdn,'cl');
-    rf_rot = rmfield(rf_rot,'cl');
+        fprintf('%s complete\n',Classifiers{c})
+    end   
 end
-
-save([rerfPath 'RandomerForest/Results/Sparse_parity_posteriors_scaled_npoints_50.mat'],...
-    'n','d','dgood','ntrees','mtrys','rf','rerf','rerfr','rerfdn','rf_rot',...
-    'Xspost','Yspost','Zspost')
-
-%% Rotated
-clear rf rerf rerfr rerfdn rf_rot
-
-rf.Lhat = zeros(ntrees,sum(mtrys<=d),ntrials);
-rerf.Lhat = zeros(ntrees,length(mtrys),ntrials);
-rerfr.Lhat = zeros(ntrees,length(mtrys),ntrials);
-rerfdn.Lhat = zeros(ntrees,length(mtrys),ntrials);
-rf_rot.Lhat = zeros(ntrees,sum(mtrys<=d),ntrials);
-
-theta = pi/4;
-R = [cos(theta) sin(theta);-sin(theta) cos(theta)];
-xmin = -sqrt(2);
-xmax = sqrt(2);
-ymin = xmin;
-ymax = xmax;
-[xgv,ygv] = meshgrid(linspace(xmin,xmax,npoints),linspace(ymin,ymax,npoints));
-Xrpost = xgv(:);
-Yrpost = ygv(:);
-Zrpost = Zpost;
-fprintf('Scaled\n')
-for trial = 1:ntrials
-    
-    fprintf('trial %d\n',trial)
-
-    x = [X{4}(:,1:2,trial)*R X{4}(:,3:end,trial)];
-    y = Y{4}(:,trial);
-    %% Train classifiers
-    i = 1;
-
-    for mtry = mtrys
-
-        fprintf('mtry = %d\n',mtry)
-
-        if mtry <= d
-            rf.cl{i} = rpclassificationforest(ntrees,x,y,'RandomForest',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            Predictions = oobpredict(rf.cl{i},x,y);
-            rf.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
-        end
-
-        rerf.cl{i} = rpclassificationforest(ntrees,x,y,'sparsemethod','sparse','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-        Predictions = oobpredict(rerf.cl{i},x,y);
-        rerf.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
-        
-        rerfr.cl{i} = rpclassificationforest(ntrees,x,y,'sparsemethod','sparse','Robust',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-        Predictions = oobpredict(rerfr.cl{i},x,y);
-        rerfr.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
-
-        rerfdn.cl{i} = rpclassificationforest(ntrees,x,y,'sparsemethod','sparse','mdiff','node','nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-        Predictions = oobpredict(rerfdn.cl{i},x,y);
-        rerfdn.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
-
-        if mtry <= d
-            rf_rot.cl{i} = rpclassificationforest(ntrees,x,y,'RandomForest',true,'rotate',true,'nvartosample',mtry,'NWorkers',NWorkers,'Stratified',true);
-            Predictions = oobpredict(rf_rot.cl{i},x,y);
-            rf_rot.Lhat(:,i,trial) = oob_error(Predictions,y,'every');
-        end
-
-        i = i + 1;
-    end
-
-    %% Select best hyperparameters for each algorithm
-    [~,rf.minIdx(trial)] = min(rf.Lhat(end,:,trial));
-    [~,rerf.minIdx(trial)] = min(rerf.Lhat(end,:,trial));
-    [~,rerfr.minIdx(trial)] = min(rerfr.Lhat(end,:,trial));
-    [~,rerfdn.minIdx(trial)] = min(rerfdn.Lhat(end,:,trial));
-    [~,rf_rot.minIdx(trial)] = min(rf_rot.Lhat(end,:,trial));
-
-    rf.posteriors(:,:,trial) = rerf_classprob(rf.cl{rf.minIdx(trial)},[Xrpost Yrpost Zrpost]);
-    rerf.posteriors(:,:,trial) = rerf_classprob(rerf.cl{rerf.minIdx(trial)},[Xrpost Yrpost Zrpost]);
-    rerfr.posteriors(:,:,trial) = rerf_classprob(rerfr.cl{rerf.minIdx(trial)},[Xrpost Yrpost Zrpost],'last',x);
-    rerfdn.posteriors(:,:,trial) = rerf_classprob(rerfdn.cl{rerfdn.minIdx(trial)},[Xrpost Yrpost Zrpost]);
-    rf_rot.posteriors(:,:,trial) = rerf_classprob(rf_rot.cl{rf_rot.minIdx(trial)},[Xrpost Yrpost Zrpost]);
-    
-    rf = rmfield(rf,'cl');
-    rerf = rmfield(rerf,'cl');
-    rerfr = rmfield(rerfr,'cl');
-    rerfdn = rmfield(rerfdn,'cl');
-    rf_rot = rmfield(rf_rot,'cl');
-end
-
-save([rerfPath 'RandomerForest/Results/Sparse_parity_posteriors_rotated_npoints_50.mat'],...
-    'n','d','dgood','ntrees','mtrys','rf','rerf','rerfr','rerfdn','rf_rot',...
-    'Xrpost','Yrpost','Zrpost')
