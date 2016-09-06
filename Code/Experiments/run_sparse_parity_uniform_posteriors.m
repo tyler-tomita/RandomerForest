@@ -12,7 +12,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load('Sparse_parity_uniform_transformations_data.mat')
+load('Sparse_parity_uniform_data.mat')
 
 Classifiers = {'rf' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
 
