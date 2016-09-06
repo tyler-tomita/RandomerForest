@@ -12,14 +12,14 @@ axWidth = 1.3;
 axHeight = 1.3;
 cbWidth = .1;
 cbHeight = axHeight;
-axLeft = [FontSize*3,FontSize*5+axWidth,FontSize*3,...
-    FontSize*5+axWidth,FontSize*3,...
-    FontSize*5+axWidth,FontSize*3,...
-    FontSize*5+axWidth,FontSize*3,...
-    FontSize*5+axWidth];
-axBottom = [(FontSize*7.5+axHeight*4)*ones(1,2),(FontSize*6+axHeight*3)*ones(1,2),...
-    (FontSize*4.5+axHeight*2)*ones(1,2),(FontSize*3+axHeight)*ones(1,2),...
-    FontSize*1.5*ones(1,2)];
+axLeft = [FontSize*3,FontSize*5+axWidth,FontSize*7+2*axWidth,FontSize*3,...
+    FontSize*5+axWidth,FontSize*7+2*axWidth,FontSize*3,...
+    FontSize*5+axWidth,FontSize*7+2*axWidth,FontSize*3,...
+    FontSize*5+axWidth,FontSize*7+2*axWidth,FontSize*3,...
+    FontSize*5+axWidth,FontSize*7+2*axWidth];
+axBottom = [(FontSize*7.5+axHeight*4)*ones(1,3),(FontSize*6+axHeight*3)*ones(1,3),...
+    (FontSize*4.5+axHeight*2)*ones(1,3),(FontSize*3+axHeight)*ones(1,3),...
+    FontSize*1.5*ones(1,3)];
 cbLeft = axLeft + axWidth + FontSize/2;
 cbBottom = axBottom;
 figWidth = cbLeft(end) + cbWidth + FontSize*2;
@@ -42,6 +42,7 @@ clear Phats
 
 Posteriors{4}.truth.Untransformed = truth.posteriors;
 Posteriors{4}.truth.Scaled = truth.posteriors;
+Posteriors{4}.truth.Outlier = truth.posteriors;
 Posteriors{4} = orderfields(Posteriors{4},[length(fieldnames(Posteriors{4})),1:length(fieldnames(Posteriors{4}))-1]);
 
 Classifiers = fieldnames(Posteriors{4});
@@ -59,14 +60,20 @@ fig.PaperSize = [figWidth figHeight];
 for i = 1:length(Classifiers)
     Transformations = fieldnames(Posteriors{4}.(Classifiers{i}));
     for j = 1:length(Transformations)
-        ax((i-1)*2+j) = axes;
-        p{(i-1)*2+j} = posterior_map(Xpost,Ypost,mean(Posteriors{4}.(Classifiers{i}).(Transformations{j}),3),false);
-        title(['(' char('A'+(i-1)*2+j-1) ')'],'FontSize',14,'Units','normalized','Position',[-0.02 1],...
+        ax((i-1)*3+j) = axes;
+        p{(i-1)*3+j} = posterior_map(Xpost.(Transformations{j}),Ypost.(Transformations{j}),mean(Posteriors{4}.(Classifiers{i}).(Transformations{j}),3),false);
+        title(['(' char('A'+(i-1)*3+j-1) ')'],'FontSize',14,'Units','normalized','Position',[-0.02 1],...
             'HorizontalAlignment','right','VerticalAlignment','top')
         if i==1
-            text(0.5,1.05,Transformations{j},'FontSize',14,'FontWeight','bold','Units',...
-                'normalized','HorizontalAlignment','center','VerticalAlignment'...
-                ,'bottom')
+            if strcmp(Transformations{j},'Outlier')
+                text(0.5,1.05,'Corrupted','FontSize',14,'FontWeight','bold','Units',...
+                    'normalized','HorizontalAlignment','center','VerticalAlignment'...
+                    ,'bottom')
+            else
+                text(0.5,1.05,Transformations{j},'FontSize',14,'FontWeight','bold','Units',...
+                    'normalized','HorizontalAlignment','center','VerticalAlignment'...
+                    ,'bottom')
+            end
             if j==1
                 xlabel('X_1')
                 ylabel({['\bf{',ClassifierNames{i},'}'];'\rm{X_2}'})
@@ -76,37 +83,37 @@ for i = 1:length(Classifiers)
                 ylabel(['\bf{',ClassifierNames{i},'}'])
             end
         end
-        ax((i-1)*2+j).LineWidth = LineWidth;
-        ax((i-1)*2+j).FontUnits = 'inches';
-        ax((i-1)*2+j).FontSize = FontSize;
-        ax((i-1)*2+j).Units = 'inches';
-        ax((i-1)*2+j).Position = [axLeft((i-1)*2+j) axBottom((i-1)*2+j) axWidth axHeight];
-        ax((i-1)*2+j).XTick = [];
-        ax((i-1)*2+j).YTick = ax((i-1)*2+j).XTick;
+        ax((i-1)*3+j).LineWidth = LineWidth;
+        ax((i-1)*3+j).FontUnits = 'inches';
+        ax((i-1)*3+j).FontSize = FontSize;
+        ax((i-1)*3+j).Units = 'inches';
+        ax((i-1)*3+j).Position = [axLeft((i-1)*3+j) axBottom((i-1)*3+j) axWidth axHeight];
+        ax((i-1)*3+j).XTick = [];
+        ax((i-1)*3+j).YTick = ax((i-1)*3+j).XTick;
         if i==1
-            colormap(ax((i-1)*2+j),'jet')
+            colormap(ax((i-1)*3+j),'jet')
         else
-            colormap(ax((i-1)*2+j),'parula')
+            colormap(ax((i-1)*3+j),'parula')
         end
         
         if i==1 && j==length(Transformations) || i==length(Classifiers) && j==length(Transformations)
             cb = colorbar;
             cb.Units = 'inches';
-            cb.Position = [cbLeft((i-1)*2+j) cbBottom((i-1)*2+j) cbWidth cbHeight];
+            cb.Position = [cbLeft((i-1)*3+j) cbBottom((i-1)*3+j) cbWidth cbHeight];
             cb.Box = 'off';
         end
     end
 end
 
 cdata = [];
-for i = 3:length(p)
+for i = 4:length(p)
     cdata = [cdata;p{i}.CData(:)];
 end
 cmin = min(cdata);
 cmax = max(cdata);
 
-for i = 3:length(ax)
+for i = 4:length(ax)
     caxis(ax(i),[cmin cmax])
 end
 
-% save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig1_posteriors'])
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig1_posteriors'])

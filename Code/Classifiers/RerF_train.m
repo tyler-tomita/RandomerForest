@@ -21,11 +21,7 @@ if ~isfield(Params,'nTrees')
     Params.nTrees = 500;
 end
 
-if ~isfield(Params,'RandomForest')
-    Params.RandomForest = false;
-end
-
-if ~isfield(Params,'Method')
+if ~isfield(Params,'ForestMethod')
     Params.Method = 'sparse-adjusted';
 end
 
@@ -38,7 +34,7 @@ if ~isfield(Params,'mdiff')
 end
 
 if ~isfield(Params,'d')
-    if Params.RandomForest
+    if strcmp(Params.ForestMethod,'rf')
         if p <= 5
             Params.d = 1:p;
         else
@@ -86,8 +82,7 @@ for i = 1:length(Params.d)
     tic;
     Forest{i} = rpclassificationforest(Xtrain,Ytrain,...
         'nTrees',Params.nTrees,...
-        'RandomForest',Params.RandomForest,...
-        'sparsemethod',Params.Method,...
+        'ForestMethod',Params.ForestMethod,...
         'rotate',Params.Rotate,...
         'mdiff',Params.mdiff,...
         'nvartosample',Params.d(i),...

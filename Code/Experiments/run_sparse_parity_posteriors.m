@@ -36,7 +36,7 @@ Xpost.Outlier = Xpost.Untransformed;
 Ypost.Outlier = Ypost.Untransformed;
 
 
-for i = 3:5
+for i = 4:5
     p = dims(i);
     fprintf('p = %d\n',p)
     
@@ -164,7 +164,7 @@ for i = 3:5
                         = rerf_classprob(Forest{BestIdx},...
                         [Xpost.(Transformations{t}),...
                         Ypost.(Transformations{t}),...
-                        Zpost{i}(Transformations{t})],...
+                        Zpost{i}.(Transformations{t})],...
                         'last',Xtrain(i).(Transformations{t})(:,:,trial));
                 end
                 

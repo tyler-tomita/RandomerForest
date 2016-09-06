@@ -397,11 +397,6 @@ function Tree=rptreefit(Tree,X,Y,varargin)
 
 % Process inputs
 
-%Reduce computational load for matrices with many zero elements
-if ~issparse(X) && nnz(X)/numel(X) <= 0.02
-    X = sparse(X);
-end
-
 if isnumeric(Y)
    Method = 'regression';
 else
@@ -1011,7 +1006,7 @@ function M = srpmat(d,k,method,varargin)
     elseif strcmp(method,'sparse')
         s = varargin{1};
         kk = round(k/(1-1/exp(1)));
-        M = sparse(d,kk);
+        M = zeros(d,kk);
         nnzs = round(kk*d*s);
         nzs=randperm(d*kk,nnzs);
         npos = rand(nnzs,1) > 0.5;
@@ -1019,10 +1014,11 @@ function M = srpmat(d,k,method,varargin)
         M(nzs(~npos))=-1;
         M = M(:,any(M));
         M = M(:,1:min(k,size(M,2)));
+        M = sparse(M);
     elseif strcmp(method,'sparse-adjusted')
         s = varargin{1};
         kk = varargin{3};
-        M = sparse(d,kk);
+        M = zeros(d,kk);
         nnzs = round(kk*d*s);
         nzs=randperm(d*kk,nnzs);
         npos = rand(nnzs,1) > 0.5;
@@ -1030,18 +1026,20 @@ function M = srpmat(d,k,method,varargin)
         M(nzs(~npos))=-1;
         M = unique(M(:,any(M))','rows','stable')';
         M = M(:,1:min(k,size(M,2)));
+        M = sparse(M);
     elseif strcmp(method,'sparse-uniform')
         s = varargin{1};
         kk = round(k/(1-1/exp(1)));
-        M = sparse(d,kk);
+        M = zeros(d,kk);
         nnzs = round(kk*d*s);
         nzs=randperm(d*kk,nnzs);
         M(nzs) = rand(1,nnzs)*2 - 1;
         M = M(:,any(M));
         M = M(:,1:min(k,size(M,2)));
+        M = sparse(M);
     elseif strcmp(method,'frc')
         nmix = varargin{2};
-        M = sparse(d,k);
+        M = zeros(d,k);
         p = 1;
         for i = 1:nmix-1
             p = p*(d-i)/d;
@@ -1056,11 +1054,12 @@ function M = srpmat(d,k,method,varargin)
         idx = idx(:,1:k);
         idx = (ndgrid(1:k,1:nmix)'-1)*d + idx;
         M(idx) = rand(1,nmix*k)*2 - 1;
+        M = sparse(M);
     elseif strcmp(method,'uniform-nnzs')
         nmix = varargin{2};
         min_nmix = min(nmix);
         max_nmix = max(nmix);
-        M = sparse(d,k);
+        M = zeros(d,k);
         p = 1;
         for i = 1:max_nmix-1
             p = p*(d-i)/d;
@@ -1080,6 +1079,7 @@ function M = srpmat(d,k,method,varargin)
         end
         idx(isnan(idx(:))) = [];
         M(idx(:)) = rand(1,length(idx(:)))*2 - 1;
+        M = sparse(M);
     end
 end
 

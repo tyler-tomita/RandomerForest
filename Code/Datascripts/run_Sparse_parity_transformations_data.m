@@ -20,8 +20,6 @@ Xtest = SS;
 Ytrain = T;
 Ytest = TT;
 
-n_out = round(0.2*ntrain);
-
 for i = 1:length(Xtrain)
     dgood = min(3,dims(i));
     for trial = 1:ntrials
@@ -43,7 +41,7 @@ for i = 1:length(Xtrain)
         Xtest(i).Affine(:,:,trial) = (Xtest(i).Untransformed*R).*S(ntrain+1:end,:);
         Ytrain(i).Affine(:,trial) = Ytrain(i).Untransformed(:,trial);
         Ytest(i).Affine(:,trial) = Ytest(i).Untransformed;
-        OutlierProportion = 0.1;
+        OutlierProportion = 0.2;
         nOutlier = ceil(OutlierProportion*numel(Xtrain(i).Untransformed(:,:,trial)));
         Xtrain(i).Outlier(:,:,trial) = Xtrain(i).Untransformed(:,:,trial);
         Ytrain(i).Outlier(:,trial) = Ytrain(i).Untransformed(:,trial);
