@@ -34,7 +34,7 @@ Xpost.Outlier = Xpost.Untransformed;
 Ypost.Outlier = Ypost.Untransformed;
 
 
-for i = 4:4
+for i = 3:3
     p = dims(i);
     fprintf('p = %d\n',p)
     

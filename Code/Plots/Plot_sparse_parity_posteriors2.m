@@ -40,12 +40,12 @@ end
 Posteriors = Phats;
 clear Phats
 
-Posteriors{4}.truth.Untransformed = truth.posteriors;
-Posteriors{4}.truth.Scaled = truth.posteriors;
-Posteriors{4}.truth.Outlier = truth.posteriors;
-Posteriors{4} = orderfields(Posteriors{4},[length(fieldnames(Posteriors{4})),1:length(fieldnames(Posteriors{4}))-1]);
+Posteriors{3}.truth.Untransformed = truth.posteriors;
+Posteriors{3}.truth.Scaled = truth.posteriors;
+Posteriors{3}.truth.Outlier = truth.posteriors;
+Posteriors{3} = orderfields(Posteriors{3},[length(fieldnames(Posteriors{3})),1:length(fieldnames(Posteriors{3}))-1]);
 
-Classifiers = fieldnames(Posteriors{4});
+Classifiers = fieldnames(Posteriors{3});
 Classifiers(strcmp(Classifiers,'rr_rfr')) = [];
 
 ClassifierNames = {'Posterior' 'RF' 'F-RC' 'F-RC(r)' 'RR-RF'};
@@ -58,10 +58,10 @@ fig.PaperPosition = [0 0 figWidth figHeight];
 fig.PaperSize = [figWidth figHeight];
 
 for i = 1:length(Classifiers)
-    Transformations = fieldnames(Posteriors{4}.(Classifiers{i}));
+    Transformations = fieldnames(Posteriors{3}.(Classifiers{i}));
     for j = 1:length(Transformations)
         ax((i-1)*3+j) = axes;
-        p{(i-1)*3+j} = posterior_map(Xpost.(Transformations{j}),Ypost.(Transformations{j}),mean(Posteriors{4}.(Classifiers{i}).(Transformations{j}),3),false);
+        p{(i-1)*3+j} = posterior_map(Xpost.(Transformations{j}),Ypost.(Transformations{j}),mean(Posteriors{3}.(Classifiers{i}).(Transformations{j}),3),false);
         title(['(' char('A'+(i-1)*3+j-1) ')'],'FontSize',14,'Units','normalized','Position',[-0.02 1],...
             'HorizontalAlignment','right','VerticalAlignment','top')
         if i==1
