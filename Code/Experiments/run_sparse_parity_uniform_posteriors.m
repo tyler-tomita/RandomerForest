@@ -34,12 +34,12 @@ Xpost.Outlier = Xpost.Untransformed;
 Ypost.Outlier = Ypost.Untransformed;
 
 
-for i = 3:4
+for i = 4:4
     p = dims(i);
     fprintf('p = %d\n',p)
     
     Zpost{i}.Untransformed = -0.5*ones(npoints^2,p-2);
-    Zpost{i}.Scaled = Zpost{i}.Untransformed;
+    Zpost{i}.Scaled = [Zpost{i}.Untransformed(:,1)*10^5 Zpost{i}.Untransformed(:,2:end)];
     Zpost{i}.Outlier = Zpost{i}.Untransformed;
       
     if p <= 5

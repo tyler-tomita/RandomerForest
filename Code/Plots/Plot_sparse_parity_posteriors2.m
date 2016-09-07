@@ -34,7 +34,7 @@ if runSims
     run_sparse_parity_posteriors
 else
     load Sparse_parity_true_posteriors
-    load Sparse_parity_transformations_posteriors
+    load Sparse_parity_uniform_transformations_posteriors
 end
 
 Posteriors = Phats;
@@ -116,4 +116,4 @@ for i = 4:length(ax)
     caxis(ax(i),[cmin cmax])
 end
 
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig1_posteriors'])
+% save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig1_posteriors'])
