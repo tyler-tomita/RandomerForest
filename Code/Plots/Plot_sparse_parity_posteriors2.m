@@ -61,7 +61,7 @@ for i = 1:length(Classifiers)
     Transformations = fieldnames(Posteriors{3}.(Classifiers{i}));
     for j = 1:length(Transformations)
         ax((i-1)*3+j) = axes;
-        p{(i-1)*3+j} = posterior_map(Xpost.(Transformations{j}),Ypost.(Transformations{j}),mean(Posteriors{3}.(Classifiers{i}).(Transformations{j}),3),false);
+        ph{(i-1)*3+j} = posterior_map(Xpost.(Transformations{j}),Ypost.(Transformations{j}),mean(Posteriors{3}.(Classifiers{i}).(Transformations{j}),3),false);
         title(['(' char('A'+(i-1)*3+j-1) ')'],'FontSize',14,'Units','normalized','Position',[-0.02 1],...
             'HorizontalAlignment','right','VerticalAlignment','top')
         if i==1
@@ -106,8 +106,8 @@ for i = 1:length(Classifiers)
 end
 
 cdata = [];
-for i = 4:length(p)
-    cdata = [cdata;p{i}.CData(:)];
+for i = 4:length(ph)
+    cdata = [cdata;ph{i}.CData(:)];
 end
 cmin = min(cdata);
 cmax = max(cdata);
@@ -116,4 +116,4 @@ for i = 4:length(ax)
     caxis(ax(i),[cmin cmax])
 end
 
-% save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig1_posteriors'])
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig1_posteriors'])

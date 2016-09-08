@@ -30,12 +30,12 @@ for i = 1:nClust
     if mod(i,inc)==0
         fprintf('%d %% complete\n',i/inc)
     end
-    f_k(:,i) = all(Xpost(:,1:p_prime).*repmat(allClusters(i,:),n,1)>0,2);
+    f_k(:,i) = Xpost(:,1:p_prime)*allClusters(i,:)';
 end
 
 g = sum(f_k,2);
 
-truth.posteriors(:,2) = sum(f_k(:,logical(mod(sum(allClusters==1,2),2))),2)./g;
+truth.posteriors(:,2) = sum(f_k(:,mod(sum(allClusters(:,1:p_prime),2),2)==1),2)./g;
 truth.posteriors(:,1) = 1 - truth.posteriors(:,2);
 
-save([rerfPath 'RandomerForest/Results/Sparse_parity_true_posteriors.mat'],'p','p_prime','Sigma','Xpost','truth')
+save([rerfPath 'RandomerForest/Results/Sparse_parity_true_posteriors.mat'],'d','p_prime','Sigma','Xpost','truth')
