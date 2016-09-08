@@ -358,9 +358,9 @@ FontSize = .12;
 axWidth = 2.75;
 axHeight = 1.25;
 axLeft = FontSize*3;
-axBottom = FontSize*3;
+axBottom = FontSize*2;
 figWidth = axLeft(end) + axWidth + FontSize;
-figHeight = axBottom(1) + axHeight + FontSize;
+figHeight = axBottom(1) + axHeight + FontSize*2;
 
 fig = figure;
 fig.Units = 'inches';
@@ -408,14 +408,14 @@ xlabel('Rank')
 ylabel('Frequency')
 % title('Corrupted')
 
-ax.LineWidth = LineWidth;
-ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
-ax.Units = 'inches';
-ax.Position = [axLeft axBottom axWidth axHeight];
 ax.XTickLabel = {'F-RC' 'F-RC(r)' 'F-RC(n)' 'F-RC(z)'};
+% ax.XTickLabel = {'RerF' 'RerF(rank)' 'RerF(normalize)' 'RerF(z-score)'};
+% ax.XTickLabel = {'raw' 'rank' 'normalize' 'z-score'};
+% ax.XTickLabel = {'RerF' 'RerF(r)' 'RerF(n)' 'RerF(z)','F-RC' 'F-RC(r)' 'F-RC(n)' 'F-RC(z)','RR-RF' 'RR-RF(r)' 'RR-RF(n)' 'RR-RF(z)'};
 ax.XLim = [0.5 4.5];
 ax.YLim = [0 60];
+ax.LineWidth = 2;
 
 ColoredIdx = [1,3];
 for j = ColoredIdx
@@ -445,10 +445,10 @@ ax.Children = ch;
 % line([1 2],[46 46],'Color','k','LineWidth',3)
 % t = text(1.5,46,'*','HorizontalAlignment','center',...
 %     'VerticalAlignment','bottom','FontSize',FontSize+2);
-t = text(2,ax.YLim(2),'\bf{+}','HorizontalAlignment','center',...
+t = text(3,ax.YLim(2),'\bf{+}','HorizontalAlignment','center',...
     'VerticalAlignment','top','FontSize',14,'Color','r');
 
-save_fig(gcf,'~/RandomerForest/Figures/Fig5_rescaling_methods')
+% save_fig(gcf,'~/RandomerForest/Figures/Fig5_rescaling_methods')
 
 %% Plot Performance Profiles for Affine Rescale Methods Benchmarks
 % % close all
