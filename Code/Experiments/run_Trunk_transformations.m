@@ -7,7 +7,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load Trunk_transformations_data
+load Trunk_data
 load Random_matrix_adjustment_factor
 
 Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
@@ -16,9 +16,6 @@ Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
 Transformations = fieldnames(Xtrain);
 Transformations(strcmp(Transformations,'Untransformed')) = [];
 
-dims = [2 10 50 100 500 1000];
-ntrials = 10;
-
 for i = 1:length(dims)
     p = dims(i);
     fprintf('p = %d\n',p)
@@ -26,9 +23,9 @@ for i = 1:length(dims)
     if p <= 5
         mtrys = [1:p ceil(p.^[1.5 2])];
     elseif p > 5 && p <= 100
-        mtrys = ceil(p.^[0 1/4 1/2 3/4 1 1.5 2]);
+        mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2]);
     else
-        mtrys = [ceil(p.^[0 1/4 1/2 3/4 1]) 5*p 10*p];
+        mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
     end
     mtrys_rf = mtrys(mtrys<=p);
 
@@ -60,16 +57,13 @@ for i = 1:length(dims)
                 || strcmp(Classifiers{c},'rfn') || strcmp(Classifiers{c},'rfz') || ...
                 strcmp(Classifiers{c},'rr_rf') || strcmp(Classifiers{c},'rr_rfr') || ...
                 strcmp(Classifiers{c},'rr_rfn') || strcmp(Classifiers{c},'rr_rfz')
-            Params{i}.(Classifiers{c}).RandomForest = true;
+            Params{i}.(Classifiers{c}).ForestMethod = 'rf';
             Params{i}.(Classifiers{c}).d = mtrys_rf;
-        else
-            Params{i}.(Classifiers{c}).RandomForest = false;
-            Params{i}.(Classifiers{c}).d = mtrys;
-        end
-        if strcmp(Classifiers{c},'rerf') || strcmp(Classifiers{c},'rerfr')...
+        elseif strcmp(Classifiers{c},'rerf') || strcmp(Classifiers{c},'rerfr')...
                 || strcmp(Classifiers{c},'rerfn') || strcmp(Classifiers{c},'rerfz') || ...
                 strcmp(Classifiers{c},'rerfd')
-            Params{i}.(Classifiers{c}).Method = 'sparse-adjusted';
+            Params{i}.(Classifiers{c}).ForestMethod = 'sparse-adjusted';
+            Params{i}.(Classifiers{c}).d = mtrys;
             for j = 1:length(Params{i}.(Classifiers{c}).d)
                 Params{i}.(Classifiers{c}).dprime(j) = ...
                     ceil(Params{i}.(Classifiers{c}).d(j)^(1/interp1(ps,...
@@ -77,7 +71,8 @@ for i = 1:length(dims)
             end
         elseif strcmp(Classifiers{c},'frc') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'frcn') || strcmp(Classifiers{c},'frcz')
-            Params{i}.(Classifiers{c}).Method = 'frc';
+            Params{i}.(Classifiers{c}).ForestMethod = 'frc';
+            Params{i}.(Classifiers{c}).d = mtrys;
             Params{i}.(Classifiers{c}).nmix = 2;
         end
         if strcmp(Classifiers{c},'rr_rf') || strcmp(Classifiers{c},'rr_rfr') || ...
@@ -141,8 +136,8 @@ for i = 1:length(dims)
 
                 clear Forest
 
-                save([rerfPath 'RandomerForest/Results/Trunk_transformations.mat'],'dims',...
-                    'OOBError','OOBAUC','TestError','TrainTime')
+                save([rerfPath 'RandomerForest/Results/Trunk.mat'],'dims',...
+                    'Params','OOBError','OOBAUC','TestError','TrainTime')
             end
             fprintf('%s complete\n',Classifiers{c})
         end
