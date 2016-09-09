@@ -31,7 +31,7 @@ for i = 1:length(dims)
     for c = 1:length(Classifiers)
         Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
-        Params{i}.(Classifiers{c}).NWorkers = 24;
+        Params{i}.(Classifiers{c}).NWorkers = 16;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                 'rerfr') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'rr_rfr')
