@@ -15,7 +15,7 @@ Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
 
 Transformations = fieldnames(Xtrain);
 
-for i = 1:length(dims)
+for i = 2:length(dims)
     p = dims(i);
     fprintf('p = %d\n',p)
       
@@ -81,6 +81,7 @@ for i = 1:length(dims)
         end
         
         for t = 1:length(Transformations)
+            fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             OOBAUC{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
@@ -139,7 +140,7 @@ for i = 1:length(dims)
                 save([rerfPath 'RandomerForest/Results/Sparse_parity.mat'],'dims',...
                     'Params','OOBError','OOBAUC','TestError','TrainTime')
             end
-            fprintf('%s complete\n',Classifiers{c})
         end
+        fprintf('%s complete\n',Classifiers{c})
     end   
 end

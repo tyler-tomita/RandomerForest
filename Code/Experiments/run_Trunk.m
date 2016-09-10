@@ -15,7 +15,7 @@ Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
 
 Transformations = fieldnames(Xtrain);
 
-for i = 1:length(dims)
+for i = 2:length(dims)
     p = dims(i);
     fprintf('p = %d\n',p)
       
@@ -29,6 +29,7 @@ for i = 1:length(dims)
     mtrys_rf = mtrys(mtrys<=p);
 
     for c = 1:length(Classifiers)
+        fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
         Params{i}.(Classifiers{c}).NWorkers = 16;
@@ -138,7 +139,7 @@ for i = 1:length(dims)
                 save([rerfPath 'RandomerForest/Results/Trunk.mat'],'dims',...
                     'Params','OOBError','OOBAUC','TestError','TrainTime')
             end
-            fprintf('%s complete\n',Classifiers{c})
         end
+        fprintf('%s complete\n',Classifiers{c})
     end   
 end
