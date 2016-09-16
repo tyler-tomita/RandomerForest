@@ -29,9 +29,6 @@ for i = 5:length(dims)
     mtrys_rf = mtrys(mtrys<=p);
 
     for c = 1:length(Classifiers)
-        if p>500 && ismember(Classifiers{c},{'rr_rf','rr_rfr','rr_rfn','rr_rfz'})
-            continue
-        end
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
