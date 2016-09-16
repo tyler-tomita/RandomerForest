@@ -134,6 +134,7 @@ classdef rpclassificationforest
             sampleidx = 1:length(Y);
             
             RR = zeros(d,d,nTrees);
+            RotVars = false(nTrees,d);
             
             poolobj = gcp('nocreate');
             if isempty(poolobj);
@@ -158,7 +159,7 @@ classdef rpclassificationforest
                         RR(:,:,i) = random_rotation(500);
                         RotVars(i,:) = ismember(1:p,randperm(d,500));
                         Xtree = X;
-                        Xtree(:,RotVars(i,:)) = X(:,RotVars(i,:))*RR(:,:,i);
+                        Xtree(:,RotVars(i,:)) = Xtree(:,RotVars(i,:))*RR(:,:,i);
                     end
                 else
                     Xtree = X;
