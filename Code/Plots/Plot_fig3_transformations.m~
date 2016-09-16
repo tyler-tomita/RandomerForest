@@ -67,15 +67,15 @@ for i = 1:length(Transformations)
     end
     if i==1
         xlabel('p')
-        ylabel({'\bf{Raw}';'\rm{Error Rate}'})
+        ylabel({['\bf{' Transformations{i} '}'];'\rm{Error Rate}'})
         text(0.5,1.05,'Sparse Parity','FontSize',14,'FontWeight','bold','Units',...
             'normalized','HorizontalAlignment','center','VerticalAlignment'...
             ,'bottom')
     else
         if strcmp(Transformations{i},'Outlier')
             ylabel('\bf{Corrupted}')
-        else
-            ylabel(['\bf{' Transformations{i} '}'])
+        elseif strcmp(Transformations{i},'
+            
         end
     end
     
