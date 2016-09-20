@@ -15,7 +15,7 @@ Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
 
 Transformations = fieldnames(Xtrain);
 
-for i = 5:length(dims)
+for i = 5:5
     p = dims(i);
     fprintf('p = %d\n',p)
       
@@ -80,14 +80,14 @@ for i = 5:length(dims)
             Params{i}.(Classifiers{c}).Rotate = true;
         end
         
-        for t = 4:4
+        for t = 5:5
             fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             OOBAUC{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             TrainTime{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
 
-            for trial = ntrials:ntrials
+            for trial = 1:ntrials
 
                 % train classifier
                 poolobj = gcp('nocreate');
