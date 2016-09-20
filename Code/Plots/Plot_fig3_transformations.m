@@ -5,7 +5,7 @@ close all
 clc
 
 fpath = mfilename('fullpath');
-rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
+frcPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 LineWidth = 2;
 FontSize = .2;
@@ -30,24 +30,23 @@ fig.Position = [0 0 figWidth figHeight];
 fig.PaperPosition = [0 0 figWidth figHeight];
 fig.PaperSize = [figWidth figHeight];
 
+%% Plot Sparse Parity
+
 runSims = false;
 
 if runSims
     run_Sparse_parity
 else
-    load Sparse_parity_p_2_20
+    load Sparse_parity
 end
 
 TestError = TestError(~cellfun(@isempty,TestError));
-
-%plot only dimensions that have complete results
-dims = dims(1:end-1);
 
 ntrials = size(TestError{1}.rf.Untransformed,1);
 
 for i = 1:length(dims)
     Classifiers = fieldnames(TestError{i});
-    Classifiers(~ismember(Classifiers,{'rf','rfr','rerf','rerfr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'rf','rfr','frc','frcr','rr_rf','rr_rfr'})) = [];
     for j = 1:length(Classifiers)
         Transformations = fieldnames(TestError{i}.(Classifiers{j}));
         for k = 1:length(Transformations)
@@ -85,12 +84,15 @@ for i = 1:length(Transformations)
     ax(2*i-1).Units = 'inches';
     ax(2*i-1).Position = [axLeft(2*i-1) axBottom(2*i-1) axWidth axHeight];
     ax(2*i-1).Box = 'off';
-    ax(2*i-1).XLim = [1.5 25];
+    ax(2*i-1).XLim = [1.5 45];
     ax(2*i-1).XScale = 'log';
-    ax(2*i-1).XTick = [2 5 10 20];
-    ax(2*i-1).XTickLabel = {'2' '5' '10' '20'};
+    ax(2*i-1).XTick = [2 5 10 20 40];
+    ax(2*i-1).XTickLabel = {'2' '5' '10' '20' '40'};
     ax(2*i-1).YLim = [0 .51];
 end
+
+clear ErrorMatrix
+%% Plot Trunk
 
 runSims = false;
 
@@ -109,7 +111,7 @@ ntrials = size(TestError{1}.rf.Untransformed,1);
 
 for i = 1:length(dims)
     Classifiers = fieldnames(TestError{i});
-    Classifiers(~ismember(Classifiers,{'rf','rfr','rerf','rerfr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'rf','rfr','frc','frcr','rr_rf','rr_rfr'})) = [];
     for j = 1:length(Classifiers)
         Transformations = fieldnames(TestError{i}.(Classifiers{j}));
         for k = 1:length(Transformations)
@@ -147,11 +149,11 @@ for i = 1:length(Transformations)
     ax(2*i).YLim = [0.01 .10];
     
     if i==length(Transformations)
-        l = legend('RF','RF(r)','RerF','RerF(r)','RR-RF','RR-RF(r)');
+        l = legend('RF','RF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
         l.Box = 'off';
         l.Units = 'inches';
         l.Position = [legLeft legBottom legWidth legHeight];
     end
 end
 
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig3_transformations'])
+save_fig(gcf,[frcPath 'RandomerForest/Figures/Fig3_transformations'])

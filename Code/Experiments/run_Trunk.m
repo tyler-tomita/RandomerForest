@@ -28,7 +28,7 @@ for i = 5:length(dims)
     end
     mtrys_rf = mtrys(mtrys<=p);
 
-    for c = 1:length(Classifiers)
+    for c = 7:7
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
@@ -80,14 +80,14 @@ for i = 5:length(dims)
             Params{i}.(Classifiers{c}).Rotate = true;
         end
         
-        for t = 1:length(Transformations)
+        for t = 4:4
             fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             OOBAUC{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             TrainTime{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
 
-            for trial = 1:ntrials
+            for trial = ntrials:ntrials
 
                 % train classifier
                 poolobj = gcp('nocreate');
