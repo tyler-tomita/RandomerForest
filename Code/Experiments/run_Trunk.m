@@ -29,7 +29,7 @@ for i = 5:5
     end
     mtrys_rf = mtrys(mtrys<=p);
 
-    for c = 8:length(Classifiers)
+    for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
