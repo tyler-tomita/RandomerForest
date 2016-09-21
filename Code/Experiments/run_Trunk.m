@@ -10,8 +10,9 @@ rng(1);
 load Trunk_data
 load Random_matrix_adjustment_factor
 
-Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
-    'frc' 'frcr' 'frcn' 'frcz' 'rr_rf' 'rr_rfr' 'rr_rfn' 'rr_rfz'};
+% Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
+%     'frc' 'frcr' 'frcn' 'frcz' 'rr_rf' 'rr_rfr' 'rr_rfn' 'rr_rfz'};
+Classifiers = {'frc' 'frcr' 'frcn' 'frcz' 'rr_rf' 'rr_rfr' 'rr_rfn' 'rr_rfz'};
 
 Transformations = fieldnames(Xtrain);
 
@@ -28,7 +29,7 @@ for i = 5:5
     end
     mtrys_rf = mtrys(mtrys<=p);
 
-    for c = 7:7
+    for c = 8:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
@@ -80,7 +81,7 @@ for i = 5:5
             Params{i}.(Classifiers{c}).Rotate = true;
         end
         
-        for t = 5:5
+        for t = 1:length(Transformations)
             fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));

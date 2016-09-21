@@ -15,21 +15,20 @@ Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
 
 Transformations = fieldnames(Xtrain);
 
-for i = 4:length(dims)
+for i = 5:5
     p = dims(i);
     fprintf('p = %d\n',p)
       
     if p <= 5
         mtrys = [1:p ceil(p.^[1.5 2])];
-    elseif p > 5 && p <= 100
+    elseif p > 5 && p <= 50
         mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2]);
     else
         mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
     end
     mtrys_rf = mtrys(mtrys<=p);
 
-    for c = 1:length(Classifiers)
-        if p>
+    for c = 8:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
@@ -82,6 +81,7 @@ for i = 4:length(dims)
         end
         
         for t = 1:length(Transformations)
+            fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             OOBAUC{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
