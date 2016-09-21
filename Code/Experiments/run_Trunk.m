@@ -29,7 +29,7 @@ for i = 5:5
     end
     mtrys_rf = mtrys(mtrys<=p);
 
-    for c = 1:length(Classifiers)
+    for c = 2:2
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
@@ -81,7 +81,7 @@ for i = 5:5
             Params{i}.(Classifiers{c}).Rotate = true;
         end
         
-        for t = 1:length(Transformations)
+        for t = 3:length(Transformations)
             fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
