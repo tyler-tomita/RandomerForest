@@ -5,7 +5,7 @@ close all
 clc
 
 fpath = mfilename('fullpath');
-frcPath = fpath(1:strfind(fpath,'RandomerForest')-1);
+rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
 Colors.rf = C(1,:);
@@ -20,15 +20,15 @@ MarkerSize = 12;
 FontSize = .2;
 axWidth = 1.3;
 axHeight = 1.3;
-axLeft = repmat([FontSize*4,FontSize*6.5+axWidth],1,3);
+axLeft = repmat([FontSize*4,FontSize*8+axWidth],1,3);
 axBottom = [...
-    (FontSize*4.5+axHeight*2)*ones(1,2),(FontSize*3+axHeight)*ones(1,2),...
-    FontSize*1.5*ones(1,2)];
+    (FontSize*9+axHeight*2)*ones(1,2),(FontSize*6+axHeight)*ones(1,2),...
+    FontSize*3*ones(1,2)];
 legWidth = axWidth;
 legHeight = axHeight;
 legLeft = axLeft(end) + axWidth + FontSize;
 legBottom = axBottom(5);
-figWidth = legLeft(end) + legWidth;
+figWidth = axLeft(end) + axWidth + FontSize;
 figHeight = axBottom(1) + axHeight + FontSize*1.5;
 
 fig = figure;
@@ -67,7 +67,7 @@ ylabel('X_2')
 l = legend('Class 1','Class 2');
 l.Location = 'southwest';
 l.Box = 'off';
-l.FontSize = 12;
+l.FontSize = 10;
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -128,10 +128,10 @@ ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft(3) axBottom(3) axWidth axHeight];
 ax.Box = 'off';
-ax.XLim = [1 105];
+ax.XLim = [1.5 45];
 ax.XScale = 'log';
-ax.XTick = [1 10 100];
-ax.XTickLabel = {'1' '10' '100'};
+ax.XTick = [2 5 10 20 40];
+ax.XTickLabel = {'2' '5' '10' '20' '40'};
 ax.YLim = [0 .5];
 
 ax = axes;
@@ -154,9 +154,10 @@ ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft(5) axBottom(5) axWidth axHeight];
 ax.Box = 'off';
-ax.XLim = [1 105];
-ax.XTick = [1 10 100];
-ax.XTickLabel = {'1' '10' '100'};
+ax.XLim = [1.5 45];
+ax.XScale = 'log';
+ax.XTick = [2 5 10 20 40];
+ax.XTickLabel = {'2' '5' '10' '20' '40'};
 ax.XScale = 'log';
 
 clear hTestError hTrainTime TestError minTestError trainTime
@@ -270,10 +271,13 @@ ax.Units = 'inches';
 ax.Position = [axLeft(6) axBottom(6) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [9 1100];
+ax.YLim = [0 100];
 ax.XScale = 'log';
 ax.XTick = logspace(0,3,4);
 ax.XTickLabel = {'1';'10';'100';'1000'};
 l = legend('RF','RF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
 l.Location = 'southwest';
 l.Box = 'off';
-l.FontSize = 12;
+l.FontSize = 10;
+
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig2_simulations'])

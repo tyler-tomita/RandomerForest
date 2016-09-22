@@ -34,14 +34,14 @@ if runSims
     run_sparse_parity_posteriors
 else
     load Sparse_parity_true_posteriors
-    load Sparse_parity_uniform_transformations_posteriors
+    load Sparse_parity_uniform_transformations_posteriors_affine
 end
 
 Posteriors = Phats;
 clear Phats
 
 Posteriors{3}.truth.Untransformed = truth.posteriors;
-Posteriors{3}.truth.Scaled = truth.posteriors;
+Posteriors{3}.truth.Affine = truth.posteriors;
 Posteriors{3}.truth.Outlier = truth.posteriors;
 Posteriors{3} = orderfields(Posteriors{3},[length(fieldnames(Posteriors{3})),1:length(fieldnames(Posteriors{3}))-1]);
 
@@ -61,7 +61,7 @@ for i = 1:length(Classifiers)
     Transformations = fieldnames(Posteriors{3}.(Classifiers{i}));
     for j = 1:length(Transformations)
         ax((i-1)*3+j) = axes;
-        ph{(i-1)*3+j} = posterior_map(Xpost.(Transformations{j}),Ypost.(Transformations{j}),mean(Posteriors{3}.(Classifiers{i}).(Transformations{j}),3),false);
+        ph{(i-1)*3+j} = posterior_map(Xpost,Ypost,mean(Posteriors{3}.(Classifiers{i}).(Transformations{j}),3),false);
         title(['(' char('A'+(i-1)*3+j-1) ')'],'FontSize',14,'Units','normalized','Position',[-0.02 1],...
             'HorizontalAlignment','right','VerticalAlignment','top')
         if i==1

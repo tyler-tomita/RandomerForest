@@ -45,9 +45,9 @@ for i = 3:3
     if p <= 5
         mtrys = [1:p ceil(p.^[1.5 2])];
     elseif p > 5 && p <= 20
-        mtrys = ceil(p.^[0 1/4 1/2 3/4 1 1.5 2]);
+        mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2]);
     else
-        mtrys = [ceil(p.^[0 1/4 1/2 3/4 1]) 5*p 10*p];
+        mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
     end
     mtrys_rf = mtrys(mtrys<=p);
 
