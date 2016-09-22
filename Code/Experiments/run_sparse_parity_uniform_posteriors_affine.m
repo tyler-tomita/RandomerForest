@@ -1,3 +1,8 @@
+%% Plot Sparse Parity Posterior Heat Maps 
+% Trains RF, F-RC, and Rotation RF on sparse parity and plots
+% posterior heat maps for each classifier
+
+%% Initialize parameters
 close all
 clear
 clc
@@ -7,24 +12,36 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load Sparse_parity_data
-load Random_matrix_adjustment_factor
+load('Sparse_parity_data.mat')
 
-Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
-    'frc' 'frcr' 'frcn' 'frcz' 'rr_rf' 'rr_rfr' 'rr_rfn' 'rr_rfz'};
+Classifiers = {'rf' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
 
-Transformations = fieldnames(Xtrain);
+Transformations = {'Affine'};
 
-for i = 1:length(dims)
+ntrials = 10;
+
+xmin = -1;
+xmax = 1;
+ymin = xmin;
+ymax = xmax;
+npoints = 50;
+[xgv,ygv] = meshgrid(linspace(xmin,xmax,npoints),linspace(ymin,ymax,npoints));
+Xpost = xgv(:);
+Ypost = ygv(:);
+
+
+for i = 3:3
     p = dims(i);
     fprintf('p = %d\n',p)
+    
+    Zpost = -0.5*ones(npoints^2,p-2);
       
     if p <= 5
         mtrys = [1:p ceil(p.^[1.5 2])];
     elseif p > 5 && p <= 20
-        mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2]);
+        mtrys = ceil(p.^[0 1/4 1/2 3/4 1 1.5 2]);
     else
-        mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
+        mtrys = [ceil(p.^[0 1/4 1/2 3/4 1]) 5*p 10*p];
     end
     mtrys_rf = mtrys(mtrys<=p);
 
@@ -80,7 +97,7 @@ for i = 1:length(dims)
             Params{i}.(Classifiers{c}).Rotate = true;
         end
         
-        for t = 4:4
+        for t = 1:length(Transformations)
             fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
@@ -88,6 +105,7 @@ for i = 1:length(dims)
             TrainTime{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
 
             for trial = 1:ntrials
+                fprintf('Trial %d\n',trial)
 
                 % train classifier
                 poolobj = gcp('nocreate');
@@ -126,19 +144,19 @@ for i = 1:length(dims)
                 end
 
                 if strcmp(Forest{BestIdx}.Rescale,'off')
-                    Scores = rerf_classprob(Forest{BestIdx},Xtest(i).(Transformations{t})(:,:,trial),'last');
+                    Phats{i}.(Classifiers{c}).(Transformations{t})(:,:,trial) ...
+                        = rerf_classprob(Forest{BestIdx},...
+                        ([Xpost,Ypost,Zpost]*R{i}(:,:,trial)).*repmat(S2{i}(1,:,trial),length(Xpost),1),...
+                        'last');
                 else
-                    Scores = rerf_classprob(Forest{BestIdx},Xtest(i).(Transformations{t})(:,:,trial),...
+                    Phats{i}.(Classifiers{c}).(Transformations{t})(:,:,trial) ...
+                        = rerf_classprob(Forest{BestIdx},...
+                        ([Xpost,Ypost,Zpost]*R{i}(:,:,trial)).*repmat(S2{i}(1,:,trial),length(Xpost),1),...
                         'last',Xtrain(i).(Transformations{t})(:,:,trial));
                 end
-                Predictions = predict_class(Scores,Forest{BestIdx}.classname);
-                TestError{i}.(Classifiers{c}).(Transformations{t})(trial) = misclassification_rate(Predictions,...
-                    Ytest(i).(Transformations{t})(:,trial),false);
-
-                clear Forest
-
-                save([rerfPath 'RandomerForest/Results/Sparse_parity_affine_revised.mat'],'dims',...
-                    'Params','OOBError','OOBAUC','TestError','TrainTime')
+                
+                save([rerfPath 'RandomerForest/Results/Sparse_parity_uniform_transformations_posteriors_affine.mat'],'dims',...
+                    'Phats','Xpost','Ypost','Zpost')
             end
         end
         fprintf('%s complete\n',Classifiers{c})

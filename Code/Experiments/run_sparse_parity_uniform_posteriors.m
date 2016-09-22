@@ -1,5 +1,5 @@
 %% Plot Sparse Parity Posterior Heat Maps 
-% Trains RF, RerF, RerFdn, and Rotation RF on sparse parity and plots
+% Trains RF, F-RC, and Rotation RF on sparse parity and plots
 % posterior heat maps for each classifier
 
 %% Initialize parameters
@@ -12,7 +12,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load('Sparse_parity_uniform_data.mat')
+load('Sparse_parity_data.mat')
 
 Classifiers = {'rf' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
 
@@ -44,14 +44,14 @@ for i = 3:3
       
     if p <= 5
         mtrys = [1:p ceil(p.^[1.5 2])];
-    elseif p > 5 && p <= 25
+    elseif p > 5 && p <= 20
         mtrys = ceil(p.^[0 1/4 1/2 3/4 1 1.5 2]);
     else
         mtrys = [ceil(p.^[0 1/4 1/2 3/4 1]) 5*p 10*p];
     end
     mtrys_rf = mtrys(mtrys<=p);
 
-    for c = 2:length(Classifiers)
+    for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 500;
         Params{i}.(Classifiers{c}).Stratified = true;
