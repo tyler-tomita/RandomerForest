@@ -27,8 +27,14 @@ for i = 3:length(dims)
         mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
     end
     mtrys_rf = mtrys(mtrys<=p);
+    
+    if p==10
+        StartIdx = 3;
+    else
+        StartIdx = 1;
+    end
 
-    for c = 1:length(Classifiers)
+    for c = StartIdx:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 500;
         Params{i}.(Classifiers{c}).Stratified = true;
