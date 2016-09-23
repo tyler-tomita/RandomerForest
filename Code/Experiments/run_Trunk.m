@@ -81,7 +81,7 @@ for i = 5:5
             Params{i}.(Classifiers{c}).Rotate = true;
         end
         
-        for t = 3:length(Transformations)
+        for t = 1:length(Transformations)
             fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
