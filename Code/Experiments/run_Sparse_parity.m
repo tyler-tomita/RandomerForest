@@ -29,7 +29,7 @@ for i = 3:length(dims)
     mtrys_rf = mtrys(mtrys<=p);
     
     if p==10
-        StartIdx = 11;
+        StartIdx = 12;
     else
         StartIdx = 1;
     end
