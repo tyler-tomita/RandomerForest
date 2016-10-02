@@ -19,11 +19,11 @@ for i = 1:length(dims)
     fprintf('p = %d\n',p)
       
     if p <= 5
-        mtrys = [1:p ceil(p.^[1.5 2])];
+        mtrys = [1:p ceil(p.^[2 3])];
     elseif p > 5 && p <= 20
-        mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2]);
+        mtrys = ceil(p.^[1/4 1/2 3/4 1 2 3]);
     else
-        mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
+        mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 10*p 20*p];
     end
     mtrys_rf = mtrys(mtrys<=p);
 
@@ -69,12 +69,12 @@ for i = 1:length(dims)
                     ceil(Params{i}.(Classifiers{c}).d(j)^(1/interp1(ps,...
                     slope,p)));
             end
-            Params{i}.(Classifiers{c}).nmix = 1:min(5,p);
+            Params{i}.(Classifiers{c}).nmix = 1:min(3,p);
         elseif strcmp(Classifiers{c},'frc') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'frcn') || strcmp(Classifiers{c},'frcz')
             Params{i}.(Classifiers{c}).ForestMethod = 'frc';
             Params{i}.(Classifiers{c}).d = mtrys;
-            Params{i}.(Classifiers{c}).nmix = 1:min(5,p);
+            Params{i}.(Classifiers{c}).nmix = 1:min(3,p);
         end
         if strcmp(Classifiers{c},'rr_rf') || strcmp(Classifiers{c},'rr_rfr') || ...
                 strcmp(Classifiers{c},'rr_rfn') || strcmp(Classifiers{c},'rr_rfz')
@@ -114,6 +114,14 @@ for i = 1:length(dims)
                 [Forest,~,TrainTime{i}.(Classifiers{c}).(Transformations{t})(trial,:)] = ...
                     RerF_train(Xtrain(i).(Transformations{t})(:,:,trial),...
                     Ytrain(i).(Transformations{t})(:,trial),Params{i}.(Classifiers{c}));
+                
+                % remove empty forests which happen when nmix=1 and d > p
+                % for F-RC
+                
+                OOBError{i}.(Classifiers{c}).(Transformations{t})(:,cellfun(@isempty,Forest)) = [];
+                OOBAUC{i}.(Classifiers{c}).(Transformations{t})(:,cellfun(@isempty,Forest)) = [];
+                TrainTime{i}.(Classifiers{c}).(Transformations{t})(:,cellfun(@isempty,Forest)) = [];
+                Forest(cellfun(@isempty,Forest)) = [];
 
                 % select best hyperparameter
 
