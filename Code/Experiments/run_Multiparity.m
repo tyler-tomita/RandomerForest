@@ -10,8 +10,7 @@ rng(1);
 load Multiparity_data
 load Random_matrix_adjustment_factor
 
-% Classifiers = {'rf' 'rerf' 'frc' 'rr_rf'};
-Classifiers = {'frc'};
+Classifiers = {'rf' 'rerf' 'frc' 'rr_rf'};
 Transformations = fieldnames(Xtrain);
 
 for i = 1:length(dims)
@@ -31,7 +30,7 @@ for i = 1:length(dims)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 500;
         Params{i}.(Classifiers{c}).Stratified = true;
-        Params{i}.(Classifiers{c}).NWorkers = 2;
+        Params{i}.(Classifiers{c}).NWorkers = 24;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                 'rerfr') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'rr_rfr')
@@ -155,8 +154,8 @@ for i = 1:length(dims)
 
                 clear Forest
 
-%                 save([rerfPath 'RandomerForest/Results/Multiparity.mat'],'dims',...
-%                     'Params','OOBError','OOBAUC','TestError','TrainTime')
+                save([rerfPath 'RandomerForest/Results/Multiparity.mat'],'dims',...
+                    'Params','OOBError','OOBAUC','TestError','TrainTime')
             end
         end
         fprintf('%s complete\n',Classifiers{c})
