@@ -10,8 +10,8 @@ rng(1);
 load Multiparity_data
 load Random_matrix_adjustment_factor
 
-Classifiers = {'rf' 'rerf' 'frc' 'rr_rf'};
-
+% Classifiers = {'rf' 'rerf' 'frc' 'rr_rf'};
+Classifiers = {'frc'};
 Transformations = fieldnames(Xtrain);
 
 for i = 1:length(dims)
@@ -31,7 +31,7 @@ for i = 1:length(dims)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 500;
         Params{i}.(Classifiers{c}).Stratified = true;
-        Params{i}.(Classifiers{c}).NWorkers = 24;
+        Params{i}.(Classifiers{c}).NWorkers = 2;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                 'rerfr') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'rr_rfr')
@@ -126,26 +126,30 @@ for i = 1:length(dims)
                 % select best hyperparameter
 
                 for j = 1:length(Forest)
-                    Scores = rerf_oob_classprob(Forest{j},...
-                        Xtrain(i).(Transformations{t})(:,:,trial),'last');
-                    Predictions = predict_class(Scores,Forest{j}.classname);
-                    OOBError{i}.(Classifiers{c}).(Transformations{t})(trial,j) = ...
-                        misclassification_rate(Predictions,Ytrain(i).(Transformations{t})(:,trial),...
-                        false);
-                    if size(Scores,2) > 2
-                        Yb = binarize_labels(Ytrain(i).(Transformations{t})(:,trial),Forest{j}.classname);
-                        [~,~,~,OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,j)] = ...
-                            perfcurve(Yb(:),Scores(:),'1');
-                    else
-                        [~,~,~,OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,j)] = ...
-                            perfcurve(Ytrain(i).(Transformations{t})(:,trial),Scores(:,2),'1');
+                    if ~isempty(Forest{j})
+                        Scores = rerf_oob_classprob(Forest{j},...
+                            Xtrain(i).(Transformations{t})(:,:,trial),'last');
+                        Predictions = predict_class(Scores,Forest{j}.classname);
+                        OOBError{i}.(Classifiers{c}).(Transformations{t})(trial,j) = ...
+                            misclassification_rate(Predictions,Ytrain(i).(Transformations{t})(:,trial),...
+                            false);
+                        if size(Scores,2) > 2
+                            Yb = binarize_labels(Ytrain(i).(Transformations{t})(:,trial),Forest{j}.classname);
+                            [~,~,~,OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,j)] = ...
+                                perfcurve(Yb(:),Scores(:),'1');
+                        else
+                            [~,~,~,OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,j)] = ...
+                                perfcurve(Ytrain(i).(Transformations{t})(:,trial),Scores(:,2),'1');
+                        end
                     end
                 end
-                BestIdx = hp_optimize(OOBError{i}.(Classifiers{c}).(Transformations{t})(trial,:),...
-                    OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,:));
+                NotEmptyIdx = find(~isnan(OOBError{i}.(Classifiers{c}).(Transformations{t})(trial,:)));
+                BestIdx = hp_optimize(OOBError{i}.(Classifiers{c}).(Transformations{t})(trial,NotEmptyIdx),...
+                    OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,NotEmptyIdx));
                 if length(BestIdx)>1
                     BestIdx = BestIdx(end);
                 end
+                BestIdx = NotEmptyIdx(BestIdx);
 
                 if strcmp(Forest{BestIdx}.Rescale,'off')
                     Scores = rerf_classprob(Forest{BestIdx},Xtest(i).(Transformations{t})(:,:,trial),'last');
@@ -159,8 +163,8 @@ for i = 1:length(dims)
 
                 clear Forest
 
-                save([rerfPath 'RandomerForest/Results/Multiparity.mat'],'dims',...
-                    'Params','OOBError','OOBAUC','TestError','TrainTime')
+%                 save([rerfPath 'RandomerForest/Results/Multiparity.mat'],'dims',...
+%                     'Params','OOBError','OOBAUC','TestError','TrainTime')
             end
         end
         fprintf('%s complete\n',Classifiers{c})

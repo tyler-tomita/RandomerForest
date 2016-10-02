@@ -126,21 +126,24 @@ for i = 1:length(dims)
                 % select best hyperparameter
 
                 for j = 1:length(Forest)
-                    Scores = rerf_oob_classprob(Forest{j},...
-                        Xtrain(i).(Transformations{t})(:,:,trial),'last');
-                    Predictions = predict_class(Scores,Forest{j}.classname);
-                    OOBError{i}.(Classifiers{c}).(Transformations{t})(trial,j) = ...
-                        misclassification_rate(Predictions,Ytrain(i).(Transformations{t})(:,trial),...
-                        false);
-                    if size(Scores,2) > 2
-                        Yb = binarize_labels(Ytrain(i).(Transformations{t})(:,trial),Forest{j}.classname);
-                        [~,~,~,OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,j)] = ...
-                            perfcurve(Yb(:),Scores(:),'1');
-                    else
-                        [~,~,~,OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,j)] = ...
-                            perfcurve(Ytrain(i).(Transformations{t})(:,trial),Scores(:,2),'1');
+                    if ~isempty(Forest{j})
+                        Scores = rerf_oob_classprob(Forest{j},...
+                            Xtrain(i).(Transformations{t})(:,:,trial),'last');
+                        Predictions = predict_class(Scores,Forest{j}.classname);
+                        OOBError{i}.(Classifiers{c}).(Transformations{t})(trial,j) = ...
+                            misclassification_rate(Predictions,Ytrain(i).(Transformations{t})(:,trial),...
+                            false);
+                        if size(Scores,2) > 2
+                            Yb = binarize_labels(Ytrain(i).(Transformations{t})(:,trial),Forest{j}.classname);
+                            [~,~,~,OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,j)] = ...
+                                perfcurve(Yb(:),Scores(:),'1');
+                        else
+                            [~,~,~,OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,j)] = ...
+                                perfcurve(Ytrain(i).(Transformations{t})(:,trial),Scores(:,2),'1');
+                        end
                     end
                 end
+                NotEmpty = ~isnan(
                 BestIdx = hp_optimize(OOBError{i}.(Classifiers{c}).(Transformations{t})(trial,:),...
                     OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,:));
                 if length(BestIdx)>1
