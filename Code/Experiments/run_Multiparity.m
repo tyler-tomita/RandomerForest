@@ -114,14 +114,6 @@ for i = 1:length(dims)
                 [Forest,~,TrainTime{i}.(Classifiers{c}).(Transformations{t})(trial,:)] = ...
                     RerF_train(Xtrain(i).(Transformations{t})(:,:,trial),...
                     Ytrain(i).(Transformations{t})(:,trial),Params{i}.(Classifiers{c}));
-                
-                % remove empty forests which happen when nmix=1 and d > p
-                % for F-RC
-                
-                OOBError{i}.(Classifiers{c}).(Transformations{t})(:,cellfun(@isempty,Forest)) = [];
-                OOBAUC{i}.(Classifiers{c}).(Transformations{t})(:,cellfun(@isempty,Forest)) = [];
-                TrainTime{i}.(Classifiers{c}).(Transformations{t})(:,cellfun(@isempty,Forest)) = [];
-                Forest(cellfun(@isempty,Forest)) = [];
 
                 % select best hyperparameter
 
