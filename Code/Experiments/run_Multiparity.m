@@ -58,6 +58,7 @@ for i = 1:length(dims)
                 strcmp(Classifiers{c},'rr_rfn') || strcmp(Classifiers{c},'rr_rfz')
             Params{i}.(Classifiers{c}).ForestMethod = 'rf';
             Params{i}.(Classifiers{c}).d = mtrys_rf;
+            Params{i}.(Classifiers{c}).nmix = 1;
         elseif strcmp(Classifiers{c},'rerf') || strcmp(Classifiers{c},'rerfr')...
                 || strcmp(Classifiers{c},'rerfn') || strcmp(Classifiers{c},'rerfz') || ...
                 strcmp(Classifiers{c},'rerfd')
