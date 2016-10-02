@@ -7,22 +7,20 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load Trunk_data
+load Multiparity_data
 load Random_matrix_adjustment_factor
 
-% Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
-%     'frc' 'frcr' 'frcn' 'frcz' 'rr_rf' 'rr_rfr' 'rr_rfn' 'rr_rfz'};
-Classifiers = {'frc' 'frcr' 'frcn' 'frcz' 'rr_rf' 'rr_rfr' 'rr_rfn' 'rr_rfz'};
+Classifiers = {'rf' 'rerf' 'frc' 'rr_rf'};
 
 Transformations = fieldnames(Xtrain);
 
-for i = 5:5
+for i = 1:length(dims)
     p = dims(i);
     fprintf('p = %d\n',p)
       
     if p <= 5
         mtrys = [1:p ceil(p.^[1.5 2])];
-    elseif p > 5 && p <= 50
+    elseif p > 5 && p <= 20
         mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2]);
     else
         mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
@@ -31,9 +29,9 @@ for i = 5:5
 
     for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
-        Params{i}.(Classifiers{c}).nTrees = 1000;
+        Params{i}.(Classifiers{c}).nTrees = 500;
         Params{i}.(Classifiers{c}).Stratified = true;
-        Params{i}.(Classifiers{c}).NWorkers = 16;
+        Params{i}.(Classifiers{c}).NWorkers = 24;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                 'rerfr') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'rr_rfr')
@@ -63,18 +61,19 @@ for i = 5:5
         elseif strcmp(Classifiers{c},'rerf') || strcmp(Classifiers{c},'rerfr')...
                 || strcmp(Classifiers{c},'rerfn') || strcmp(Classifiers{c},'rerfz') || ...
                 strcmp(Classifiers{c},'rerfd')
-            Params{i}.(Classifiers{c}).ForestMethod = 'sparse-adjusted';
+            Params{i}.(Classifiers{c}).ForestMethod = 'uniform-nnzs';
             Params{i}.(Classifiers{c}).d = mtrys;
             for j = 1:length(Params{i}.(Classifiers{c}).d)
                 Params{i}.(Classifiers{c}).dprime(j) = ...
                     ceil(Params{i}.(Classifiers{c}).d(j)^(1/interp1(ps,...
                     slope,p)));
             end
+            Params{i}.(Classifiers{c}).nmix = 2:min(5,p);
         elseif strcmp(Classifiers{c},'frc') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'frcn') || strcmp(Classifiers{c},'frcz')
             Params{i}.(Classifiers{c}).ForestMethod = 'frc';
             Params{i}.(Classifiers{c}).d = mtrys;
-            Params{i}.(Classifiers{c}).nmix = 2;
+            Params{i}.(Classifiers{c}).nmix = 2:min(5,p);
         end
         if strcmp(Classifiers{c},'rr_rf') || strcmp(Classifiers{c},'rr_rfr') || ...
                 strcmp(Classifiers{c},'rr_rfn') || strcmp(Classifiers{c},'rr_rfz')
@@ -84,9 +83,12 @@ for i = 5:5
         for t = 1:length(Transformations)
             fprintf('%s\n',Transformations{t})
 
-            OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
-            OOBAUC{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
-            TrainTime{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+            OOBError{i}.(Classifiers{c}).(Transformations{t}) = ...
+                NaN(ntrials,length(Params{i}.(Classifiers{c}).d)*length(Params{i}.(Classifiers{c}).nmix));
+            OOBAUC{i}.(Classifiers{c}).(Transformations{t}) = ...
+                NaN(ntrials,length(Params{i}.(Classifiers{c}).d)*length(Params{i}.(Classifiers{c}).nmix));
+            TrainTime{i}.(Classifiers{c}).(Transformations{t}) = ...
+                NaN(ntrials,length(Params{i}.(Classifiers{c}).d)*length(Params{i}.(Classifiers{c}).nmix));
 
             for trial = 1:ntrials
 
@@ -104,7 +106,7 @@ for i = 5:5
 
                 % select best hyperparameter
 
-                for j = 1:length(Params{i}.(Classifiers{c}).d)
+                for j = 1:length(Forest)
                     Scores = rerf_oob_classprob(Forest{j},...
                         Xtrain(i).(Transformations{t})(:,:,trial),'last');
                     Predictions = predict_class(Scores,Forest{j}.classname);
@@ -138,7 +140,7 @@ for i = 5:5
 
                 clear Forest
 
-                save([rerfPath 'RandomerForest/Results/Trunk.mat'],'dims',...
+                save([rerfPath 'RandomerForest/Results/Multiparity.mat'],'dims',...
                     'Params','OOBError','OOBAUC','TestError','TrainTime')
             end
         end

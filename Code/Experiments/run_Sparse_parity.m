@@ -12,10 +12,11 @@ load Random_matrix_adjustment_factor
 
 Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
     'frc' 'frcr' 'frcn' 'frcz' 'rr_rf' 'rr_rfr' 'rr_rfn' 'rr_rfz'};
+% Classifiers = {'rf' 'rfr' 'rerf' 'rerfr' 'rerfu' 'rerfur' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
 
 Transformations = fieldnames(Xtrain);
 
-for i = 3:length(dims)
+for i = 1:length(dims)
     p = dims(i);
     fprintf('p = %d\n',p)
       
@@ -27,14 +28,8 @@ for i = 3:length(dims)
         mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
     end
     mtrys_rf = mtrys(mtrys<=p);
-    
-    if p==10
-        StartIdx = 12;
-    else
-        StartIdx = 1;
-    end
 
-    for c = StartIdx:length(Classifiers)
+    for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 500;
         Params{i}.(Classifiers{c}).Stratified = true;
@@ -86,7 +81,7 @@ for i = 3:length(dims)
             Params{i}.(Classifiers{c}).Rotate = true;
         end
         
-        for t = 4:4
+        for t = 1:length(Transformations)
             fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
@@ -143,7 +138,7 @@ for i = 3:length(dims)
 
                 clear Forest
 
-                save([rerfPath 'RandomerForest/Results/Sparse_parity_affine_revised.mat'],'dims',...
+                save([rerfPath 'RandomerForest/Results/Sparse_parity.mat'],'dims',...
                     'Params','OOBError','OOBAUC','TestError','TrainTime')
             end
         end

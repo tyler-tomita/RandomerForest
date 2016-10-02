@@ -13,7 +13,6 @@ Colors.rfr = C(2,:);
 Colors.frc = C(3,:);
 Colors.frcr = C(4,:);
 Colors.rr_rf = C(5,:);
-% Colors.rerfd = C(6,:);
 Colors.rr_rfr = C(6,:);
 LineWidth = 2;
 MarkerSize = 12;
@@ -118,7 +117,7 @@ for i = 1:length(Classifiers)
     hold on
 end
 
-title('(B)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
+title('(C)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 % text(0.5,1.05,{'Error Rate';'(relative to RF)'},'FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('p')
 ylabel('Error Rate')
@@ -144,7 +143,7 @@ for i = 1:length(Classifiers)
     hold on
 end
 
-title('(C)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
+title('(E)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 % text(0.5,1.05,'Training Time','FontSize',16,'FontWeight','bold','Units','normalized','HorizontalAlignment','center','VerticalAlignment','bottom')
 xlabel('p')
 ylabel('Train Time (s)')
@@ -180,7 +179,7 @@ Y = Class(idx);
 
 plot(X(Y==0,1),X(Y==0,2),'b.',X(Y==1,1),X(Y==1,2),'r.','MarkerSize',MarkerSize)
 
-title('(D)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
+title('(B)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 text(0.5,1.05,'Trunk','FontSize',14,'FontWeight','bold','Units',...
     'normalized','HorizontalAlignment','center','VerticalAlignment'...
     ,'bottom')
@@ -236,7 +235,7 @@ for i = 1:length(Classifiers)
     hold on
 end
 
-title('(E)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
+title('(D)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 xlabel('p')
 ylabel('Error Rate')
 ax.LineWidth = LineWidth;

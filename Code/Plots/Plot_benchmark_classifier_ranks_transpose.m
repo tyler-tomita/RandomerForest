@@ -435,16 +435,6 @@ ch = ax.Children;
 ch(1:4) = [];
 ch(end+1:end+4) = ax.Children(1:4);
 ax.Children = ch;
-
-% l = legend('1st place','2nd place','3rd place','4th place');
-% l.Location = 'northwest';
-% l.Box = 'off';
-
-% line([1 1],[42 46],'Color','k','LineWidth',3)
-% line([2 2],[41 46],'Color','k','LineWidth',3)
-% line([1 2],[46 46],'Color','k','LineWidth',3)
-% t = text(1.5,46,'*','HorizontalAlignment','center',...
-%     'VerticalAlignment','bottom','FontSize',FontSize+2);
 t = text(2,ax.YLim(2),'\bf{+}','HorizontalAlignment','center',...
     'VerticalAlignment','top','FontSize',14,'Color','r');
 

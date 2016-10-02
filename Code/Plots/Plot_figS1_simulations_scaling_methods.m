@@ -8,12 +8,12 @@ fpath = mfilename('fullpath');
 frcPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
-Colors.rf = C(1,:);
-Colors.rfr = C(2,:);
-Colors.frc = C(3,:);
-Colors.frcr = C(4,:);
-Colors.rr_rf = C(5,:);
-Colors.rr_rfr = C(6,:);
+Colors.frcr = C(1,:);
+Colors.frcn = C(2,:);
+Colors.frcz = C(3,:);
+Colors.rr_rfr = C(4,:);
+Colors.rr_rfn = C(5,:);
+Colors.rr_rfz = C(6,:);
 LineWidth = 2;
 FontSize = .2;
 axWidth = 1.3;
@@ -23,13 +23,11 @@ axBottom = [...
     (FontSize*8.5+axHeight*4)*ones(1,2),(FontSize*6+axHeight*3)*ones(1,2),...
     (FontSize*4.5+axHeight*2)*ones(1,2),(FontSize*3+axHeight)*ones(1,2),...
     FontSize*1.5*ones(1,2)];
-legWidth = 0.4*axWidth;
-legHeight = 0.4*axHeight;
+legWidth = axWidth;
+legHeight = axHeight;
 legLeft = axLeft(end) + axWidth + FontSize;
 legBottom = axBottom(5);
-% figWidth = legLeft(end) + legWidth;
-% figHeight = axBottom(1) + axHeight + FontSize*1.5;
-figWidth = axLeft(end) + axWidth + FontSize;
+figWidth = legLeft(end) + legWidth;
 figHeight = axBottom(1) + axHeight + FontSize*1.5;
 
 fig = figure;
@@ -55,7 +53,7 @@ ntrials = size(TestError{1}.rf.Untransformed,1);
 
 for i = 1:length(dims)
     Classifiers = fieldnames(TestError{i});
-    Classifiers(~ismember(Classifiers,{'rf','rfr','frc','frcr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'frcr','frcn','frcz','rr_rfr','rr_rfn','rr_rfz'})) = [];
     for j = 1:length(Classifiers)
         Transformations = fieldnames(TestError{i}.(Classifiers{j}));
         for k = 1:length(Transformations)
@@ -121,7 +119,7 @@ ntrials = size(TestError{1}.rf.Untransformed,1);
 
 for i = 1:length(dims)
     Classifiers = fieldnames(TestError{i});
-    Classifiers(~ismember(Classifiers,{'rf','rfr','frc','frcr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'frcr','frcn','frcz','rr_rfr','rr_rfn','rr_rfz'})) = [];
     for j = 1:length(Classifiers)
         Transformations = fieldnames(TestError{i}.(Classifiers{j}));
         for k = 1:length(Transformations)
@@ -159,13 +157,12 @@ for i = 1:length(Transformations)
     ax(2*i).XTickLabel = {'10' '50' '100'};
     ax(2*i).YLim = [0.01 .10];
     
-%     if i==length(Transformations)
-%         l = legend('RF','RF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
-%         l.Box = 'off';
-%         l.FontSize = 10;
-%         l.Units = 'inches';
-%         l.Position = [legLeft legBottom legWidth legHeight];
-%     end
+    if i==length(Transformations)
+        l = legend('F-RC(r)','F-RC(n)','F-RC(z)','RR-RF(r)','RR-RF(n)','RR-RF(z)');
+        l.Box = 'off';
+        l.Units = 'inches';
+        l.Position = [legLeft legBottom legWidth legHeight];
+    end
 end
 
-save_fig(gcf,[frcPath 'RandomerForest/Figures/Fig3_transformations'])
+save_fig(gcf,[frcPath 'RandomerForest/Figures/FigS1_simulations_scaling_methods'])

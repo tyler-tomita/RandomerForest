@@ -102,6 +102,14 @@ classdef rpclassificationforest
                 Rescale,NWorkers,Stratified,nmix,rotate,p,dprime,nTrees,~,extra] = ...
                 internal.stats.parseArgs(okargs,defaults,varargin{:});
             
+            % If ForestMethod is F-RC and nmix = 1, then just do RF instead
+            % since it's the same and faster
+            if strcmp(ForestMethod,'frc') && length(nmix)==1
+                if nmix==1
+                    ForestMethod = 'rf';
+                end
+            end
+            
             %Convert to double if not already
             if ~isa(X,'double')
                 X = double(X);
