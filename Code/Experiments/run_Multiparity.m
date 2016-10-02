@@ -81,7 +81,7 @@ for i = 1:length(dims)
             Params{i}.(Classifiers{c}).Rotate = true;
         end
         
-        for t = 1:length(Transformations)
+        for t = 1:1
             fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = ...
