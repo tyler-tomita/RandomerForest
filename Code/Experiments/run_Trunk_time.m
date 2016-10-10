@@ -86,7 +86,7 @@ for i = 5:5
             OOBAUC{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             TrainTime{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
 
-            for trial = 1:ntrials
+            for trial = 4:ntrials
                 fprintf('Trial %d\n',trial)
                 
                 % train classifier
