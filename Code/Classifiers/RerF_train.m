@@ -44,9 +44,9 @@ if ~isfield(Params,'d')
         if p <= 5
             Params.d = [1:p ceil(p.^[1.5 2])];
         elseif p > 5 && p <= 10
-            Params.d = ceil(p.^[0 1/4 1/2 3/4 1 1.5 2]);
+            Params.d = ceil(p.^[1/4 1/2 3/4 1 1.5 2]);
         else
-            Params.d = [ceil(p.^[0 1/4 1/2 3/4 1]) 5*p 10*p];
+            Params.d = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
         end
     end
 end

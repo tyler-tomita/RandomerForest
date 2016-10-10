@@ -12,7 +12,7 @@ load Random_matrix_adjustment_factor
 
 % Classifiers = {'rf' 'rfr' 'rfn' 'rfz' 'rerf' 'rerfr' 'rerfn' 'rerfz' ...
 %     'frc' 'frcr' 'frcn' 'frcz' 'rr_rf' 'rr_rfr' 'rr_rfn' 'rr_rfz'};
-Classifiers = {'frc' 'frcr' 'frcn' 'frcz' 'rr_rf' 'rr_rfr' 'rr_rfn' 'rr_rfz'};
+Classifiers = {'rf' 'rfr' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
 
 Transformations = fieldnames(Xtrain);
 
@@ -29,11 +29,11 @@ for i = 5:5
     end
     mtrys_rf = mtrys(mtrys<=p);
 
-    for c = 6:6
+    for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
-        Params{i}.(Classifiers{c}).NWorkers = 16;
+        Params{i}.(Classifiers{c}).NWorkers = 2;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                 'rerfr') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'rr_rfr')
@@ -81,7 +81,7 @@ for i = 5:5
             Params{i}.(Classifiers{c}).Rotate = true;
         end
         
-        for t = 4:length(Transformations)
+        for t = 1:1
             fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
@@ -89,7 +89,8 @@ for i = 5:5
             TrainTime{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
 
             for trial = 1:ntrials
-
+                fprintf('Trial %d\n',trial)
+                
                 % train classifier
                 poolobj = gcp('nocreate');
                 if isempty(poolobj)
@@ -97,7 +98,6 @@ for i = 5:5
                         'IdleTimeout',360);
                 end
 
-                tic;
                 [Forest,~,TrainTime{i}.(Classifiers{c}).(Transformations{t})(trial,:)] = ...
                     RerF_train(Xtrain(i).(Transformations{t})(:,:,trial),...
                     Ytrain(i).(Transformations{t})(:,trial),Params{i}.(Classifiers{c}));
@@ -138,7 +138,7 @@ for i = 5:5
 
                 clear Forest
 
-                save([rerfPath 'RandomerForest/Results/Trunk.mat'],'dims',...
+                save([rerfPath 'RandomerForest/Results/Trunk_local.mat'],'dims',...
                     'Params','OOBError','OOBAUC','TestError','TrainTime')
             end
         end

@@ -22,5 +22,5 @@ X = x1; % + repmat([x_init],size(X,1),1);
 %Y = cat(1,zeros(size(X,1)/2,1),ones(size(X,1)/2,1));
 %plot3(X(Y==0,1),X(Y==0,2),X(Y==0,3),'b',X(Y==1,1),X(Y==1,2),X(Y==1,3),'r')
 %surf(x11,x21,x31)
-plot3(X(:,1),X(:,2),X(:,3))
+plot3(X(:,1),X(:,2),X(:,3),'.')
 end

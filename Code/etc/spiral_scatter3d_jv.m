@@ -1,4 +1,4 @@
-function [X] = spiral_scatter3d_jv(x_init,phi1_inc,phi2_inc,r_inc,npoints)
+function X = spiral_scatter3d_jv(x_init,phi1_inc,phi2_inc,r_inc,npoints)
 phi1_i = 0;
 phi1_f = 4*pi;
 phi1 = phi1_i:phi1_inc:phi1_inc*npoints;
