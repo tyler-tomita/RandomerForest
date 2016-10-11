@@ -27,7 +27,7 @@ for i = 5:5
     end
     mtrys_rf = mtrys(mtrys<=p);
 
-    for c = 4:4
+    for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
@@ -86,7 +86,7 @@ for i = 5:5
             OOBAUC{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             TrainTime{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
 
-            for trial = 4:ntrials
+            for trial = 1:ntrials
                 fprintf('Trial %d\n',trial)
                 
                 % train classifier
@@ -119,7 +119,7 @@ for i = 5:5
 
                 clear Forest
 
-                save([rerfPath 'RandomerForest/Results/Trunk_time.mat'],'dims',...
+                save([rerfPath 'RandomerForest/Results/Trunk_time_p500.mat'],'dims',...
                     'Params','OOBError','OOBAUC','TrainTime')
             end
         end
