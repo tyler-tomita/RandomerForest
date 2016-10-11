@@ -14,7 +14,7 @@ Classifiers = {'rf' 'rfr' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
 
 Transformations = fieldnames(Xtrain);
 
-for i = 5:5
+for i = 1:4
     p = dims(i);
     fprintf('p = %d\n',p)
       
@@ -119,7 +119,7 @@ for i = 5:5
 
                 clear Forest
 
-                save([rerfPath 'RandomerForest/Results/Trunk_time_p500.mat'],'dims',...
+                save([rerfPath 'RandomerForest/Results/Trunk_time_p_2_100.mat'],'dims',...
                     'Params','OOBError','OOBAUC','TrainTime')
             end
         end
