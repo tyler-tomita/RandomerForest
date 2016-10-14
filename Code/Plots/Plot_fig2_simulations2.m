@@ -201,7 +201,7 @@ ax.XTickLabel = {'-5';'0';'5'};
 if runSims
     run_Trunk
 else
-    load Trunk_p_2_100
+    load Trunk_p_2_500
 end
 
 ax = axes;
@@ -229,7 +229,7 @@ end
 
 for i = 1:length(Classifiers)
     cl = Classifiers{i};
-    hTestError(i) = errorbar(dims(dims<=100),mean(PlotError.(cl)),...
+    hTestError(i) = errorbar(dims(dims<=500),mean(PlotError.(cl)),...
         std(PlotError.(cl))/sqrt(size(PlotError.(cl),1)),...
         'LineWidth',LineWidth,'Color',Colors.(cl));
     hold on
@@ -254,7 +254,7 @@ ax = axes;
 
 for i = 1:length(Classifiers)
     cl = Classifiers{i};
-    hTrainTime(i) = errorbar(dims(dims<=100),mean(PlotTime.(cl)),...
+    hTrainTime(i) = errorbar(dims(dims<=500),mean(PlotTime.(cl)),...
         std(PlotTime.(cl))/sqrt(size(PlotTime.(cl),1)),...
         'LineWidth',LineWidth,'Color',Colors.(cl));
     hold on
