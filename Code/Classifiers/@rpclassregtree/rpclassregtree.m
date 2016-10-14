@@ -1075,7 +1075,8 @@ function M = srpmat(d,k,method,varargin)
 %         idx = idx(:,1:k);
         idx = randperms(d,max_nmix,k);
         idx = (ndgrid(1:k,1:max_nmix)'-1)*d + idx;
-        nnzs = round(rand(1,k)*(max_nmix-min_nmix)+min_nmix);
+%         nnzs = round(rand(1,k)*(max_nmix-min_nmix)+min_nmix);
+        nnzs = nmix(randi(length(nmix),1,k));
         for i = 1:length(nmix)
             idx(nmix(i)+1:end,nnzs==nmix(i)) = NaN;
         end

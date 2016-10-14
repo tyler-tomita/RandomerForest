@@ -60,4 +60,5 @@ for i = 1:length(ns)
 end
 
 save('~/Documents/MATLAB/Data/Multiparity_data.mat','Xtrain','Ytrain',...
-    'Xtest','Ytest','ns','ntest','p','p_prime1','p_prime2','ntrials')
+    'Xtest','Ytest','ntrain','ntest','dims','ntrials','p_prime',...
+    'p_prime1','p_prime2','S1','S2','R','-v7.3')

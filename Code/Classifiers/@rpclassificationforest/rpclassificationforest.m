@@ -165,7 +165,7 @@ classdef rpclassificationforest
                         Xtree = X*RR(:,:,i);
                     else
                         RR(:,:,i) = random_rotation(500);
-                        RotVars(i,:) = ismember(1:p,randperm(d,500));
+                        RotVars(i,:) = ismember(1:d,randperm(d,500));
                         Xtree = X;
                         Xtree(:,RotVars(i,:)) = Xtree(:,RotVars(i,:))*RR(:,:,i);
                     end
