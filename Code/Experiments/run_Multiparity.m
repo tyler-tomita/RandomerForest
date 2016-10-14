@@ -116,14 +116,14 @@ for i = 1:length(ns)
             end
 
             if strcmp(Forest{BestIdx}.Rescale,'off')
-                Scores = rerf_classprob(Forest{BestIdx},Xtest(i)(:,:,trial),'last');
+                Scores = rerf_classprob(Forest{BestIdx},Xtest{i}(:,:,trial),'last');
             else
-                Scores = rerf_classprob(Forest{BestIdx},Xtest(i)(:,:,trial),...
+                Scores = rerf_classprob(Forest{BestIdx},Xtest{i}(:,:,trial),...
                     'last',Xtrain{i}(:,:,trial));
             end
             Predictions = predict_class(Scores,Forest{BestIdx}.classname);
             TestError{i}.(Classifiers{c})(trial) = misclassification_rate(Predictions,...
-                Ytest(i)(:,trial),false);
+                Ytest{i}(:,trial),false);
 
             clear Forest
 
