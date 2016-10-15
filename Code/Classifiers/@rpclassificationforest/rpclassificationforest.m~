@@ -278,7 +278,7 @@ classdef rpclassificationforest
                             Xtree = X*forest.rotmat(:,:,i);
                         else
                             Xtree = X;
-                            Xtree(:,forest.RotVars(i,:)) = X(:,forest.RotVars(i,:))*forest.rotmat(:,:,i);       
+                            Xtree(:,forest.RotVars(i,:)) = X(:,forest.RotVars(i,:))*forest.rotmat;       
                         end
                     else
                         Xtree = X;

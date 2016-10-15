@@ -21,7 +21,7 @@ for i = 1:length(ns)
 
     for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
-        Params{i}.(Classifiers{c}).nTrees = 500;
+        Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
         Params{i}.(Classifiers{c}).NWorkers = 2;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
@@ -73,9 +73,15 @@ for i = 1:length(ns)
             Params{i}.(Classifiers{c}).Rotate = true;
         end
 
-        OOBError{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
-        OOBAUC{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
-        TrainTime{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+        if strcmp(Classifiers{c},'frc')
+            OOBError{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d)*length(Pa);
+            OOBAUC{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+            TrainTime{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+        else
+            OOBError{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+            OOBAUC{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+            TrainTime{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+        end
 
         for trial = 1:ntrials
 
@@ -116,18 +122,18 @@ for i = 1:length(ns)
             end
 
             if strcmp(Forest{BestIdx}.Rescale,'off')
-                Scores = rerf_classprob(Forest{BestIdx},Xtest(i)(:,:,trial),'last');
+                Scores = rerf_classprob(Forest{BestIdx},Xtest{i},'last');
             else
-                Scores = rerf_classprob(Forest{BestIdx},Xtest(i)(:,:,trial),...
+                Scores = rerf_classprob(Forest{BestIdx},Xtest{i},...
                     'last',Xtrain{i}(:,:,trial));
             end
             Predictions = predict_class(Scores,Forest{BestIdx}.classname);
             TestError{i}.(Classifiers{c})(trial) = misclassification_rate(Predictions,...
-                Ytest(i)(:,trial),false);
+                Ytest{i},false);
 
             clear Forest
 
-            save([rerfPath 'RandomerForest/Results/Sparse_parity.mat'],'dims',...
+            save([rerfPath 'RandomerForest/Results/Multiparity.mat'],'ns',...
                 'Params','OOBError','OOBAUC','TestError','TrainTime')
         end
         fprintf('%s complete\n',Classifiers{c})

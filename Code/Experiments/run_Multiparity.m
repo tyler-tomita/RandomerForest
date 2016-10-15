@@ -23,7 +23,7 @@ for i = 1:length(ns)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 1000;
         Params{i}.(Classifiers{c}).Stratified = true;
-        Params{i}.(Classifiers{c}).NWorkers = 16;
+        Params{i}.(Classifiers{c}).NWorkers = 2;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                 'rerfr') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'rr_rfr')
@@ -73,9 +73,15 @@ for i = 1:length(ns)
             Params{i}.(Classifiers{c}).Rotate = true;
         end
 
-        OOBError{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
-        OOBAUC{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
-        TrainTime{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+        if strcmp(Classifiers{c},'frc')
+            OOBError{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d)*length(Params{i}.(Classifiers{c}).nmix));
+            OOBAUC{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d)*length(Params{i}.(Classifiers{c}).nmix));
+            TrainTime{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d)*length(Params{i}.(Classifiers{c}).nmix));
+        else
+            OOBError{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+            OOBAUC{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+            TrainTime{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+        end
 
         for trial = 1:ntrials
 

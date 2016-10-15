@@ -17,8 +17,8 @@ Colors.rr_rfr = C(6,:);
 LineWidth = 2;
 MarkerSize = 12;
 FontSize = .2;
-axWidth = 1.3;
-axHeight = 1.3;
+axWidth = 1.5;
+axHeight = 1.5;
 axLeft = repmat([FontSize*4,FontSize*8+axWidth],1,3);
 axBottom = [...
     (FontSize*9+axHeight*2)*ones(1,2),(FontSize*6+axHeight)*ones(1,2),...
@@ -41,40 +41,35 @@ fig.PaperSize = [figWidth figHeight];
 
 ax = axes;
 
-n = 1000;
-d = 2;
-dgood = min(3,d);
-Sigma = 1/32*ones(1,d);
-Mu = sparse(n,d);
+n = 100;
+p = 2;
+p_prime = min(3,p);
 
-for jj = 1:n
-    Mu(jj,:) = binornd(1,0.5,1,d);
-    X(jj,1:d) = mvnrnd(Mu(jj,:),Sigma);
-end
-
-nones = sum(Mu(:,1:dgood),2);
-Y = mod(nones,2);
+X = rand(n,p)*2 - 1;
+Y = mod(sum(X(:,1:p_prime)>0,2),2);
 
 plot(X(Y==0,1),X(Y==0,2),'b.',X(Y==1,1),X(Y==1,2),'r.','MarkerSize',MarkerSize)
 
 title('(A)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
-text(0.5,1.05,'Sparse Parity','FontSize',14,'FontWeight','bold','Units',...
+text(0.5,1.05,'Sparse Parity','FontSize',16,'FontWeight','bold','Units',...
     'normalized','HorizontalAlignment','center','VerticalAlignment'...
     ,'bottom')
 xlabel('X_1')
 ylabel('X_2')
-l = legend('Class 1','Class 2');
-l.Location = 'southwest';
-l.Box = 'off';
-l.FontSize = 10;
+[lh1,objh1] = legend('Class 1','Class 2');
+lh1.Location = 'southwest';
+lh1.Box = 'off';
+lh1.FontSize = 10;
+objh1(4).XData = 0.75*(objh1(3).XData(2) - objh1(3).XData(1)) + objh1(3).XData(1);
+objh1(6).XData = 0.75*(objh1(5).XData(2) - objh1(5).XData(1)) + objh1(5).XData(1);
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft(1) axBottom(1) axWidth axHeight];
 ax.Box = 'off';
-ax.XLim = [-2 3];
-ax.YLim = [-2 3];
+ax.XLim = [-2 2];
+ax.YLim = [-2 2];
 ax.XTick = [-2 0 2];
 ax.YTick = [-2 0 2];
 ax.XTickLabel = {'-2';'0';'2'};
@@ -165,13 +160,13 @@ clear hTestError hTrainTime TestError minTestError trainTime
 ax = axes;
 
 n = 100;
-d = 2;
+p = 2;
 
-d_idx = 1:d;
+d_idx = 1:p;
 mu1 = 1./sqrt(d_idx);
 mu0 = -1*mu1;
 Mu = cat(1,mu0,mu1);
-Sigma = ones(1,d);
+Sigma = ones(1,p);
 obj = gmdistribution(Mu,Sigma);
 [X,idx] = random(obj,n);
 Class = [0;1];
@@ -180,7 +175,7 @@ Y = Class(idx);
 plot(X(Y==0,1),X(Y==0,2),'b.',X(Y==1,1),X(Y==1,2),'r.','MarkerSize',MarkerSize)
 
 title('(B)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
-text(0.5,1.05,'Trunk','FontSize',14,'FontWeight','bold','Units',...
+text(0.5,1.05,'Trunk','FontSize',16,'FontWeight','bold','Units',...
     'normalized','HorizontalAlignment','center','VerticalAlignment'...
     ,'bottom')
 xlabel('X_1')
@@ -244,11 +239,11 @@ ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft(4) axBottom(4) axWidth axHeight];
 ax.Box = 'off';
-ax.XLim = [9 1100];
-ax.YLim = [0.02 0.1];
+ax.XLim = [9 600];
+ax.YLim = [0.02 0.15];
 ax.XScale = 'log';
-ax.XTick = logspace(0,3,4);
-ax.XTickLabel = {'1';'10';'100';'1000'};
+ax.XTick = [10,100,500];
+ax.XTickLabel = {'10','100','500'};
 
 ax = axes;
 
@@ -269,14 +264,18 @@ ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft(6) axBottom(6) axWidth axHeight];
 ax.Box = 'off';
-ax.XLim = [9 1100];
+ax.XLim = [9 600];
 ax.YLim = [0 100];
 ax.XScale = 'log';
-ax.XTick = logspace(0,3,4);
-ax.XTickLabel = {'1';'10';'100';'1000'};
-l = legend('RF','RF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
-l.Location = 'southwest';
-l.Box = 'off';
-l.FontSize = 10;
+ax.XTick = [10,100,500];
+ax.XTickLabel = {'10','100','500'};
+[lh2,objh2] = legend('RF','RF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
+lh2.Location = 'southwest';
+lh2.Box = 'off';
+lh2.FontSize = 11;
+
+for i = 7:length(objh2)
+    objh2(i).Children.Children(2).XData = [mean(objh2(i).Children.Children(2).XData),objh2(i).Children.Children(2).XData(2)];
+end
 
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig2_simulations'])

@@ -109,13 +109,13 @@ runSims = false;
 if runSims
     run_Trunk
 else
-    load Trunk_p_2_100
+    load Trunk_p_2_500
 end
 
 TestError = TestError(~cellfun(@isempty,TestError));
 
 %plot only dimensions that have complete results
-dims = dims(1:end-2);
+dims = dims(1:end-1);
 
 ntrials = size(TestError{1}.rf.Untransformed,1);
 
@@ -153,11 +153,11 @@ for i = 1:length(Transformations)
     ax(2*i).Units = 'inches';
     ax(2*i).Position = [axLeft(2*i) axBottom(2*i) axWidth axHeight];
     ax(2*i).Box = 'off';
-    ax(2*i).XLim = [9 110];
+    ax(2*i).XLim = [9 600];
     ax(2*i).XScale = 'log';
-    ax(2*i).XTick = [10 50 100];
-    ax(2*i).XTickLabel = {'10' '50' '100'};
-    ax(2*i).YLim = [0.01 .10];
+    ax(2*i).XTick = [10 100 500];
+    ax(2*i).XTickLabel = {'10' '100' '500'};
+    ax(2*i).YLim = [0.01 .15];
     
 %     if i==length(Transformations)
 %         l = legend('RF','RF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
