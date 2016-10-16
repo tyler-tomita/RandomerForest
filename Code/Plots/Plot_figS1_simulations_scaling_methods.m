@@ -158,7 +158,7 @@ for i = 1:length(Transformations)
     ax(2*i).YLim = [0.01 .10];
     
     if i==length(Transformations)
-        l = legend('F-RC(r)','F-RC(n)','F-RC(z)','RR-RF(r)','RR-RF(n)','RR-RF(z)');
+        l = legend('Frank','F-RC(n)','F-RC(z)','RR-RF(r)','RR-RF(n)','RR-RF(z)');
         l.Box = 'off';
         l.Units = 'inches';
         l.Position = [legLeft legBottom legWidth legHeight];

@@ -7,13 +7,18 @@ clc
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
-C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
-Colors.rf = C(1,:);
-Colors.rfr = C(2,:);
-Colors.frc = C(3,:);
-Colors.frcr = C(4,:);
-Colors.rr_rf = C(5,:);
-Colors.rr_rfr = C(6,:);
+Colors.rf = 'c';
+Colors.rfr = 'c';
+Colors.frc = 'g';
+Colors.frcr = 'g';
+Colors.rr_rf = 'm';
+Colors.rr_rfr = 'm';
+LineStyles.rf = '-';
+LineStyles.rfr = ':';
+LineStyles.frc = '-';
+LineStyles.frcr = ':';
+LineStyles.rr_rf = '-';
+LineStyles.rr_rfr = ':';
 LineWidth = 2;
 MarkerSize = 12;
 FontSize = .2;
@@ -59,7 +64,7 @@ ylabel('X_2')
 [lh1,objh1] = legend('Class 1','Class 2');
 lh1.Location = 'southwest';
 lh1.Box = 'off';
-lh1.FontSize = 10;
+lh1.FontSize = 11;
 objh1(4).XData = 0.75*(objh1(3).XData(2) - objh1(3).XData(1)) + objh1(3).XData(1);
 objh1(6).XData = 0.75*(objh1(5).XData(2) - objh1(5).XData(1)) + objh1(5).XData(1);
 ax.LineWidth = LineWidth;
@@ -108,7 +113,8 @@ for i = 1:length(Classifiers)
     cl = Classifiers{i};
     hTestError(i) = errorbar(dims,mean(PlotError.(cl)),...
         std(PlotError.(cl))/sqrt(size(PlotError.(cl),1)),...
-        'LineWidth',LineWidth,'Color',Colors.(cl));
+        'LineWidth',LineWidth,'Color',Colors.(cl),...
+        'LineStyle',LineStyles.(cl));
     hold on
 end
 
@@ -134,7 +140,8 @@ for i = 1:length(Classifiers)
     cl = Classifiers{i};
     hTrainTime(i) = errorbar(dims,mean(PlotTime.(cl)),...
         std(PlotTime.(cl))/sqrt(size(PlotTime.(cl),1)),...
-        'LineWidth',LineWidth,'Color',Colors.(cl));
+        'LineWidth',LineWidth,'Color',Colors.(cl),...
+        'LineStyle',LineStyles.(cl));
     hold on
 end
 
@@ -149,10 +156,12 @@ ax.Units = 'inches';
 ax.Position = [axLeft(5) axBottom(5) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [1.5 45];
+ax.YLim = [1 150];
 ax.XScale = 'log';
+ax.YScale = 'log';
 ax.XTick = [2 5 10 20 40];
 ax.XTickLabel = {'2' '5' '10' '20' '40'};
-ax.XScale = 'log';
+ax.YTickLabel = {'1','10','100'};
 
 clear hTestError hTrainTime TestError minTestError trainTime
 %% Plot Trunk
@@ -226,7 +235,8 @@ for i = 1:length(Classifiers)
     cl = Classifiers{i};
     hTestError(i) = errorbar(dims(dims<=500),mean(PlotError.(cl)),...
         std(PlotError.(cl))/sqrt(size(PlotError.(cl),1)),...
-        'LineWidth',LineWidth,'Color',Colors.(cl));
+        'LineWidth',LineWidth,'Color',Colors.(cl),...
+        'LineStyle',LineStyles.(cl));
     hold on
 end
 
@@ -251,7 +261,8 @@ for i = 1:length(Classifiers)
     cl = Classifiers{i};
     hTrainTime(i) = errorbar(dims(dims<=500),mean(PlotTime.(cl)),...
         std(PlotTime.(cl))/sqrt(size(PlotTime.(cl),1)),...
-        'LineWidth',LineWidth,'Color',Colors.(cl));
+        'LineWidth',LineWidth,'Color',Colors.(cl),...
+        'LineStyle',LineStyles.(cl));
     hold on
 end
 
@@ -265,17 +276,20 @@ ax.Units = 'inches';
 ax.Position = [axLeft(6) axBottom(6) axWidth axHeight];
 ax.Box = 'off';
 ax.XLim = [9 600];
-ax.YLim = [0 100];
+ax.YLim = [0 150];
 ax.XScale = 'log';
+ax.YScale = 'log';
 ax.XTick = [10,100,500];
+ax.YTick = [1,10,100];
 ax.XTickLabel = {'10','100','500'};
-[lh2,objh2] = legend('RF','RF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
+ax.YTickLabel = {'1','10','100'};
+[lh2,objh2] = legend('RF','RF(r)','F-RC','Frank','RR-RF','RR-RF(r)');
 lh2.Location = 'southwest';
 lh2.Box = 'off';
 lh2.FontSize = 11;
 
 for i = 7:length(objh2)
-    objh2(i).Children.Children(2).XData = [mean(objh2(i).Children.Children(2).XData),objh2(i).Children.Children(2).XData(2)];
+    objh2(i).Children.Children(2).XData = [(objh2(i).Children.Children(2).XData(2)-objh2(i).Children.Children(2).XData(1))*.75+objh2(i).Children.Children(2).XData(1),objh2(i).Children.Children(2).XData(2)];
 end
 
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig2_simulations'])

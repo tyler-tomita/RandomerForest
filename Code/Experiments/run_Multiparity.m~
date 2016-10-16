@@ -21,7 +21,7 @@ for i = 1:length(ns)
 
     for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
-        Params{i}.(Classifiers{c}).nTrees = 1000;
+        Params{i}.(Classifiers{c}).nTrees = 999;
         Params{i}.(Classifiers{c}).Stratified = true;
         Params{i}.(Classifiers{c}).NWorkers = 2;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
@@ -74,9 +74,9 @@ for i = 1:length(ns)
         end
 
         if strcmp(Classifiers{c},'frc')
-            OOBError{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d)*length(Pa);
-            OOBAUC{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
-            TrainTime{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
+            OOBError{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d)*length(Params{i}.(Classifiers{c}).nmix));
+            OOBAUC{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d)*length(Params{i}.(Classifiers{c}).nmix));
+            TrainTime{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d)*length(Params{i}.(Classifiers{c}).nmix));
         else
             OOBError{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             OOBAUC{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
@@ -99,7 +99,7 @@ for i = 1:length(ns)
 
             % select best hyperparameter
 
-            for j = 1:length(Params{i}.(Classifiers{c}).d)
+            for j = 1:length(Forest)
                 Scores = rerf_oob_classprob(Forest{j},...
                     Xtrain{i}(:,:,trial),'last');
                 Predictions = predict_class(Scores,Forest{j}.classname);

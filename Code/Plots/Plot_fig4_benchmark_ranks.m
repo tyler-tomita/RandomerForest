@@ -75,11 +75,18 @@ for i = 1:length(Transformations)
         text(0.5,1.05,'Corrupted','FontSize',12,'FontWeight','bold','Units',...
             'normalized','HorizontalAlignment','center','VerticalAlignment'...
             ,'bottom')
-        l = legend('1st place','2nd place','3rd place','4th place','5th place','6th place');
-        l.Box = 'off';
-        l.FontSize = 9;
-        l.Units = 'inches';
-        l.Position = [legLeft legBottom legWidth legHeight];
+        [lh,objh] = legend('1st','2nd','3rd','4th','5th','6th');
+        lh.Box = 'off';
+        lh.FontSize = 9;
+        lh.Units = 'inches';
+        lh.Position = [legLeft legBottom legWidth legHeight];
+        BarWidth = (objh(7).Children.YData(2) - objh(7).Children.YData(1))/2;
+        for j = 7:12
+            objh(j).Children.XData(1) = objh(j).Children.XData(3) - BarWidth;
+            objh(j).Children.XData(2) = objh(j).Children.XData(3) - BarWidth;
+            objh(j).Children.XData(5) = objh(j).Children.XData(3) - BarWidth;
+%             objh(j).Children.EdgeAlpha = 0;
+        end
     else
         text(0.5,1.05,Transformations{i},'FontSize',12,'FontWeight','bold','Units',...
             'normalized','HorizontalAlignment','center','VerticalAlignment'...
@@ -94,7 +101,7 @@ for i = 1:length(Transformations)
     ax(i).Position = [axLeft(i) axBottom(i) axWidth axHeight];
     if i==1
         xlabel('Rank')
-        ax(i).XTickLabel = {'RF' 'RF(r)' 'F-RC' 'F-RC(r)' 'RR-RF' 'RR-RF(r)'};
+        ax(i).XTickLabel = {'RF' 'RF(r)' 'F-RC' 'Frank' 'RR-RF' 'RR-RF(r)'};
     else
         ax(i).XTick = [];
     end

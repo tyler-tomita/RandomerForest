@@ -7,20 +7,24 @@ clc
 fpath = mfilename('fullpath');
 frcPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
-C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
-Colors.rf = C(1,:);
-Colors.rfr = C(2,:);
-Colors.frc = C(3,:);
-Colors.frcr = C(4,:);
-Colors.rr_rf = C(5,:);
-Colors.rr_rfr = C(6,:);
+Colors.rf = 'c';
+Colors.rfr = 'c';
+Colors.frc = 'g';
+Colors.frcr = 'g';
+Colors.rr_rf = 'm';
+Colors.rr_rfr = 'm';
+LineStyles.rf = '-';
+LineStyles.rfr = ':';
+LineStyles.frc = '-';
+LineStyles.frcr = ':';
+LineStyles.rr_rf = '-';
+LineStyles.rr_rfr = ':';
 LineWidth = 2;
 FontSize = .2;
-axWidth = 1.3;
+axWidth = 2;
 axHeight = 1.3;
-axLeft = repmat([FontSize*4,FontSize*6.5+axWidth],1,5);
-axBottom = [...
-    (FontSize*8.5+axHeight*4)*ones(1,2),(FontSize*6+axHeight*3)*ones(1,2),...
+axLeft = repmat([FontSize*4,FontSize*6.5+axWidth],1,4);
+axBottom = [(FontSize*6+axHeight*3)*ones(1,2),...
     (FontSize*4.5+axHeight*2)*ones(1,2),(FontSize*3+axHeight)*ones(1,2),...
     FontSize*1.5*ones(1,2)];
 legWidth = 0.4*axWidth;
@@ -65,18 +69,22 @@ for i = 1:length(dims)
     end
 end
 
+Transformations(strcmp(Transformations,'Untransformed')) = [];
+
 for i = 1:length(Transformations)
     ax(2*i-1) = axes;
     for j = 1:length(Classifiers)
         errorbar(dims,mean(ErrorMatrix.(Classifiers{j}).(Transformations{i})),...
             std(ErrorMatrix.(Classifiers{j}).(Transformations{i}))/sqrt(ntrials),...
-            'LineWidth',LineWidth,'Color',Colors.(Classifiers{j}));
+            'LineWidth',LineWidth,'Color',Colors.(Classifiers{j}),...
+            'LineStyle',LineStyles.(Classifiers{j}));
         hold on
     end
     if i==1
         xlabel('p')
-        ylabel({'\bf{Raw}';'\rm{Error Rate}'})
-        text(0.5,1.05,'Sparse Parity','FontSize',14,'FontWeight','bold','Units',...
+%         ylabel({'\bf{Raw}';'\rm{Error Rate}'})
+            ylabel(['\bf{' Transformations{i} '}'])
+        text(0.5,1.05,'Sparse Parity','FontSize',16,'FontWeight','bold','Units',...
             'normalized','HorizontalAlignment','center','VerticalAlignment'...
             ,'bottom')
     else
@@ -131,17 +139,20 @@ for i = 1:length(dims)
     end
 end
 
+Transformations(strcmp(Transformations,'Untransformed')) = [];
+
 for i = 1:length(Transformations)
     ax(2*i) = axes;
     for j = 1:length(Classifiers)
         errorbar(dims,mean(ErrorMatrix.(Classifiers{j}).(Transformations{i})),...
             std(ErrorMatrix.(Classifiers{j}).(Transformations{i}))/sqrt(ntrials),...
-            'LineWidth',LineWidth,'Color',Colors.(Classifiers{j}));
+            'LineWidth',LineWidth,'Color',Colors.(Classifiers{j}),...
+            'LineStyle',LineStyles.(Classifiers{j}));
         hold on
     end
     
     if i==1
-        text(0.5,1.05,'Trunk','FontSize',14,'FontWeight','bold','Units',...
+        text(0.5,1.05,'Trunk','FontSize',16,'FontWeight','bold','Units',...
             'normalized','HorizontalAlignment','center','VerticalAlignment'...
             ,'bottom')
     end

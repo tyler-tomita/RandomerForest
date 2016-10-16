@@ -66,7 +66,7 @@ ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
 ax.Units = 'inches';
 ax.Position = [axLeft axBottom axWidth axHeight];
-ax.XTickLabel = {'F-RC' 'F-RC(r)' 'F-RC(n)' 'F-RC(z)'};
+ax.XTickLabel = {'F-RC' 'Frank' 'F-RC(n)' 'F-RC(z)'};
 ax.XLim = [0.5 4.5];
 ax.YLim = [0 60];
 

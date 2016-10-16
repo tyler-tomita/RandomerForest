@@ -21,9 +21,9 @@ for i = 1:length(ns)
 
     for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
-        Params{i}.(Classifiers{c}).nTrees = 1000;
+        Params{i}.(Classifiers{c}).nTrees = 999;
         Params{i}.(Classifiers{c}).Stratified = true;
-        Params{i}.(Classifiers{c}).NWorkers = 2;
+        Params{i}.(Classifiers{c}).NWorkers = 16;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                 'rerfr') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'rr_rfr')
@@ -99,7 +99,7 @@ for i = 1:length(ns)
 
             % select best hyperparameter
 
-            for j = 1:length(Params{i}.(Classifiers{c}).d)
+            for j = 1:length(Forest)
                 Scores = rerf_oob_classprob(Forest{j},...
                     Xtrain{i}(:,:,trial),'last');
                 Predictions = predict_class(Scores,Forest{j}.classname);
