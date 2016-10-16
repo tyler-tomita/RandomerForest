@@ -18,12 +18,18 @@ for i = 1:length(ns)
       
     mtrys = ceil(p.^[1/4 1/2 3/4 1 2 3]);
     mtrys_rf = mtrys(mtrys<=p);
+    
+    if i==1
+        StartIdx = 3;
+    else
+        StartIdx = 1;
+    end
 
-    for c = 1:length(Classifiers)
+    for c = StartIdx:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 999;
         Params{i}.(Classifiers{c}).Stratified = true;
-        Params{i}.(Classifiers{c}).NWorkers = 16;
+        Params{i}.(Classifiers{c}).NWorkers = 24;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                 'rerfr') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'rr_rfr')
