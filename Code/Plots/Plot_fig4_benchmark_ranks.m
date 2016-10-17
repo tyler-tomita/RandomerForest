@@ -17,9 +17,9 @@ axBottom = [FontSize*16+axHeight*4,FontSize*11+axHeight*3,...
     FontSize];
 legWidth = 1;
 legHeight = 1;
-legLeft = axLeft(end) + axWidth + FontSize;
+legLeft = axLeft(end) + axWidth - 4*FontSize;
 legBottom = axBottom(3) - (legHeight - axHeight)/2;
-figWidth = legLeft + legWidth + FontSize;
+figWidth = legLeft + legWidth;
 figHeight = axBottom(1) + axHeight + FontSize*2;
 
 fig = figure;

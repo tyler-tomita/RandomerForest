@@ -21,10 +21,10 @@ LineStyles.rr_rf = '-';
 LineStyles.rr_rfr = ':';
 LineWidth = 2;
 FontSize = .2;
-axWidth = 2;
+axWidth = 1.3;
 axHeight = 1.3;
 axLeft = repmat([FontSize*4,FontSize*6.5+axWidth],1,4);
-axBottom = [(FontSize*6+axHeight*3)*ones(1,2),...
+axBottom = [(FontSize*7+axHeight*3)*ones(1,2),...
     (FontSize*4.5+axHeight*2)*ones(1,2),(FontSize*3+axHeight)*ones(1,2),...
     FontSize*1.5*ones(1,2)];
 legWidth = 0.4*axWidth;
@@ -83,7 +83,7 @@ for i = 1:length(Transformations)
     if i==1
         xlabel('p')
 %         ylabel({'\bf{Raw}';'\rm{Error Rate}'})
-            ylabel(['\bf{' Transformations{i} '}'])
+            ylabel({['\bf{' Transformations{i} '}'];'\rm{Error Rate}'})
         text(0.5,1.05,'Sparse Parity','FontSize',16,'FontWeight','bold','Units',...
             'normalized','HorizontalAlignment','center','VerticalAlignment'...
             ,'bottom')

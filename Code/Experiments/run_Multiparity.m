@@ -12,20 +12,14 @@ load Random_matrix_adjustment_factor
 
 Classifiers = {'rf','rerf','frc','rr_rf'};
 
-for i = 1:length(ns)
+for i = length(ns):length(ns)
     ntrain = ns(i);
     fprintf('ntrain = %d\n',ntrain)
       
     mtrys = ceil(p.^[1/4 1/2 3/4 1 2 3]);
     mtrys_rf = mtrys(mtrys<=p);
-    
-    if i==1
-        StartIdx = 3;
-    else
-        StartIdx = 1;
-    end
 
-    for c = StartIdx:length(Classifiers)
+    for c = 3:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 999;
         Params{i}.(Classifiers{c}).Stratified = true;
@@ -89,7 +83,13 @@ for i = 1:length(ns)
             TrainTime{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
         end
 
-        for trial = 1:ntrials
+        if c==3
+            StartIdx = 6;
+        else
+            StartIdx = 1;
+        end
+        
+        for trial = StartIdx:ntrials
 
             % train classifier
             poolobj = gcp('nocreate');
