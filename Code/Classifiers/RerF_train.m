@@ -54,7 +54,7 @@ end
 if ~isfield(Params,'dprime')
     load Random_matrix_adjustment_factor
     for i = 1:length(Params.d)
-        Params.dprime(i) = ceil(Params.d(i)^(1/interp1(ps,slope,p)));
+        Params.dprime(i) = ceil(Params.d(i)^(1/interp1(dims,slope,p)));
     end
 end
 

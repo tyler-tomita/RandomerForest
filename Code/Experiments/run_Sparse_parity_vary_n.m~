@@ -12,8 +12,10 @@ load Random_matrix_adjustment_factor
 
 Classifiers = {'rf' 'rerf' 'frc'};
 
+Transformations = fieldnames(Xtrain);
+
 for j = 1:length(ps)
-    p = ps(j);
+    p = dims(j);
     fprintf('p = %d\n',p)
       
     if p <= 5
@@ -65,9 +67,9 @@ for j = 1:length(ps)
                     strcmp(Classifiers{c},'rerfd')
                 Params{i,j}.(Classifiers{c}).ForestMethod = 'sparse-adjusted';
                 Params{i,j}.(Classifiers{c}).d = mtrys;
-                for k = 1:length(Params{i,j}.(Classifiers{c}).d)
-                    Params{i,j}.(Classifiers{c}).dprime(k) = ...
-                        ceil(Params{i,j}.(Classifiers{c}).d(k)^(1/interp1(dims,...
+                for j = 1:length(Params{i,j}.(Classifiers{c}).d)
+                    Params{i,j}.(Classifiers{c}).dprime(j) = ...
+                        ceil(Params{i,j}.(Classifiers{c}).d(j)^(1/interp1(ps,...
                         slope,p)));
                 end
             elseif strcmp(Classifiers{c},'frc') || strcmp(Classifiers{c},'frcr') || ...

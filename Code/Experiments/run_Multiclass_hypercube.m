@@ -7,7 +7,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load Multiparity_data
+load Multiclass_hypercube_data
 load Random_matrix_adjustment_factor
 
 Classifiers = {'rf','rerf','frc','rr_rf'};
@@ -21,7 +21,7 @@ for i = 1:length(ns)
 
     for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
-        Params{i}.(Classifiers{c}).nTrees = 999;
+        Params{i}.(Classifiers{c}).nTrees = 9;
         Params{i}.(Classifiers{c}).Stratified = true;
         Params{i}.(Classifiers{c}).NWorkers = 2;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
@@ -53,7 +53,7 @@ for i = 1:length(ns)
         elseif strcmp(Classifiers{c},'rerf') || strcmp(Classifiers{c},'rerfr')...
                 || strcmp(Classifiers{c},'rerfn') || strcmp(Classifiers{c},'rerfz') || ...
                 strcmp(Classifiers{c},'rerfd')
-            Params{i}.(Classifiers{c}).ForestMethod = 'uniform-nnzs';
+            Params{i}.(Classifiers{c}).ForestMethod = 'sparse-adjusted';
             Params{i}.(Classifiers{c}).d = mtrys;
             for j = 1:length(Params{i}.(Classifiers{c}).d)
                 Params{i}.(Classifiers{c}).dprime(j) = ...
@@ -61,12 +61,12 @@ for i = 1:length(ns)
                     slope,p)));
                 
             end
-            Params{i}.(Classifiers{c}).nmix = [2,5,10,15];
+            Params{i}.(Classifiers{c}).nmix = 2:6;
         elseif strcmp(Classifiers{c},'frc') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'frcn') || strcmp(Classifiers{c},'frcz')
             Params{i}.(Classifiers{c}).ForestMethod = 'frc';
             Params{i}.(Classifiers{c}).d = mtrys;
-            Params{i}.(Classifiers{c}).nmix = [2,5,10,15];
+            Params{i}.(Classifiers{c}).nmix = 2:6;
         end
         if strcmp(Classifiers{c},'rr_rf') || strcmp(Classifiers{c},'rr_rfr') || ...
                 strcmp(Classifiers{c},'rr_rfn') || strcmp(Classifiers{c},'rr_rfz')
@@ -82,10 +82,12 @@ for i = 1:length(ns)
             OOBAUC{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             TrainTime{i}.(Classifiers{c}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
         end
-
+        
         for trial = 1:ntrials
+            fprintf('trial %d\n',trial)
 
             % train classifier
+            
             poolobj = gcp('nocreate');
             if isempty(poolobj)
                 parpool('local',Params{i}.(Classifiers{c}).NWorkers,...
@@ -120,20 +122,22 @@ for i = 1:length(ns)
             if length(BestIdx)>1
                 BestIdx = BestIdx(end);
             end
+            
+            % predict on test set
 
             if strcmp(Forest{BestIdx}.Rescale,'off')
-                Scores = rerf_classprob(Forest{BestIdx},Xtest{i},'last');
+                Scores = rerf_classprob(Forest{BestIdx},Xtest,'last');
             else
-                Scores = rerf_classprob(Forest{BestIdx},Xtest{i},...
+                Scores = rerf_classprob(Forest{BestIdx},Xtest,...
                     'last',Xtrain{i}(:,:,trial));
             end
             Predictions = predict_class(Scores,Forest{BestIdx}.classname);
             TestError{i}.(Classifiers{c})(trial) = misclassification_rate(Predictions,...
-                Ytest{i},false);
+                Ytest,false);
 
             clear Forest
 
-            save([rerfPath 'RandomerForest/Results/Multiparity.mat'],'ns',...
+            save([rerfPath 'RandomerForest/Results/Multiclass_hypercube.mat'],'ns',...
                 'Params','OOBError','OOBAUC','TestError','TrainTime')
         end
         fprintf('%s complete\n',Classifiers{c})
