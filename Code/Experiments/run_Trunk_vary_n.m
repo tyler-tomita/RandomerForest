@@ -12,8 +12,6 @@ load Random_matrix_adjustment_factor
 
 Classifiers = {'rf' 'rerf' 'frc'};
 
-Transformations = fieldnames(Xtrain);
-
 for j = 1:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
