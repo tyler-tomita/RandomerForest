@@ -22,7 +22,7 @@ if ~isfield(Params,'nTrees')
 end
 
 if ~isfield(Params,'ForestMethod')
-    Params.ForestMethod = 'sparse-adjusted';
+    Params.ForestMethod = 'sparse-binary';
 end
 
 if ~isfield(Params,'Rotate')

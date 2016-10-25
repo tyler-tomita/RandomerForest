@@ -10,7 +10,7 @@ rng(1);
 load Trunk_vary_n_data
 load Random_matrix_adjustment_factor
 
-Classifiers = {'rf' 'rerfb' 'rerfc' 'frc2' 'frc3' 'frc4'};
+Classifiers = {'rf' 'rerf' 'rerfu' 'frc2' 'frc3' 'frc4'};
 
 for j = 1:length(ps)
     p = ps(j);
@@ -59,18 +59,22 @@ for j = 1:length(ps)
                     strcmp(Classifiers{c},'frc4')
                 Params{i,j}.(Classifiers{c}).ForestMethod = 'frc';
                 Params{i,j}.(Classifiers{c}).d = mtrys;
-            end
-            if strcmp(Classifiers{c},'frc2')
                 Params{i,j}.(Classifiers{c}).nmix = 2;
-            elseif strcmp(Classifiers{c},'frc3')
-                Params{i,j}.(Classifiers{c}).nmix = 3;
-            elseif strcmp(Classifiers{c},'frc4')
-                Params{i,j}.(Classifiers{c}).nmix = 4;
+            end
+            if strcmp(Classifiers{c},'rr_rf') || strcmp(Classifiers{c},'rr_rfr') || ...
+                    strcmp(Classifiers{c},'rr_rfn') || strcmp(Classifiers{c},'rr_rfz')
+                Params{i,j}.(Classifiers{c}).Rotate = true;
             end
 
+        if strcmp(Classifiers{c},'frc')
+            OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).nmix));
+            OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).nmix));
+            TrainTime{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).nmix));
+        else
             OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
             OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
             TrainTime{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
+        end
 
             for trial = 1:ntrials
                 fprintf('Trial %d\n',trial)

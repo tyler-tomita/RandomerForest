@@ -10,18 +10,16 @@ rng(1);
 load Sparse_parity_vary_n_data
 load Random_matrix_adjustment_factor
 
-Classifiers = {'rf' 'rerf' 'frc'};
+Classifiers = {'rf' 'rerfb' 'rerfc' 'frc2' 'frc3' 'frc4'};
 
 for j = 1:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
       
     if p <= 5
-        mtrys = [1:p ceil(p.^[1.5 2])];
-    elseif p > 5 && p <= 20
-        mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2]);
+        mtrys = [1:p ceil(p.^[1.5 2 2.5])];
     else
-        mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 10*p 20*p];
+        mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2 2.5]);
     end
     mtrys_rf = mtrys(mtrys<=p);
     
@@ -34,62 +32,43 @@ for j = 1:length(ps)
             Params{i,j}.(Classifiers{c}).nTrees = 499;
             Params{i,j}.(Classifiers{c}).Stratified = true;
             Params{i,j}.(Classifiers{c}).NWorkers = 16;
-            if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
-                    'rerfr') || strcmp(Classifiers{c},'frcr') || ...
-                    strcmp(Classifiers{c},'rr_rfr')
-                Params{i,j}.(Classifiers{c}).Rescale = 'rank';
-            elseif strcmp(Classifiers{c},'rfn') || strcmp(Classifiers{c},...
-                    'rerfn') || strcmp(Classifiers{c},'frcn') || ...
-                    strcmp(Classifiers{c},'rr_rfn')
-                Params{i,j}.(Classifiers{c}).Rescale = 'normalize';
-            elseif strcmp(Classifiers{c},'rfz') || strcmp(Classifiers{c},...
-                    'rerfz') || strcmp(Classifiers{c},'frcz') || ...
-                    strcmp(Classifiers{c},'rr_rfz')
-                Params{i,j}.(Classifiers{c}).Rescale = 'zscore';
-            else
-                Params{i,j}.(Classifiers{c}).Rescale = 'off';
-            end
-            if strcmp(Classifiers{c},'rerfd')
-                Params{i,j}.(Classifiers{c}).mdiff = 'node';
-            else
-                Params{i,j}.(Classifiers{c}).mdiff = 'off';
-            end
-            if strcmp(Classifiers{c},'rf') || strcmp(Classifiers{c},'rfr')...
-                    || strcmp(Classifiers{c},'rfn') || strcmp(Classifiers{c},'rfz') || ...
-                    strcmp(Classifiers{c},'rr_rf') || strcmp(Classifiers{c},'rr_rfr') || ...
-                    strcmp(Classifiers{c},'rr_rfn') || strcmp(Classifiers{c},'rr_rfz')
+            Params{i,j}.(Classifiers{c}).Rescale = 'off';
+            Params{i,j}.(Classifiers{c}).mdiff = 'off';
+            if strcmp(Classifiers{c},'rf')
                 Params{i,j}.(Classifiers{c}).ForestMethod = 'rf';
                 Params{i,j}.(Classifiers{c}).d = mtrys_rf;
-            elseif strcmp(Classifiers{c},'rerf') || strcmp(Classifiers{c},'rerfr')...
-                    || strcmp(Classifiers{c},'rerfn') || strcmp(Classifiers{c},'rerfz') || ...
-                    strcmp(Classifiers{c},'rerfd')
-                Params{i,j}.(Classifiers{c}).ForestMethod = 'sparse-adjusted';
+            elseif strcmp(Classifiers{c},'rerfb')
+                Params{i,j}.(Classifiers{c}).ForestMethod = 'sparse-binary';
                 Params{i,j}.(Classifiers{c}).d = mtrys;
                 for k = 1:length(Params{i,j}.(Classifiers{c}).d)
                     Params{i,j}.(Classifiers{c}).dprime(k) = ...
                         ceil(Params{i,j}.(Classifiers{c}).d(k)^(1/interp1(dims,...
                         slope,p)));
                 end
-            elseif strcmp(Classifiers{c},'frc') || strcmp(Classifiers{c},'frcr') || ...
-                    strcmp(Classifiers{c},'frcn') || strcmp(Classifiers{c},'frcz')
+            elseif strcmp(Classifiers{c},'rerfc')
+                Params{i,j}.(Classifiers{c}).ForestMethod = 'sparse-continuous';
+                Params{i,j}.(Classifiers{c}).d = mtrys;
+                for k = 1:length(Params{i,j}.(Classifiers{c}).d)
+                    Params{i,j}.(Classifiers{c}).dprime(k) = ...
+                        ceil(Params{i,j}.(Classifiers{c}).d(k)^(1/interp1(dims,...
+                        slope,p)));
+                end
+            elseif strcmp(Classifiers{c},'frc2') || strcmp(Classifiers{c},'frc3') || ...
+                    strcmp(Classifiers{c},'frc4')
                 Params{i,j}.(Classifiers{c}).ForestMethod = 'frc';
                 Params{i,j}.(Classifiers{c}).d = mtrys;
-                Params{i,j}.(Classifiers{c}).nmix = 2:min(p,6);
             end
-            if strcmp(Classifiers{c},'rr_rf') || strcmp(Classifiers{c},'rr_rfr') || ...
-                    strcmp(Classifiers{c},'rr_rfn') || strcmp(Classifiers{c},'rr_rfz')
-                Params{i,j}.(Classifiers{c}).Rotate = true;
+            if strcmp(Classifiers{c},'frc2')
+                Params{i,j}.(Classifiers{c}).nmix = 2;
+            elseif strcmp(Classifiers{c},'frc3')
+                Params{i,j}.(Classifiers{c}).nmix = 3;
+            elseif strcmp(Classifiers{c},'frc4')
+                Params{i,j}.(Classifiers{c}).nmix = 4;
             end
 
-        if strcmp(Classifiers{c},'frc')
-            OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).nmix));
-            OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).nmix));
-            TrainTime{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).nmix));
-        else
             OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
             OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
             TrainTime{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
-        end
 
             for trial = 1:ntrials
                 fprintf('Trial %d\n',trial)

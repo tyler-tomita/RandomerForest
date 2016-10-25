@@ -1015,7 +1015,7 @@ function M = srpmat(d,k,method,varargin)
         M = M(:,any(M));
         M = M(:,1:min(k,size(M,2)));
         M = sparse(M);
-    elseif strcmp(method,'sparse-adjusted')
+    elseif strcmp(method,'sparse-binary')
         s = varargin{1};
         kk = varargin{3};
         M = zeros(d,kk);
@@ -1027,9 +1027,9 @@ function M = srpmat(d,k,method,varargin)
         M = unique(M(:,any(M))','rows','stable')';
         M = M(:,1:min(k,size(M,2)));
         M = sparse(M);
-    elseif strcmp(method,'sparse-uniform')
+    elseif strcmp(method,'sparse-continuous')
         s = varargin{1};
-        kk = round(k/(1-1/exp(1)));
+        kk = varargin{3};
         M = zeros(d,kk);
         nnzs = round(kk*d*s);
         nzs=randperm(d*kk,nnzs);
