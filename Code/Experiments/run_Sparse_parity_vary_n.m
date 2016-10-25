@@ -33,7 +33,7 @@ for j = 1:length(ps)
             
             Params{i,j}.(Classifiers{c}).nTrees = 499;
             Params{i,j}.(Classifiers{c}).Stratified = true;
-            Params{i,j}.(Classifiers{c}).NWorkers = 2;
+            Params{i,j}.(Classifiers{c}).NWorkers = 16;
             if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                     'rerfr') || strcmp(Classifiers{c},'frcr') || ...
                     strcmp(Classifiers{c},'rr_rfr')
