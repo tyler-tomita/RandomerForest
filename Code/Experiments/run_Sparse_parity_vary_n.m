@@ -10,8 +10,6 @@ rng(1);
 load Sparse_parity_vary_n_data
 load Random_matrix_adjustment_factor
 
-Classifiers = {'rf' 'rerfb' 'rerfc' 'frc2' 'frc3' 'frc4'};
-
 for j = 1:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
@@ -22,6 +20,14 @@ for j = 1:length(ps)
         mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2 2.5]);
     end
     mtrys_rf = mtrys(mtrys<=p);
+    
+    if p == 2
+        Classifiers = {'rf' 'rerfb' 'rerfc' 'frc2'};
+    elseif p == 3
+        Classifiers = {'rf' 'rerfb' 'rerfc' 'frc2' 'frc3'};
+    elseif p >= 4
+        Classifiers = {'rf' 'rerfb' 'rerfc' 'frc2' 'frc3' 'frc4'};
+    end
     
     for i = 1:length(ns{j})
         fprintf('n = %d\n',ns{j}(i))
