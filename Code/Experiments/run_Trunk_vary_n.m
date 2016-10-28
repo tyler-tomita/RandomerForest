@@ -12,7 +12,7 @@ load Random_matrix_adjustment_factor
 
 Classifiers = {'rf' 'rerfb' 'rerfc' 'frc2' 'frc3' 'frc4'};
 
-for j = 1:length(ps)
+for j = 2:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
       
@@ -25,7 +25,7 @@ for j = 1:length(ps)
     end
     mtrys_rf = mtrys(mtrys<=p);
     
-    for i = 1:length(ns{j})
+    for i = length(ns{j})-1:length(ns{j})
         fprintf('n = %d\n',ns{j}(i))
 
         for c = 1:length(Classifiers)

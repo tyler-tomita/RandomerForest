@@ -5,58 +5,55 @@ clc
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
-rng(1);
-
-C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
-Colors.rf = C(1,:);
-Colors.rerf = C(2,:);
-Colors.rf_rot = C(3,:);
-Colors.rerfr = C(4,:);
-Colors.frc = C(5,:);
-Colors.rerfdn = C(6,:);
+Colors.rf = 'b';
+Colors.rerfb = 'g';
+Colors.rerfc = 'c';
+Colors.frc2 = 'y';
+Colors.frc3 = 'k';
+Colors.frc4 = 'r';
 LineWidth = 2;
-MarkerSize = 12;
-FontSize = .2;
-TitleFontSize = 18;
-axWidth = 1.75;
-axHeight = 1.75;
-axLeft = FontSize*4;
-axBottom = FontSize*4;
-figWidth = axLeft(end) + axWidth + FontSize*4;
-figHeight = axBottom(1) + axHeight + FontSize*4;
 
-fig = gcf;
-fig.Units = 'inches';
-fig.PaperUnits = 'inches';
-fig.Position = [0 0 figWidth figHeight];
-fig.PaperPosition = [0 0 figWidth figHeight];
-fig.PaperSize = [figWidth figHeight];
+load ~/Sparse_parity_vary_n
 
-load Sparse_parity_vary_n
+ntrials = length(TestError{1}.rf);
 
-mtrys = ceil(d.^[0 1/4 1/2 3/4 1]);
+for j = 1:2
+    p = ps(j);
+    
+    Classifiers = fieldnames(TestError{1,j});
 
-[minLhat.rf,minLhatIdx.rf] = min(mean(Lhat.rf,3),[],2);
-[minLhat.rerf,minLhatIdx.rerf] = min(mean(Lhat.rerf,3),[],2);
-for j = 1:length(ns)
-    sem.rf(j) = std(Lhat.rf(j,minLhatIdx.rf(j),:))/sqrt(size(Lhat.rf,3)-1);
-    sem.rerf(j) = std(Lhat.rerf(j,minLhatIdx.rerf(j),:))/sqrt(size(Lhat.rerf,3)-1);
+    ErrorMatrix = zeros(ntrials,length(ns),length(Classifiers));
+
+    for i = 1:length(ns{j})
+        n = ns{j}(i);
+
+        for c = 1:length(Classifiers)
+            cl = Classifiers{c};
+            ErrorMatrix(:,i,c) = TestError{i,j}.(cl)';
+        end
+    end
+
+    figure;
+    hold on
+    for c = 1:length(Classifiers)
+        errorbar(ns{j},mean(ErrorMatrix(:,:,c)),std(ErrorMatrix(:,:,c))/sqrt(ntrials),...
+            'LineWidth',LineWidth,'Color',Colors.(Classifiers{c}))
+    end
+
+    ax = gca;
+
+    ax.XScale = 'log';
+    ax.FontSize = 16;
+    ax.XLim = [10^(log10(min(ns{j}))-0.1) 10^(log10(max(ns{j}))+0.1)];
+    ax.YLim = [min(ErrorMatrix(:)) max(ErrorMatrix(:))];
+    ax.XTick = ns{j};
+    ax.XTickLabel = cellstr(num2str(ns{j}'))';
+
+    xlabel('n')
+    ylabel('Misclassification Rate')
+    title(sprintf('Sparse Parity (p = %d)',p))
+    lh = legend('RF','RerF(bin)','RerF(cont)','F-RC(L=2)','F-RC(L=3)','F-RC(L=4)');
+    lh.Box = 'off';
+
+    save_fig(gcf,[rerfPath sprintf('RandomerForest/Figures/Sparse_parity_p_%d',p)])
 end
-errorbar(ns,minLhat.rf,sem.rf,'LineWidth',LineWidth,'Color',Colors.rf)
-hold on
-errorbar(ns,minLhat.rerf,sem.rerf,'LineWidth',LineWidth,'Color',Colors.rerf)
-
-ax = gca;
-
-xlabel('n')
-ylabel('Error Rate')
-ax.LineWidth = LineWidth;
-ax.FontUnits = 'inches';
-ax.FontSize = FontSize;
-ax.Units = 'inches';
-%ax.Position = [axLeft axBottom axWidth axHeight];
-ax.Box = 'off';
-ax.XLim = [1 ns(end)];
-ax.XScale = 'log';
-
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/Sparse_parity_vary_n'])
