@@ -10,7 +10,7 @@ rng(1);
 load Sparse_parity_vary_n_data
 load Random_matrix_adjustment_factor
 
-for j = length(ps):length(ps)
+for j = 2:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
       
@@ -29,7 +29,7 @@ for j = length(ps):length(ps)
         Classifiers = {'rf' 'rerfb' 'rerfc' 'frc2' 'frc3' 'frc4'};
     end
     
-    for i = 2:length(ns{j})
+    for i = 1:length(ns{j})
         fprintf('n = %d\n',ns{j}(i))
 
         for c = 1:length(Classifiers)

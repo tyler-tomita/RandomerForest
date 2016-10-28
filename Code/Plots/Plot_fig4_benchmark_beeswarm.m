@@ -34,7 +34,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 Transformations = {'Untransformed','Rotated','Scaled','Affine','Outlier'};
 
-for i = 1:1
+for i = 1:length(Transformations)
     load(['~/Benchmarks/Results/Benchmark_' lower(Transformations{i}) '.mat'])
     Classifiers = fieldnames(TestError{1});
     Classifiers(~ismember(Classifiers,{'rf','rerf','rerfr','frc','frcr'})) = [];
@@ -49,6 +49,10 @@ for i = 1:1
         end
     end
     
+    figure;
+    hold on
+
+    
     h = plotSpread(RelativeError,[],[],{'RerF','RerF(r)','F-RC','Frank'},...
         2);
     
@@ -59,7 +63,6 @@ for i = 1:1
 %     ax(i).Position = [axLeft(i) axBottom(i) axWidth axHeight];
 %     ax(i).YScale = 'log';
     
-    hold on
     
     ylabel('Relative Error');
     Mu = h{2}(1).YData;
@@ -75,5 +78,5 @@ for i = 1:1
         plot([min(h_line(j).XData),max(h_line(j).XData)],[Mu(j) Mu(j)],...
             'Color','m')
     end
-    
+%     save_fig(gcf,[rerfPath sprintf('RandomerForest/Figures/Fig4_benchmark_%s_beeswarm',Transformations{i})])
 end
