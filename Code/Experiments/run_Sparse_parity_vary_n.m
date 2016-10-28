@@ -10,7 +10,7 @@ rng(1);
 load Sparse_parity_vary_n_data
 load Random_matrix_adjustment_factor
 
-for j = 2:length(ps)
+for j = 3:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
       
