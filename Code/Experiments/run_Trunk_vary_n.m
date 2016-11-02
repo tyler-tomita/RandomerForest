@@ -135,7 +135,8 @@ for j = 1:length(ps)
                 clear Forest
 
                 save([rerfPath 'RandomerForest/Results/Trunk_vary_n.mat'],'ps',...
-                    'ns','Params','OOBError','OOBAUC','TestError','TrainTime')
+                    'ns','Params','OOBError','OOBAUC','TestError',...
+                    'TrainTime','Depth','NumNodes','NumSplitNodes')
             end
             fprintf('%s complete\n',Classifiers{c})
         end
