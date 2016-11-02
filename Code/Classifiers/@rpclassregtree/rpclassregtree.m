@@ -94,6 +94,15 @@ splitcriterion = '';
                 classprob(noderows{node},:) = repmat(Tree.classprob(node,:),length(noderows{node}),1);            
             end
         end     %function rpclassprob
+        
+        function Depth = tree_depth(Tree)
+            Depth = 1;
+            CurrentNode = Tree.numnodes;
+            while Tree.parent(CurrentNode) ~= 0
+                CurrentNode = Tree.parent(CurrentNode);
+                Depth = Depth + 1;
+            end
+        end % function tree_depth
     end     %methods block
     
         methods(Hidden = true)

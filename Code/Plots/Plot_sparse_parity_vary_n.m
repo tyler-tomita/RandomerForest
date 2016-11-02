@@ -17,7 +17,7 @@ load ~/Sparse_parity_vary_n
 
 ntrials = length(TestError{1}.rf);
 
-for j = 1:2
+for j = 1:3
     p = ps(j);
     
     Classifiers = fieldnames(TestError{1,j});

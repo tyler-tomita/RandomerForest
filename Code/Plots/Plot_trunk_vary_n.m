@@ -14,6 +14,8 @@ Colors.frc4 = 'r';
 LineWidth = 2;
 
 load ~/Trunk_vary_n
+load('~/RandomerForest/Results/Trunk_bayes_error.mat','bayes_error','dims')
+bayes_error(dims~=10&dims~=100) = [];
 
 ntrials = length(TestError{1}.rf);
 
@@ -49,12 +51,16 @@ for j = 1:2
     ax = gca;
 
     ax.XScale = 'log';
-    ax.YScale = 'log';
+%     ax.YScale = 'log';
     ax.FontSize = 16;
     ax.XLim = [10^(log10(min(ns{j}))-0.1) 10^(log10(max(ns{j}))+0.1)];
-    ax.YLim = [min(ErrorMatrix(:)) max(ErrorMatrix(:))];
+    ax.YLim = [bayes_error(j)*0.9 max(max(mean(ErrorMatrix)))*1.2];
     ax.XTick = ns{j};
     ax.XTickLabel = cellstr(num2str(ns{j}'))';
+    
+    hold on
+    
+    plot([ax.XLim(1),ax.XLim(2)],[bayes_error(j),bayes_error(j)],'LineWidth',LineWidth)
 
     xlabel('n')
     ylabel('Misclassification Rate')

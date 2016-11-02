@@ -51,22 +51,27 @@ for i = 1:length(Transformations)
     
     figure;
     hold on
-
     
     h = plotSpread(RelativeError,[],[],{'RerF','RerF(r)','F-RC','Frank'},...
         2);
     
-%     ax(i).LineWidth = LineWidth;
-%     ax(i).FontUnits = 'inches';
-%     ax(i).FontSize = FontSize;
-%     ax(i).Units = 'inches';
-%     ax(i).Position = [axLeft(i) axBottom(i) axWidth axHeight];
-%     ax(i).YScale = 'log';
+%     h{3}.LineWidth = LineWidth;
+%     h{3}.FontUnits = 'inches';
+%     h{3}.FontSize = FontSize;
+%     h{3}.Units = 'inches';
+%     h{3}.Position = [axLeft(i) axBottom(i) axWidth axHeight];
+%     h{3}.YScale = 'log';
     
     
     ylabel('Relative Error');
+    if i == 1
+        title('Raw')
+    else
+        title(Transformations{i})
+    end
     Mu = h{2}(1).YData;
     h{2}(1).Visible = 'off';
+    h{3}.XLim = [0.5,4.5];
     h{3}.YLim = [-0.2,0.2];
     h{3}.FontSize = 14;
     
@@ -78,5 +83,41 @@ for i = 1:length(Transformations)
         plot([min(h_line(j).XData),max(h_line(j).XData)],[Mu(j) Mu(j)],...
             'Color','m')
     end
-%     save_fig(gcf,[rerfPath sprintf('RandomerForest/Figures/Fig4_benchmark_%s_beeswarm',Transformations{i})])
+    
+    ColoredIdx = [1,3];
+    for j = ColoredIdx
+        p = patch([j-0.5 j+0.5 j+0.5 j-0.5],[h{3}.YLim(1) h{3}.YLim(1) h{3}.YLim(2) h{3}.YLim(2)],...
+            [0.7 0.7 0.7]);
+        p.EdgeColor = 'none';
+    end
+    
+    ColoredIdx = [2,4];
+    for j = ColoredIdx
+        p = patch([j-0.5 j+0.5 j+0.5 j-0.5],[h{3}.YLim(1) h{3}.YLim(1) h{3}.YLim(2) h{3}.YLim(2)],...
+            [0.75 0.75 0.75]);
+        p.EdgeColor = 'none';
+    end
+    
+    ch = h{3}.Children;
+    ch(1:5) = [];
+    ch(end+1:end+5) = h{3}.Children(1:5);
+    h{3}.Children = ch;
+    
+        t = text(1,h{3}.YLim(2),...
+            sprintf('%0.2e +/-\n%0.2e',mean(RelativeError{1}),std(RelativeError{1})/sqrt(length(RelativeError{1}))),...
+            'HorizontalAlignment','center',...
+            'VerticalAlignment','top','FontSize',12,'Color','k');
+        t = text(2,h{3}.YLim(2),...
+            sprintf('%0.2e +/-\n%0.2e',mean(RelativeError{2}),std(RelativeError{2})/sqrt(length(RelativeError{2}))),...
+            'HorizontalAlignment','center',...
+            'VerticalAlignment','top','FontSize',12,'Color','k');
+        t = text(3,h{3}.YLim(2),...
+            sprintf('%0.2e +/-\n%0.2e',mean(RelativeError{3}),std(RelativeError{3})/sqrt(length(RelativeError{3}))),...
+            'HorizontalAlignment','center',...
+            'VerticalAlignment','top','FontSize',12,'Color','k');
+        t = text(4,h{3}.YLim(2),...
+            sprintf('%0.2e +/-\n%0.2e',mean(RelativeError{4}),std(RelativeError{4})/sqrt(length(RelativeError{4}))),...
+            'HorizontalAlignment','center',...
+            'VerticalAlignment','top','FontSize',12,'Color','k');
+    save_fig(gcf,[rerfPath sprintf('RandomerForest/Figures/Fig4_benchmark_%s_beeswarm',Transformations{i})])
 end

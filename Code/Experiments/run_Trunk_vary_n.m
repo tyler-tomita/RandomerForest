@@ -71,7 +71,10 @@ for j = 1:length(ps)
             OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
             OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
             TrainTime{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
-
+            Depth{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
+            NumNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
+            NumSplitNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
+            
             for trial = 1:ntrials
                 fprintf('Trial %d\n',trial)
 
@@ -103,6 +106,15 @@ for j = 1:length(ps)
                         [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k)] = ...
                             perfcurve(Ytrain{i,j}(:,trial),Scores(:,2),'1');
                     end
+                    Depth{i,j}.(Classifiers{c})(trial,:,k) = forest_depth(Forest{k})';
+                    NN = NaN(1,Forest{k}.nTrees);
+                    NS = NaN(1,Forest{k}.nTrees);
+                    parfor kk = 1:Forest{k}.nTrees
+                        NN(kk) = Forest{k}.Tree{kk}.numnodes;
+                        NS(kk) = sum(Forest{k}.Tree{kk}.isbranch);
+                    end
+                    NumNodes{i,j}.(Classifiers{c})(trial,:,k) = NN;
+                    NumSplitNodes{i,j}.(Classifiers{c})(trial,:,k) = NS;
                 end
                 BestIdx = hp_optimize(OOBError{i,j}.(Classifiers{c})(trial,:),...
                     OOBAUC{i,j}.(Classifiers{c})(trial,:));

@@ -111,14 +111,14 @@ for j = 1:length(ps)
                             perfcurve(Ytrain{i,j}(:,trial),Scores(:,2),'1');
                     end
                     Depth{i,j}.(Classifiers{c})(trial,:,k) = forest_depth(Forest{k})';
-                    NN = NaN(1,Forest{k}.nTrees);
-                    NS = NaN(1,Forest{k}.nTrees);
-                    parfor kk = 1:Forest{k}.nTrees
-                        NN(kk) = Forest{k}.Tree{kk}.numnodes;
-                        NS(kk) = sum(Forest{k}.Tree{kk}.isbranch);
+                    NN = NaN(Forest{k}.nTrees,1);
+                    NS = NaN(Forest{k}.nTrees,1);
+                    for kk = 1:Forest{k}.nTrees
+                        NN(kk) = Forest.r.Tree{j}.numnodes;
+                        NS(j) = sum(Forest.rf{i}.Tree{j}.isbranch);
                     end
-                    NumNodes{i,j}.(Classifiers{c})(trial,:,k) = NN;
-                    NumSplitNodes{i,j}.(Classifiers{c})(trial,:,k) = NS;
+                    NumNodes(1,i) = mean(NN);
+                    NumSplitNodes(1,i) = mean(NS);
                 end
                 
                 %select best model for test predictions
