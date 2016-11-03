@@ -15,6 +15,8 @@ function [Forest,Params,TrainTime] = RerF_train(Xtrain,Ytrain,Params)
 
 p = size(Xtrain,2);
 
+Params.AdjustmentFactors = load('Random_matrix_adjustment_factor');
+
 % set defaults if empty
 
 if ~isfield(Params,'nTrees')
@@ -52,10 +54,13 @@ if ~isfield(Params,'d')
 end
 
 if ~isfield(Params,'dprime')
-    load Random_matrix_adjustment_factor
     for i = 1:length(Params.d)
-        Params.dprime(i) = ceil(Params.d(i)^(1/interp1(dims,slope,p)));
+        Params.dprime(i) = ceil(Params.d(i)^(1/interp1(Params.AdjustmentFactors.dims,Params.AdjustmentFactors.slope,p)));
     end
+end
+
+if ~isfield(Params,'dx')
+    dx = p;
 end
 
 if ~isfield(Params,'nmix')
@@ -114,7 +119,9 @@ else
             'nmix',Params.nmix,...
             'Rescale',Params.Rescale,...
             'Stratified',Params.Stratified,...
-            'NWorkers',Params.NWorkers);
+            'NWorkers',Params.NWorkers,...
+            'AdjustmentFactors',Params.AdjustmentFactors,...
+            'dx',Params.dx);
         TrainTime(i) = toc;
     end
 end

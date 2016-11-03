@@ -11,6 +11,7 @@ classdef rpclassificationforest
         priors = [];
         rotmat = [];
         RotVars = logical([]);
+        rpm = [];
     end
     
     methods
@@ -61,6 +62,9 @@ classdef rpclassificationforest
                 %
                 %p: probability of sampling each of the K-1 mean difference
                 %vectors, where K is the number of classes
+                %
+                %dx: size of expanded feature set in one random projection
+                %per tree version
             %
             %Example:
             %
@@ -90,17 +94,19 @@ classdef rpclassificationforest
                         'skipchecks'    'stream'    'fboot'...
                         'SampleWithReplacement' 's' 'mdiff' 'ForestMethod'...
                         'Rescale'   'NWorkers'  'Stratified'...
-                        'nmix'  'rotate'    'p' 'dprime'    'nTrees'};
+                        'nmix'  'rotate'    'p' 'dprime'    'nTrees'    'dx'...
+                        'AdjustmentFactors'};
             defaults = {[]  []  'gdi'   []  2  1   ceil(size(X,2)^(2/3))...
                         'off'    []  'off'    'classification'  1e-6    {}...
                         []  'off'   false  []  1    true   1/size(X,2)    'off'   'sparse'...
-                        'off' 1   true   2   false  []    []  500};
+                        'off' 1   true   2   false  []    []  500   size(X,2)...
+                        []};
             [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
                 nvartosample,Merge,categ,Prune,Method,qetoler,names,W,...
                 surrogate,skipchecks,Stream,fboot,...
                 SampleWithReplacement,s,mdiff,ForestMethod,...
-                Rescale,NWorkers,Stratified,nmix,rotate,p,dprime,nTrees,~,extra] = ...
-                internal.stats.parseArgs(okargs,defaults,varargin{:});
+                Rescale,NWorkers,Stratified,nmix,rotate,p,dprime,nTrees,dx,...
+                AdjustmentFactors,~,extra] = internal.stats.parseArgs(okargs,defaults,varargin{:});
             
             % If ForestMethod is F-RC and nmix = 1, then just do RF instead
             % since it's the same and faster
@@ -147,6 +153,19 @@ classdef rpclassificationforest
                 RR = zeros(500,500,nTrees);
             end
             RotVars = false(nTrees,d);
+            
+            % one random projection per tree implementation
+            load Random_matrix_adjustment_factor
+            if strcmp(ForestMethod,'rerf2')
+                RM = cell(nTrees,1);
+%                 if d <= 10
+%                     dx = 2^d;
+%                 elseif d > 10 && d <= 100
+%                     dx = d^2;
+%                 elseif d > 100 && d <= 1000
+%                     dx = ceil(d^1.5);
+%                 end
+            end
             
             poolobj = gcp('nocreate');
             if isempty(poolobj);
@@ -200,7 +219,7 @@ classdef rpclassificationforest
                     end
                 end
                 
-                if ~strcmp(ForestMethod,'rf')
+                if ~strcmp(ForestMethod,'rf') && ~strcmp(ForestMethod,'rerf2')
                     Tree{i} = rpclassregtree(Xtree(ibidx,:),Y(ibidx,:),...
                         'priorprob',Prior,'cost',Cost,'splitcriterion',...
                         Criterion,'splitmin',splitmin,'minparent',...
@@ -211,6 +230,17 @@ classdef rpclassificationforest
                         surrogate,'skipchecks',skipchecks,'stream',Stream,...
                         's',s,'mdiff',mdiff,'sparsemethod',ForestMethod,'nmix',nmix,...
                         'p',p,'dprime',dprime);
+                elseif strcmp(ForestMethod,'rerf2')
+                    RM{i} = randmat(d,dx,'sparse-adjusted',s,...
+                        ceil(dx^(1/interp1(AdjustmentFactors.dims,AdjustmentFactors.slope,d))));
+                    Tree{i} = classregtree2(Xtree(ibidx,:)*RM{i},Y(ibidx,:),...
+                        'priorprob',Prior,'cost',Cost,'splitcriterion',...
+                        Criterion,'splitmin',splitmin,'minparent',...
+                        minparent,'minleaf',minleaf,'nvartosample',...
+                        min(nvartosample,size(RM{i},2)),'mergeleaves',...
+                        Merge,'categorical',categ,'prune',Prune,'method',...
+                        Method,'qetoler',qetoler,'names',names,'weights',...
+                        W,'surrogate',surrogate,'skipchecks',skipchecks,'stream',Stream);
                 else
                     Tree{i} = classregtree2(Xtree(ibidx,:),Y(ibidx,:),...
                         'priorprob',Prior,'cost',Cost,'splitcriterion',...
@@ -253,60 +283,64 @@ classdef rpclassificationforest
                     forest.RotVars = RotVars;
                 end
             end
+            if strcmp(ForestMethod,'rerf2')
+                forest.rpm = RM;
+            end
         end     %function rpclassificationforest
         
-        function [predcell,err] = oobpredict(forest,X,Y)
-            
-            %Convert to double if not already
-            if ~isa(X,'double')
-                X = double(X);
-            end
-            
-            if ~strcmp(forest.Rescale,'off')
-                X = rescale(X,[],forest.Rescale);
-            end
-            [nrows,d] = size(X);
-            predcell = cell(nrows,forest.nTrees);
-            err = NaN(1,forest.nTrees);
-            OOBIndices = forest.oobidx;
-            trees = forest.Tree;
-            rotate = ~isempty(forest.rotmat);
-            if ~strcmp(forest.ForestMethod,'rf')
-                parfor i = 1:forest.nTrees
-                    if rotate
-                        if d<=500
-                            Xtree = X*forest.rotmat(:,:,i);
-                        else
-                            Xtree = X;
-                            Xtree(:,forest.RotVars(i,:)) = X(:,forest.RotVars(i,:))*forest.rotmat(:,:,i);       
-                        end
-                    else
-                        Xtree = X;
-                    end
-                    pred_i = cell(nrows,1);
-                    pred_i(OOBIndices{i}) = rptreepredict(trees{i},Xtree(OOBIndices{i},:));
-                    predcell(:,i) = pred_i;
-                    err(i) = sum(~strcmp(pred_i(OOBIndices{i}),Y(OOBIndices{i})))/length(OOBIndices{i});
-                end
-            else
-                parfor i = 1:forest.nTrees
-                    if rotate
-                        if d<=500
-                            Xtree = X*forest.rotmat(:,:,i);
-                        else
-                            Xtree = X;
-                            Xtree(:,forest.RotVars(i,:)) = Xtree(:,forest.RotVars(i,:))*forest.rotmat(:,:,i);       
-                        end
-                    else
-                        Xtree = X;
-                    end
-                    pred_i = cell(nrows,1);
-                    pred_i(OOBIndices{i}) = eval(trees{i},Xtree(OOBIndices{i},:));
-                    predcell(:,i) = pred_i;
-                    err(i) = sum(~strcmp(pred_i(OOBIndices{i}),Y(OOBIndices{i})))/length(OOBIndices{i});
-                end
-            end
-        end     %function oobpredict
+%         oobpredict is deprecated
+%         function [predcell,err] = oobpredict(forest,X,Y)
+%             
+%             %Convert to double if not already
+%             if ~isa(X,'double')
+%                 X = double(X);
+%             end
+%             
+%             if ~strcmp(forest.Rescale,'off')
+%                 X = rescale(X,[],forest.Rescale);
+%             end
+%             [nrows,d] = size(X);
+%             predcell = cell(nrows,forest.nTrees);
+%             err = NaN(1,forest.nTrees);
+%             OOBIndices = forest.oobidx;
+%             trees = forest.Tree;
+%             rotate = ~isempty(forest.rotmat);
+%             if ~strcmp(forest.ForestMethod,'rf')
+%                 parfor i = 1:forest.nTrees
+%                     if rotate
+%                         if d<=500
+%                             Xtree = X*forest.rotmat(:,:,i);
+%                         else
+%                             Xtree = X;
+%                             Xtree(:,forest.RotVars(i,:)) = X(:,forest.RotVars(i,:))*forest.rotmat(:,:,i);       
+%                         end
+%                     else
+%                         Xtree = X;
+%                     end
+%                     pred_i = cell(nrows,1);
+%                     pred_i(OOBIndices{i}) = rptreepredict(trees{i},Xtree(OOBIndices{i},:));
+%                     predcell(:,i) = pred_i;
+%                     err(i) = sum(~strcmp(pred_i(OOBIndices{i}),Y(OOBIndices{i})))/length(OOBIndices{i});
+%                 end
+%             else
+%                 parfor i = 1:forest.nTrees
+%                     if rotate
+%                         if d<=500
+%                             Xtree = X*forest.rotmat(:,:,i);
+%                         else
+%                             Xtree = X;
+%                             Xtree(:,forest.RotVars(i,:)) = Xtree(:,forest.RotVars(i,:))*forest.rotmat(:,:,i);       
+%                         end
+%                     else
+%                         Xtree = X;
+%                     end
+%                     pred_i = cell(nrows,1);
+%                     pred_i(OOBIndices{i}) = eval(trees{i},Xtree(OOBIndices{i},:));
+%                     predcell(:,i) = pred_i;
+%                     err(i) = sum(~strcmp(pred_i(OOBIndices{i}),Y(OOBIndices{i})))/length(OOBIndices{i});
+%                 end
+%             end
+%         end     %function oobpredict
         
         function scores = rerf_oob_classprob(forest,Xtrain,treenum)
             if nargin == 2
@@ -329,7 +363,7 @@ classdef rpclassificationforest
             OOBIndices = forest.oobidx;
             trees = forest.Tree;
             rotate = ~isempty(forest.rotmat);
-            if ~strcmp(forest.ForestMethod,'rf')
+            if ~strcmp(forest.ForestMethod,'rf') && ~strcmp(forest.ForestMethod,'rerf2')
                 parfor i = 1:forest.nTrees
                     if rotate
                         if d<=500
@@ -345,6 +379,13 @@ classdef rpclassificationforest
                     score_i(OOBIndices{i},:) = rpclassprob(trees{i},Xtree)
                     scoremat(:,:,i) = score_i;
                 end
+            elseif strcmp(forest.ForestMethod,'rerf2')
+                parfor i = 1:forest.nTrees
+                    Xtree = Xtrain(OOBIndices{i},:)*forest.rpm{i};
+                    score_i = NaN(nrows,nclasses);
+                    score_i(OOBIndices{i},:) = rfclassprob(trees{i},Xtree)
+                    scoremat(:,:,i) = score_i;
+                end
             else
                 parfor i = 1:forest.nTrees
                     if rotate
@@ -357,8 +398,8 @@ classdef rpclassificationforest
                     else
                         Xtree = Xtrain(OOBIndices{i},:);
                     end
-                    score_i = NaN(nrows,nclasses,1);
-                    score_i(OOBIndices{i},:,1) = rfclassprob(trees{i},Xtree);
+                    score_i = NaN(nrows,nclasses);
+                    score_i(OOBIndices{i},:) = rfclassprob(trees{i},Xtree);
                     scoremat(:,:,i) = score_i;
                 end
             end
@@ -410,7 +451,7 @@ classdef rpclassificationforest
             scoremat = NaN(nrows,nclasses,forest.nTrees);
             trees = forest.Tree;
             rotate = ~isempty(forest.rotmat);
-            if ~strcmp(forest.ForestMethod,'rf')
+            if ~strcmp(forest.ForestMethod,'rf') && ~strcmp(forest.ForestMethod,'rerf2')
                 parfor i = 1:forest.nTrees
                     if rotate
                         if d<=500
@@ -423,6 +464,12 @@ classdef rpclassificationforest
                         Xtree = Xtest;
                     end
                     score_i = rpclassprob(trees{i},Xtree)
+                    scoremat(:,:,i) = score_i;
+                end
+            elseif strcmp(forest.ForestMethod,'rerf2')
+                parfor i = 1:forest.nTrees
+                    Xtree = Xtest*forest.rpm{i};
+                    score_i = rfclassprob(trees{i},Xtree);
                     scoremat(:,:,i) = score_i;
                 end
             else
@@ -452,88 +499,90 @@ classdef rpclassificationforest
             end
         end     %function rerf_classprob
         
-        function Y = predict(forest,Xtest,varargin)
-                        
-            %Convert to double if not already
-            if ~isa(Xtest,'double')
-                Xtest = double(Xtest);
-            end
-            
-            if nargin == 3;
-                Xtrain = varargin{1};
-                if ~isa(Xtrain,'double')
-                    Xtrain = double(Xtrain);
-                end
-            end
-            
-            if ~strcmp(forest.Rescale,'off')
-                if nargin < 3
-                    error('Training data is required as third input argument for predicting')
-                end
-                Xtest = rescale(Xtrain,Xtest,forest.Rescale);
-            end
-            
-            [n,d] = size(Xtest);
-            predmat = NaN(n,forest.nTrees);
-            YTree = cell(n,forest.nTrees);
-            Tree = forest.Tree;
-            rotate = ~isempty(forest.rotmat);
-            
-            if ~strcmp(forest.ForestMethod,'rf')
-                parfor i = 1:forest.nTrees
-                    if rotate
-                        if d<=500
-                            Xtree = Xtest*forest.rotmat(:,:,i);
-                        else
-                            Xtree = Xtest;
-                            Xtree(:,forest.RotVars(i,:)) = Xtree(:,forest.RotVars(i,:))*forest.rotmat(:,:,i);       
-                        end
-                    else
-                        Xtree = Xtest;
-                    end
-                    YTree(:,i) = rptreepredict(Tree{i},Xtree);
-                end
-            else
-                parfor i = 1:forest.nTrees
-                    if rotate
-                        if d<=500
-                            Xtree = Xtest*forest.rotmat(:,:,i);
-                        else
-                            Xtree = Xtest;
-                            Xtree(:,forest.RotVars(i,:)) = Xtree(:,forest.RotVars(i,:))*forest.rotmat(:,:,i);       
-                        end
-                    else
-                        Xtree = Xtest;
-                    end
-                    YTree(:,i) = eval(Tree{i},Xtree);
-                end
-            end
-            Labels = forest.classname;
-            for j = 1:length(Labels)
-                predmat(strcmp(YTree,Labels{j})) = j;
-            end
-            ensemblepredictions = mode(predmat,2);
-            missing = isnan(ensemblepredictions);
-            Y = Labels(ensemblepredictions(~missing));
-        end     %function predict
+%         DEPRECATED 
+%         function Y = predict(forest,Xtest,varargin)
+%                         
+%             %Convert to double if not already
+%             if ~isa(Xtest,'double')
+%                 Xtest = double(Xtest);
+%             end
+%             
+%             if nargin == 3;
+%                 Xtrain = varargin{1};
+%                 if ~isa(Xtrain,'double')
+%                     Xtrain = double(Xtrain);
+%                 end
+%             end
+%             
+%             if ~strcmp(forest.Rescale,'off')
+%                 if nargin < 3
+%                     error('Training data is required as third input argument for predicting')
+%                 end
+%                 Xtest = rescale(Xtrain,Xtest,forest.Rescale);
+%             end
+%             
+%             [n,d] = size(Xtest);
+%             predmat = NaN(n,forest.nTrees);
+%             YTree = cell(n,forest.nTrees);
+%             Tree = forest.Tree;
+%             rotate = ~isempty(forest.rotmat);
+%             
+%             if ~strcmp(forest.ForestMethod,'rf')
+%                 parfor i = 1:forest.nTrees
+%                     if rotate
+%                         if d<=500
+%                             Xtree = Xtest*forest.rotmat(:,:,i);
+%                         else
+%                             Xtree = Xtest;
+%                             Xtree(:,forest.RotVars(i,:)) = Xtree(:,forest.RotVars(i,:))*forest.rotmat(:,:,i);       
+%                         end
+%                     else
+%                         Xtree = Xtest;
+%                     end
+%                     YTree(:,i) = rptreepredict(Tree{i},Xtree);
+%                 end
+%             else
+%                 parfor i = 1:forest.nTrees
+%                     if rotate
+%                         if d<=500
+%                             Xtree = Xtest*forest.rotmat(:,:,i);
+%                         else
+%                             Xtree = Xtest;
+%                             Xtree(:,forest.RotVars(i,:)) = Xtree(:,forest.RotVars(i,:))*forest.rotmat(:,:,i);       
+%                         end
+%                     else
+%                         Xtree = Xtest;
+%                     end
+%                     YTree(:,i) = eval(Tree{i},Xtree);
+%                 end
+%             end
+%             Labels = forest.classname;
+%             for j = 1:length(Labels)
+%                 predmat(strcmp(YTree,Labels{j})) = j;
+%             end
+%             ensemblepredictions = mode(predmat,2);
+%             missing = isnan(ensemblepredictions);
+%             Y = Labels(ensemblepredictions(~missing));
+%         end     %function predict
         
-        function sp = db_sparsity(forest)
-            %sparsity of decision boundary computed as sum #variables used
-            %over all nodes
-            
-            sp = 0;
-            for i = 1:forest.nTrees
-                Tree = forest.Tree{i};
-                if ~strcmp(forest.ForestMethod,'rf')
-                    internalnodes = Tree.node(Tree.var~=0);
-                    for node = internalnodes'
-                        sp = sp + sum(Tree.rpm{node}~=0);
-                    end
-                else
-                    sp = sp + sum(Tree.var~=0);
-                end
-            end
-        end
+%             DEPRECATED
+%             function sp = db_sparsity(forest)
+%             %sparsity of decision boundary computed as sum #variables used
+%             %over all nodes
+%             
+%             sp = 0;
+%             for i = 1:forest.nTrees
+%                 Tree = forest.Tree{i};
+%                 if ~strcmp(forest.ForestMethod,'rf')
+%                     internalnodes = Tree.node(Tree.var~=0);
+%                     for node = internalnodes'
+%                         sp = sp + sum(Tree.rpm{node}~=0);
+%                     end
+%                 else
+%                     sp = sp + sum(Tree.var~=0);
+%                 end
+%             end
+%         end
         
         function Depth = forest_depth(forest)
             Depth = NaN(forest.nTrees,1);
