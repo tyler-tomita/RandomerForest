@@ -11,6 +11,7 @@ Colors.rerfc = 'c';
 Colors.frc2 = 'y';
 Colors.frc3 = 'k';
 Colors.frc4 = 'r';
+Colors.rerf2 = 'm';
 LineWidth = 2;
 
 load ~/Sparse_parity_vary_n
@@ -52,8 +53,8 @@ for j = 1:3
     xlabel('n')
     ylabel('Misclassification Rate')
     title(sprintf('Sparse Parity (p = %d)',p))
-    lh = legend('RF','RerF(bin)','RerF(cont)','F-RC(L=2)','F-RC(L=3)','F-RC(L=4)');
+    lh = legend('RF','RerF(bin)','RerF(cont)','F-RC(L=2)','F-RC(L=3)','F-RC(L=4)','RerF2');
     lh.Box = 'off';
 
-    save_fig(gcf,[rerfPath sprintf('RandomerForest/Figures/Sparse_parity_p_%d',p)])
+%     save_fig(gcf,[rerfPath sprintf('RandomerForest/Figures/Sparse_parity_p_%d',p)])
 end

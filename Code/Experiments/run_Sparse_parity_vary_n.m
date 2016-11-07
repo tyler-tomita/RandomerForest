@@ -10,10 +10,22 @@ rng(1);
 load Sparse_parity_vary_n_data
 load Random_matrix_adjustment_factor
 
+Classifiers = {'rf' 'rerfb' 'rerfc' 'rerf2' 'frc'};
+
 for j = 1:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
-      
+
+    if p <= 10
+        dx = 2^p;
+    elseif p > 10 && p <= 100
+        dx = p^2;
+    elseif p > 100 && p <= 1000
+        dx = round(p^1.5);
+    else
+        dx = 10*p;
+    end
+    
     if p <= 5
         mtrys = [1:p ceil(p.^[1.5 2 2.5])];
     else
@@ -21,21 +33,19 @@ for j = 1:length(ps)
     end
     mtrys_rf = mtrys(mtrys<=p);
     
-    if p == 2
-        Classifiers = {'rf' 'rerfb' 'rerfc' 'frc2'};
-    elseif p == 3
-        Classifiers = {'rf' 'rerfb' 'rerfc' 'frc2' 'frc3'};
-    elseif p >= 4
-        Classifiers = {'rf' 'rerfb' 'rerfc' 'frc2' 'frc3' 'frc4'};
+    if dx <= 5
+        mtrys_rerf2 = 1:dx;
+    else
+        mtrys_rerf2 = ceil(dx.^[1/4 1/2 3/4 1]);
     end
-    
+      
     for i = 1:length(ns{j})
         fprintf('n = %d\n',ns{j}(i))
 
         for c = 1:length(Classifiers)
             fprintf('%s start\n',Classifiers{c})
             
-            Params{i,j}.(Classifiers{c}).nTrees = 499;
+            Params{i,j}.(Classifiers{c}).nTrees = 500;
             Params{i,j}.(Classifiers{c}).Stratified = true;
             Params{i,j}.(Classifiers{c}).NWorkers = 16;
             Params{i,j}.(Classifiers{c}).Rescale = 'off';
@@ -59,21 +69,18 @@ for j = 1:length(ps)
                         ceil(Params{i,j}.(Classifiers{c}).d(k)^(1/interp1(dims,...
                         slope,p)));
                 end
-            elseif strcmp(Classifiers{c},'frc2') || strcmp(Classifiers{c},'frc3') || ...
-                    strcmp(Classifiers{c},'frc4')
+            elseif strcmp(Classifiers{c},'rerf2')
+                Params{i,j}.(Classifiers{c}).ForestMethod = 'rerf2';
+                Params{i,j}.(Classifiers{c}).d = mtrys_rerf2;
+                Params{i,j}.(Classifiers{c}).dx = dx;
+            elseif strcmp(Classifiers{c},'frc')
                 Params{i,j}.(Classifiers{c}).ForestMethod = 'frc';
                 Params{i,j}.(Classifiers{c}).d = mtrys;
-            end
-            if strcmp(Classifiers{c},'frc2')
-                Params{i,j}.(Classifiers{c}).nmix = 2;
-            elseif strcmp(Classifiers{c},'frc3')
-                Params{i,j}.(Classifiers{c}).nmix = 3;
-            elseif strcmp(Classifiers{c},'frc4')
-                Params{i,j}.(Classifiers{c}).nmix = 4;
+                Params{i,j}.(Classifiers{c}).nmix = 2;                
             end
 
-            OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
-            OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
+            OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d),Params{i,j}.(Classifiers{c}).nTrees);
+            OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d),Params{i,j}.(Classifiers{c}).nTrees);
             TrainTime{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
             Depth{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
             NumNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
@@ -97,18 +104,20 @@ for j = 1:length(ps)
 
                 for k = 1:length(Forest)
                     Scores = rerf_oob_classprob(Forest{k},...
-                        Xtrain{i,j}(:,:,trial),'last');
-                    Predictions = predict_class(Scores,Forest{k}.classname);
-                    OOBError{i,j}.(Classifiers{c})(trial,k) = ...
-                        misclassification_rate(Predictions,Ytrain{i,j}(:,trial),...
+                        Xtrain{i,j}(:,:,trial),'every');
+                    for t = 1:Forest{k}.nTrees
+                        Predictions = predict_class(Scores(:,:,t),Forest{k}.classname);
+                        OOBError{i,j}.(Classifiers{c})(trial,k,t) = ...
+                            misclassification_rate(Predictions,Ytrain{i,j}(:,trial),...
                         false);
-                    if size(Scores,2) > 2
-                        Yb = binarize_labels(Ytrain{i,j}(:,trial),Forest{k}.classname);
-                        [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k)] = ...
-                            perfcurve(Yb(:),Scores(:),'1');
-                    else
-                        [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k)] = ...
-                            perfcurve(Ytrain{i,j}(:,trial),Scores(:,2),'1');
+                        if size(Scores,2) > 2
+                            Yb = binarize_labels(Ytrain{i,j}(:,trial),Forest{k}.classname);
+                            [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k,t)] = ... 
+                                perfcurve(Yb(:),Scores((t-1)*ns{j}(i)*Params{i,j}.(Classifiers{c}).d+(1:ns{j}(i)*Params{i,j}.(Classifiers{c}).d)),'1');
+                        else
+                            [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k,t)] = ...
+                                perfcurve(Ytrain{i,j}(:,trial),Scores(:,2,t),'1');
+                        end
                     end
                     Depth{i,j}.(Classifiers{c})(trial,:,k) = forest_depth(Forest{k})';
                     NN = NaN(1,Forest{k}.nTrees);
@@ -122,21 +131,23 @@ for j = 1:length(ps)
                 end
                 
                 %select best model for test predictions
-                BestIdx = hp_optimize(OOBError{i,j}.(Classifiers{c})(trial,:),...
-                    OOBAUC{i,j}.(Classifiers{c})(trial,:));
+                BestIdx = hp_optimize(OOBError{i,j}.(Classifiers{c})(trial,:,end),...
+                    OOBAUC{i,j}.(Classifiers{c})(trial,:,end));
                 if length(BestIdx)>1
                     BestIdx = BestIdx(end);
                 end
 
                 if strcmp(Forest{BestIdx}.Rescale,'off')
-                    Scores = rerf_classprob(Forest{BestIdx},Xtest{j},'last');
+                    Scores = rerf_classprob(Forest{BestIdx},Xtest{j},'every');
                 else
                     Scores = rerf_classprob(Forest{BestIdx},Xtest{j},...
-                        'last',Xtrain{i,j}(:,:,trial));
+                        'every',Xtrain{i,j}(:,:,trial));
                 end
-                Predictions = predict_class(Scores,Forest{BestIdx}.classname);
-                TestError{i,j}.(Classifiers{c})(trial) = misclassification_rate(Predictions,...
+                for t = 1:Forest{BestIdx}.nTrees
+                    Predictions = predict_class(Scores(:,:,t),Forest{BestIdx}.classname);
+                    TestError{i,j}.(Classifiers{c})(trial,t) = misclassification_rate(Predictions,...
                     Ytest{j},false);
+                end
 
                 clear Forest
 

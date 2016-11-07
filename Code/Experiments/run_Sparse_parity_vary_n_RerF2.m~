@@ -7,17 +7,15 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load Trunk_vary_n_data
+load Sparse_parity_vary_n_data
 load Random_matrix_adjustment_factor
 
-Classifiers = {'rf' 'rerfb' 'rerfc' 'rerf2' 'frc'};
-
-for j = 1:length(ps)
+for j = length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
 
     if p <= 10
-        dx = 2^p;
+        dx = p^3;
     elseif p > 10 && p <= 100
         dx = p^2;
     elseif p > 100 && p <= 1000
@@ -27,11 +25,9 @@ for j = 1:length(ps)
     end
     
     if p <= 5
-        mtrys = [1:p ceil(p.^[1.5 2])];
-    elseif p > 5 && p <= 10
-        mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2]);
+        mtrys = [1:p ceil(p.^[1.5 2 2.5])];
     else
-        mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 10*p 20*p];
+        mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2 2.5]);
     end
     mtrys_rf = mtrys(mtrys<=p);
     
@@ -41,15 +37,17 @@ for j = 1:length(ps)
         mtrys_rerf2 = ceil(dx.^[1/4 1/2 3/4 1]);
     end
       
-    for i = 1:length(ns{j})
+    Classifiers = {'rerfb','rerf2'};
+    
+    for i = 3
         fprintf('n = %d\n',ns{j}(i))
 
         for c = 1:length(Classifiers)
             fprintf('%s start\n',Classifiers{c})
             
-            Params{i,j}.(Classifiers{c}).nTrees = 500;
+            Params{i,j}.(Classifiers{c}).nTrees = 750;
             Params{i,j}.(Classifiers{c}).Stratified = true;
-            Params{i,j}.(Classifiers{c}).NWorkers = 24;
+            Params{i,j}.(Classifiers{c}).NWorkers = 2;
             Params{i,j}.(Classifiers{c}).Rescale = 'off';
             Params{i,j}.(Classifiers{c}).mdiff = 'off';
             if strcmp(Classifiers{c},'rf')
@@ -75,10 +73,17 @@ for j = 1:length(ps)
                 Params{i,j}.(Classifiers{c}).ForestMethod = 'rerf2';
                 Params{i,j}.(Classifiers{c}).d = mtrys_rerf2;
                 Params{i,j}.(Classifiers{c}).dx = dx;
-            elseif strcmp(Classifiers{c},'frc')
+            elseif strcmp(Classifiers{c},'frc2') || strcmp(Classifiers{c},'frc3') || ...
+                    strcmp(Classifiers{c},'frc4')
                 Params{i,j}.(Classifiers{c}).ForestMethod = 'frc';
                 Params{i,j}.(Classifiers{c}).d = mtrys;
-                Params{i,j}.(Classifiers{c}).nmix = 2;                
+            end
+            if strcmp(Classifiers{c},'frc2')
+                Params{i,j}.(Classifiers{c}).nmix = 2;
+            elseif strcmp(Classifiers{c},'frc3')
+                Params{i,j}.(Classifiers{c}).nmix = 3;
+            elseif strcmp(Classifiers{c},'frc4')
+                Params{i,j}.(Classifiers{c}).nmix = 4;
             end
 
             OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d),Params{i,j}.(Classifiers{c}).nTrees);
@@ -88,7 +93,7 @@ for j = 1:length(ps)
             NumNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
             NumSplitNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
 
-            for trial = 1:ntrials
+            for trial = 1
                 fprintf('Trial %d\n',trial)
 
                 % train classifier
@@ -153,11 +158,15 @@ for j = 1:length(ps)
 
                 clear Forest
 
-                save([rerfPath 'RandomerForest/Results/Trunk_vary_n.mat'],'ps',...
-                    'ns','Params','OOBError','OOBAUC','TestError',...
-                    'TrainTime','Depth','NumNodes','NumSplitNodes')
+%                 save([rerfPath 'RandomerForest/Results/Sparse_parity_vary_n_RerF2.mat'],'ps',...
+%                     'ns','Params','OOBError','OOBAUC','TestError',...
+%                     'TrainTime','Depth','NumNodes','NumSplitNodes')
             end
             fprintf('%s complete\n',Classifiers{c})
         end
     end   
 end
+
+plot(TestError{end}.rerfb(1,:))
+hold on
+plot(TestError{end}.rerf2(1,:))

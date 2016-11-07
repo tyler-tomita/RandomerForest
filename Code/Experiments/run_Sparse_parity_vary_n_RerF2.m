@@ -1,4 +1,4 @@
-close all
+% close all
 clear
 clc
 
@@ -10,12 +10,12 @@ rng(1);
 load Sparse_parity_vary_n_data
 load Random_matrix_adjustment_factor
 
-for j = 1:length(ps)
+for j = length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
 
     if p <= 10
-        dx = 2^p;
+        dx = round(p^3.5);
     elseif p > 10 && p <= 100
         dx = p^2;
     elseif p > 100 && p <= 1000
@@ -39,15 +39,15 @@ for j = 1:length(ps)
       
     Classifiers = {'rerf2'};
     
-    for i = 1:length(ns{j})
+    for i = 3
         fprintf('n = %d\n',ns{j}(i))
 
         for c = 1:length(Classifiers)
             fprintf('%s start\n',Classifiers{c})
             
-            Params{i,j}.(Classifiers{c}).nTrees = 499;
+            Params{i,j}.(Classifiers{c}).nTrees = 500;
             Params{i,j}.(Classifiers{c}).Stratified = true;
-            Params{i,j}.(Classifiers{c}).NWorkers = 16;
+            Params{i,j}.(Classifiers{c}).NWorkers = 2;
             Params{i,j}.(Classifiers{c}).Rescale = 'off';
             Params{i,j}.(Classifiers{c}).mdiff = 'off';
             if strcmp(Classifiers{c},'rf')
@@ -86,14 +86,14 @@ for j = 1:length(ps)
                 Params{i,j}.(Classifiers{c}).nmix = 4;
             end
 
-            OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
-            OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
+            OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d),Params{i,j}.(Classifiers{c}).nTrees);
+            OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d),Params{i,j}.(Classifiers{c}).nTrees);
             TrainTime{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
             Depth{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
             NumNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
             NumSplitNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
 
-            for trial = 1:ntrials
+            for trial = 1
                 fprintf('Trial %d\n',trial)
 
                 % train classifier
@@ -111,18 +111,20 @@ for j = 1:length(ps)
 
                 for k = 1:length(Forest)
                     Scores = rerf_oob_classprob(Forest{k},...
-                        Xtrain{i,j}(:,:,trial),'last');
-                    Predictions = predict_class(Scores,Forest{k}.classname);
-                    OOBError{i,j}.(Classifiers{c})(trial,k) = ...
-                        misclassification_rate(Predictions,Ytrain{i,j}(:,trial),...
+                        Xtrain{i,j}(:,:,trial),'every');
+                    for t = 1:Forest{k}.nTrees
+                        Predictions = predict_class(Scores(:,:,t),Forest{k}.classname);
+                        OOBError{i,j}.(Classifiers{c})(trial,k,t) = ...
+                            misclassification_rate(Predictions,Ytrain{i,j}(:,trial),...
                         false);
-                    if size(Scores,2) > 2
-                        Yb = binarize_labels(Ytrain{i,j}(:,trial),Forest{k}.classname);
-                        [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k)] = ...
-                            perfcurve(Yb(:),Scores(:),'1');
-                    else
-                        [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k)] = ...
-                            perfcurve(Ytrain{i,j}(:,trial),Scores(:,2),'1');
+                        if size(Scores,2) > 2
+                            Yb = binarize_labels(Ytrain{i,j}(:,trial),Forest{k}.classname);
+                            [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k,t)] = ... 
+                                perfcurve(Yb(:),Scores((t-1)*ns{j}(i)*Params{i,j}.(Classifiers{c}).d+(1:ns{j}(i)*Params{i,j}.(Classifiers{c}).d)),'1');
+                        else
+                            [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k,t)] = ...
+                                perfcurve(Ytrain{i,j}(:,trial),Scores(:,2,t),'1');
+                        end
                     end
                     Depth{i,j}.(Classifiers{c})(trial,:,k) = forest_depth(Forest{k})';
                     NN = NaN(1,Forest{k}.nTrees);
@@ -136,29 +138,35 @@ for j = 1:length(ps)
                 end
                 
                 %select best model for test predictions
-                BestIdx = hp_optimize(OOBError{i,j}.(Classifiers{c})(trial,:),...
-                    OOBAUC{i,j}.(Classifiers{c})(trial,:));
+                BestIdx = hp_optimize(OOBError{i,j}.(Classifiers{c})(trial,:,end),...
+                    OOBAUC{i,j}.(Classifiers{c})(trial,:,end));
                 if length(BestIdx)>1
                     BestIdx = BestIdx(end);
                 end
 
                 if strcmp(Forest{BestIdx}.Rescale,'off')
-                    Scores = rerf_classprob(Forest{BestIdx},Xtest{j},'last');
+                    Scores = rerf_classprob(Forest{BestIdx},Xtest{j},'every');
                 else
                     Scores = rerf_classprob(Forest{BestIdx},Xtest{j},...
-                        'last',Xtrain{i,j}(:,:,trial));
+                        'every',Xtrain{i,j}(:,:,trial));
                 end
-                Predictions = predict_class(Scores,Forest{BestIdx}.classname);
-                TestError{i,j}.(Classifiers{c})(trial) = misclassification_rate(Predictions,...
+                for t = 1:Forest{BestIdx}.nTrees
+                    Predictions = predict_class(Scores(:,:,t),Forest{BestIdx}.classname);
+                    TestError{i,j}.(Classifiers{c})(trial,t) = misclassification_rate(Predictions,...
                     Ytest{j},false);
+                end
 
                 clear Forest
 
-                save([rerfPath 'RandomerForest/Results/Sparse_parity_vary_n_RerF2.mat'],'ps',...
-                    'ns','Params','OOBError','OOBAUC','TestError',...
-                    'TrainTime','Depth','NumNodes','NumSplitNodes')
+%                 save([rerfPath 'RandomerForest/Results/Sparse_parity_vary_n_RerF2.mat'],'ps',...
+%                     'ns','Params','OOBError','OOBAUC','TestError',...
+%                     'TrainTime','Depth','NumNodes','NumSplitNodes')
             end
             fprintf('%s complete\n',Classifiers{c})
         end
     end   
 end
+
+% plot(TestError{end}.rerfb(1,:))
+% hold on
+plot(TestError{end}.rerf2(1,:))

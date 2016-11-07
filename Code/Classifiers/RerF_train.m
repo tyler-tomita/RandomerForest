@@ -60,7 +60,7 @@ if ~isfield(Params,'dprime')
 end
 
 if ~isfield(Params,'dx')
-    dx = p;
+    Params.dx = p;
 end
 
 if ~isfield(Params,'nmix')

@@ -786,7 +786,7 @@ while(tnode < nextunusednode)
       varmap = 1:nvars;
       if nusevars < nvars
           if isempty(Stream)
-              varmap = randsample(nvars,nusevars);
+              varmap = randperm(nvars,nusevars);
           else
               varmap = randsample(Stream,nvars,nusevars);
           end

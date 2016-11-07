@@ -156,8 +156,7 @@ classdef rpclassificationforest
             
             % one random projection per tree implementation
             load Random_matrix_adjustment_factor
-            if strcmp(ForestMethod,'rerf2')
-                RM = cell(nTrees,1);
+            RM = cell(nTrees,1);
 %                 if d <= 10
 %                     dx = 2^d;
 %                 elseif d > 10 && d <= 100
@@ -165,7 +164,6 @@ classdef rpclassificationforest
 %                 elseif d > 100 && d <= 1000
 %                     dx = ceil(d^1.5);
 %                 end
-            end
             
             poolobj = gcp('nocreate');
             if isempty(poolobj);
@@ -178,7 +176,6 @@ classdef rpclassificationforest
             end
             
             parfor i = 1:nTrees
-
                 %Rotate data?
                 if rotate
                     %is d > 500? if so only rotate a subset of 500 of the
@@ -199,7 +196,7 @@ classdef rpclassificationforest
                 go = true;
                 if Stratified
                     while go
-                        ibidx = []
+                        ibidx = [];
                         for c = 1:nclasses
                             idx = find(strcmp(forest.classname{c},Y));
                             if length(idx) > 1
