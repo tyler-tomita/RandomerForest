@@ -12,7 +12,8 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load('Sparse_parity_data.mat')
+load Sparse_parity_data
+load Random_matrix_adjustment_factor
 
 Classifiers = {'rerf' 'rerfr' 'rerf2' 'rerf2r'};
 
@@ -26,21 +27,16 @@ ymin = xmin;
 ymax = xmax;
 npoints = 50;
 [xgv,ygv] = meshgrid(linspace(xmin,xmax,npoints),linspace(ymin,ymax,npoints));
-Xpost.Untransformed = xgv(:);
-Ypost.Untransformed = ygv(:);
-Xpost.Scaled = Xpost.Untransformed*10^-5;
-Ypost.Scaled = Ypost.Untransformed;
-Xpost.Outlier = Xpost.Untransformed;
-Ypost.Outlier = Ypost.Untransformed;
+Xpost = xgv(:);
+Ypost = ygv(:);
 
 
 for i = 3:3
     p = dims(i);
     fprintf('p = %d\n',p)
     
-    Zpost{i}.Untransformed = -0.5*ones(npoints^2,p-2);
-    Zpost{i}.Scaled = [Zpost{i}.Untransformed(:,1)*10^5 Zpost{i}.Untransformed(:,2:end)];
-    Zpost{i}.Outlier = Zpost{i}.Untransformed;
+    
+    Zpost = -0.5*ones(npoints^2,p-2);
     
     if p <= 10
         dx = round(p^3.5);
@@ -71,7 +67,7 @@ for i = 3:3
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 500;
         Params{i}.(Classifiers{c}).Stratified = true;
-        Params{i}.(Classifiers{c}).NWorkers = 24;
+        Params{i}.(Classifiers{c}).NWorkers = 2;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                 'rerfr') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'rr_rfr') || strcmp(Classifiers{c},'rerf2r')
@@ -105,7 +101,7 @@ for i = 3:3
             Params{i}.(Classifiers{c}).d = mtrys;
             for j = 1:length(Params{i}.(Classifiers{c}).d)
                 Params{i}.(Classifiers{c}).dprime(j) = ...
-                    ceil(Params{i}.(Classifiers{c}).d(j)^(1/interp1(ps,...
+                    ceil(Params{i}.(Classifiers{c}).d(j)^(1/interp1(dims,...
                     slope,p)));
             end
         elseif strcmp(Classifiers{c},'frc') || strcmp(Classifiers{c},'frcr') || ...
@@ -169,19 +165,19 @@ for i = 3:3
                     BestIdx = BestIdx(end);
                 end
 
+                x = [Xpost,Ypost,Zpost];
+                if strcmp(Transformations{t},'Affine')
+                    x = (x*R{i}(:,:,trial)).*repmat(S2{i}(1,:,trial),length(Xpost),1);
+                end
                 if strcmp(Forest{BestIdx}.Rescale,'off')
                     Phats{i}.(Classifiers{c}).(Transformations{t})(:,:,trial) ...
                         = rerf_classprob(Forest{BestIdx},...
-                        [Xpost.(Transformations{t}),...
-                        Ypost.(Transformations{t}),...
-                        Zpost{i}.(Transformations{t})],'last');
+                        x,'last');
                 else
                     Phats{i}.(Classifiers{c}).(Transformations{t})(:,:,trial) ...
                         = rerf_classprob(Forest{BestIdx},...
-                        [Xpost.(Transformations{t}),...
-                        Ypost.(Transformations{t}),...
-                        Zpost{i}.(Transformations{t})],...
-                        'last',Xtrain(i).(Transformations{t})(:,:,trial));
+                        x,'last',...
+                        Xtrain(i).(Transformations{t})(:,:,trial));
                 end
                 
                 save([rerfPath 'RandomerForest/Results/Sparse_parity_uniform_transformations_posteriors_RerF.mat'],'dims',...
