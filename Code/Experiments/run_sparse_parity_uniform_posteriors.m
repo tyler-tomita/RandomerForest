@@ -14,9 +14,9 @@ rng(1);
 
 load('Sparse_parity_data.mat')
 
-Classifiers = {'rf' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
+Classifiers = {'rerf' 'rerfr' 'rerf2' 'rerf2r'};
 
-Transformations = {'Untransformed' 'Scaled' 'Outlier'};
+Transformations = {'Untransformed' 'Affine' 'Outlier'};
 
 ntrials = 10;
 
@@ -41,6 +41,22 @@ for i = 3:3
     Zpost{i}.Untransformed = -0.5*ones(npoints^2,p-2);
     Zpost{i}.Scaled = [Zpost{i}.Untransformed(:,1)*10^5 Zpost{i}.Untransformed(:,2:end)];
     Zpost{i}.Outlier = Zpost{i}.Untransformed;
+    
+    if p <= 10
+        dx = round(p^3.5);
+    elseif p > 10 && p <= 100
+        dx = p^2;
+    elseif p > 100 && p <= 1000
+        dx = round(p^1.5);
+    else
+        dx = 10*p;
+    end
+    
+    if dx <= 5
+        mtrys_rerf2 = 1:dx;
+    else
+        mtrys_rerf2 = ceil(dx.^[1/4 1/2 3/4 1]);
+    end
       
     if p <= 5
         mtrys = [1:p ceil(p.^[1.5 2])];
@@ -58,16 +74,16 @@ for i = 3:3
         Params{i}.(Classifiers{c}).NWorkers = 24;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                 'rerfr') || strcmp(Classifiers{c},'frcr') || ...
-                strcmp(Classifiers{c},'rr_rfr')
+                strcmp(Classifiers{c},'rr_rfr') || strcmp(Classifiers{c},'rerf2r')
             Params{i}.(Classifiers{c}).Rescale = 'rank';
-        elseif strcmp(Classifiers{c},'rfn') || strcmp(Classifiers{c},...
-                'rerfn') || strcmp(Classifiers{c},'frcn') || ...
-                strcmp(Classifiers{c},'rr_rfn')
-            Params{i}.(Classifiers{c}).Rescale = 'normalize';
-        elseif strcmp(Classifiers{c},'rfz') || strcmp(Classifiers{c},...
-                'rerfz') || strcmp(Classifiers{c},'frcz') || ...
-                strcmp(Classifiers{c},'rr_rfz')
-            Params{i}.(Classifiers{c}).Rescale = 'zscore';
+%         elseif strcmp(Classifiers{c},'rfn') || strcmp(Classifiers{c},...
+%                 'rerfn') || strcmp(Classifiers{c},'frcn') || ...
+%                 strcmp(Classifiers{c},'rr_rfn')
+%             Params{i}.(Classifiers{c}).Rescale = 'normalize';
+%         elseif strcmp(Classifiers{c},'rfz') || strcmp(Classifiers{c},...
+%                 'rerfz') || strcmp(Classifiers{c},'frcz') || ...
+%                 strcmp(Classifiers{c},'rr_rfz')
+%             Params{i}.(Classifiers{c}).Rescale = 'zscore';
         else
             Params{i}.(Classifiers{c}).Rescale = 'off';
         end
@@ -85,7 +101,7 @@ for i = 3:3
         elseif strcmp(Classifiers{c},'rerf') || strcmp(Classifiers{c},'rerfr')...
                 || strcmp(Classifiers{c},'rerfn') || strcmp(Classifiers{c},'rerfz') || ...
                 strcmp(Classifiers{c},'rerfd')
-            Params{i}.(Classifiers{c}).ForestMethod = 'sparse-adjusted';
+            Params{i}.(Classifiers{c}).ForestMethod = 'sparse-binary';
             Params{i}.(Classifiers{c}).d = mtrys;
             for j = 1:length(Params{i}.(Classifiers{c}).d)
                 Params{i}.(Classifiers{c}).dprime(j) = ...
@@ -97,6 +113,10 @@ for i = 3:3
             Params{i}.(Classifiers{c}).ForestMethod = 'frc';
             Params{i}.(Classifiers{c}).d = mtrys;
             Params{i}.(Classifiers{c}).nmix = 2;
+        elseif strcmp(Classifiers{c},'rerf2') || strcmp(Classifiers{c},'rerf2r')
+            Params{i}.(Classifiers{c}).ForestMethod = 'rerf2';
+            Params{i}.(Classifiers{c}).d = mtrys_rerf2;
+            Params{i}.(Classifiers{c}).dx = dx;
         end
         if strcmp(Classifiers{c},'rr_rf') || strcmp(Classifiers{c},'rr_rfr') || ...
                 strcmp(Classifiers{c},'rr_rfn') || strcmp(Classifiers{c},'rr_rfz')
@@ -164,7 +184,7 @@ for i = 3:3
                         'last',Xtrain(i).(Transformations{t})(:,:,trial));
                 end
                 
-                save([rerfPath 'RandomerForest/Results/Sparse_parity_uniform_transformations_posteriors.mat'],'dims',...
+                save([rerfPath 'RandomerForest/Results/Sparse_parity_uniform_transformations_posteriors_RerF.mat'],'dims',...
                     'Phats','Xpost','Ypost','Zpost')
             end
         end

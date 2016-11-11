@@ -4,9 +4,6 @@ clear
 close all
 clc
 
-fpath = mfilename('fullpath');
-rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
-
 LineWidth = 2;
 FontSize = .12;
 % axWidth = 2.75;
@@ -34,10 +31,10 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 Transformations = {'Untransformed','Rotated','Scaled','Affine','Outlier'};
 
-for i = 1:length(Transformations)
+for i = 1
     load(['~/Benchmarks/Results/Benchmark_' lower(Transformations{i}) '.mat'])
     Classifiers = fieldnames(TestError{1});
-    Classifiers(~ismember(Classifiers,{'rf','rerf','rerfr','frc','frcr'})) = [];
+    Classifiers(~ismember(Classifiers,{'rf','rfr','rerf','rerfr','frc','frcr','rr_rf','rr_rfr'})) = [];
 
     TestError = TestError(~cellfun(@isempty,TestError));
     
@@ -52,7 +49,7 @@ for i = 1:length(Transformations)
     figure;
     hold on
     
-    h = plotSpread(RelativeError,[],[],{'RerF','RerF(r)','F-RC','Frank'},...
+    h = plotSpread(RelativeError,[],[],{'RF(r)','RerF','RerF(r)','F-RC','Frank','RR-RF','RR-RF(r)'},...
         2);
     
 %     h{3}.LineWidth = LineWidth;
@@ -71,27 +68,27 @@ for i = 1:length(Transformations)
     end
     Mu = h{2}(1).YData;
     h{2}(1).Visible = 'off';
-    h{3}.XLim = [0.5,4.5];
-    h{3}.YLim = [-0.2,0.2];
+    h{3}.XLim = [0.5,7.5];
+    h{3}.YLim = [-0.1,0.1];
     h{3}.FontSize = 14;
     
     h_line = allchild(h{3});
-    h_line = flipud(h_line(end-3:end));
+    h_line = flipud(h_line(end-6:end));
     
     for j = 1:length(h_line)
         h_line(j).Color = 'c';
         plot([min(h_line(j).XData),max(h_line(j).XData)],[Mu(j) Mu(j)],...
-            'Color','m')
+            'Color','m','LineWidth',LineWidth)
     end
     
-    ColoredIdx = [1,3];
+    ColoredIdx = [1,3,5,7];
     for j = ColoredIdx
         p = patch([j-0.5 j+0.5 j+0.5 j-0.5],[h{3}.YLim(1) h{3}.YLim(1) h{3}.YLim(2) h{3}.YLim(2)],...
             [0.7 0.7 0.7]);
         p.EdgeColor = 'none';
     end
     
-    ColoredIdx = [2,4];
+    ColoredIdx = [2,4,6];
     for j = ColoredIdx
         p = patch([j-0.5 j+0.5 j+0.5 j-0.5],[h{3}.YLim(1) h{3}.YLim(1) h{3}.YLim(2) h{3}.YLim(2)],...
             [0.75 0.75 0.75]);
@@ -99,8 +96,8 @@ for i = 1:length(Transformations)
     end
     
     ch = h{3}.Children;
-    ch(1:5) = [];
-    ch(end+1:end+5) = h{3}.Children(1:5);
+    ch(1:7) = [];
+    ch(end+1:end+7) = h{3}.Children(1:7);
     h{3}.Children = ch;
     
         t = text(1,h{3}.YLim(2),...
@@ -119,5 +116,10 @@ for i = 1:length(Transformations)
             sprintf('%0.2e +/-\n%0.2e',mean(RelativeError{4}),std(RelativeError{4})/sqrt(length(RelativeError{4}))),...
             'HorizontalAlignment','center',...
             'VerticalAlignment','top','FontSize',12,'Color','k');
+        t = text(5,h{3}.YLim(2),...
+            sprintf('%0.2e +/-\n%0.2e',mean(RelativeError{5}),std(RelativeError{5})/sqrt(length(RelativeError{5}))),...
+            'HorizontalAlignment','center',...
+            'VerticalAlignment','top','FontSize',12,'Color','k');
+        
     save_fig(gcf,[rerfPath sprintf('RandomerForest/Figures/Fig4_benchmark_%s_beeswarm',Transformations{i})])
 end

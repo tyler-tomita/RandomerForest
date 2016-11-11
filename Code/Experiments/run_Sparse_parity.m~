@@ -7,7 +7,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load Trunk_data
+load Sparse_parity_data
 load Random_matrix_adjustment_factor
 
 Classifiers = {'rf' 'rfr' 'rerf' 'rerfr' 'rerf2' 'rerf2r' 'frc' 'frcr'...
@@ -18,26 +18,10 @@ Transformations = fieldnames(Xtrain);
 for i = 1:length(dims)
     p = dims(i);
     fprintf('p = %d\n',p)
-    
-    if p <= 10
-        dx = round(p^3.5);
-    elseif p > 10 && p <= 100
-        dx = p^2;
-    elseif p > 100 && p <= 1000
-        dx = round(p^1.5);
-    else
-        dx = 10*p;
-    end
-    
-    if dx <= 5
-        mtrys_rerf2 = 1:dx;
-    else
-        mtrys_rerf2 = ceil(dx.^[1/4 1/2 3/4 1]);
-    end
       
     if p <= 5
         mtrys = [1:p ceil(p.^[1.5 2])];
-    elseif p > 5 && p <= 50
+    elseif p > 5 && p <= 20
         mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2]);
     else
         mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
@@ -46,9 +30,9 @@ for i = 1:length(dims)
 
     for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
-        Params{i}.(Classifiers{c}).nTrees = 750;
+        Params{i}.(Classifiers{c}).nTrees = 500;
         Params{i}.(Classifiers{c}).Stratified = true;
-        Params{i}.(Classifiers{c}).NWorkers = 24;
+        Params{i}.(Classifiers{c}).NWorkers = 16;
         if strcmp(Classifiers{c},'rfr') || strcmp(Classifiers{c},...
                 'rerfr') || strcmp(Classifiers{c},'frcr') || ...
                 strcmp(Classifiers{c},'rr_rfr') || strcmp(Classifiers{c},'rerf2r')
@@ -111,7 +95,6 @@ for i = 1:length(dims)
             NumSplits{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
 
             for trial = 1:ntrials
-                fprintf('Trial %d\n',trial)
 
                 % train classifier
                 poolobj = gcp('nocreate');
@@ -144,15 +127,15 @@ for i = 1:length(dims)
                                 perfcurve(Ytrain(i).(Transformations{t})(:,trial),Scores(:,2,k),'1');
                         end
                     end
-                    Depth{i}.(Classifiers{c}).(Transformations{t})(trial,:,j) = forest_depth(Forest{j})';
-                    NN = NaN(1,Forest{j}.nTrees);
-                    NS = NaN(1,Forest{j}.nTrees);
-                    parfor k = 1:Forest{j}.nTrees
-                        NN(k) = Forest{j}.Tree{k}.numnodes;
-                        NS(k) = sum(Forest{j}.Tree{k}.isbranch);
+                    Depth{i}.(Classifiers{c}).(Transformations{t})(trial,:,j) = forest_depth(Forest{k})';
+                    NN = NaN(1,Forest{k}.nTrees);
+                    NS = NaN(1,Forest{k}.nTrees);
+                    parfor kk = 1:Forest{k}.nTrees
+                        NN(kk) = Forest{k}.Tree{kk}.numnodes;
+                        NS(kk) = sum(Forest{k}.Tree{kk}.isbranch);
                     end
-                    NumNodes{i}.(Classifiers{c}).(Transformations{t})(trial,:,j) = NN;
-                    NumSplits{i}.(Classifiers{c}).(Transformations{t})(trial,:,j) = NS;
+                    NumNodes{i,j}.(Classifiers{c})(trial,:,k) = NN;
+                    NumSplitNodes{i,j}.(Classifiers{c})(trial,:,k) = NS;
                 end
                 BestIdx = hp_optimize(OOBError{i}.(Classifiers{c}).(Transformations{t})(trial,:,end),...
                     OOBAUC{i}.(Classifiers{c}).(Transformations{t})(trial,:,end));
@@ -176,9 +159,8 @@ for i = 1:length(dims)
                 
                 clear Forest
 
-                save([rerfPath 'RandomerForest/Results/Trunk.mat'],'dims',...
-                    'Params','OOBError','OOBAUC','TestError','TrainTime',...
-                    'Depth','NumNodes','NumSplits')
+                save([rerfPath 'RandomerForest/Results/Sparse_parity.mat'],'dims',...
+                    'Params','OOBError','OOBAUC','TestError','TrainTime')
             end
         end
         fprintf('%s complete\n',Classifiers{c})
