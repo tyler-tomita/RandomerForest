@@ -105,7 +105,7 @@ for i = 1:length(dims)
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d),Params{i}.(Classifiers{c}).nTrees);
             OOBAUC{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d),Params{i}.(Classifiers{c}).nTrees);
-            TrainTime{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d),Params{i}.(Classifiers{c}).nTrees);
+            TrainTime{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d));
             Depth{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,Params{i}.(Classifiers{c}).nTrees,length(Params{i}.(Classifiers{c}).d));
             NumNodes{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,Params{i}.(Classifiers{c}).nTrees,length(Params{i}.(Classifiers{c}).d));
             NumSplits{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,Params{i}.(Classifiers{c}).nTrees,length(Params{i}.(Classifiers{c}).d));
