@@ -106,7 +106,7 @@ for i = 2:length(dims)
 %             StartIdx = 1;
 %         end
         
-        for 1 = StartIdx:length(Transformations)
+        for t = 1:length(Transformations)
             fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d),Params{i}.(Classifiers{c}).nTrees);
