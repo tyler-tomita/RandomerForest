@@ -10,4 +10,4 @@
 - Key parameters:
   - nTrees = number of trees
   - mtry = number of variables sampled at each split node
-  - d = number of new features defined by taking linear combinations of original features (with of random matrix A)
+  - d = number of new features defined by taking linear combinations of original features (width of random matrix A)
