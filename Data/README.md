@@ -1,0 +1,13 @@
+# Datasets for comparing James' xgboost RerF implementation with Tyler's Matlab version along with associated predictions and specification of algorithm parameters
+- Datasets can be found in their corresponding folders (e.g. "Trunk")
+- Each dataset has six files:
+  - *Xtrain.dat is a csv file with ntrain rows (observations) and p columns (features) specifying the input training data matrix
+  - *Ytrain.dat is a text file with a single column of ntrain class labels associated with the input training data
+  - *Xtest.dat is a csv file with ntest rows and p columns specifying the input test data
+  - *Ytest.dat is a text file with a single column of ntest class labels associated the the input test data matrix
+  - *predictions.dat is a text file with a single column of predictions made on the test set by a classifier trained on the training set
+  - *parameters.txt is a text file specifying the parameter values used for training the classifier
+- Key parameters:
+  - nTrees = number of trees
+  - mtry = number of variables sampled at each split node
+  - d = number of new features defined by taking linear combinations of original features (with of random matrix A)
