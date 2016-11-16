@@ -15,7 +15,7 @@ Classifiers = {'rf' 'rfr' 'rerf' 'rerfr' 'rerf2' 'rerf2r' 'frc' 'frcr'...
 
 Transformations = fieldnames(Xtrain);
 
-for i = 2:length(dims)
+for i = 3:length(dims)
     p = dims(i);
     fprintf('p = %d\n',p)
     
@@ -43,8 +43,14 @@ for i = 2:length(dims)
         mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
     end
     mtrys_rf = mtrys(mtrys<=p);
+    
+    if i==3
+        StartIdx = 6;
+    else
+        StartIdx = 1;
+    end
 
-    for c = 1:length(Classifiers)
+    for c = StartIdx:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 750;
         Params{i}.(Classifiers{c}).Stratified = true;

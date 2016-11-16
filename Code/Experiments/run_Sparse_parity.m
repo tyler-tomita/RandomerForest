@@ -43,8 +43,14 @@ for i = 2:length(dims)
         mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
     end
     mtrys_rf = mtrys(mtrys<=p);
+    
+    if i==2
+        StartIdx_c = 3;
+    else
+        StartIdx_c = 1;
+    end
 
-    for c = 1:length(Classifiers)
+    for c = StartIdx_c:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
         Params{i}.(Classifiers{c}).nTrees = 750;
         Params{i}.(Classifiers{c}).Stratified = true;
@@ -100,13 +106,13 @@ for i = 2:length(dims)
             Params{i}.(Classifiers{c}).Rotate = true;
         end
         
-%         if c==6
-%             StartIdx = 4;
-%         else
-%             StartIdx = 1;
-%         end
+        if i==2 && c==3
+            StartIdx_t = 3;
+        else
+            StartIdx_t = 1;
+        end
         
-        for t = 1:length(Transformations)
+        for t = StartIdx_t:length(Transformations)
             fprintf('%s\n',Transformations{t})
 
             OOBError{i}.(Classifiers{c}).(Transformations{t}) = NaN(ntrials,length(Params{i}.(Classifiers{c}).d),Params{i}.(Classifiers{c}).nTrees);
