@@ -5,33 +5,30 @@ close all
 clc
 
 LineWidth = 2;
-FontSize = .12;
-% axWidth = 2.75;
-% axHeight = 1;
-% axLeft = FontSize*3*ones(1,5);
-% axBottom = [FontSize*16+axHeight*4,FontSize*11+axHeight*3,...
-%     FontSize*8+axHeight*2,FontSize*5+axHeight,...
-%     FontSize];
-% legWidth = 1;
-% legHeight = 1;
-% legLeft = axLeft(end) + axWidth - 4*FontSize;
-% legBottom = axBottom(3) - (legHeight - axHeight)/2;
-% figWidth = legLeft + legWidth;
-% figHeight = axBottom(1) + axHeight + FontSize*2;
-% 
-% fig = figure;
-% fig.Units = 'inches';
-% fig.PaperUnits = 'inches';
-% fig.Position = [0 0 figWidth figHeight];
-% fig.PaperPosition = [0 0 figWidth figHeight];
-% fig.PaperSize = [figWidth figHeight];
+MarkerSize = 6;
+FontSize = .18;
+axWidth = 8;
+axHeight = 1.5;
+axLeft = FontSize*5*ones(1,5);
+axBottom = [FontSize*10+axHeight*4,FontSize*7+axHeight*3,...
+    FontSize*5+axHeight*2,FontSize*3+axHeight,...
+    FontSize];
+figWidth = axLeft(end) + axWidth + FontSize;
+figHeight = axBottom(1) + axHeight + FontSize*2;
+
+fig = figure;
+fig.Units = 'inches';
+fig.PaperUnits = 'inches';
+fig.Position = [0 0 figWidth figHeight];
+fig.PaperPosition = [0 0 figWidth figHeight];
+fig.PaperSize = [figWidth figHeight];
 
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 Transformations = {'Untransformed','Rotated','Scaled','Affine','Outlier'};
 
-for i = 1
+for i = 1:length(Transformations)
     load(['~/Benchmarks/Results/Benchmark_' lower(Transformations{i}) '.mat'])
     Classifiers = fieldnames(TestError{1});
     Classifiers(~ismember(Classifiers,{'rf','rfr','rerf','rerfr','frc','frcr','rr_rf','rr_rfr'})) = [];
@@ -46,8 +43,10 @@ for i = 1
         end
     end
     
-    figure;
+    ax(i) = axes;
     hold on
+
+%     figure;
     
     h = plotSpread(RelativeError,[],[],{'RF(r)','RerF','RerF(r)','F-RC','Frank','RR-RF','RR-RF(r)'},...
         2);
@@ -60,23 +59,44 @@ for i = 1
 %     h{3}.YScale = 'log';
     
     
-    ylabel('Relative Error');
     if i == 1
-        title('Raw')
+        ylabel('Relative Error');
+        text(0.5,1.025,'Raw','FontSize',14,'FontWeight','bold','Units',...
+            'normalized','HorizontalAlignment','center','VerticalAlignment'...
+            ,'bottom')
     else
-        title(Transformations{i})
+        if i == 5
+            text(0.5,1.025,'Corrupted','FontSize',14,'FontWeight','bold','Units',...
+                'normalized','HorizontalAlignment','center','VerticalAlignment'...
+                ,'bottom')
+        else
+            text(0.5,1.025,Transformations{i},'FontSize',14,'FontWeight','bold','Units',...
+                'normalized','HorizontalAlignment','center','VerticalAlignment'...
+                ,'bottom')
+        end
+        ax(i).XTickLabel = {};
     end
     Mu = h{2}(1).YData;
     h{2}(1).Visible = 'off';
     h{3}.XLim = [0.5,7.5];
     h{3}.YLim = [-0.1,0.1];
-    h{3}.FontSize = 14;
+%     h{3}.FontSize = 14;
+    text(0,1.025,['(' char('A'+i-1) ')'],'FontSize',14,'FontWeight','bold','Units',...
+        'normalized','HorizontalAlignment','left','VerticalAlignment'...
+        ,'bottom')
+%     title(['(' char('A'+i-1) ')'],'Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','bottom')
+    ax(i).LineWidth = LineWidth;
+    ax(i).FontUnits = 'inches';
+    ax(i).FontSize = FontSize;
+    ax(i).Units = 'inches';
+    ax(i).Position = [axLeft(i) axBottom(i) axWidth axHeight];
     
     h_line = allchild(h{3});
     h_line = flipud(h_line(end-6:end));
     
     for j = 1:length(h_line)
         h_line(j).Color = 'c';
+        h_line(j).MarkerSize = MarkerSize;
         plot([min(h_line(j).XData),max(h_line(j).XData)],[Mu(j) Mu(j)],...
             'Color','m','LineWidth',LineWidth)
     end
@@ -100,26 +120,11 @@ for i = 1
     ch(end+1:end+7) = h{3}.Children(1:7);
     h{3}.Children = ch;
     
-        t = text(1,h{3}.YLim(2),...
-            sprintf('%0.2e +/-\n%0.2e',mean(RelativeError{1}),std(RelativeError{1})/sqrt(length(RelativeError{1}))),...
-            'HorizontalAlignment','center',...
-            'VerticalAlignment','top','FontSize',12,'Color','k');
-        t = text(2,h{3}.YLim(2),...
-            sprintf('%0.2e +/-\n%0.2e',mean(RelativeError{2}),std(RelativeError{2})/sqrt(length(RelativeError{2}))),...
-            'HorizontalAlignment','center',...
-            'VerticalAlignment','top','FontSize',12,'Color','k');
-        t = text(3,h{3}.YLim(2),...
-            sprintf('%0.2e +/-\n%0.2e',mean(RelativeError{3}),std(RelativeError{3})/sqrt(length(RelativeError{3}))),...
-            'HorizontalAlignment','center',...
-            'VerticalAlignment','top','FontSize',12,'Color','k');
-        t = text(4,h{3}.YLim(2),...
-            sprintf('%0.2e +/-\n%0.2e',mean(RelativeError{4}),std(RelativeError{4})/sqrt(length(RelativeError{4}))),...
-            'HorizontalAlignment','center',...
-            'VerticalAlignment','top','FontSize',12,'Color','k');
-        t = text(5,h{3}.YLim(2),...
-            sprintf('%0.2e +/-\n%0.2e',mean(RelativeError{5}),std(RelativeError{5})/sqrt(length(RelativeError{5}))),...
-            'HorizontalAlignment','center',...
-            'VerticalAlignment','top','FontSize',12,'Color','k');
-        
-    save_fig(gcf,[rerfPath sprintf('RandomerForest/Figures/Fig4_benchmark_%s_beeswarm',Transformations{i})])
+%     for j = 1:length(RelativeError)
+%         t = text(j,h{3}.YLim(2),...
+%             sprintf('%0.2e +/-\n%0.2e',mean(RelativeError{j}),std(RelativeError{j})/sqrt(length(RelativeError{j}))),...
+%             'HorizontalAlignment','center',...
+%             'VerticalAlignment','top','FontSize',12,'Color','k');
+%     end
 end
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig4_benchmark_beeswarm'])

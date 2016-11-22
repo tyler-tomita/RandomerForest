@@ -45,7 +45,7 @@ for i = 2:length(dims)
     mtrys_rf = mtrys(mtrys<=p);
     
     if i==2
-        StartIdx_c = 3;
+        StartIdx_c = 6;
     else
         StartIdx_c = 1;
     end
@@ -106,7 +106,7 @@ for i = 2:length(dims)
             Params{i}.(Classifiers{c}).Rotate = true;
         end
         
-        if i==2 && c==3
+        if i==2 && c==6
             StartIdx_t = 3;
         else
             StartIdx_t = 1;
