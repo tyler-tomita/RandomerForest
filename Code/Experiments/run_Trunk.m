@@ -45,7 +45,7 @@ for i = 4:length(dims)
     mtrys_rf = mtrys(mtrys<=p);
     
     if i==4
-        StartIdx = 8;
+        StartIdx = 10;
     else
         StartIdx = 1;
     end
@@ -106,7 +106,7 @@ for i = 4:length(dims)
             Params{i}.(Classifiers{c}).Rotate = true;
         end
         
-        if i==4 && c==8
+        if i==4 && c==10
             StartIdx_t = 3;
         else
             StartIdx_t = 1;
