@@ -15,8 +15,8 @@ Classifiers = {'rf' 'rfr' 'rerf' 'rerfr' 'rerf2' 'rerf2r' 'frc' 'frcr'...
 
 Transformations = fieldnames(Xtrain);
 
-for i = 4:length(dims)
-    p = dims(i);
+for i = 4:length(ps)
+    p = ps(i);
     fprintf('p = %d\n',p)
     
     if p <= 10
@@ -188,7 +188,7 @@ for i = 4:length(dims)
                 
                 clear Forest
 
-                save([rerfPath 'RandomerForest/Results/Trunk.mat'],'dims',...
+                save([rerfPath 'RandomerForest/Results/Trunk.mat'],'ps',...
                     'Params','OOBError','OOBAUC','TestError','TrainTime',...
                     'Depth','NumNodes','NumSplits')
             end
