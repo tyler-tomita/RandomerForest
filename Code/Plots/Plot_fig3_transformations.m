@@ -9,12 +9,16 @@ frcPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 Colors.rf = 'c';
 Colors.rfr = 'c';
+Colors.rerf = 'b';
+Colors.rerfr = 'b';
 Colors.frc = 'g';
 Colors.frcr = 'g';
 Colors.rr_rf = 'm';
 Colors.rr_rfr = 'm';
 LineStyles.rf = '-';
 LineStyles.rfr = ':';
+LineStyles.rerf = '-';
+LineStyles.rerfr = ':';
 LineStyles.frc = '-';
 LineStyles.frcr = ':';
 LineStyles.rr_rf = '-';
@@ -27,14 +31,14 @@ axLeft = repmat([FontSize*4,FontSize*6.5+axWidth],1,4);
 axBottom = [(FontSize*7+axHeight*3)*ones(1,2),...
     (FontSize*4.5+axHeight*2)*ones(1,2),(FontSize*3+axHeight)*ones(1,2),...
     FontSize*1.5*ones(1,2)];
-legWidth = 0.4*axWidth;
-legHeight = 0.4*axHeight;
-legLeft = axLeft(end) + axWidth + FontSize;
-legBottom = axBottom(5);
-% figWidth = legLeft(end) + legWidth;
-% figHeight = axBottom(1) + axHeight + FontSize*1.5;
-figWidth = axLeft(end) + axWidth + FontSize;
+legWidth = axWidth;
+legHeight = axHeight;
+legLeft = axLeft(end) + axWidth*2/3 + FontSize;
+legBottom = axBottom(end);
+figWidth = legLeft + legWidth + FontSize;
 figHeight = axBottom(1) + axHeight + FontSize*1.5;
+% figWidth = axLeft(end) + axWidth + FontSize;
+% figHeight = axBottom(1) + axHeight + FontSize*1.5;
 
 fig = figure;
 fig.Units = 'inches';
@@ -59,7 +63,7 @@ ntrials = size(TestError{1}.rf.Untransformed,1);
 
 for i = 1:length(dims)
     Classifiers = fieldnames(TestError{i});
-    Classifiers(~ismember(Classifiers,{'rf','rfr','frc','frcr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'rf','rfr''rerf','rerfr','frc','frcr','rr_rf','rr_rfr'})) = [];
     for j = 1:length(Classifiers)
         Transformations = fieldnames(TestError{i}.(Classifiers{j}));
         for k = 1:length(Transformations)
@@ -129,7 +133,7 @@ ntrials = size(TestError{1}.rf.Untransformed,1);
 
 for i = 1:length(dims)
     Classifiers = fieldnames(TestError{i});
-    Classifiers(~ismember(Classifiers,{'rf','rfr','frc','frcr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'rf','rfr','rerf','rerfr','frc','frcr','rr_rf','rr_rfr'})) = [];
     for j = 1:length(Classifiers)
         Transformations = fieldnames(TestError{i}.(Classifiers{j}));
         for k = 1:length(Transformations)
@@ -170,13 +174,16 @@ for i = 1:length(Transformations)
     ax(2*i).XTickLabel = {'10' '100' '500'};
     ax(2*i).YLim = [0.01 .15];
     
-%     if i==length(Transformations)
-%         l = legend('RF','RF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
-%         l.Box = 'off';
-%         l.FontSize = 10;
-%         l.Units = 'inches';
-%         l.Position = [legLeft legBottom legWidth legHeight];
-%     end
+    if i==length(Transformations)
+        [lh,objh] = legend('RF','RF(r)','RerF','RerF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
+        lh.Box = 'off';
+        lh.FontSize = 10;
+        lh.Units = 'inches';
+        lh.Position = [legLeft legBottom legWidth legHeight];
+        for j = 9:length(objh)
+            objh(j).Children.Children(2).XData = [(objh(j).Children.Children(2).XData(2)-objh(j).Children.Children(2).XData(1))*.75+objh(j).Children.Children(2).XData(1),objh(j).Children.Children(2).XData(2)];
+        end
+    end
 end
 
-save_fig(gcf,[frcPath 'RandomerForest/Figures/Fig3_transformations'])
+save_fig(gcf,[frcPath 'RandomerForest/Figures/Fig3_transformations_with_RerF'])

@@ -7,14 +7,18 @@ FontSize = 14;
 S1 = load('Sparse_parity_partial.mat');
 S2 = load('Trunk_partial.mat');
 
-TreeDepth = [];
-nNodes = [];
-nSplits = [];
-ErrorRate = [];
-p = [];
-for i = 1:length(S1.TestError)
+Markers = {'o','^','+'};
+Colors = get(gca,'ColorOrder');
+
+for i = 1:length(S1.TestError) - 1
     Classifiers = fieldnames(S1.TestError{i});
+    Classifiers(~ismember(Classifiers,{'rf','rerf','rerf2','frc','rr_rf'})) = [];
     for c = 1:length(Classifiers)
+        TreeDepth = [];
+        nNodes = [];
+        nSplits = [];
+        ErrorRate = [];
+        p = [];
         Transformations = fieldnames(S1.TestError{i}.(Classifiers{c}));
         for t = 1:length(Transformations)
             ntrials = size(S1.TestError{i}.(Classifiers{c}).(Transformations{t}),1);
@@ -37,45 +41,55 @@ for i = 1:length(S1.TestError)
             ErrorRate = [ErrorRate,mean(S1.TestError{i}.(Classifiers{c}).(Transformations{t})(:,end))];
             p = [p,S1.dims(i)];
         end
+        plot(TreeDepth,ErrorRate,Markers{i},'MarkerEdgeColor',Colors(c,:))
+        hold on
     end
 end
 
-gscatter(TreeDepth,ErrorRate,p)
 xlabel('Tree Depth')
 ylabel('Error Rate')
-title('Sparse parity')
-legend('p = 2','p = 5','Location','southeast')
-ax = gca;
-ax.YScale = 'log';
-ax.FontSize = FontSize;
-
-save_fig(gcf,'~/RandomerForest/Figures/Sparse_parity_error_vs_depth')
-
-figure;
-
-gscatter(nNodes,ErrorRate,p)
-xlabel('# of nodes')
-ylabel('Error Rate')
 title('Sparse Parity')
-legend('p = 2','p = 5','Location','southeast')
+legend('RF','RerF','RerF2','F-RC','RR-RF','Location','southeast')
 ax = gca;
 ax.YScale = 'log';
 ax.FontSize = FontSize;
 
-save_fig(gcf,'~/RandomerForest/Figures/Sparse_parity_error_vs_num_nodes')
-
-figure;
-
-gscatter(nSplits,ErrorRate,p)
-xlabel('# of splits')
-ylabel('Error Rate')
-title('Sparse parity')
-legend('p = 2','p = 5','Location','southeast')
-ax = gca;
-ax.YScale = 'log';
-ax.FontSize = FontSize;
-
-save_fig(gcf,'~/RandomerForest/Figures/Sparse_parity_error_vs_num_splits')
+% gscatter(TreeDepth,ErrorRate,p)
+% xlabel('Tree Depth')
+% ylabel('Error Rate')
+% title('Sparse parity')
+% legend('p = 2','p = 5','Location','southeast')
+% ax = gca;
+% ax.YScale = 'log';
+% ax.FontSize = FontSize;
+% 
+save_fig(gcf,'~/RandomerForest/Figures/Sparse_parity_error_vs_depth')
+% 
+% figure;
+% 
+% gscatter(nNodes,ErrorRate,p)
+% xlabel('# of nodes')
+% ylabel('Error Rate')
+% title('Sparse Parity')
+% legend('p = 2','p = 5','Location','southeast')
+% ax = gca;
+% ax.YScale = 'log';
+% ax.FontSize = FontSize;
+% 
+% save_fig(gcf,'~/RandomerForest/Figures/Sparse_parity_error_vs_num_nodes')
+% 
+% figure;
+% 
+% gscatter(nSplits,ErrorRate,p)
+% xlabel('# of splits')
+% ylabel('Error Rate')
+% title('Sparse parity')
+% legend('p = 2','p = 5','Location','southeast')
+% ax = gca;
+% ax.YScale = 'log';
+% ax.FontSize = FontSize;
+% 
+% save_fig(gcf,'~/RandomerForest/Figures/Sparse_parity_error_vs_num_splits')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -84,9 +98,16 @@ nNodes = [];
 nSplits = [];
 ErrorRate = [];
 p = [];
-for i = 1:length(S2.TestError) - 1
+figure;
+for i = 1:length(S2.TestError) - 2
     Classifiers = fieldnames(S2.TestError{i});
+    Classifiers(~ismember(Classifiers,{'rf','rerf','rerf2','frc','rr_rf'})) = [];
     for c = 1:length(Classifiers)
+        TreeDepth = [];
+        nNodes = [];
+        nSplits = [];
+        ErrorRate = [];
+        p = [];
         Transformations = fieldnames(S2.TestError{i}.(Classifiers{c}));
         for t = 1:length(Transformations)
             ntrials = size(S2.TestError{i}.(Classifiers{c}).(Transformations{t}),1);
@@ -109,44 +130,54 @@ for i = 1:length(S2.TestError) - 1
             ErrorRate = [ErrorRate,mean(S2.TestError{i}.(Classifiers{c}).(Transformations{t})(:,end))];
             p = [p,S2.dims(i)];
         end
+        plot(TreeDepth,ErrorRate,Markers{i},'MarkerEdgeColor',Colors(c,:))
+        hold on
     end
 end
 
-figure;
-
-gscatter(TreeDepth,ErrorRate,p)
 xlabel('Tree Depth')
 ylabel('Error Rate')
 title('Trunk')
-legend('p = 2','p = 5','p = 10','Location','southeast')
+legend('RF','RerF','RerF2','F-RC','RR-RF','Location','southeast')
 ax = gca;
 ax.YScale = 'log';
 ax.FontSize = FontSize;
 
+% figure;
+% 
+% gscatter(TreeDepth,ErrorRate,p)
+% xlabel('Tree Depth')
+% ylabel('Error Rate')
+% title('Trunk')
+% legend('p = 2','p = 5','p = 10','Location','southeast')
+% ax = gca;
+% ax.YScale = 'log';
+% ax.FontSize = FontSize;
+% 
 save_fig(gcf,'~/RandomerForest/Figures/Trunk_error_vs_depth')
-
-figure;
-
-gscatter(nNodes,ErrorRate,p)
-xlabel('# of nodes')
-ylabel('Error Rate')
-title('Trunk')
-legend('p = 2','p = 5','p = 10','Location','southeast')
-ax = gca;
-ax.YScale = 'log';
-ax.FontSize = FontSize;
-
-save_fig(gcf,'~/RandomerForest/Figures/Trunk_error_vs_num_nodes')
-
-figure;
-
-gscatter(nSplits,ErrorRate,p)
-xlabel('# of splits')
-ylabel('Error Rate')
-title('Trunk')
-legend('p = 2','p = 5','p = 10','Location','southeast')
-ax = gca;
-ax.YScale = 'log';
-ax.FontSize = FontSize;
-
-save_fig(gcf,'~/RandomerForest/Figures/Trunk_error_vs_num_splits')
+% 
+% figure;
+% 
+% gscatter(nNodes,ErrorRate,p)
+% xlabel('# of nodes')
+% ylabel('Error Rate')
+% title('Trunk')
+% legend('p = 2','p = 5','p = 10','Location','southeast')
+% ax = gca;
+% ax.YScale = 'log';
+% ax.FontSize = FontSize;
+% 
+% save_fig(gcf,'~/RandomerForest/Figures/Trunk_error_vs_num_nodes')
+% 
+% figure;
+% 
+% gscatter(nSplits,ErrorRate,p)
+% xlabel('# of splits')
+% ylabel('Error Rate')
+% title('Trunk')
+% legend('p = 2','p = 5','p = 10','Location','southeast')
+% ax = gca;
+% ax.YScale = 'log';
+% ax.FontSize = FontSize;
+% 
+% save_fig(gcf,'~/RandomerForest/Figures/Trunk_error_vs_num_splits')

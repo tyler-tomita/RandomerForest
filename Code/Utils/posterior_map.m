@@ -1,4 +1,5 @@
 function p = posterior_map(X,Y,posteriors,binarize)
+    load Colors
 
     npoints = sqrt(length(posteriors));
     xmin = min(X);
@@ -10,7 +11,7 @@ function p = posterior_map(X,Y,posteriors,binarize)
         C = p.CData;
         p.ZData = zeros(npoints,npoints);
         p.CData = C;
-        colormap(gray)
+        colormap(ColorMap)
         p.LineStyle = 'none';
         axis([xmin xmax ymin ymax])
         view(2)
@@ -23,7 +24,7 @@ function p = posterior_map(X,Y,posteriors,binarize)
         C = p.CData;
         p.ZData = zeros(npoints,npoints);
         p.CData = C;
-        colormap(gray)
+        colormap(ColorMap)
         p.LineStyle = 'none';
         axis([xmin xmax ymin ymax])
         view(2)

@@ -9,12 +9,16 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 Colors.rf = 'c';
 Colors.rfr = 'c';
+Colors.rerf = 'b';
+Colors.rerfr = 'b';
 Colors.frc = 'g';
 Colors.frcr = 'g';
 Colors.rr_rf = 'm';
 Colors.rr_rfr = 'm';
 LineStyles.rf = '-';
 LineStyles.rfr = ':';
+LineStyles.rerf = '-';
+LineStyles.rerfr = ':';
 LineStyles.frc = '-';
 LineStyles.frcr = ':';
 LineStyles.rr_rf = '-';
@@ -30,9 +34,9 @@ axBottom = [...
     FontSize*3*ones(1,2)];
 legWidth = axWidth;
 legHeight = axHeight;
-legLeft = axLeft(end) + axWidth + FontSize;
-legBottom = axBottom(5);
-figWidth = axLeft(end) + axWidth + FontSize;
+legLeft = axLeft(end) + axWidth*2/3 + FontSize;
+legBottom = axBottom(end);
+figWidth = legLeft + legWidth + FontSize;
 figHeight = axBottom(1) + axHeight + FontSize*1.5;
 
 fig = figure;
@@ -92,7 +96,7 @@ ax = axes;
 
 for i = 1:length(TestError)
     Classifiers = fieldnames(TestError{i});
-    Classifiers(~ismember(Classifiers,{'rf','rfr','frc','frcr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'rf','rfr','rerf','rerfr','frc','frcr','rr_rf','rr_rfr'})) = [];
     for j = 1:length(Classifiers)
         ntrials = length(TestError{i}.(Classifiers{j}).Untransformed);
         for trial = 1:ntrials
@@ -214,7 +218,7 @@ clear PlotError PlotTime
 
 for i = 1:length(TestError)
     Classifiers = fieldnames(TestError{i});
-    Classifiers(~ismember(Classifiers,{'rf','rfr','frc','frcr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'rf','rfr','rerf','rerfr','frc','frcr','rr_rf','rr_rfr'})) = [];
     for j = 1:length(Classifiers)
         ntrials = length(TestError{i}.(Classifiers{j}).Untransformed);
         for trial = 1:ntrials
@@ -283,13 +287,15 @@ ax.XTick = [10,100,500];
 ax.YTick = [1,10,100];
 ax.XTickLabel = {'10','100','500'};
 ax.YTickLabel = {'1','10','100'};
-[lh2,objh2] = legend('RF','RF(r)','F-RC','Frank','RR-RF','RR-RF(r)');
-lh2.Location = 'southwest';
+[lh2,objh2] = legend('RF','RF(r)','RerF','RerF(r)','F-RC','Frank','RR-RF','RR-RF(r)');
+% lh2.Location = 'southwest';
+lh2.Units = 'inches';
+lh2.Position = [legLeft legBottom legWidth legHeight];
 lh2.Box = 'off';
 lh2.FontSize = 11;
 
-for i = 7:length(objh2)
+for i = 9:length(objh2)
     objh2(i).Children.Children(2).XData = [(objh2(i).Children.Children(2).XData(2)-objh2(i).Children.Children(2).XData(1))*.75+objh2(i).Children.Children(2).XData(1),objh2(i).Children.Children(2).XData(2)];
 end
 
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig2_simulations'])
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig2_simulations_with_RerF'])
