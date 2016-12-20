@@ -1008,7 +1008,11 @@ end
 
 %----------------------------------------------------
 function M = srpmat(d,k,method,varargin)
-    if strcmp(method,'binary')
+    if strcmp(method,'dense')
+        s = varargin{1};
+        M = vec2mat(randsample([0 1],d*k,true,[1-1/s 1/s]),k);
+        M(M==1) = rand(sum(M(:)==1),1)*2 - 1;
+    elseif strcmp(method,'binary')
         s = varargin{1};
         M = zeros(d,k);
         nnzs = round(k*d*s);
@@ -1016,9 +1020,6 @@ function M = srpmat(d,k,method,varargin)
         npos = rand(nnzs,1) > 0.5;
         M(nzs(npos))=1;
         M(nzs(~npos))=-1;
-        isnz = M~=0;
-        OnlyNz = isnz & repmat(sum(isnz)==1,d,1);
-        M(OnlyNz) = 1;
         M = sparse(unique(M(:,any(M))','rows','stable')');
     elseif strcmp(method,'continuous')
         s = varargin{1};
@@ -1028,8 +1029,7 @@ function M = srpmat(d,k,method,varargin)
         M(nzs) = rand(1,nnzs)*2 - 1;
         isnz = M~=0;
         OnlyNz = isnz & repmat(sum(isnz)==1,d,1);
-        M(OnlyNz) = 1;
-        M = sparse(unique(M(:,any(M))','rows','stable')');
+        M(OnlyNz) 
     elseif strcmp(method,'binary-adjusted')
         s = varargin{1};
         kk = varargin{3};
@@ -1039,9 +1039,6 @@ function M = srpmat(d,k,method,varargin)
         npos = rand(nnzs,1) > 0.5;
         M(nzs(npos))=1;
         M(nzs(~npos))=-1;
-        isnz = M~=0;
-        OnlyNz = isnz & repmat(sum(isnz)==1,d,1);
-        M(OnlyNz) = 1;
         M = unique(M(:,any(M))','rows','stable')';
         M = M(:,1:min(k,size(M,2)));
         M = sparse(M);
@@ -1052,10 +1049,7 @@ function M = srpmat(d,k,method,varargin)
         nnzs = round(kk*d*s);
         nzs=randperm(d*kk,nnzs);
         M(nzs) = rand(1,nnzs)*2 - 1;
-        isnz = M~=0;
-        OnlyNz = isnz & repmat(sum(isnz)==1,d,1);
-        M(OnlyNz) = 1;
-        M = unique(M(:,any(M))','rows','stable')';
+        M = M(:,any(M));
         M = M(:,1:min(k,size(M,2)));
         M = sparse(M);
     elseif strcmp(method,'frc')

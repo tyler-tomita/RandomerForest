@@ -156,7 +156,9 @@ classdef rpclassificationforest
             RotVars = false(nTrees,d);
             
             % one random projection per tree implementation
-            load Random_matrix_adjustment_factor
+%             load Random_matrix_adjustment_factor
+            slope = [0.7205 0.7890 0.8143 0.8298 0.8442 0.8600 0.8794 0.8916 0.8922];
+            dims = [2 5 10 25 50 100 250 500 1000];
             RM = cell(nTrees,1);
 %                 if d <= 10
 %                     dx = 2^d;
@@ -166,16 +168,17 @@ classdef rpclassificationforest
 %                     dx = ceil(d^1.5);
 %                 end
             
-            poolobj = gcp('nocreate');
-            if isempty(poolobj);
-                parpool('local',NWorkers,'IdleTimeout',360);
-            end
+%             poolobj = gcp('nocreate');
+%             if isempty(poolobj);
+%                 parpool('local',NWorkers,'IdleTimeout',360);
+%             end
             
             %Reduce computational load for matrices with many zero elements
             if ~strcmp(ForestMethod,'rf') && ~rotate && ~issparse(X) && nnz(X)/numel(X) <= 0.01
                 X = sparse(X);
             end
             
+%             for i = 1:nTrees
             parfor i = 1:nTrees
                 %Rotate data?
                 if rotate

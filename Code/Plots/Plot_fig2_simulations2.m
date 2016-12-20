@@ -7,14 +7,23 @@ clc
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
-Colors.rf = 'c';
-Colors.rfr = 'c';
-Colors.rerf = 'b';
-Colors.rerfr = 'b';
-Colors.frc = 'g';
-Colors.frcr = 'g';
-Colors.rr_rf = 'm';
-Colors.rr_rfr = 'm';
+load('purple2green')
+Colors.rf = ColorMap(1,:);
+Colors.rfr = ColorMap(1,:);
+Colors.rerf = ColorMap(3,:);
+Colors.rerfr = ColorMap(3,:);
+Colors.frc= ColorMap(9,:);
+Colors.frcr = ColorMap(9,:);
+Colors.rr_rf = ColorMap(11,:);
+Colors.rr_rfr = ColorMap(11,:);
+% Colors.rf = 'c';
+% Colors.rfr = 'c';
+% Colors.rerf = 'b';
+% Colors.rerfr = 'b';
+% Colors.frc = 'g';
+% Colors.frcr = 'g';
+% Colors.rr_rf = 'm';
+% Colors.rr_rfr = 'm';
 LineStyles.rf = '-';
 LineStyles.rfr = ':';
 LineStyles.rerf = '-';
@@ -57,7 +66,9 @@ p_prime = min(3,p);
 X = rand(n,p)*2 - 1;
 Y = mod(sum(X(:,1:p_prime)>0,2),2);
 
-plot(X(Y==0,1),X(Y==0,2),'b.',X(Y==1,1),X(Y==1,2),'r.','MarkerSize',MarkerSize)
+plot(X(Y==0,1),X(Y==0,2),'.','Color',ColorMap(3,:),'MarkerSize',MarkerSize)
+hold on
+plot(X(Y==1,1),X(Y==1,2),'.','Color',ColorMap(9,:),'MarkerSize',MarkerSize)
 
 title('(A)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 text(0.5,1.05,'Sparse Parity','FontSize',16,'FontWeight','bold','Units',...
@@ -185,7 +196,9 @@ obj = gmdistribution(Mu,Sigma);
 Class = [0;1];
 Y = Class(idx);
 
-plot(X(Y==0,1),X(Y==0,2),'b.',X(Y==1,1),X(Y==1,2),'r.','MarkerSize',MarkerSize)
+plot(X(Y==0,1),X(Y==0,2),'.','Color',ColorMap(3,:),'MarkerSize',MarkerSize)
+hold on
+plot(X(Y==1,1),X(Y==1,2),'.','Color',ColorMap(9,:),'MarkerSize',MarkerSize)
 
 title('(B)','Units','normalized','Position',[0.025 .975],'HorizontalAlignment','left','VerticalAlignment','top')
 text(0.5,1.05,'Trunk','FontSize',16,'FontWeight','bold','Units',...

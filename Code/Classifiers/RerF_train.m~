@@ -132,10 +132,6 @@ if ~isfield(Params,'NWorkers')
     Params.NWorkers = 2;
 end
 
-if ~isfield(Params,'Stream')
-    Params.Stream = [];
-end
-
 TrainTime = NaN(1,length(Params.d));
 
 %train classifier for all values of Params.d
@@ -161,7 +157,7 @@ if strcmp(Params.ForestMethod,'rerf') && strcmp(Params.RandomMatrix,'frc')
                 'Rescale',Params.Rescale,...
                 'Stratified',Params.Stratified,...
                 'NWorkers',Params.NWorkers,...
-                'stream',Params.Stream);
+                'stream,);
                 TrainTime((i-1)*length(Params.d)+j) = toc;
             end
         end
@@ -182,7 +178,6 @@ else
             'Rescale',Params.Rescale,...
             'Stratified',Params.Stratified,...
             'NWorkers',Params.NWorkers,...
-            'stream',Params.Stream,...
             'AdjustmentFactors',Params.AdjustmentFactors,...
             'dx',Params.dx);
         TrainTime(i) = toc;

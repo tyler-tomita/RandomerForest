@@ -1,4 +1,4 @@
-%% Plot benchmark classifier rank distributions
+%% Plot distributions of errors for benchmark data
 
 clear
 close all
@@ -38,22 +38,31 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 Transformations = {'Untransformed','Rotated','Scaled','Affine','Outlier'};
 
 BinEdges = [-1,-0.2,-0.1,-0.05:0.005:0,0:0.005:0.05,0.1,0.2,1];
+% BinEdges = [-1:0.1:0,0:0.1:1];
+
+load Benchmark_plus_20_percent_outliers_data
 
 for i = 1:length(Transformations)
     load(['~/Benchmarks/Results/Benchmark_' lower(Transformations{i}) '.mat'])
     Classifiers = fieldnames(TestError{1});
     Classifiers(~ismember(Classifiers,{'rf','rerf','rerfr','frc','frcr','rr_rf','rr_rfr'})) = [];
 
-    TestError = TestError(~cellfun(@isempty,TestError));
+    NotEmpty = find(~cellfun(@isempty,TestError));
     
-    AbsoluteError = NaN(length(TestError),length(Classifiers));
-    RelativeError = NaN(length(TestError),length(Classifiers)-1);
+    ChanceProb = NaN(length(NotEmpty),1);
+    AbsoluteError = NaN(length(NotEmpty),length(Classifiers));
+    NormRelativeError = NaN(length(NotEmpty),length(Classifiers)-1);
 
-    for j = 1:length(TestError)
+    for j = 1:length(NotEmpty)
+        ClassCounts = histcounts(grp2idx(Datasets(NotEmpty(j)).Ytrain));
+        ChanceProb(j) = 1 - max(ClassCounts)/sum(ClassCounts);
         for k = 1:length(Classifiers)
-            AbsoluteError(j,k) = TestError{j}.(Classifiers{k});
+            AbsoluteError(j,k) = TestError{NotEmpty(j)}.(Classifiers{k});
+        end
+        for k = 1:length(Classifiers)
             if k > 1
-                RelativeError(j,k-1) = TestError{j}.(Classifiers{k}) - TestError{j}.(Classifiers{1});
+                NormRelativeError(j,k-1) = (TestError{NotEmpty(j)}.(Classifiers{k})...
+                    - TestError{NotEmpty(j)}.(Classifiers{1}))/ChanceProb(j);
             end
         end
     end
@@ -63,14 +72,14 @@ for i = 1:length(Transformations)
     for k = 1:length(Classifiers)-1
 %         h = histogram(RelativeError(:,k),BinEdges);
 %         Counts(:,k) = h.Values';
-        Counts(:,k) = histcounts(RelativeError(:,k),BinEdges)';
+        Counts(:,k) = histcounts(NormRelativeError(:,k),BinEdges)';
     end
-        Counts(length(BinEdges)/2,:) = sum(RelativeError==0);
-        Counts(length(BinEdges)/2+1,:) = Counts(length(BinEdges)/2+1,:) - Counts(length(BinEdges)/2,:);
+    Counts(length(BinEdges)/2,:) = sum(NormRelativeError==0);
+    Counts(length(BinEdges)/2+1,:) = Counts(length(BinEdges)/2+1,:) - Counts(length(BinEdges)/2,:);
         
     figure(i);
     h = heatmap(flipud(Counts),{'RerF','RerF(r)','F-RC','Frank','RR-RF','RR-RF(r)'},cellstr(num2str(flipud(BinEdges'))),ColorMap,true);
-    ylabel('Relative Error')
+    ylabel('($\hat{L}_X - \hat{L}_{RF})/(Chance - min(\hat{L}(X))')
     if i==1
         title('Raw')
     elseif i==5
@@ -84,7 +93,5 @@ for i = 1:length(Transformations)
     for k = 2:length(Classifiers)-1
         plot([k-0.5,k-0.5],h.YLim,'-k','LineWidth',LineWidth+1)
     end
-    save_fig(gcf,['~/RandomerForest/Figures/Benchmark_heatmap_histogram_' Transformations{i}])
+    save_fig(gcf,['~/RandomerForest/Figures/Benchmark_heatmap_histogram_' Transformations{i} '_normalized_by_best'])
 end
-
-% save_fig(gcf,'~/RandomerForest/Figures/Benchmark_heatmap_histogram')

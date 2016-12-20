@@ -7,6 +7,9 @@ clc
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
+load('purple2green')
+ColorMap = interpolate_colormap(ColorMap(round(size(ColorMap,1)/2):end,:),64,false);
+
 Colors.rf = 'c';
 Colors.rfr = 'c';
 Colors.rerf = 'g';
@@ -89,7 +92,7 @@ for i = 1:length(Classifiers)
     Transformations = fieldnames(Posteriors{3}.(Classifiers{i}));
     for j = 1:length(Transformations)
         ax((i-1)*3+j) = axes;
-        ph{(i-1)*3+j} = posterior_map(Xpost,Ypost,mean(Posteriors{3}.(Classifiers{i}).(Transformations{j}),3),false);
+        ph{(i-1)*3+j} = posterior_map(Xpost,Ypost,mean(Posteriors{3}.(Classifiers{i}).(Transformations{j}),3),false,ColorMap);
 %         title(['(' char('A'+(i-1)*3+j-1) ')'],'FontSize',16,'Units','normalized','Position',[-0.02 1],...
 %             'HorizontalAlignment','right','VerticalAlignment','top')
         if i==1
@@ -191,4 +194,4 @@ for i = 8:length(objh)
     objh(i).Children.Children(2).XData = [(objh(i).Children.Children(2).XData(2)-objh(i).Children.Children(2).XData(1))*0.5+objh(i).Children.Children(2).XData(1),objh(i).Children.Children(2).XData(2)];
 end
 
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig1_posteriors'])
+% save_fig(gcf,[rerfPath 'RandomerForest/Figures/Fig1_posteriors'])

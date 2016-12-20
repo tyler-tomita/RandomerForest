@@ -1,5 +1,4 @@
-function p = posterior_map(X,Y,posteriors,binarize)
-    load Colors
+function p = posterior_map(X,Y,posteriors,binarize,ColorMap)
 
     npoints = sqrt(length(posteriors));
     xmin = min(X);
