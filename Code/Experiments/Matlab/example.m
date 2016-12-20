@@ -82,7 +82,7 @@ end
 
 % Select best model according to OOB errors and OOB AUCs
 
-BestIdx = hp_optimize(OOBError(i),OOBAUC(i));
+BestIdx = hp_optimize(OOBError,OOBAUC);
 if length(BestIdx)>1
     BestIdx = BestIdx(end);
 end
