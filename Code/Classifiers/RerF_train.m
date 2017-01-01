@@ -136,6 +136,22 @@ if ~isfield(Params,'Stream')
     Params.Stream = [];
 end
 
+if ~isfield(Params,'MinParent')
+    Params.MinParent = 2;
+end
+
+if ~isfield(Params,'MinLeaf')
+    Params.MinLeaf = 1;
+end
+
+if ~isfield(Params,'DownsampleNode')
+    Params.DownsampleNode = false;
+end
+
+if ~isfield(Params,'MaxNodeSize')
+    Params.MaxNodeSize = 100;
+end
+
 TrainTime = NaN(1,length(Params.d));
 
 %train classifier for all values of Params.d
@@ -161,7 +177,11 @@ if strcmp(Params.ForestMethod,'rerf') && strcmp(Params.RandomMatrix,'frc')
                 'Rescale',Params.Rescale,...
                 'Stratified',Params.Stratified,...
                 'NWorkers',Params.NWorkers,...
-                'stream',Params.Stream);
+                'stream',Params.Stream,...
+                'minparent',Params.MinParent,...
+                'minleaf',Params.MinLeaf,...
+                'DownsampleNode',false,...
+                'MaxNodeSize',100);
                 TrainTime((i-1)*length(Params.d)+j) = toc;
             end
         end
@@ -184,7 +204,11 @@ else
             'NWorkers',Params.NWorkers,...
             'stream',Params.Stream,...
             'AdjustmentFactors',Params.AdjustmentFactors,...
-            'dx',Params.dx);
+            'dx',Params.dx,...
+            'minparent',Params.MinParent,...
+            'minleaf',Params.MinLeaf,...
+            'DownsampleNode',false,...
+            'MaxNodeSize',100);
         TrainTime(i) = toc;
     end
 end

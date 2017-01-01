@@ -31,16 +31,12 @@ for j = 1:length(ps)
         ntrain = ns{j}(i);
         fprintf('n = %d\n',ntrain)
         if ntrain == 10
+            go = true;
+            while go
+            Xtrain{i,j} = rand(ntrain,p,ntrials)*2 - 1;
             Ytrain{i,j} = cell(ntrain,ntrials);
             for trial = 1:ntrials
-                go = true;
-                while go
-                    Xtrain{i,j}(:,:,trial) = rand(ntrain,p)*2 - 1;
-                    Ytrain{i,j}(:,trial) = cellstr(num2str(mod(sum(Xtrain{i,j}(:,1:p_prime,trial)>0,2),2)));
-                    if mean(strcmp(Ytrain{i,j}(:,trial),'1')) == 0.5
-                        go = false;
-                    end
-                end
+                Ytrain{i,j}(:,trial) = cellstr(num2str(mod(sum(Xtrain{i,j}(:,1:p_prime,trial)>0,2),2)));
             end
         else
             Xtrain{i,j} = rand(ntrain,p,ntrials)*2 - 1;

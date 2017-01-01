@@ -416,17 +416,18 @@ okargs =   {'priorprob'   'cost'  'splitcriterion' ...
             'splitmin' 'minparent' 'minleaf' ...
             'nvartosample' 'mergeleaves' 'categorical' 'prune' 'method' ...
             'qetoler' 'names' 'weights' 'surrogate' 'skipchecks' ...
-            'stream' 's'    'mdiff' 'RandomMatrix'  'nmix'  'p' 'dprime'};
+            'stream' 's'    'mdiff' 'RandomMatrix'  'nmix'  'p' 'dprime',...
+            'DownsampleNode'    'MaxNodeSize'};
 defaults = {[]            []      'gdi'                        ...
             []         2          1                          ...
             'all'          'on'          []            'off'    Method      ...
             1e-6      {}       []        'off'      false ...
-            []  3   'off'   'sparse' 2   [] []};
+            []  3   'off'   'sparse' 2   [] []  false   100};
 
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
-    skipchecks,Stream,s,mdiff,RandomMatrix,nmix,p,dprime,~,extra] = ...
-    internal.stats.parseArgs(okargs,defaults,varargin{:});
+    skipchecks,Stream,s,mdiff,RandomMatrix,nmix,p,dprime,DownsampleNode,...
+    MaxNodeSize,~,extra] = internal.stats.parseArgs(okargs,defaults,varargin{:});
 
 % For backwards compatibility. 'catidx' is a synonym for 'categorical'
 for j=1:2:length(extra)
@@ -709,6 +710,18 @@ while(tnode < nextunusednode)
    Cnode = C(noderows,:);
    Wnode = W(noderows);
    Wt = sum(Wnode);
+   
+   % Do we want to downsample the node observations?   
+   if DownsampleNode && NodeSize > MaxNodeSize
+      NodeSample = randperm(NodeSize,MaxNodeSize);
+      Csub = Cnode(NodeSample,:);
+      Wsub = Wnode(NodeSample,:);
+   else
+      NodeSample = 1:length(noderows);
+      Csub = Cnode;
+      Wsub = Wnode;
+   end
+   
    if doclass
       % Compute class probabilities and related statistics for this node
       Njt = sum(Cnode,1);    % number in class j at node t
@@ -771,26 +784,34 @@ while(tnode < nextunusednode)
           %nvarsplit2 = nvarsplit;
       end
       Xnode = Xnode*promat; %project Xnode onto random bases of promat
+      Xsub = Xnode(NodeSample,:);
+      
       bestvar = 0;
       bestcut = 0;
       
       % Find the best of all possible splits
-      for jvar=1:size(Xnode,2)
+%       for jvar=1:size(Xnode,2)
+      for jvar = 1:size(Xsub,2)
 
          % Categorical variable?
          %xcat = iscat2(jvar);
          xcat = false;
 
          % Get rid of missing values and sort this variable
-         idxnan = isnan(Xnode(:,jvar));
+%          idxnan = isnan(Xnode(:,jvar));
+         idxnan = isnan(Xsub(:,jvar));
          idxnotnan = find(~idxnan);
          if isempty(idxnotnan)
              continue;
          end
-         [x,idxsort] = sort(Xnode(idxnotnan,jvar));
+         
+%          [x,idxsort] = sort(Xnode(idxnotnan,jvar));
+         [x,idxsort] = sort(Xsub(idxnotnan,jvar));
          idx = idxnotnan(idxsort);
-         c = Cnode(idx,:);
-         w = Wnode(idx);
+%          c = Cnode(idx,:);
+%          w = Wnode(idx);
+         c = Csub(idx,:);
+         w = Wsub(idx,:);
          
          % Downweight the impurity (for classification) or node mse (for
          % regression) by the fraction of observations that are being
@@ -801,14 +822,16 @@ while(tnode < nextunusednode)
              if isimpurity % twoing crit does not need to be offset
                  % crit0U = P(t0-tU)*i(t0)
                  % crit0  = P(t0)*i(t0)
-                 Pmis = sum(Wnode(idxnan));
+%                  Pmis = sum(Wnode(idxnan));
+                 Pmis = sum(Wsub(idxnan));
                  crit0U = impurity(tnode)*(nodeprob(tnode)-Pmis);
                  crit0 = impurity(tnode)*nodeprob(tnode);
              end
          else
              % crit0U = P(t0-tU)*mse(t0)
              % crit0  = P(t0)*mse(t0)
-             Pmis = sum(Wnode(idxnan));
+%              Pmis = sum(Wnode(idxnan));
+             Pmis = sum(Wsub(idxnan));
              crit0U = resuberr(tnode)*(nodeprob(tnode)-Pmis);
              crit0 = resuberr(tnode)*nodeprob(tnode);
          end

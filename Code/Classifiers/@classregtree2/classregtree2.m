@@ -1,6 +1,6 @@
 classdef classregtree2
 %CLASSREGTREE2 Create a classification and regression tree object.
-%   T = CLASSREGTREE2(X,Y) creates a decision tree T for predicting response
+%   T = CLASSREGTREE3(X,Y) creates a decision tree T for predicting response
 %   Y as a function of predictors X.  X is an N-by-M matrix of predictor
 %   values. If Y is a vector of N response values, then CLASSREGTREE
 %   performs regression.  If Y is a categorical variable, character array,
@@ -13,7 +13,7 @@ classdef classregtree2
 %   missing values for X are used to find splits on variables for which
 %   these observations have valid values.
 %
-%   T = CLASSREGTREE2(X,Y,'PARAM1',val1,'PARAM2',val2,...) specifies optional
+%   T = CLASSREGTREE3(X,Y,'PARAM1',val1,'PARAM2',val2,...) specifies optional
 %   parameter name/value pairs:
 %
 %   For all trees:
@@ -90,7 +90,7 @@ classdef classregtree2
 %      t = classregtree2(meas, species,'names',{'SL' 'SW' 'PL' 'PW'});
 %      view(t);
 %
-%   See also CLASSREGTREE2/EVAL, CLASSREGTREE2/TEST, CLASSREGTREE2/VIEW, CLASSREGTREE2/PRUNE.
+%   See also CLASSREGTREE3/EVAL, CLASSREGTREE3/TEST, CLASSREGTREE3/VIEW, CLASSREGTREE3/PRUNE.
 
 %   Copyright 2006-2013 The MathWorks, Inc.
 
@@ -486,15 +486,15 @@ okargs =   {'priorprob'   'cost'  'splitcriterion' ...
             'splitmin' 'minparent' 'minleaf' ...
             'nvartosample' 'mergeleaves' 'categorical' 'prune' 'method' ...
             'qetoler' 'names' 'weights' 'surrogate' 'skipchecks' ...
-            'stream'};
+            'stream'    'DownsampleNode'    'MaxNodeSize'};
 defaults = {[]            []      'gdi'                        ...
             []         2          1                          ...
             'all'          'on'          []            'off'    Method      ...
             1e-6      {}       []        'off'      false ...
-            []};
+            []  false   100};
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
-    skipchecks,Stream,~,extra] = ...
+    skipchecks,Stream,DownsampleNode,MaxNodeSize,~,extra] = ...
     internal.stats.parseArgs(okargs,defaults,varargin{:});
 
 % For backwards compatibility. 'catidx' is a synonym for 'categorical'
@@ -705,7 +705,6 @@ if doclass
    if isimpurity
        impurity = zeros(M,1);
    end
-   ybar = [];
 end
 iscat = false(nvars,1); iscat(categ) = 1;
 nvarsplit = zeros(1,nvars);
@@ -730,14 +729,27 @@ nextunusednode = 2;
 
 % Keep processing nodes until done
 tnode = 1;
-ybar = 0;
 while(tnode < nextunusednode)
    % Record information about this node
    noderows = assignednode{tnode};
+   NodeSize = length(noderows);
+   
    Nt = length(noderows);
    Cnode = C(noderows,:);
    Wnode = W(noderows);
    Wt = sum(Wnode);
+   
+   % Do we want to downsample the node observations?   
+   if DownsampleNode && NodeSize > MaxNodeSize
+      NodeSample = randperm(NodeSize,MaxNodeSize);
+      Csub = Cnode(NodeSample,:);
+      Wsub = Wnode(NodeSample,:);
+   else
+      NodeSample = 1:length(noderows);
+      Csub = Cnode;
+      Wsub = Wnode;
+   end
+     
    if doclass
       % Compute class probabilities and related statistics for this node
       Njt = sum(Cnode,1);    % number in class j at node t
@@ -779,8 +791,16 @@ while(tnode < nextunusednode)
    % Consider splitting this node
    if (Nt>=minparent) && impure      % split only large impure nodes
       Xnode = X(noderows,:);
+      Xsub = Xnode(NodeSample,:);
       bestvar = 0;
       bestcut = 0;
+      
+      % Do we want to downsample the node observations?
+%      if DownsampleNode && length(noderows) > MaxNodeSize
+%              NodeSample = randperm(length(noderows),MaxNodeSize);
+%      else
+%          NodeSample = 1:length(noderows);
+%      end
 
       % Reduce the number of predictor vars as specified by nvarstosample
       varmap = 1:nvars;
@@ -802,15 +822,20 @@ while(tnode < nextunusednode)
          xcat = iscat(jvar);
 
          % Get rid of missing values and sort this variable
-         idxnan = isnan(Xnode(:,jvar));
+%          idxnan = isnan(Xnode(:,jvar));
+         idxnan = isnan(Xsub(:,jvar));
          idxnotnan = find(~idxnan);
          if isempty(idxnotnan)
              continue;
          end
-         [x,idxsort] = sort(Xnode(idxnotnan,jvar));
+         
+%          [x,idxsort] = sort(Xnode(idxnotnan,jvar));
+         [x,idxsort] = sort(Xsub(idxnotnan,jvar));
          idx = idxnotnan(idxsort);
-         c = Cnode(idx,:);
-         w = Wnode(idx);
+%          c = Cnode(idx,:);
+%          w = Wnode(idx);
+         c = Csub(idx,:);
+         w = Wsub(idx,:);
          
          % Downweight the impurity (for classification) or node mse (for
          % regression) by the fraction of observations that are being
@@ -821,14 +846,16 @@ while(tnode < nextunusednode)
              if isimpurity % twoing crit does not need to be offset
                  % crit0U = P(t0-tU)*i(t0)
                  % crit0  = P(t0)*i(t0)
-                 Pmis = sum(Wnode(idxnan));
+%                  Pmis = sum(Wnode(idxnan));
+                 Pmis = sum(Wsub(idxnan));
                  crit0U = impurity(tnode)*(nodeprob(tnode)-Pmis);
                  crit0 = impurity(tnode)*nodeprob(tnode);
              end
          else
              % crit0U = P(t0-tU)*mse(t0)
              % crit0  = P(t0)*mse(t0)
-             Pmis = sum(Wnode(idxnan));
+%              Pmis = sum(Wnode(idxnan));
+             Pmis = sum(Wsub(idxnan));
              crit0U = resuberr(tnode)*(nodeprob(tnode)-Pmis);
              crit0 = resuberr(tnode)*nodeprob(tnode);
          end

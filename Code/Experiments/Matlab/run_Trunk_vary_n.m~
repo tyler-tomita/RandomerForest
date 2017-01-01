@@ -44,7 +44,7 @@ for j = 1:length(ps)
             
             Params{i,j}.(Classifiers{c}).nTrees = 1000;
             Params{i,j}.(Classifiers{c}).Stratified = true;
-            Params{i,j}.(Classifiers{c}).NWorkers = 2;
+            Params{i,j}.(Classifiers{c}).NWorkers = 24;
             Params{i,j}.(Classifiers{c}).Rescale = 'off';
             Params{i,j}.(Classifiers{c}).mdiff = 'off';
             if strcmp(Classifiers{c},'rf')
@@ -109,10 +109,9 @@ for j = 1:length(ps)
                     Depth{i,j}.(Classifiers{c})(trial,:,k) = forest_depth(Forest{k})';
                     NN = NaN(1,Forest{k}.nTrees);
                     NS = NaN(1,Forest{k}.nTrees);
-                    Trees = Forest{k}.Tree;
                     parfor kk = 1:Forest{k}.nTrees
-                        NN(kk) = Trees{kk}.numnodes;
-                        NS(kk) = sum(Trees{kk}.isbranch);
+                        NN(kk) = Forest{k}.Tree{kk}.numnodes;
+                        NS(kk) = sum(Forest{k}.Tree{kk}.isbranch);
                     end
                     NumNodes{i,j}.(Classifiers{c})(trial,:,k) = NN;
                     NumSplitNodes{i,j}.(Classifiers{c})(trial,:,k) = NS;
@@ -123,7 +122,9 @@ for j = 1:length(ps)
                 % select best model for test predictions
                 BI = hp_optimize(OOBError{i,j}.(Classifiers{c})(trial,:,end),...
                     OOBAUC{i,j}.(Classifiers{c})(trial,:,end));
-                BestIdx{i,j}.(Classifiers{c})(trial) = BI(end);
+                if length(BI)>1
+                    BestIdx{i,j}.(Classifiers{c})(trial) = BI(end);
+                end
                 
                 TestError{i,j}.(Classifiers{c})(trial) = ...
                     misclassification_rate(TestPredictions(:,trial,BestIdx{i,j}.(Classifiers{c})(trial)),Ytest{j},false);
@@ -144,10 +145,9 @@ for j = 1:length(ps)
                 MR{i,j}.(Classifiers{c})(k) = mean(1 - sum(Phats.*ClassPosteriors{j})); % error estimate using the definition from the bias-variance decomposition
             end
             fprintf('%s complete\n',Classifiers{c})
-            save([rerfPath 'RandomerForest/Results/Trunk_vary_n_' Classifiers{c} '.mat'],'ps',...
+            save([rerfPath 'RandomerForest/Results/Trunk_vary_n.mat'],'ps',...
                 'ns','Params','OOBError','OOBAUC','TestError',...
-                'TrainTime','Depth','NumNodes','NumSplitNodes','Bias',...
-                'Variance','MR','BestIdx')
+                'TrainTime','Depth','NumNodes','NumSplitNodes')
         end
     end   
 end
