@@ -9,7 +9,7 @@ rng(1);
 
 load Trunk_vary_n_data
 
-Classifiers = {'rerf'};
+Classifiers = {'rr_rf'};
 
 OOBError = cell(length(ns{1}),length(ps));
 OOBAUC = cell(length(ns{1}),length(ps));
@@ -36,7 +36,7 @@ for j = 1:length(ps)
     
     mtrys_rf = mtrys(mtrys<=p);
       
-    for i = 1:length(ns{j})
+     for i = 1:length(ns{j})
         fprintf('n = %d\n',ns{j}(i))
 
         for c = 1:length(Classifiers)
@@ -54,7 +54,7 @@ for j = 1:length(ps)
                 Params{i,j}.(Classifiers{c}).ForestMethod = 'rerf';
                 Params{i,j}.(Classifiers{c}).RandomMatrix = 'binary';
                 Params{i,j}.(Classifiers{c}).d = mtrys;
-            elseif strcmp(Classifiers{c},'rr-rf')
+            elseif strcmp(Classifiers{c},'rr_rf')
                 Params{i,j}.(Classifiers{c}).ForestMethod = 'rf';   
                 Params{i,j}.(Classifiers{c}).Rotate = true;
                 Params{i,j}.(Classifiers{c}).d = mtrys_rf;
@@ -74,7 +74,7 @@ for j = 1:length(ps)
             BestIdx{i,j}.(Classifiers{c}) = NaN(ntrials,1);
 
             for trial = 1:ntrials
-                fprintf('Trial %d\n',trial)
+                 fprintf('Trial %d\n',trial)
 
                 % train classifier
                 poolobj = gcp('nocreate');
@@ -109,9 +109,10 @@ for j = 1:length(ps)
                     Depth{i,j}.(Classifiers{c})(trial,:,k) = forest_depth(Forest{k})';
                     NN = NaN(1,Forest{k}.nTrees);
                     NS = NaN(1,Forest{k}.nTrees);
+                    Trees = Forest{k}.Tree;
                     parfor kk = 1:Forest{k}.nTrees
-                        NN(kk) = Forest{k}.Tree{kk}.numnodes;
-                        NS(kk) = sum(Forest{k}.Tree{kk}.isbranch);
+                        NN(kk) = Trees{kk}.numnodes;
+                        NS(kk) = sum(Trees{kk}.isbranch);
                     end
                     NumNodes{i,j}.(Classifiers{c})(trial,:,k) = NN;
                     NumSplitNodes{i,j}.(Classifiers{c})(trial,:,k) = NS;
@@ -122,9 +123,7 @@ for j = 1:length(ps)
                 % select best model for test predictions
                 BI = hp_optimize(OOBError{i,j}.(Classifiers{c})(trial,:,end),...
                     OOBAUC{i,j}.(Classifiers{c})(trial,:,end));
-                if length(BI)>1
-                    BestIdx{i,j}.(Classifiers{c})(trial) = BI(end);
-                end
+                BestIdx{i,j}.(Classifiers{c})(trial) = BI(end);
                 
                 TestError{i,j}.(Classifiers{c})(trial) = ...
                     misclassification_rate(TestPredictions(:,trial,BestIdx{i,j}.(Classifiers{c})(trial)),Ytest{j},false);
@@ -145,9 +144,10 @@ for j = 1:length(ps)
                 MR{i,j}.(Classifiers{c})(k) = mean(1 - sum(Phats.*ClassPosteriors{j})); % error estimate using the definition from the bias-variance decomposition
             end
             fprintf('%s complete\n',Classifiers{c})
-            save([rerfPath 'RandomerForest/Results/Trunk_vary_n.mat'],'ps',...
+            save([rerfPath 'RandomerForest/Results/Trunk_vary_n_' Classifiers{c} '.mat'],'ps',...
                 'ns','Params','OOBError','OOBAUC','TestError',...
-                'TrainTime','Depth','NumNodes','NumSplitNodes')
+                'TrainTime','Depth','NumNodes','NumSplitNodes','Bias',...
+                'Variance','MR','BestIdx')
         end
     end   
 end

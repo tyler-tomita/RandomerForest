@@ -7,7 +7,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load Sparse_parity_vary_n_data
+load Trunk_vary_n_data
 
 Classifiers = {'rf'};
 
@@ -28,10 +28,15 @@ for j = 1:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
     
-    mtrys = ceil(p.^[1/4 1/2 3/4 1 2 3]); 
+    if p <= 100
+        mtrys = ceil(p.^[1/4 1/2 3/4 1 2]);
+    else
+        mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 20*p];
+    end
+    
     mtrys_rf = mtrys(mtrys<=p);
       
-    for i = 1:length(ns{j})
+     for i = 1:length(ns{j})
         fprintf('n = %d\n',ns{j}(i))
 
         for c = 1:length(Classifiers)
@@ -39,7 +44,7 @@ for j = 1:length(ps)
             
             Params{i,j}.(Classifiers{c}).nTrees = 1000;
             Params{i,j}.(Classifiers{c}).Stratified = true;
-            Params{i,j}.(Classifiers{c}).NWorkers = 2;
+            Params{i,j}.(Classifiers{c}).NWorkers = 24;
             Params{i,j}.(Classifiers{c}).Rescale = 'off';
             Params{i,j}.(Classifiers{c}).mdiff = 'off';
             if strcmp(Classifiers{c},'rf')
@@ -49,7 +54,7 @@ for j = 1:length(ps)
                 Params{i,j}.(Classifiers{c}).ForestMethod = 'rerf';
                 Params{i,j}.(Classifiers{c}).RandomMatrix = 'binary';
                 Params{i,j}.(Classifiers{c}).d = mtrys;
-            elseif strcmp(Classifiers{c},'rr-rf')
+            elseif strcmp(Classifiers{c},'rr_rf')
                 Params{i,j}.(Classifiers{c}).ForestMethod = 'rf';   
                 Params{i,j}.(Classifiers{c}).Rotate = true;
                 Params{i,j}.(Classifiers{c}).d = mtrys_rf;
@@ -69,7 +74,7 @@ for j = 1:length(ps)
             BestIdx{i,j}.(Classifiers{c}) = NaN(ntrials,1);
 
             for trial = 1:ntrials
-                fprintf('Trial %d\n',trial)
+                 fprintf('Trial %d\n',trial)
 
                 % train classifier
                 poolobj = gcp('nocreate');
@@ -139,7 +144,7 @@ for j = 1:length(ps)
                 MR{i,j}.(Classifiers{c})(k) = mean(1 - sum(Phats.*ClassPosteriors{j})); % error estimate using the definition from the bias-variance decomposition
             end
             fprintf('%s complete\n',Classifiers{c})
-            save([rerfPath 'RandomerForest/Results/Sparse_parity_vary_n_' Classifiers{c} '.mat'],'ps',...
+            save([rerfPath 'RandomerForest/Results/Trunk_vary_n_' Classifiers{c} '.mat'],'ps',...
                 'ns','Params','OOBError','OOBAUC','TestError',...
                 'TrainTime','Depth','NumNodes','NumSplitNodes','Bias',...
                 'Variance','MR','BestIdx')
