@@ -24,7 +24,7 @@ MR = cell(length(ns{1}),length(ps));
 BestIdx = cell(length(ns{1}),length(ps));
 Labels = {'0';'1'};
 
-for j = 1:length(ps)
+for j = 2:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
     
@@ -35,7 +35,13 @@ for j = 1:length(ps)
     end
     mtrys_rf = mtrys(mtrys<=p);
       
-    for i = 1:length(ns{j})
+    if j ==2
+        startIdx = 3;
+    else
+        startIdx = 1;
+    end
+      
+    for i = startIdx:length(ns{j})
         fprintf('n = %d\n',ns{j}(i))
 
         for c = 1:length(Classifiers)
