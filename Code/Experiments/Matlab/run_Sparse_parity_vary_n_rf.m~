@@ -7,9 +7,11 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
+% load Sparse_parity_vary_n_data
+
 ps = [3,10,20];
 ns = {[10,100,1000], [1000,5000,50000], [1000,10000,100000]};
-ntrials = 10;
+nTrials = 10;
 ntest = 10e3;
 
 Classifiers = {'rf'};
@@ -27,11 +29,12 @@ MR = cell(length(ns{1}),length(ps));
 BestIdx = cell(length(ns{1}),length(ps));
 Labels = {'0';'1'};
 
-for j = 1:length(ps)
+for j = 2:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
     
-    Xtest = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Sparse_parity/dat/Test/Sparse_parity_test_set_p%d.dat',p));
+%     Xtest = dlmread(sprintf('scratch/groups/jvogels3/tyler/R/Data/Sparse_parity/dat/Test/Sparse_parity_test_set_p%d.dat',p));
+    Xtest = dlmread(sprintf('~/Documents/R/Data/Sparse_parity/dat/Test/Sparse_parity_test_set_p%d.dat',p));
     Ytest = cellstr(num2str(Xtest(:,end)));
     Xtest(:,end) = [];
     
@@ -88,7 +91,8 @@ for j = 1:length(ps)
             for trial = 1:ntrials
                 fprintf('Trial %d\n',trial)
                 
-                Xtrain = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Sparse_parity/dat/Train/Sparse_parity_train_set_n%d_p%d_trial%d.dat',ns{j}(i),p,trial));
+%                 Xtrain = dlmread(sprintf('scratch/groups/jvogels3/tyler/R/Data/Sparse_parity/dat/Train/Sparse_parity_train_set_n%d_p%d_trial%d.dat',p,ns{j}(i),trial));
+                Xtest = dlmread(sprintf('~/Documents/R/Data/Sparse_parity/dat/Train/Sparse_parity_train_set_n%d_p%d_trial%d.dat',p,ns{j}(i),trial));
                 Ytrain = cellstr(num2str(Xtrain(:,end)));
                 Xtrain(:,end) = [];
 
@@ -131,7 +135,7 @@ for j = 1:length(ps)
                     end
                     NumNodes{i,j}.(Classifiers{c})(trial,:,k) = NN;
                     NumSplitNodes{i,j}.(Classifiers{c})(trial,:,k) = NS;
-                    Scores = rerf_classprob(Forest{k},Xtest,'last');
+                    Scores = rerf_classprob(Forest{k},Xtest{j},'last');
                     TestPredictions(:,trial,k) = predict_class(Scores,Forest{k}.classname);
                 end
                 
@@ -159,10 +163,10 @@ for j = 1:length(ps)
                 MR{i,j}.(Classifiers{c})(k) = mean(1 - sum(Phats.*ClassPosteriors{j})); % error estimate using the definition from the bias-variance decomposition
             end
             fprintf('%s complete\n',Classifiers{c})
-            save([rerfPath 'RandomerForest/Results/Sparse_parity_vary_n_' Classifiers{c} '.mat'],'ps',...
-                'ns','Params','OOBError','OOBAUC','TestError',...
-                'TrainTime','Depth','NumNodes','NumSplitNodes','Bias',...
-                'Variance','MR','BestIdx')
+%             save([rerfPath 'RandomerForest/Results/Sparse_parity_vary_n_' Classifiers{c} '.mat'],'ps',...
+%                 'ns','Params','OOBError','OOBAUC','TestError',...
+%                 'TrainTime','Depth','NumNodes','NumSplitNodes','Bias',...
+%                 'Variance','MR','BestIdx')
         end
     end   
 end

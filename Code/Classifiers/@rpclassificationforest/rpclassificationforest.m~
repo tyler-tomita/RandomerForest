@@ -480,25 +480,35 @@ classdef rpclassificationforest
                 if rotate
                     if d<=500
                         parfor i = 1:forest.nTrees
-                            Xtree = Xtest*RR(:,:,i);
+                            if rotate
+                                if d<=500
+                                    Xtree = Xtest*RR(:,:,i);
+                                else
+                                    Xtree = Xtest;
+                                    Xtree(:,RotVars(i,:)) = Xtree(:,RotVars(i,:))*RR(:,:,i);       
+                                end
+                            else
+                                Xtree = Xtest;
+                            end
                             score_i = rfclassprob(trees{i},Xtree);
                             scoremat(:,:,i) = score_i;
                         end
                     else
                         parfor i = 1:forest.nTrees
-                            Xtree = Xtest;
-                            Xtree(:,RotVars(i,:)) = Xtree(:,RotVars(i,:))*RR(:,:,i);       
+                            if rotate
+                                if d<=500
+                                    Xtree = Xtest*RR(:,:,i);
+                                else
+                                    Xtree = Xtest;
+                                    Xtree(:,RotVars(i,:)) = Xtree(:,RotVars(i,:))*RR(:,:,i);       
+                                end
+                            else
+                                Xtree = Xtest;
+                            end
                             score_i = rfclassprob(trees{i},Xtree);
                             scoremat(:,:,i) = score_i;
                         end
                     end
-                else
-                    parfor i = 1:forest.nTrees
-                        Xtree = Xtest;
-                        score_i = rfclassprob(trees{i},Xtree);
-                        scoremat(:,:,i) = score_i;
-                    end
-                end
             end
             if strcmp(treenum,'every')
                 scores = NaN(size(scoremat));
