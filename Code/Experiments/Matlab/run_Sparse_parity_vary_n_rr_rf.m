@@ -27,7 +27,7 @@ MR = cell(length(ns{1}),length(ps));
 BestIdx = cell(length(ns{1}),length(ps));
 Labels = {'0';'1'};
 
-for j = 1:length(ps)
+for j = 2:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
     
