@@ -54,9 +54,13 @@ for j = 2:length(ps)
         for c = 1:length(Classifiers)
             fprintf('%s start\n',Classifiers{c})
             
-            Params{i,j}.(Classifiers{c}).nTrees = 1000;
+            if ns{j}(i) <= 1000
+                Params{i,j}.(Classifiers{c}).nTrees = 1000;
+            else
+                Params{i,j}.(Classifiers{c}).nTrees = 500;
+            end
             Params{i,j}.(Classifiers{c}).Stratified = true;
-            Params{i,j}.(Classifiers{c}).NWorkers = 24;
+            Params{i,j}.(Classifiers{c}).NWorkers = 12;
             Params{i,j}.(Classifiers{c}).Rescale = 'off';
             Params{i,j}.(Classifiers{c}).mdiff = 'off';
             if strcmp(Classifiers{c},'rf')
@@ -101,6 +105,8 @@ for j = 2:length(ps)
 
                 [Forest,~,TrainTime{i,j}.(Classifiers{c})(trial,:)] = ...
                     RerF_train(Xtrain,Ytrain,Params{i,j}.(Classifiers{c}));
+                
+                fprintf('Training complete\n')
 
                 % compute oob auc, oob error, and tree stats
 
