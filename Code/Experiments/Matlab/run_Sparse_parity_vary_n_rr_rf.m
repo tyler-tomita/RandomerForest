@@ -34,6 +34,7 @@ for j = 1:length(ps)
     Xtest = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Sparse_parity/dat/Test/Sparse_parity_test_set_p%d.dat',p));
     Ytest = cellstr(num2str(Xtest(:,end)));
     Xtest(:,end) = [];
+    ClassPosteriors = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Sparse_parity/dat/Test/Sparse_parity_test_set_posteriors_p%d.dat',p));
     
     if p <= 5
         mtrys = [1:p p^2 p^3];
@@ -146,7 +147,7 @@ for j = 1:length(ps)
                 clear Forest
             end
             for k = 1:length(Params{i,j}.(Classifiers{c}).d)
-                Bias{i,j}.(Classifiers{c})(k) = classifier_bias(TestPredictions(:,:,k),ClassPosteriors{j});
+                Bias{i,j}.(Classifiers{c})(k) = classifier_bias(TestPredictions(:,:,k),ClassPosteriors);
                 Variance{i,j}.(Classifiers{c})(k) = classifier_variance(TestPredictions(:,:,k));
                 Phats = NaN(ntest,2);
                 for l = 1:2
@@ -156,7 +157,7 @@ for j = 1:length(ps)
                     end
                     Phats(:,l) = mean(isY,2);
                 end
-                MR{i,j}.(Classifiers{c})(k) = mean(1 - sum(Phats.*ClassPosteriors{j})); % error estimate using the definition from the bias-variance decomposition
+                MR{i,j}.(Classifiers{c})(k) = mean(1 - sum(Phats.*ClassPosteriors)); % error estimate using the definition from the bias-variance decomposition
             end
             fprintf('%s complete\n',Classifiers{c})
             save([rerfPath 'RandomerForest/Results/Sparse_parity_vary_n_' Classifiers{c} '.mat'],'ps',...
