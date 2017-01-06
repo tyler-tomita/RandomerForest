@@ -47,14 +47,14 @@ for j = 3:length(ps)
         end
     end
     
-%     Xtest = rand(ntest,p)*2 - 1;
-%     Ytest = mod(sum(Xtest(:,1:p_prime)>0,2),2);
-%     dlmwrite(sprintf('~/Documents/R/Data/Sparse_parity/dat/Test/Sparse_parity_test_set_p%d.dat',p),...
-%     [Xtest,Ytest],'delimiter','\t','precision','%0.15f');
-% 
-%     ClassPosteriors = zeros(ntest,2);
-%     ClassPosteriors(:,2) = cellfun(@str2double,Ytest);
-%     ClassPosteriors(:,1) = 1 - ClassPosteriors(:,2);
-%     dlmwrite(sprintf('~/Documents/R/Data/Sparse_parity/dat/Test/Sparse_parity_test_set_posteriors_p%d.dat',p),...
-%     ClassPosteriors,'delimiter','\t','precision','%0.15f');
+    Xtest = rand(ntest,p)*2 - 1;
+    Ytest = mod(sum(Xtest(:,1:p_prime)>0,2),2);
+    dlmwrite(sprintf('~/Documents/R/Data/Sparse_parity/dat/Test/Sparse_parity_test_set_p%d.dat',p),...
+    [Xtest,Ytest],'delimiter','\t','precision','%0.15f');
+
+    ClassPosteriors = zeros(ntest,2);
+    ClassPosteriors(:,2) = cellfun(@str2double,Ytest);
+    ClassPosteriors(:,1) = 1 - ClassPosteriors(:,2);
+    dlmwrite(sprintf('~/Documents/R/Data/Sparse_parity/dat/Test/Sparse_parity_test_set_posteriors_p%d.dat',p),...
+    ClassPosteriors,'delimiter','\t','precision','%0.15f');
 end

@@ -17,12 +17,6 @@ ntest = 10000;                  % number of test samples
 ntrials = 10;                   % number of replicate experiments
 Class = [0;1];
 
-Xtrain = cell(length(ns),length(ps));   % training data
-Ytrain = cell(length(ns),length(ps));   % training labels
-Xtest = cell(1,length(ps));             % test data
-Ytest = cell(1,length(ps));             % test labels
-ClassPosteriors = cell(1,length(ps));
-
 % generate data
 for j = 1:length(ps)
     p = ps(j);
@@ -36,27 +30,32 @@ for j = 1:length(ps)
     for i = 1:length(ns{j})
         ntrain = ns{j}(i);
         fprintf('n = %d\n',ntrain)
-        Xtrain{i,j} = zeros(ntrain,p,ntrials);
-        Ytrain{i,j} = cell(ntrain,ntrials);
         for trial = 1:ntrials
             if ntrain == 10
                 go = true;
                 while go
-                    [Xtrain{i,j}(:,:,trial),idx] = random(obj,ntrain);
-                    Ytrain{i,j}(:,trial) = cellstr(num2str(Class(idx)));
-                    if mean(strcmp(Ytrain{i,j}(:,trial),'1')) == 0.5
+                    [Xtrain,idx] = random(obj,ntrain);
+                    Ytrain = Class(idx);
+                    if mean(Ytrain==1) == 0.5
                         go = false;
                     end
                 end
             else
-                [Xtrain{i,j}(:,:,trial),idx] = random(obj,ntrain);
-                Ytrain{i,j}(:,trial) = cellstr(num2str(Class(idx)));
+                [Xtrain,idx] = random(obj,ntrain);
+                Ytrain = cellstr(num2str(Class(idx)));
             end
+            dlmwrite(sprintf('~/Documents/R/Data/Trunk/dat/Train/Trunk_train_set_n%d_p%d_trial%d.dat',ntrain,p,trial),...
+                [Xtrain,Ytrain],'delimiter','\t','precision','%0.15f');
         end
     end
-    [Xtest{j},idx] = random(obj,ntest);
-    Ytest{j} = cellstr(num2str(Class(idx)));
-    ClassPosteriors{j} = posterior(obj,Xtest{j});
+    [Xtest,idx] = random(obj,ntest);
+    Ytest = Class(idx);
+    dlmwrite(sprintf('~/Documents/R/Data/Trunk/dat/Test/Trunk_test_set_p%d.dat',p),...
+    [Xtest,Ytest],'delimiter','\t','precision','%0.15f');
+    
+    ClassPosteriors = posterior(obj,Xtest);
+    dlmwrite(sprintf('~/Documents/R/Data/Trunk/dat/Test/Trunk_test_set_posteriors_p%d.dat',p),...
+    ClassPosteriors,'delimiter','\t','precision','%0.15f');
 end
 
 save('~/Documents/MATLAB/Data/Trunk_vary_n_data.mat','Xtrain','Ytrain',...
