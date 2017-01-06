@@ -8,7 +8,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 rng(1);
 
 ps = [3,10,20];
-ns = {[10,100,1000], [1000,5000,50000], [1000,10000,100000]};
+ns = {[10,100,1000], [100,1000,10000], [1000,5000,10000]};
 ntrials = 10;
 ntest = 10e3;
 
@@ -27,7 +27,7 @@ MR = cell(length(ns{1}),length(ps));
 BestIdx = cell(length(ns{1}),length(ps));
 Labels = {'0';'1'};
 
-for j = 1:length(ps)
+for j = 2:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
     

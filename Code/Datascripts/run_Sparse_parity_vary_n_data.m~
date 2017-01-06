@@ -11,13 +11,19 @@ rng(1);
 
 ps = [3,10,20];                 % numbers of dimensions
 ns{1} = [10,100,1000];          % numbers of train samples for ps(1)
-ns{2} = [100,1000,10000];       % numbers of train samples for ps(2)
-ns{3} = [1000,5000,10000];     % numbers of train samples for ps(3)
+ns{2} = [100,1000,10000];      % numbers of train samples for ps(2)
+ns{3} = [1000,10000,20000];    % numbers of train samples for ps(3)
 ntest = 10000;                  % numbers of test samples
 ntrials = 10;                   % number of replicate experiments
 
+Xtrain = cell(length(ns),length(ps));   % training data
+Ytrain = cell(length(ns),length(ps));   % training labels
+Xtest = cell(1,length(ps));             % test data
+Ytest = cell(1,length(ps));             % test labels
+ClassPosteriors = cell(1,length(ps));
+
 % generate data
-for j = 3:length(ps)
+for j = 1:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
     p_prime = min(3,p);
@@ -47,14 +53,16 @@ for j = 3:length(ps)
         end
     end
     
-%     Xtest = rand(ntest,p)*2 - 1;
-%     Ytest = mod(sum(Xtest(:,1:p_prime)>0,2),2);
-%     dlmwrite(sprintf('~/Documents/R/Data/Sparse_parity/dat/Test/Sparse_parity_test_set_p%d.dat',p),...
-%     [Xtest,Ytest],'delimiter','\t','precision','%0.15f');
-% 
-%     ClassPosteriors = zeros(ntest,2);
-%     ClassPosteriors(:,2) = cellfun(@str2double,Ytest);
-%     ClassPosteriors(:,1) = 1 - ClassPosteriors(:,2);
-%     dlmwrite(sprintf('~/Documents/R/Data/Sparse_parity/dat/Test/Sparse_parity_test_set_posteriors_p%d.dat',p),...
-%     ClassPosteriors,'delimiter','\t','precision','%0.15f');
+    Xtest = rand(ntest,p)*2 - 1;
+    Ytest = mod(sum(Xtest(:,1:p_prime)>0,2),2);
+    dlmwrite(sprintf('~/Documents/R/Data/Sparse_parity/dat/Test/Sparse_parity_test_set_p%d.dat',p),...
+    [Xtest{j},cellfun(@str2num,Ytest{j})],...
+    'delimiter','\t','precision','%0.15f');
+
+    ClassPosteriors = zeros(ntest,2);
+    ClassPosteriors(:,2) = cellfun(@str2double,Ytest);
+    ClassPosteriors(:,1) = 1 - ClassPosteriors(:,2);
 end
+
+save('~/Documents/MATLAB/Data/Sparse_parity_vary_n_data.mat','Xtrain','Ytrain',...
+    'Xtest','Ytest','ClassPosteriors','ns','ntest','ps','ntrials','-v7.3')

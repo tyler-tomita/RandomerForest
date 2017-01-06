@@ -162,7 +162,7 @@ splitcriterion = '';
             for node = leafnodes
                 classprob(noderows{node},:) = repmat(Tree.classprob(node,:),length(noderows{node}),1);            
             end
-        end     %function rpclassprob
+        end     %function rfclassprob
         
         function Depth = tree_depth(Tree)
             Depth = 1;

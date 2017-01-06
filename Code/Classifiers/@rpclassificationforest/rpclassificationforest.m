@@ -598,8 +598,9 @@ classdef rpclassificationforest
         
         function Depth = forest_depth(forest)
             Depth = NaN(forest.nTrees,1);
+            trees = forest.Tree;
             parfor i = 1:forest.nTrees
-                Depth(i) = tree_depth(forest.Tree{i});
+                Depth(i) = tree_depth(trees{i});
             end
         end % forest_depth
     end     %methods
