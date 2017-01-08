@@ -25,6 +25,7 @@ Bias = cell(length(ns{1}),length(ps));
 Variance = cell(length(ns{1}),length(ps));
 MR = cell(length(ns{1}),length(ps));
 BestIdx = cell(length(ns{1}),length(ps));
+Noise = zeros(1,length(ps));
 Labels = {'0';'1'};
 
 for j = 1:length(ps)
@@ -35,6 +36,7 @@ for j = 1:length(ps)
     Ytest = cellstr(num2str(Xtest(:,end)));
     Xtest(:,end) = [];
     ClassPosteriors = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Trunk/dat/Test/Trunk_test_set_posteriors_p%d.dat',p));
+    Noise(j) = 0.5*(1 - mean(sum(ClassPosteriors.^2,2)));
     
     if p <= 10
         mtrys = ceil(p.^[1/4 1/2 3/4 1 2]);
