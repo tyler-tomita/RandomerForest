@@ -36,7 +36,7 @@ for j = 1:length(ps)
     Ytest = cellstr(num2str(Xtest(:,end)));
     Xtest(:,end) = [];
     ClassPosteriors = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Trunk/dat/Test/Trunk_test_set_posteriors_p%d.dat',p));
-    Noise(j) = 0.5*(1 - mean(sum(ClassPosteriors.^2,2)));
+    Noise(j) = 0.5*(1 - mean(sum(ClassPosteriors.^2,2)));   % noise from bias-variance-noise decomposition for 0-1 loss
     
     if p <= 10
         mtrys = ceil(p.^[1/4 1/2 3/4 1 2]);
@@ -151,21 +151,12 @@ for j = 1:length(ps)
             for k = 1:length(Params{i,j}.(Classifiers{c}).d)
                 Bias{i,j}.(Classifiers{c})(k) = classifier_bias(TestPredictions(:,:,k),ClassPosteriors);
                 Variance{i,j}.(Classifiers{c})(k) = classifier_variance(TestPredictions(:,:,k));
-                Phats = NaN(ntest,2);
-                for l = 1:2
-                    isY = NaN(ntest,ntrials);
-                    for trial = 1:ntrials
-                        isY(:,trial) = strcmp(TestPredictions(:,trial,k),Labels{l});
-                    end
-                    Phats(:,l) = mean(isY,2);
-                end
-                MR{i,j}.(Classifiers{c})(k) = mean(1 - sum(Phats.*ClassPosteriors)); % error estimate using the definition from the bias-variance decomposition
             end
             fprintf('%s complete\n',Classifiers{c})
             save([rerfPath 'RandomerForest/Results/Trunk_vary_n_' Classifiers{c} '.mat'],'ps',...
                 'ns','Params','OOBError','OOBAUC','TestError',...
                 'TrainTime','Depth','NumNodes','NumSplitNodes','Bias',...
-                'Variance','MR','BestIdx')
+                'Variance','Noise','BestIdx')
         end
     end   
 end

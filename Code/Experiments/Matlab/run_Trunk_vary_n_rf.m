@@ -36,7 +36,7 @@ for j = 1:length(ps)
     Ytest = cellstr(num2str(Xtest(:,end)));
     Xtest(:,end) = [];
     ClassPosteriors = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Trunk/dat/Test/Trunk_test_set_posteriors_p%d.dat',p));
-    Noise(j) = 0.5*(1 - mean(sum(ClassPosteriors.^2,2)));
+    Noise(j) = 0.5*(1 - mean(sum(ClassPosteriors.^2,2)));   % noise from bias-variance-noise decomposition for 0-1 loss
     
     if p <= 10
         mtrys = ceil(p.^[1/4 1/2 3/4 1 2]);
@@ -156,7 +156,7 @@ for j = 1:length(ps)
             save([rerfPath 'RandomerForest/Results/Trunk_vary_n_' Classifiers{c} '.mat'],'ps',...
                 'ns','Params','OOBError','OOBAUC','TestError',...
                 'TrainTime','Depth','NumNodes','NumSplitNodes','Bias',...
-                'Variance','MR','BestIdx')
+                'Variance','Noise','BestIdx')
         end
     end   
 end
