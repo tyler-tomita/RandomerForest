@@ -36,7 +36,7 @@ for j = 1:length(ps)
     Xtest(:,end) = [];
     ClassPosteriors = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Trunk/dat/Test/Trunk_test_set_posteriors_p%d.dat',p));
     
-    if p <= 100
+    if p <= 10
         mtrys = ceil(p.^[1/4 1/2 3/4 1 2]);
     else
         mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 20*p];
