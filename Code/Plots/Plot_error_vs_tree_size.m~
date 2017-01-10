@@ -93,7 +93,7 @@ for j = 1:np
     for c = 1:length(Classifiers)
         E = ErrorMatrix(:,j,c);
         D = DepthMatrix(:,j,c);
-        plot(D,E,Markers{j},'MarkerSize',MarkerSize,'MarkerEdgeColor',...
+        plot(E,D,Markers{j},'MarkerSize',MarkerSize,'MarkerEdgeColor',...
             Colors.(Classifiers{c}))
         hold on
     end
@@ -117,7 +117,7 @@ ax(1).Box = 'off';
 clear ErrorMatrix DepthMatrix
 %% Plot Sparse parity error vs tree size
 
-load ~/Trunk_vary_n
+load ~/Sparse_parity_vary_n
 
 [nn,np] = size(TestError);
 
@@ -145,10 +145,10 @@ for c = 1:length(Classifiers)
                     DepthMatrix(i,j,c) = NaN;
                 end
             else
-                fh = fopen(sprintf('~/Documents/R/Results/dat/Trunk_vary_n_testError_n%d_p%d.dat',n,p));
+                fh = fopen(sprintf('~/Documents/R/Results/dat/Sparse_parity_vary_n_testError_n%d_p%d.dat',n,p));
                 e = textscan(fh,'%f');
                 fclose(fh);
-                fh = fopen(sprintf('~/Documents/R/Results/dat/Trunk_vary_n_depth_n%d_p%d.dat',n,p));
+                fh = fopen(sprintf('~/Documents/R/Results/dat/Sparse_parity_vary_n_depth_n%d_p%d.dat',n,p));
                 D = textscan(fh,'%f');
                 fclose(fh);
                 if ~isempty(e{1})
@@ -163,13 +163,13 @@ for c = 1:length(Classifiers)
     end
 end
 
-ax(2) = axes;
+ax(1) = axes;
 
 for j = 1:np
     for c = 1:length(Classifiers)
         E = ErrorMatrix(:,j,c);
         D = DepthMatrix(:,j,c);
-        plot(D,E,Markers{j},'MarkerSize',MarkerSize,'MarkerEdgeColor',...
+        plot(E,D,Markers{j},'MarkerSize',MarkerSize,'MarkerEdgeColor',...
             Colors.(Classifiers{c}))
         hold on
     end
@@ -177,17 +177,19 @@ end
 
 xlabel('Mean Tree Depth')
 ylabel('Error Rate')
-title('Trunk')
+title('Sparse Parity')
     
-ax(2).LineWidth = LineWidth;
-ax(2).FontUnits = 'inches';
-ax(2).FontSize = FontSize;
-ax(2).Units = 'inches';
-ax(2).Position = [axLeft(2) axBottom(2) axWidth axHeight];
-ax(2).Box = 'off';
+ax(1).LineWidth = LineWidth;
+ax(1).FontUnits = 'inches';
+ax(1).FontSize = FontSize;
+ax(1).Units = 'inches';
+ax(1).Position = [axLeft(1) axBottom(1) axWidth axHeight];
+ax(1).Box = 'off';
 % ax(1).XLim = [ns{j}(1) ns{j}(end)];
 % ax(1).XScale = 'log';
 % ax(1).XTick = ns{j};
 % ax(1).YLim = [0.05 0.5];
 
-save_fig(gcf,[frcPath 'RandomerForest/Figures/Sparse_parity_error_vs_tree_size'])
+clear ErrorMatrix DepthMatrix
+
+save_fig(gcf,[frcPath 'RandomerForest/Figures/Sparse_parity_tra'])
