@@ -506,6 +506,8 @@ classdef rpclassificationforest
                     score_i = mean(scoremat(:,:,1:i),3);
                     scores(:,:,i) = score_i;
                 end
+            elseif strcmp(treenum,'individual')
+                scores = scoremat;
             else
                 scores = mean(scoremat,3);
             end
@@ -603,5 +605,82 @@ classdef rpclassificationforest
                 Depth(i) = tree_depth(trees{i});
             end
         end % forest_depth
+        
+        function tree_strength(forest,Xtest,Ytest,varargin)
+            
+            if nargin == 4;
+                Xtrain = varargin{1};
+                if ~isa(Xtrain,'double')
+                    Xtrain = double(Xtrain);
+                end
+            end
+            
+            if ~strcmp(forest.Rescale,'off')
+                if nargin < 4
+                    error('Training data is required as third input argument for predicting')
+                end
+                Xtest = rescale(Xtrain,Xtest,forest.Rescale);
+            end
+            
+            %Convert to double if not already
+            if ~isa(Xtest,'double')
+                Xtest = double(Xtest);
+            end
+            
+            [nrows,d] = size(Xtest);
+            
+            Labels = forest.classname;
+            nclasses = length(Labels);
+            scoremat = NaN(nrows,nclasses,forest.nTrees);
+            trees = forest.Tree;
+            rotate = ~isempty(forest.rotmat);
+            RR = forest.rotmat;
+            RotVars = forest.RotVars;
+            RM = forest.rpm;
+            if ~strcmp(forest.ForestMethod,'rf') && ~strcmp(forest.ForestMethod,'rerf2')
+                parfor i = 1:forest.nTrees
+                    score_i = rpclassprob(trees{i},Xtest)
+                    scoremat(:,:,i) = score_i;
+                end
+            elseif strcmp(forest.ForestMethod,'rerf2')
+                parfor i = 1:forest.nTrees
+                    Xtree = Xtest*RM{i};
+                    score_i = rfclassprob(trees{i},Xtree);
+                    scoremat(:,:,i) = score_i;
+                end
+            else
+                if rotate
+                    if d<=500
+                        parfor i = 1:forest.nTrees
+                            Xtree = Xtest*RR(:,:,i);
+                            score_i = rfclassprob(trees{i},Xtree);
+                            scoremat(:,:,i) = score_i;
+                        end
+                    else
+                        parfor i = 1:forest.nTrees
+                            Xtree = Xtest;
+                            Xtree(:,RotVars(i,:)) = Xtree(:,RotVars(i,:))*RR(:,:,i);       
+                            score_i = rfclassprob(trees{i},Xtree);
+                            scoremat(:,:,i) = score_i;
+                        end
+                    end
+                else
+                    parfor i = 1:forest.nTrees
+                        Xtree = Xtest;
+                        score_i = rfclassprob(trees{i},Xtree);
+                        scoremat(:,:,i) = score_i;
+                    end
+                end
+            end
+            if strcmp(treenum,'every')
+                scores = NaN(size(scoremat));
+                parfor i = 1:forest.nTrees
+                    score_i = mean(scoremat(:,:,1:i),3);
+                    scores(:,:,i) = score_i;
+                end
+            else
+                scores = mean(scoremat,3);
+            end
+        end     %tree_strength
     end     %methods
 end     %classdef

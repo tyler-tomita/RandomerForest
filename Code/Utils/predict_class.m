@@ -1,12 +1,18 @@
 function Predictions = predict(Scores,Labels)
-% PREDICT predicts class labels given Scores. Scores is an n-by-n_classes
+% PREDICT predicts class labels given Scores. Scores is an n-by-nClasses
 % matrix of scores ranging from 0 to 1. Labels is an array of length 
-% n_classes specifying the set of unique class labels. Values of Scores in 
+% nClasses specifying the set of unique class labels. Values of Scores in 
 % the jth column represent the strength of belief that an observation is 
 % associated with the class label specified by Labels(j).
 
-[~,PredictionIdx] = max(Scores,[],2);
+n = size(Scores,1);
 
-Predictions = Labels(PredictionIdx);
+nanIdx = isnan(sum(Scores,2));
+
+[~,PredictionIdx] = max(Scores(~nanIdx,:),[],2);
+
+Predictions = cell(n,1);
+
+Predictions(~nanIdx) = Labels(PredictionIdx);
 
 end

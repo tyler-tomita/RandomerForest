@@ -22,7 +22,7 @@ for j = 1:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
     p_idx = 1:p;
-    mu1 = 1./sqrt(p_idx);
+    mu1 = 1./p_idx;
     mu0 = -1*mu1;
     Mu = cat(1,mu0,mu1);
     Sigma = eye(p);
@@ -44,19 +44,16 @@ for j = 1:length(ps)
                 [Xtrain,idx] = random(obj,ntrain);
                 Ytrain = Class(idx);
             end
-            dlmwrite(sprintf('~/Documents/R/Data/Trunk/dat/Train/Trunk_train_set_n%d_p%d_trial%d.dat',ntrain,p,trial),...
+            dlmwrite(sprintf('~/Documents/R/Data/Trunk/dat/Train/Trunk_order_1_decay_train_set_n%d_p%d_trial%d.dat',ntrain,p,trial),...
                 [Xtrain,Ytrain],'delimiter','\t','precision','%0.15f');
         end
     end
     [Xtest,idx] = random(obj,ntest);
     Ytest = Class(idx);
-    dlmwrite(sprintf('~/Documents/R/Data/Trunk/dat/Test/Trunk_test_set_p%d.dat',p),...
+    dlmwrite(sprintf('~/Documents/R/Data/Trunk/dat/Test/Trunk_order_1_decay_test_set_p%d.dat',p),...
     [Xtest,Ytest],'delimiter','\t','precision','%0.15f');
     
     ClassPosteriors = posterior(obj,Xtest);
-    dlmwrite(sprintf('~/Documents/R/Data/Trunk/dat/Test/Trunk_test_set_posteriors_p%d.dat',p),...
+    dlmwrite(sprintf('~/Documents/R/Data/Trunk/dat/Test/Trunk_order_1_decay_test_set_posteriors_p%d.dat',p),...
     ClassPosteriors,'delimiter','\t','precision','%0.15f');
 end
-
-save('~/Documents/MATLAB/Data/Trunk_vary_n_data.mat','Xtrain','Ytrain',...
-    'Xtest','Ytest','ClassPosteriors','ns','ntest','ps','ntrials','-v7.3')
