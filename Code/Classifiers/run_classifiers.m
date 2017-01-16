@@ -77,20 +77,32 @@ function run_classifiers(TrainFile,TestFile,OutFile,Classifiers)
             nClasses = length(Labels);
             Scores = rerf_oob_classprob(Forest{k},...
                 Xtrain,'every');
-            for t = 1:Forest{k}.nTrees
-                Predictions = predict_class(Scores(:,:,t),Labels);
-                OOBError.(Classifiers{c})(t,k) = ...
-                    misclassification_rate(Predictions,Ytrain,...
-                false);
-                if nClasses > 2
+            OE = zeros(Forest{k}.nTrees,1);
+            OA = zeros(Forest{k}.nTrees,1);
+            if nClasses > 2
+                parfor t = 1:Forest{k}.nTrees
+                    Scores_t = Scores(:,:,t);
+                    Predictions = predict_class(Scores_t,Labels);
+                    OE(t) = ...
+                        misclassification_rate(Predictions,Ytrain,...
+                    false);
                     Yb = binarize_labels(Ytrain,Labels);
-                    [~,~,~,OOBAUC.(Classifiers{c})(t,k)] = ... 
-                        perfcurve(Yb(:),Scores((t-1)*ntrain*nClasses+(1:ntrain*nClasses)),'1');
-                else
-                    [~,~,~,OOBAUC.(Classifiers{c})(t,k)] = ...
-                        perfcurve(Ytrain,Scores(:,2,t),'1');
+                    [~,~,~,OA(t)] = ... 
+                        perfcurve(Yb(:),Scores_t(:),'1');
+                end
+            else
+                PositiveScores = Scores(:,2,:);
+                parfor t = 1:Forest{k}.nTrees
+                    Predictions = predict_class(Scores(:,:,t),Labels);
+                    OE(t) = ...
+                        misclassification_rate(Predictions,Ytrain,...
+                    false);
+                    [~,~,~,OA(t)] = ...
+                        perfcurve(Ytrain,PositiveScores(:,1,t),'1');
                 end
             end
+            OOBError.(Classifiers{c})(:,k) = OE;
+            OOBAUC.(Classifiers{c})(:,k) = OA;
             Depth.(Classifiers{c})(:,k) = forest_depth(Forest{k})';
             NN = NaN(Forest{k}.nTrees,1);
             NS = NaN(Forest{k}.nTrees,1);
