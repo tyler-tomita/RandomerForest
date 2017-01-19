@@ -3,7 +3,7 @@ close all
 clc
 
 fpath = mfilename('fullpath');
-frcPath = fpath(1:strfind(fpath,'RandomerForest')-1);
+rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 load('purple2green')
 Colors.rf = ColorMap(1,:);
@@ -181,4 +181,4 @@ for j = 1:np
     end
 end
 
-save_fig(gcf,[frcPath 'RandomerForest/Figures/Simulations_error_vs_n'])
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Simulations_error_vs_n'])
