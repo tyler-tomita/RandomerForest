@@ -139,8 +139,6 @@ function run_classifiers(TrainFile,TestFile,OutFile,Classifiers)
         
         ConfusionMatrix.(Classifiers{c}) = confusion_matrix(TestPredictions,Ytest,Labels);
         
-        size(ConfusionMatrix.(Classifiers{c}))
-        nClasses
         TestError.(Classifiers{c}) = ...
             sum(ConfusionMatrix.(Classifiers{c})(~logical(eye(nClasses))))/ntest;
         
