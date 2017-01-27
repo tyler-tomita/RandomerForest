@@ -5,17 +5,15 @@ close all
 clc
 
 fpath = mfilename('fullpath');
-frcPath = fpath(1:strfind(fpath,'RandomerForest')-1);
+rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 load('purple2green')
 Colors.rf = ColorMap(1,:);
 Colors.rfr = ColorMap(1,:);
-Colors.rerf = ColorMap(3,:);
-Colors.rerfr = ColorMap(3,:);
 Colors.frc= ColorMap(9,:);
 Colors.frcr = ColorMap(9,:);
-Colors.rr_rf = ColorMap(11,:);
-Colors.rr_rfr = ColorMap(11,:);
+Colors.rr_rf = ColorMap(3,:);
+Colors.rr_rfr = ColorMap(3,:);
 % Colors.rf = 'c';
 % Colors.rfr = 'c';
 % Colors.rerf = 'b';
@@ -72,7 +70,7 @@ ntrials = size(TestError{1}.rf.Untransformed,1);
 
 for i = 1:length(dims)
     Classifiers = fieldnames(TestError{i});
-    Classifiers(~ismember(Classifiers,{'rf','rfr''rerf','rerfr','frc','frcr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'rf','rfr','frc','frcr','rr_rf','rr_rfr'})) = [];
     for j = 1:length(Classifiers)
         Transformations = fieldnames(TestError{i}.(Classifiers{j}));
         for k = 1:length(Transformations)
@@ -142,7 +140,7 @@ ntrials = size(TestError{1}.rf.Untransformed,1);
 
 for i = 1:length(dims)
     Classifiers = fieldnames(TestError{i});
-    Classifiers(~ismember(Classifiers,{'rf','rfr','rerf','rerfr','frc','frcr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'rf','rfr','frc','frcr','rr_rf','rr_rfr'})) = [];
     for j = 1:length(Classifiers)
         Transformations = fieldnames(TestError{i}.(Classifiers{j}));
         for k = 1:length(Transformations)
@@ -184,15 +182,15 @@ for i = 1:length(Transformations)
     ax(2*i).YLim = [0.01 .15];
     
     if i==length(Transformations)
-        [lh,objh] = legend('RF','RF(r)','RerF','RerF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
+        [lh,objh] = legend('RF','RF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
         lh.Box = 'off';
         lh.FontSize = 10;
         lh.Units = 'inches';
         lh.Position = [legLeft legBottom legWidth legHeight];
-        for j = 9:length(objh)
+        for j = length(objh)/2+1:length(objh)
             objh(j).Children.Children(2).XData = [(objh(j).Children.Children(2).XData(2)-objh(j).Children.Children(2).XData(1))*.75+objh(j).Children.Children(2).XData(1),objh(j).Children.Children(2).XData(2)];
         end
     end
 end
 
-save_fig(gcf,[frcPath 'RandomerForest/Figures/Fig3_transformations_with_RerF'])
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/ROFLMAO_fig4_transformations_2017_01_23'],{'fig','pdf','png'})

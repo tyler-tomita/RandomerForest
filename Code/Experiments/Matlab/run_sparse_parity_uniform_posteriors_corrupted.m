@@ -12,11 +12,11 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-load('Sparse_parity_data.mat')
+load('~/Documents/MATLAB/Data/Sparse_parity_data.mat')
 
 Classifiers = {'rf' 'frc' 'frcr' 'rr_rf' 'rr_rfr'};
 
-Transformations = {'Affine'};
+Transformations = {'Outlier'};
 
 ntrials = 10;
 
@@ -36,8 +36,14 @@ for i = 3:3
     
     Zpost = -0.5*ones(npoints^2,p-2);
       
-    mtrys = p^2;
-    mtrys_rf = p;
+    if p <= 5
+        mtrys = [1:p ceil(p.^[1.5 2])];
+    elseif p > 5 && p <= 20
+        mtrys = ceil(p.^[1/4 1/2 3/4 1 1.5 2]);
+    else
+        mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 5*p 10*p];
+    end
+    mtrys_rf = mtrys(mtrys<=p);
 
     for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
@@ -151,7 +157,7 @@ for i = 3:3
                         'last',Xtrain(i).(Transformations{t})(:,:,trial));
                 end
                 
-                save([rerfPath 'RandomerForest/Results/Sparse_parity_uniform_transformations_posteriors_affine.mat'],'ps',...
+                save([rerfPath 'RandomerForest/Results/Sparse_parity_uniform_transformations_posteriors_corrupted.mat'],'ps',...
                     'Phats','Xpost','Ypost','Zpost')
             end
         end

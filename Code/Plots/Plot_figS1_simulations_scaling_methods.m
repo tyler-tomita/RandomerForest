@@ -5,15 +5,21 @@ close all
 clc
 
 fpath = mfilename('fullpath');
-frcPath = fpath(1:strfind(fpath,'RandomerForest')-1);
+rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
-C = [0 1 1;0 1 0;1 0 1;1 0 0;0 0 0;1 .5 0];
-Colors.frcr = C(1,:);
-Colors.frcn = C(2,:);
-Colors.frcz = C(3,:);
-Colors.rr_rfr = C(4,:);
-Colors.rr_rfn = C(5,:);
-Colors.rr_rfz = C(6,:);
+load('purple2green')
+Colors.frcr = ColorMap(9,:);
+Colors.frcn = ColorMap(9,:);
+Colors.frcz = ColorMap(9,:);
+Colors.rr_rfr = ColorMap(3,:);
+Colors.rr_rfn = ColorMap(3,:);
+Colors.rr_rfz = ColorMap(3,:);
+LineStyles.frcr = '-';
+LineStyles.frcn = ':';
+LineStyles.frcz = '--';
+LineStyles.rr_rfr = '-';
+LineStyles.rr_rfn = ':';
+LineStyles.rr_rfz = '--';
 LineWidth = 2;
 FontSize = .2;
 axWidth = 1.3;
@@ -68,7 +74,8 @@ for i = 1:length(Transformations)
     for j = 1:length(Classifiers)
         errorbar(dims,mean(ErrorMatrix.(Classifiers{j}).(Transformations{i})),...
             std(ErrorMatrix.(Classifiers{j}).(Transformations{i}))/sqrt(ntrials),...
-            'LineWidth',LineWidth,'Color',Colors.(Classifiers{j}));
+            'LineWidth',LineWidth,'Color',Colors.(Classifiers{j}),...
+            'LineStyle',LineStyles.(Classifiers{j}));
         hold on
     end
     if i==1
@@ -134,7 +141,8 @@ for i = 1:length(Transformations)
     for j = 1:length(Classifiers)
         errorbar(dims,mean(ErrorMatrix.(Classifiers{j}).(Transformations{i})),...
             std(ErrorMatrix.(Classifiers{j}).(Transformations{i}))/sqrt(ntrials),...
-            'LineWidth',LineWidth,'Color',Colors.(Classifiers{j}));
+            'LineWidth',LineWidth,'Color',Colors.(Classifiers{j}),...
+            'LineStyle',LineStyles.(Classifiers{j}));
         hold on
     end
     
@@ -165,4 +173,4 @@ for i = 1:length(Transformations)
     end
 end
 
-save_fig(gcf,[frcPath 'RandomerForest/Figures/FigS1_simulations_scaling_methods'])
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/ROFLMAO_figS1_simulations_scaling_methods_2017_01_23'],{'fig','pdf','png'})

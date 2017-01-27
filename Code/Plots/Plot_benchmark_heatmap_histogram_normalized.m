@@ -45,7 +45,7 @@ load Benchmark_plus_20_percent_outliers_data
 for i = 1:length(Transformations)
     load(['~/Benchmarks/Results/Benchmark_' lower(Transformations{i}) '.mat'])
     Classifiers = fieldnames(TestError{1});
-    Classifiers(~ismember(Classifiers,{'rf','rerf','rerfr','frc','frcr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'rf','rerf','frc','frcr','rr_rf','rr_rfr'})) = [];
 
     NotEmpty = find(~cellfun(@isempty,TestError));
     

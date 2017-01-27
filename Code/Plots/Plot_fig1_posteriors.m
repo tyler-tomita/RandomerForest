@@ -8,24 +8,20 @@ fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 load('purple2green')
-ColorMap = interpolate_colormap(ColorMap(round(size(ColorMap,1)/2):end,:),64,false);
+ColorMap2 = interpolate_colormap(ColorMap,64,true);
 
-Colors.rf = 'c';
-Colors.rfr = 'c';
-Colors.rerf = 'g';
-Colors.rerfr = 'g';
-Colors.rerf2 = 'b';
-Colors.rerf2r = 'b';
-Colors.frc = 'm';
-Colors.frcr = 'm';
+Colors.rf = ColorMap(1,:);
+Colors.rfr = ColorMap(1,:);
+Colors.frc= ColorMap(9,:);
+Colors.frcr = ColorMap(9,:);
+Colors.rr_rf = ColorMap(3,:);
+Colors.rr_rfr = ColorMap(3,:);
 LineStyles.rf = '-';
 LineStyles.rfr = ':';
-LineStyles.rerf = '-';
-LineStyles.rerfr = ':';
-LineStyles.rerf2 = '-';
-LineStyles.rerf2r = ':';
 LineStyles.frc = '-';
 LineStyles.frcr = ':';
+LineStyles.rr_rf = '-';
+LineStyles.rr_rfr = ':';
 
 LineWidth = 2;
 FontSize = .15;
@@ -64,7 +60,7 @@ if runSims
     run_sparse_parity_posteriors
 else
     load Sparse_parity_true_posteriors
-    load Sparse_parity_uniform_transformations_posteriors
+    load Sparse_parity_uniform_transformations_posteriors_affine
 end
 
 Posteriors = Phats;
@@ -77,9 +73,9 @@ Posteriors{3} = orderfields(Posteriors{3},[length(fieldnames(Posteriors{3})),1:l
 
 Classifiers = fieldnames(Posteriors{3});
 
-Classifiers(~ismember(Classifiers,{'truth' 'rf','rerf','rerfr','rerf2','rerf2r','frc','frcr'})) = [];
+Classifiers(~ismember(Classifiers,{'truth' 'rf','frc','frcr','rr_rf','rr_rfr'})) = [];
 
-ClassifierNames = {'Posterior' 'RF' 'RerF' 'RerF(r)' 'RerF2','RerF2(r)' 'F-RC' 'Frank'};
+ClassifierNames = {'Posterior' 'RF' 'F-RC' 'Frank' 'RR-RF' 'RR-RF(r)'};
 
 fig = figure;
 fig.Units = 'inches';
@@ -88,11 +84,13 @@ fig.Position = [0 0 figWidth figHeight];
 fig.PaperPosition = [0 0 figWidth figHeight];
 fig.PaperSize = [figWidth figHeight];
 
+Transformations = {'Untransformed','Affine','Outlier'};
 for i = 1:length(Classifiers)
-    Transformations = fieldnames(Posteriors{3}.(Classifiers{i}));
+%     Transformations = fieldnames(Posteriors{3}.(Classifiers{i}));
+%     Transformations(strcmp(Transformations,'Scaled')) = [];
     for j = 1:length(Transformations)
         ax((i-1)*3+j) = axes;
-        ph{(i-1)*3+j} = posterior_map(Xpost,Ypost,mean(Posteriors{3}.(Classifiers{i}).(Transformations{j}),3),false,ColorMap);
+        ph{(i-1)*3+j} = posterior_map(Xpost,Ypost,mean(Posteriors{3}.(Classifiers{i}).(Transformations{j}),3),false,ColorMap2);
 %         title(['(' char('A'+(i-1)*3+j-1) ')'],'FontSize',16,'Units','normalized','Position',[-0.02 1],...
 %             'HorizontalAlignment','right','VerticalAlignment','top')
         if i==1
@@ -136,7 +134,7 @@ for i = 1:length(Classifiers)
         if i==1
             colormap(ax((i-1)*3+j),'jet')
         else
-            colormap(ax((i-1)*3+j),'parula')
+            colormap(ax((i-1)*3+j),ColorMap2)
         end
         
         if i==1 && j==length(Transformations) || i==length(Classifiers) && j==length(Transformations)
@@ -185,12 +183,12 @@ ax(19).XTick = 1:3;
 ax(19).XTickLabel = {'Raw','Affine','Corrupted'};
 ax(19).Box = 'off';
 
-[lh,objh] = legend('RF','RerF','RerF(r)','RerF2','RerF2(r)','F-RC','Frank');
+[lh,objh] = legend('RF','F-RC','Frank','RR-RF','RR-RF(r)');
 lh.Units = 'inches';
 lh.Position = [legLeft legBottom legWidth legHeight];
 lh.Box = 'off';
 
-for i = 8:length(objh)
+for i = 6:length(objh)
     objh(i).Children.Children(2).XData = [(objh(i).Children.Children(2).XData(2)-objh(i).Children.Children(2).XData(1))*0.5+objh(i).Children.Children(2).XData(1),objh(i).Children.Children(2).XData(2)];
 end
 

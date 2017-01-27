@@ -11,7 +11,7 @@ function run_classifiers(TrainFile,TestFile,OutFile,Classifiers)
     Xtest(:,end) = [];
 
     [ntrain,p] = size(Xtrain);
-    ntest = length(Ytest);
+    ntest = length(Ytest,1);
     
     Labels = unique([Ytrain;Ytest]);
     nClasses = length(Labels);
@@ -137,19 +137,19 @@ function run_classifiers(TrainFile,TestFile,OutFile,Classifiers)
         TestScores = rerf_classprob(Forest{BestIdx.(Classifiers{c})},Xtest,'last');
         TestPredictions = predict_class(TestScores,Forest{BestIdx.(Classifiers{c})}.classname);
         
-        ConfusionMatrix.(Classifiers{c}) = confusion_matrix(TestPredictions,Ytest,Labels);
+        ConfusionMatrix = confusion_matrix(TestPredictions,Ytest,Labels);
         
-        size(ConfusionMatrix.(Classifiers{c}))
-        nClasses
         TestError.(Classifiers{c}) = ...
-            sum(ConfusionMatrix.(Classifiers{c})(~logical(eye(nClasses))))/ntest;
+            sum(ConfusionMatrix(~logical(eye(nClasses))))/ntest;
         
+        
+
         clear Forest
 
         fprintf('%s complete\n',Classifiers{c})
         
         save(OutFile,'Params','OOBError','OOBAUC','TestError',...
             'TrainTime','Depth','NumNodes','NumSplitNodes','TreeStrength',...
-            'TreeDiversity','BestIdx','ConfusionMatrix')
+            'TreeDiversity','BestIdx')
     end  
 end
