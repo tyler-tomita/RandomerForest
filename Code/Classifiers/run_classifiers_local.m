@@ -1,4 +1,4 @@
-function run_classifiers(TrainFile,TestFile,OutFile,Classifiers)
+function run_classifiers_local(TrainFile,TestFile,OutFile,Classifiers)
 
     rng(1);
 
@@ -38,7 +38,7 @@ function run_classifiers(TrainFile,TestFile,OutFile,Classifiers)
             Params.(Classifiers{c}).nTrees = 500;
         end
         Params.(Classifiers{c}).Stratified = true;
-        Params.(Classifiers{c}).NWorkers = 12;
+        Params.(Classifiers{c}).NWorkers = 2;
         Params.(Classifiers{c}).Rescale = 'off';
         Params.(Classifiers{c}).mdiff = 'off';
         if strcmp(Classifiers{c},'rf')
@@ -47,11 +47,11 @@ function run_classifiers(TrainFile,TestFile,OutFile,Classifiers)
         elseif strcmp(Classifiers{c},'rerf')
             Params.(Classifiers{c}).ForestMethod = 'rerf';
             Params.(Classifiers{c}).RandomMatrix = 'binary';
-        elseif strcmp(Classifiers{c},'rerfd')
+        elseif strcmp(Classifiers{c},'rerfc')
             Params.(Classifiers{c}).ForestMethod = 'rerf';
-            Params.(Classifiers{c}).RandomMatrix = 'binary';
+            Params.(Classifiers{c}).RandomMatrix = 'continuous';
             Params.(Classifiers{c}).d = mtrys;
-            Params.(Classifiers{c}).mdiff = 'off';
+            Params.(Classifiers{c}).s = 1;
         elseif strcmp(Classifiers{c},'rr_rf')
             Params.(Classifiers{c}).ForestMethod = 'rf';   
             Params.(Classifiers{c}).Rotate = true;

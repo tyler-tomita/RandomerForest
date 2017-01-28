@@ -495,15 +495,19 @@ if doclass
    end
    
    % Get binary matrix, C(i,j)==1 means point i is in class j
-   nclasses = length(cnames);
-   C = false(N,nclasses);
-   C(sub2ind([N nclasses],(1:N)',Y)) = 1;   
+   nClasses = length(cnames);
+   C = false(N,nClasses);
+   C(sub2ind([N nClasses],(1:N)',Y)) = 1;   
    WC = bsxfun(@times,C,W);
    Wj = sum(WC,1);
 else
    C = Y(:);
    isimpurity = [];
    critfun = [];
+end
+
+if isempty(p)
+    p = 1/nClasses;
 end
 
 % Process prior and cost
@@ -532,7 +536,7 @@ if doclass
     % Adjust prior to take costs into account
     % pratio is a multiplicative factor for class probabilities
     Cj = sum(Cost,2)';
-    pratio = nclasses*Cj / sum(Cj);
+    pratio = nClasses*Cj / sum(Cj);
     if ~isa(pratio,'double')
         pratio = double(pratio);
     end
@@ -650,8 +654,8 @@ nodesize = zeros(M,1);
 rpm = cell(M,1);    %initialize cell array for storing proj matrices
 isdelta = false(M,1);
 if doclass
-   classprob = zeros(M,nclasses);
-   classcount = zeros(M,nclasses);
+   classprob = zeros(M,nClasses);
+   classcount = zeros(M,nClasses);
    if isimpurity
        impurity = zeros(M,1);
    end
@@ -773,7 +777,7 @@ while(tnode < nextunusednode)
       if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
           promat = srpmat(nvars,nusevars,RandomMatrix,s,nmix,dprime);    %random projection matrix
           md_ind = rand(size(mu_diff,2),1) <= p;
-          promat = cat(2,mu_diff(:,md_ind),promat);
+          promat = [mu_diff(:,md_ind) promat];
           md_idx = 1:sum(md_ind);   %Indices of where the mean difference vectors are in the matrix
           iscat2 = cat(1,false(sum(md_ind),1),iscat);
           %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
@@ -992,7 +996,7 @@ Tree.isdelta = isdelta(1:topnode);
 
 if doclass
    Tree.prior     = Prior;
-   Tree.nclasses  = nclasses;
+   Tree.nclasses  = nClasses;
    Tree.cost      = Cost;
    Tree.classprob = classprob(1:topnode,:);
    Tree.classcount= classcount(1:topnode,:);
