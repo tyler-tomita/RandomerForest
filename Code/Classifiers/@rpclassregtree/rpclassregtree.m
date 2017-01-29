@@ -416,17 +416,17 @@ okargs =   {'priorprob'   'cost'  'splitcriterion' ...
             'splitmin' 'minparent' 'minleaf' ...
             'nvartosample' 'mergeleaves' 'categorical' 'prune' 'method' ...
             'qetoler' 'names' 'weights' 'surrogate' 'skipchecks' ...
-            'stream' 's'    'mdiff' 'RandomMatrix'  'nmix'  'p' 'dprime',...
+            'stream' 'rho'    'mdiff' 'RandomMatrix'  'nmix'  'p' 'dprime',...
             'DownsampleNode'    'MaxNodeSize'};
 defaults = {[]            []      'gdi'                        ...
             []         2          1                          ...
             'all'          'on'          []            'off'    Method      ...
             1e-6      {}       []        'off'      false ...
-            []  3   'off'   'sparse' 2   [] []  false   100};
+            []  1/size(X,2)   'off'   'sparse' 2   [] []  false   100};
 
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
-    skipchecks,Stream,s,mdiff,RandomMatrix,nmix,p,dprime,DownsampleNode,...
+    skipchecks,Stream,rho,mdiff,RandomMatrix,nmix,p,dprime,DownsampleNode,...
     MaxNodeSize,~,extra] = internal.stats.parseArgs(okargs,defaults,varargin{:});
 
 % For backwards compatibility. 'catidx' is a synonym for 'categorical'
@@ -775,7 +775,7 @@ while(tnode < nextunusednode)
             end
         end
       if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
-          promat = srpmat(nvars,nusevars,RandomMatrix,s,nmix,dprime);    %random projection matrix
+          promat = srpmat(nvars,nusevars,RandomMatrix,rho,nmix,dprime);    %random projection matrix
           md_ind = rand(size(mu_diff,2),1) <= p;
           promat = [mu_diff(:,md_ind) promat];
           md_idx = 1:sum(md_ind);   %Indices of where the mean difference vectors are in the matrix
@@ -783,7 +783,7 @@ while(tnode < nextunusednode)
           %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
           nvarsplit = cat(2,zeros(1,sum(md_ind)),nvarsplit);
       else
-          promat = srpmat(nvars,nusevars,RandomMatrix,s,nmix,dprime);    %random projection matrix
+          promat = srpmat(nvars,nusevars,RandomMatrix,rho,nmix,dprime);    %random projection matrix
           iscat2 = iscat;
           %nvarsplit2 = nvarsplit;
       end
@@ -1036,9 +1036,9 @@ end
 %----------------------------------------------------
 function M = srpmat(d,k,method,varargin)
     if strcmp(method,'binary')
-        s = varargin{1};
+        rho = varargin{1};
         M = zeros(d,k);
-        nnzs = round(k*d*s);
+        nnzs = round(k*d*rho);
         nzs=randperm(d*k,nnzs);
         npos = rand(nnzs,1) > 0.5;
         M(nzs(npos))=1;
@@ -1048,9 +1048,9 @@ function M = srpmat(d,k,method,varargin)
         M(OnlyNz) = 1;
         M = sparse(unique(M(:,any(M))','rows','stable')');
     elseif strcmp(method,'continuous')
-        s = varargin{1};
+        rho = varargin{1};
         M = zeros(d,k);
-        nnzs = round(k*d*s);
+        nnzs = round(k*d*rho);
         nzs=randperm(d*k,nnzs);
         M(nzs) = rand(1,nnzs)*2 - 1;
         isnz = M~=0;
@@ -1058,10 +1058,10 @@ function M = srpmat(d,k,method,varargin)
         M(OnlyNz) = 1;
         M = sparse(unique(M(:,any(M))','rows','stable')');
     elseif strcmp(method,'binary-adjusted')
-        s = varargin{1};
+        rho = varargin{1};
         kk = varargin{3};
         M = zeros(d,kk);
-        nnzs = round(kk*d*s);
+        nnzs = round(kk*d*rho);
         nzs=randperm(d*kk,nnzs);
         npos = rand(nnzs,1) > 0.5;
         M(nzs(npos))=1;
@@ -1073,10 +1073,10 @@ function M = srpmat(d,k,method,varargin)
         M = M(:,1:min(k,size(M,2)));
         M = sparse(M);
     elseif strcmp(method,'continuous-adjusted')
-        s = varargin{1};
+        rho = varargin{1};
         kk = varargin{3};
         M = zeros(d,kk);
-        nnzs = round(kk*d*s);
+        nnzs = round(kk*d*rho);
         nzs=randperm(d*kk,nnzs);
         M(nzs) = rand(1,nnzs)*2 - 1;
         isnz = M~=0;

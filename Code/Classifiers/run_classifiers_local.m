@@ -47,11 +47,17 @@ function run_classifiers_local(TrainFile,TestFile,OutFile,Classifiers)
         elseif strcmp(Classifiers{c},'rerf')
             Params.(Classifiers{c}).ForestMethod = 'rerf';
             Params.(Classifiers{c}).RandomMatrix = 'binary';
+            Params.(Classifiers{c}).d = mtrys;
+        elseif strcmp(Classifiers{c},'rerf_dense')
+            Params.(Classifiers{c}).ForestMethod = 'rerf';
+            Params.(Classifiers{c}).RandomMatrix = 'binary';
+            Params.(Classifiers{c}).d = mtrys;
+            Params.(Classifiers{c}).rho = 2/p;
         elseif strcmp(Classifiers{c},'rerfc')
             Params.(Classifiers{c}).ForestMethod = 'rerf';
             Params.(Classifiers{c}).RandomMatrix = 'continuous';
             Params.(Classifiers{c}).d = mtrys;
-            Params.(Classifiers{c}).s = 1;
+            Params.(Classifiers{c}).rho = 2/p;
         elseif strcmp(Classifiers{c},'rr_rf')
             Params.(Classifiers{c}).ForestMethod = 'rf';   
             Params.(Classifiers{c}).Rotate = true;
