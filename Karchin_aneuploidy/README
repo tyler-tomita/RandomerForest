@@ -1,0 +1,7 @@
+Rachel and Chris' description of the problem and the data:
+
+We are using supervised machine learning to summarize chromosomal features and classify samples as aneuploid. This classification problem requires a very high specificity (>99.5%) for practical usage in cancer screening. 
+
+In order to test our performance, we developed a more rigorous cross validation protocol than the standard leave one out or n-fold cross validation. Samples from the same batch are highly correlated and we will overestimate our performance when samples from the same batch are not restricted to the same fold. We separated our folds into ~20 different folds from the batch in which the samples were sequenced (ie 4377.train 4377.test, 4777.train 4777.test, etc).
+
+Feature files are set up with the class in column 1 (1 for samples derived from cancer patients and 0 for samples derived from normal people), unique name in column 3, and features in column 8-85. Other columns are not used in classification.
