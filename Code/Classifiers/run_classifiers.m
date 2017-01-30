@@ -57,7 +57,7 @@ function run_classifiers(TrainFile,TestFile,OutFile,Classifiers)
             Params.(Classifiers{c}).ForestMethod = 'rerf';
             Params.(Classifiers{c}).RandomMatrix = 'continuous';
             Params.(Classifiers{c}).d = mtrys;
-            Params.(Classifiers{c}).rho = 2/p;
+            Params.(Classifiers{c}).rho = 1;
         elseif strcmp(Classifiers{c},'rr_rf')
             Params.(Classifiers{c}).ForestMethod = 'rf';   
             Params.(Classifiers{c}).Rotate = true;
