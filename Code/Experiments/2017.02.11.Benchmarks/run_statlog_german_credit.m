@@ -1,7 +1,7 @@
 % train and test classifiers on statlog_german_credit dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/statlog_german_credit_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/statlog_german_credit_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/statlog_german_credit_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/statlog_german_credit_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/statlog_german_credit.mat';
 
 Classifiers = {'rerf'};

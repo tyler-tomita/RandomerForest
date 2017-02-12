@@ -1,7 +1,7 @@
 % train and test classifiers on congressional_voting dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/congressional_voting_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/congressional_voting_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/congressional_voting_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/congressional_voting_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/congressional_voting.mat';
 
 Classifiers = {'rerf'};

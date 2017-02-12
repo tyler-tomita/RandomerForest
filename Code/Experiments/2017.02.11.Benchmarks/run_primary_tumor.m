@@ -1,7 +1,7 @@
 % train and test classifiers on primary_tumor dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/primary_tumor_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/primary_tumor_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/primary_tumor_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/primary_tumor_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/primary_tumor.mat';
 
 Classifiers = {'rerf'};

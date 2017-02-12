@@ -1,7 +1,7 @@
 % train and test classifiers on energy_y1 dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/energy_y1_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/energy_y1_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/energy_y1_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/energy_y1_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/energy_y1.mat';
 
 Classifiers = {'rerf'};

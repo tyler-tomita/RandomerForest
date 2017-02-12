@@ -1,7 +1,7 @@
 % train and test classifiers on ozone dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/ozone_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/ozone_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/ozone_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/ozone_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/ozone.mat';
 
 Classifiers = {'rerf'};

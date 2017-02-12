@@ -1,7 +1,7 @@
 % train and test classifiers on vertebral_column_2clases dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/vertebral_column_2clases_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/vertebral_column_2clases_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/vertebral_column_2clases_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/vertebral_column_2clases_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/vertebral_column_2clases.mat';
 
 Classifiers = {'rerf'};

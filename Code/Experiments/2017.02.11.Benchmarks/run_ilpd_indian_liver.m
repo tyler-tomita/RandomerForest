@@ -1,7 +1,7 @@
 % train and test classifiers on ilpd_indian_liver dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/ilpd_indian_liver_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/ilpd_indian_liver_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/ilpd_indian_liver_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/ilpd_indian_liver_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/ilpd_indian_liver.mat';
 
 Classifiers = {'rerf'};

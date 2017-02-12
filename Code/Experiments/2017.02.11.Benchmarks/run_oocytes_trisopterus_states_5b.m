@@ -1,7 +1,7 @@
 % train and test classifiers on oocytes_trisopterus_states_5b dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/oocytes_trisopterus_states_5b_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/oocytes_trisopterus_states_5b_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/oocytes_trisopterus_states_5b_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/oocytes_trisopterus_states_5b_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/oocytes_trisopterus_states_5b.mat';
 
 Classifiers = {'rerf'};

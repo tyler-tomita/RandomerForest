@@ -1,7 +1,7 @@
 % train and test classifiers on breast_cancer_wisc_prog dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/breast_cancer_wisc_prog_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/breast_cancer_wisc_prog_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/breast_cancer_wisc_prog_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/breast_cancer_wisc_prog_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/breast_cancer_wisc_prog.mat';
 
 Classifiers = {'rerf'};

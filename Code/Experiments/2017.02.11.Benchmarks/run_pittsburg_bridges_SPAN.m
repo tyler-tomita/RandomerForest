@@ -1,7 +1,7 @@
 % train and test classifiers on pittsburg_bridges_SPAN dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/pittsburg_bridges_SPAN_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/pittsburg_bridges_SPAN_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/pittsburg_bridges_SPAN_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/pittsburg_bridges_SPAN_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/pittsburg_bridges_SPAN.mat';
 
 Classifiers = {'rerf'};

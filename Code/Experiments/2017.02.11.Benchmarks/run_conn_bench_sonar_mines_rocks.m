@@ -1,7 +1,7 @@
 % train and test classifiers on conn_bench_sonar_mines_rocks dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/conn_bench_sonar_mines_rocks_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/conn_bench_sonar_mines_rocks_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/conn_bench_sonar_mines_rocks_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/conn_bench_sonar_mines_rocks_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/conn_bench_sonar_mines_rocks.mat';
 
 Classifiers = {'rerf'};

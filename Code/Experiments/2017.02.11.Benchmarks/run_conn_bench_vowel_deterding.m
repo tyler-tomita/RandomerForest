@@ -1,7 +1,7 @@
 % train and test classifiers on conn_bench_vowel_deterding dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/conn_bench_vowel_deterding_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/conn_bench_vowel_deterding_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/conn_bench_vowel_deterding_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/conn_bench_vowel_deterding_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/conn_bench_vowel_deterding.mat';
 
 Classifiers = {'rerf'};

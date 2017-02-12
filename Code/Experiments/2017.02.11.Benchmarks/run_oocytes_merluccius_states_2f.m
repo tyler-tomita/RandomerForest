@@ -1,7 +1,7 @@
 % train and test classifiers on oocytes_merluccius_states_2f dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/oocytes_merluccius_states_2f_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/oocytes_merluccius_states_2f_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/oocytes_merluccius_states_2f_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/oocytes_merluccius_states_2f_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/oocytes_merluccius_states_2f.mat';
 
 Classifiers = {'rerf'};

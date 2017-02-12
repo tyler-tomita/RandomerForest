@@ -1,7 +1,7 @@
 % train and test classifiers on cardiotocography_10clases dataset
 
-TrainFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/cardiotocography_10clases_train.dat';
-TestFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Data/Benchmarks/dat/cardiotocography_10clases_test.dat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/cardiotocography_10clases_train.dat';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/cardiotocography_10clases_test.dat';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.02.11/cardiotocography_10clases.mat';
 
 Classifiers = {'rerf'};
