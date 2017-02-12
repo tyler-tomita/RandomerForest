@@ -44,7 +44,7 @@ for c = 1:length(Classifiers)
         Params.(Classifiers{c}).nTrees = 500;
     end
     Params.(Classifiers{c}).Stratified = true;
-    Params.(Classifiers{c}).NWorkers = 2;
+    Params.(Classifiers{c}).NWorkers = 12;
     Params.(Classifiers{c}).Rescale = 'off';
     Params.(Classifiers{c}).mdiff = 'off';
     if strcmp(Classifiers{c},'rf')
