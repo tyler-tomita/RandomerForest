@@ -2,7 +2,7 @@
 
 #SBATCH
 #SBATCH --job-name=run_benchmarks
-#SBATCH --array=1-121
+#SBATCH --array=121
 #SBATCH --time=1-0:0:0
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=12
@@ -18,6 +18,6 @@ echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 NAME_FILE=~/work/tyler/RandomerForest/Data/Benchmarks/Benchmark_names.txt
 DATASET=$(sed "${SLURM_ARRAY_TASK_ID}q;d" $NAME_FILE)
 
-matlab -nosplash -nodisplay -singleCompThread -r "run_${DATASET};exit"
+matlab -nosplash -nodisplay -singleCompThread -r "run_${DATASET}"
 
 echo "job complete"

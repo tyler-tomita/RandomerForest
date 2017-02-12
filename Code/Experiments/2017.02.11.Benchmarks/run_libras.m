@@ -170,3 +170,5 @@ for c = 1:length(Classifiers)
         'TrainTime','Depth','NumNodes','NumSplitNodes','TreeStrength',...
         'TreeDiversity','BestIdx','TestScores')
 end  
+
+delete(gcp);
