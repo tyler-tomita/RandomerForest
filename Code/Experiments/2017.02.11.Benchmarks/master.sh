@@ -15,7 +15,7 @@
 # Print this sub-job's task ID
 echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 
-NAME_FILE=~/work/tyler/RandomerForest/Data/Benchmarks/Names.txt
+NAME_FILE=~/work/tyler/RandomerForest/Data/Benchmarks/Benchmark_names.txt
 DATASET=$(sed "${SLURM_ARRAY_TASK_ID}q;d" $NAME_FILE)
 
 matlab -nosplash -nodisplay -singleCompThread -r "run_${DATASET}"
