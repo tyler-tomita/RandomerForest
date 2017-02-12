@@ -144,8 +144,8 @@ function run_classifiers(TrainFile,TestFile,OutFile,Classifiers)
             OOBAUC.(Classifiers{c})(end,:));
         BestIdx.(Classifiers{c}) = BI(end);
 
-        TestScores = rerf_classprob(Forest{BestIdx.(Classifiers{c})},Xtest,'last');
-        TestPredictions = predict_class(TestScores,Forest{BestIdx.(Classifiers{c})}.classname);
+        TestScores.(Classifiers{c}) = rerf_classprob(Forest{BestIdx.(Classifiers{c})},Xtest,'last');
+        TestPredictions = predict_class(TestScores.(Classifiers{c}),Forest{BestIdx.(Classifiers{c})}.classname);
         
         ConfusionMatrix.(Classifiers{c}) = confusion_matrix(TestPredictions,Ytest,Labels);
         

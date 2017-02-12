@@ -11,6 +11,15 @@ function M = srpmat(d,k,method,varargin)
         OnlyNz = isnz & repmat(sum(isnz)==1,d,1);
         M(OnlyNz) = 1;
         M = sparse(unique(M(:,any(M))','rows','stable')');
+    elseif strcmp(method,'binary-raw')
+        s = varargin{1};
+        M = zeros(d,k);
+        nnzs = round(k*d*s);
+        nzs=randperm(d*k,nnzs);
+        npos = rand(nnzs,1) > 0.5;
+        M(nzs(npos))=1;
+        M(nzs(~npos))=-1;
+        M = sparse(M);
     elseif strcmp(method,'continuous')
         s = varargin{1};
         M = zeros(d,k);
