@@ -1,0 +1,30 @@
+My SLURM_ARRAY_TASK_ID:  80
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2015 The MathWorks, Inc.
+                   R2015a (8.5.0.197613) 64-bit (glnxa64)
+                             February 12, 2015
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+
+	Academic License
+
+rerf start
+Starting parallel pool (parpool) using the 'local' profile ... connected to 12 workers.
+[Warning: File:
+/scratch/groups/jvogels3/tyler/RandomerForest/Code/Classifiers/@rpclassificationforest/rpclassificationforest.m
+Line: 207 Column: 47
+The temporary variable ibidx will be cleared at the beginning of each iteration
+of the parfor loop.
+Any value assigned to it before the loop will be lost.  If ibidx is used before
+it is assigned in the parfor loop, a runtime error will occur.
+See Parallel for Loops in MATLAB, "Temporary Variables".] 
+[> In RerF_train (line 199)
+  In run_pittsburg_bridges_REL_L (line 95)] 
+Training complete
+rerf complete
+Parallel pool using the 'local' profile is shutting down.
+job complete

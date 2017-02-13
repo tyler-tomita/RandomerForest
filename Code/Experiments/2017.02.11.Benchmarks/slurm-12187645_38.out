@@ -1,0 +1,37 @@
+My SLURM_ARRAY_TASK_ID:  38
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2015 The MathWorks, Inc.
+                   R2015a (8.5.0.197613) 64-bit (glnxa64)
+                             February 12, 2015
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+WARNING: Failed to load file "/cm/shared/apps/MATLAB/R2015a/bin/glnxa64/libmwhgbuiltins.so".
+
+	Academic License
+
+rerf start
+Starting parallel pool (parpool) using the 'local' profile ... 
+{Error using parpool (line 103)
+Failed to start a parallel pool. (For information in addition to the causing
+error, validate the profile 'local' in the Cluster Profile Manager.)
+
+Error in run_hayes_roth (line 91)
+        parpool('local',Params.(Classifiers{c}).NWorkers,...
+
+Caused by:
+    Error using parallel.internal.pool.InteractiveClient>iThrowWithCause (line
+    667)
+    Failed to start pool.
+        Error using parallel.Cluster/createCommunicatingJob (line 92)
+        The storage metadata file is corrupt. Please delete all files in the
+        JobStorageLocation and try again.
+} 
+Caught "std::exception" Exception message is:
+FatalException(unknown)
+MATLAB:dispatcher:loadLibrary Can't reload '/cm/shared/apps/MATLAB/R2015a/bin/glnxa64/libmwhgbuiltins.so'.
+Caught MathWorks::System::FatalException
+>> job complete
