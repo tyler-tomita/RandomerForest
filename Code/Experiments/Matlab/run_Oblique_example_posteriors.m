@@ -1,6 +1,4 @@
 %% Compute posterior heat map for simple "oblique" example 
-% Trains RF, F-RC, and Rotation RF on sparse parity and plots
-% posterior heat maps for each classifier
 
 %% Initialize parameters
 close all
