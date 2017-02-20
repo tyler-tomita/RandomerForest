@@ -6,7 +6,7 @@
 % values, select the optimal model based on out of bag estimates, and
 % make predictions on a test set using the selected model.
 
-%% Load Iris Dataset
+%% Load Iris Dataset and plot
 
 close all
 clear
@@ -18,16 +18,34 @@ Y = cellstr(num2str(grp2idx(species))); %Convert to strings of numbers
 classes = unique(Y);
 [ntrain,p] = size(X);
 
+for i = 1:p
+    for j = 1:p
+        if j >= i
+            subplot(p,p,(i-1)*p+j)
+            gscatter(X(:,j),X(:,i),Y)
+            l.Visible = 'off';
+            xlabel(['X_' num2str(j)])
+            ylabel(['X_' num2str(i)])
+        end
+    end
+end
+l = findobj(gcf,'Type','Legend');
+for i = 1:length(l)
+    l(i).Visible = 'off';
+end
+
+
 %% Train Randomer Forest
 
-% Use 100 trees, very sparse Rademacher matrix (default) for random projections,
+% Use 50 trees, very sparse Rademacher matrix (default) for random projections,
 % sample d candidate projections at each split node, specify stratified
 % bootstrap sampling, and connect to two parallel workers
 
-Params.nTrees = 100;
+Params.nTrees = 50;
 Params.ForestMethod = 'rerf';
 Params.RandomMatrix = 'binary';
 Params.d = [1:p ceil(p.^[1.5 2])];  % one model will be fit for each value of d
+Params.rho = (1:4)/p;
 Params.NWorkers = 2;
 Params.Stratified = true;
 
@@ -107,7 +125,7 @@ for t = 1:Forest{BestIdx}.nTrees
     TestError(t) = misclassification_rate(Predictions,Ytest,false);
 end
 
-
+figure;
 plot(1:Params.nTrees,TestError)
 xlabel('# of trees used')
 ylabel('misclassification rate')
