@@ -94,4 +94,4 @@ hold on
 for k = 2:length(Classifiers)-1
     plot([k-0.5,k-0.5],h.YLim,'-k','LineWidth',LineWidth+1)
 end
-save_fig(gcf,'~/RandomerForest/Figures/2017.02.11/Benchmark_heatmap_histogram_normalized_by_chance_2017_02_17')
+save_fig(gcf,'~/RandomerForest/Figures/2017.02.11/Benchmark_heatmap_histogram_normalized_by_chance_2017_02_11',{'fig','pdf','png'})
