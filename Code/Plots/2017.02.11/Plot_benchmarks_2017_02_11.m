@@ -34,36 +34,36 @@ LineWidth = 2;
 
 fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
-ResultsPath = [rerfPath 'RandomerForest/Results/2017.02.11/'];
 
 
 BinEdges = [-1,-0.2,-0.1,-0.05:0.005:0,0:0.005:0.05,0.1,0.2,1];
 % BinEdges = [-1:0.1:0,0:0.1:1];
 
-Contents = dir([ResultsPath '*.mat']);
+load aggregated_results_2017_02_11
+nDatasets = length(Results);
 
-nDatasets = length(Contents);
+Classifiers = fieldnames(Results(1).TestError);
+Classifiers(strcmp(Classifiers,'rr_rf')) = [];
 
 ChanceProb = NaN(nDatasets,1);
-AbsoluteError = NaN(nDatasets,3);
-NormRelativeError = NaN(nDatasets,2);
+AbsoluteError = NaN(nDatasets,length(Classifiers));
+NormRelativeError = NaN(nDatasets,length(Classifiers)-1);
 
 for j = 1:nDatasets
-    DatasetName = Contents(j).name(1:regexp(Contents(j).name,'\.mat')-1);
+    DatasetName = Results(j).Name(1:regexp(Results(j).Name,'\.mat')-1);
     Xtrain = dlmread(['~/Benchmarks/Data/dat/' DatasetName '_train.dat']);
     Ytrain = Xtrain(:,end);
     Xtrain(:,end) = [];
     ClassCounts = histcounts(Ytrain);
     ChanceProb(j) = 1 - max(ClassCounts)/sum(ClassCounts);
-    load([ResultsPath Contents(j).name])
-    for k = 1:3
-        BI = hp_optimize(OOBError.rerf(end,(k-1)*length(Params.rerf.d)+1:k*length(Params.rerf.d)),...
-            OOBAUC.rerf(end,(k-1)*length(Params.rerf.d)+1:k*length(Params.rerf.d)));
-        BI = BI(end);
-        TE = TestError.rerf((k-1)*length(Params.rerf.d)+1:k*length(Params.rerf.d));
-        AbsoluteError(j,k) = TE(BI);
+    for k = 1:length(Classifiers)
+        if strcmp(Classifiers{k},'rerf_big')
+            AbsoluteError(j,k) = Results(j).TestError.(Classifiers{k})(Results(j).BestIdx.(Classifiers{k}));
+        else
+            AbsoluteError(j,k) = Results(j).TestError.(Classifiers{k});
+        end
     end
-    for k = 1:3
+    for k = 1:length(Classifiers)
         if k > 1
             NormRelativeError(j,k-1) = (AbsoluteError(j,k) ...
                 - AbsoluteError(j,1))/ChanceProb(j);
@@ -71,9 +71,9 @@ for j = 1:nDatasets
     end
 end
     
-Counts = zeros(length(BinEdges)-1,2);
+Counts = zeros(length(BinEdges)-1,length(Classifiers)-1);
     
-for k = 1:2
+for k = 1:length(Classifiers)-1
 %         h = histogram(RelativeError(:,k),BinEdges);
 %         Counts(:,k) = h.Values';
     Counts(:,k) = histcounts(NormRelativeError(:,k),BinEdges)';
@@ -81,14 +81,17 @@ end
 Counts(length(BinEdges)/2,:) = sum(NormRelativeError==0);
 Counts(length(BinEdges)/2+1,:) = Counts(length(BinEdges)/2+1,:) - Counts(length(BinEdges)/2,:);
 
+p.rerf = signrank(AbsoluteError(:,1),AbsoluteError(:,2),'tail','right');
+p.rerf_big = signrank(AbsoluteError(:,1),AbsoluteError(:,3),'tail','right');
+
 figure;
-h = heatmap(flipud(Counts),{'RerF2' 'RerF3'},cellstr(num2str(flipud(BinEdges'))),ColorMap,true);
-ylabel('($\hat{L}_X - \hat{L}_{RerF})/Chance$','Interpreter','latex')
-title([num2str(nDatasets) 'Benchmark Datasets'])
+h = heatmap(flipud(Counts),{['RerF\newlinep = ',num2str(p.rerf,'%0.4f')],['RerF+\newlinep = ',num2str(p.rerf_big,'%0.4f')]},cellstr(num2str(flipud(BinEdges'))),ColorMap,true);
+ylabel('($\hat{L}_X - \hat{L}_{RF})/Chance$','Interpreter','latex')
+title(sprintf('%d Benchmark Datasets',nDatasets))
 colorbar;
 h.FontSize = FontSize;
 hold on
-for k = 2:2
+for k = 2:length(Classifiers)-1
     plot([k-0.5,k-0.5],h.YLim,'-k','LineWidth',LineWidth+1)
 end
-save_fig(gcf,'~/RandomerForest/Figures/2017.02.11/Benchmark_heatmap_histogram_RerF_density_comparison',{'fig','pdf','png'})
+save_fig(gcf,'~/RandomerForest/Figures/2017.02.11/Benchmark_heatmap_histogram_normalized_by_chance_2017_02_11',{'fig','pdf','png'})
