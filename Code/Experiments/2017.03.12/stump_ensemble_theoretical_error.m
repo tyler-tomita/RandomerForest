@@ -36,7 +36,7 @@ L_rerf = zeros(length(ns),1);
 for i = 1:length(ns)
     n = ns(i);
     fprintf('n = %d\n',n)
-    a = 2;
+    a = 0.01;
     vx = 1;
     e = a/100/sqrt(vx);
     mx1_0 = -a;
@@ -257,4 +257,4 @@ ax(j).FontSize = FontSize;
 ax(j).Units = 'inches';
 ax(j).Position = [axLeft(j) axBottom(j) axWidth axHeight];
 
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/2017.03.12/Stump_ensemble_theoretical_error'],{'fig','pdf','png'})
+% save_fig(gcf,[rerfPath 'RandomerForest/Figures/2017.03.12/Stump_ensemble_theoretical_error'],{'fig','pdf','png'})

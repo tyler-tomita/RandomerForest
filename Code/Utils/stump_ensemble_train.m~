@@ -1,0 +1,14 @@
+function g = stump_ensemble_train(X,Y,method)
+
+prior = sum(Y)/length(Y);
+
+if strcmp(method,'rf')
+    g.method = 'rf';
+    g.mu_hat = 1/2*(mean(X(Y==0,:),1) + mean(X(Y==1,:),1));
+else
+    g.method = 'rerf';
+    X = [X sum(X,2) -diff(X,1,2)];
+    g.mu_hat = 1/2*(mean(X(Y==0,:),1) + mean(X(Y==1,:),1));
+end
+
+end
