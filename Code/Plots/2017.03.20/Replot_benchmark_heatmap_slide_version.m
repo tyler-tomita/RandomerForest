@@ -88,8 +88,11 @@ end
 Counts(length(BinEdges)/2,:) = sum(NormRelativeError==0);
 Counts(length(BinEdges)/2+1,:) = Counts(length(BinEdges)/2+1,:) - Counts(length(BinEdges)/2,:);
 
+Fractions = Counts./repmat(sum(Counts),size(Counts,1),1);
+
 figure;
-h = heatmap(flipud(Counts),{'RerF','RR-RF','XGBoost'},cellstr(num2str(flipud(BinEdges'))),ColorMap,true);
+% h = heatmap(flipud(Counts),{'RerF','RR-RF','XGBoost'},cellstr(num2str(flipud(BinEdges'))),ColorMap,true);
+h = heatmap(flipud(Fractions),{'RerF','RR-RF','XGBoost'},cellstr(num2str(flipud(BinEdges'))),ColorMap,true);
 ylabel('($\hat{L}_X - \hat{L}_{RF})/Chance$','Interpreter','latex')
 title('119 Benchmark Datasets')
 colorbar;
@@ -101,4 +104,4 @@ end
 h.YTick = [0.5,14,27.5];
 h.YTickLabel = {'-1';'0';'1'};
 h.FontSize = 20;
-save_fig(gcf,'~/RandomerForest/Figures/2017.03.20/Benchmark_heatmap_histogram_xgboost_normalized_by_chance_slide_version_for_jovo',{'fig','pdf','png'})
+save_fig(gcf,'~/RandomerForest/Figures/2017.03.20/Benchmark_heatmap_relative_histogram_xgboost_normalized_by_chance_slide_version_for_jovo',{'fig','pdf','png'})
