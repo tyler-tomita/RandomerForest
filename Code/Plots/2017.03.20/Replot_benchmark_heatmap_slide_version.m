@@ -4,10 +4,10 @@ clear
 close all
 clc
 
-% load('red2purple')
+load('red2purple')
+ColorMap = flipud(interpolate_colormap(ColorMap(3:end-2,:),64,true));
+% load('purple2green')
 % ColorMap = interpolate_colormap(ColorMap(3:end-2,:),64,true);
-load('purple2green')
-ColorMap = interpolate_colormap(ColorMap(3:end-2,:),64,true);
 % ColorMap = flipud(ColorMap);
 % Colormap = parula;
 FontSize = 12;
@@ -106,4 +106,4 @@ end
 h.YTick = [0.5,14,27.5];
 h.YTickLabel = {'1';'0';'-1'};
 h.FontSize = 20;
-save_fig(gcf,'~/RandomerForest/Figures/2017.03.20/Benchmark_heatmap_relative_histogram_xgboost_normalized_by_chance_slide_version_for_jovo_purple2green',{'fig','pdf','png'})
+save_fig(gcf,'~/RandomerForest/Figures/2017.03.20/Benchmark_heatmap_relative_histogram_xgboost_normalized_by_chance_slide_version_for_jovo_orange2purple',{'fig','pdf','png'})
