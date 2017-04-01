@@ -5,8 +5,7 @@ close all
 clc
 
 load('purple2green')
-ColorMap = interpolate_colormap(ColorMap,64,
-% ColorMap = interpolate_colormap(ColorMap(round(size(ColorMap,1)/2):end,:),64,false);
+ColorMap = interpolate_colormap(ColorMap(round(size(ColorMap,1)/2):end,:),64,false);
 % ColorMap = flipud(ColorMap);
 % Colormap = parula;
 FontSize = 12;

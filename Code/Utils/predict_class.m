@@ -1,4 +1,4 @@
-function Predictions = predict(Scores,Labels)
+function Predictions = predict_class(Scores,Labels)
 % PREDICT predicts class labels given Scores. Scores is an n-by-nClasses
 % matrix of scores ranging from 0 to 1. Labels is an array of length 
 % nClasses specifying the set of unique class labels. Values of Scores in 

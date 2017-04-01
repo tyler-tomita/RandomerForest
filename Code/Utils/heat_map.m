@@ -1,4 +1,4 @@
-function h = heat_map(X,Y,f,ColorMap)
+function h = heat_map(X,Y,f,ColorMap,cmin,cmax,isColorBar)
 
         h = surf(X,Y,f);
         C = h.CData;
@@ -8,4 +8,11 @@ function h = heat_map(X,Y,f,ColorMap)
         h.LineStyle = 'none';
         view(2)
         grid off
+        caxis([cmin,cmax])
+        xlim([min(X(:)) max(X(:))])
+        ylim([min(Y(:)) max(Y(:))])
+        if isColorBar
+            colorbar;
+        end
+        
 end
