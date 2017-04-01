@@ -145,7 +145,11 @@ for c = 1:length(Classifiers)
         NumNodes.(Classifiers{c})(:,k) = NN;
         NumSplitNodes.(Classifiers{c})(:,k) = NS;
 
-        Scores = rerf_classprob(Forest{k},Xtest,'individual');
+        if ~strcmp(Forest{k}.Rescale,'off')
+            Scores = rerf_classprob(Forest{k},Xtest,'individual',Xtrain);
+        else
+            Scores = rerf_classprob(Forest{k},Xtest,'individual');
+        end
         PredCell = cell(ntest,Params.(Classifiers{c}).nTrees);
         parfor kk = 1:Params.(Classifiers{c}).nTrees
             PredCell(:,kk) = predict_class(Scores(:,:,kk),Labels);
@@ -154,7 +158,11 @@ for c = 1:length(Classifiers)
         TreeStrength.(Classifiers{c})(k) = 1 - misclassification_rate(PredCell,Ytest,true);
         TreeDiversity.(Classifiers{c})(k) = classifier_variance(PredCell);
         
+        if ~strcmp(Forest{k}.Rescale,'off')
+            TestScores.(Classifiers{c})(:,:,k) = rerf_classprob(Forest{k},Xtest,'last',Xtrain);
+        else
         TestScores.(Classifiers{c})(:,:,k) = rerf_classprob(Forest{k},Xtest,'last');
+        end
         TestPredictions = predict_class(TestScores.(Classifiers{c})(:,:,k),Forest{k}.classname);
 
         TestError.(Classifiers{c})(k) = ...
