@@ -2,7 +2,7 @@
 
 TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/Affine/audiology_std_train.dat';
 TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/Affine/audiology_std_test.dat';
-OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.03.31_benchmarks/Affine/audiology_std.mat';
+OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.04.01/Benchmarks/Affine/audiology_std.mat';
 
 Classifiers = {'rf','rerf','rerfr','rr_rf','rr_rfr'};
 

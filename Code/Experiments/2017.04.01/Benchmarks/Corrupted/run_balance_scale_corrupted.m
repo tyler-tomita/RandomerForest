@@ -2,7 +2,7 @@
 
 TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/Corrupted/balance_scale_train.dat';
 TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/Corrupted/balance_scale_test.dat';
-OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.03.31_benchmarks/Corrupted/balance_scale.mat';
+OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.04.01/Benchmarks/Corrupted/balance_scale.mat';
 
 Classifiers = {'rf','rerf','rerfr','rr_rf','rr_rfr'};
 

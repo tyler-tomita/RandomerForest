@@ -2,7 +2,7 @@
 
 TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/Corrupted/ilpd_indian_liver_train.dat';
 TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/Corrupted/ilpd_indian_liver_test.dat';
-OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.03.31_benchmarks/Corrupted/ilpd_indian_liver.mat';
+OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.04.01/Benchmarks/Corrupted/ilpd_indian_liver.mat';
 
 Classifiers = {'rf','rerf','rerfr','rr_rf','rr_rfr'};
 

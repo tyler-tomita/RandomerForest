@@ -2,7 +2,7 @@
 
 TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/Rotated/wine_quality_white_train.dat';
 TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/Rotated/wine_quality_white_test.dat';
-OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.03.31_benchmarks/Rotated/wine_quality_white.mat';
+OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.04.01/Benchmarks/Rotated/wine_quality_white.mat';
 
 Classifiers = {'rf','rerf','rerfr','rr_rf','rr_rfr'};
 

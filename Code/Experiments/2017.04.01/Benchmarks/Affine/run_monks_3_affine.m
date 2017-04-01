@@ -2,7 +2,7 @@
 
 TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/Affine/monks_3_train.dat';
 TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/dat/Affine/monks_3_test.dat';
-OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.03.31_benchmarks/Affine/monks_3.mat';
+OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.04.01/Benchmarks/Affine/monks_3.mat';
 
 Classifiers = {'rf','rerf','rerfr','rr_rf','rr_rfr'};
 
