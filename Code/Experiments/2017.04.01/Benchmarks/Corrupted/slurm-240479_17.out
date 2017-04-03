@@ -1,0 +1,508 @@
+My SLURM_ARRAY_TASK_ID:  17
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2015 The MathWorks, Inc.
+                   R2015a (8.5.0.197613) 64-bit (glnxa64)
+                             February 12, 2015
+
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/branches] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/hooks] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/info] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/logs] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/logs/refs] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/logs/refs/heads] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/logs/refs/remotes] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/logs/refs/remotes/origin] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/objects] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/objects/info] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/objects/pack] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/refs] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/refs/heads] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/refs/remotes] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/refs/remotes/origin] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.git/refs/tags] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/.github] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/binary] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/deprecated/_fluxomics_obsolete] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/deprecated/_io_depreciated] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/deprecated/_maps_old] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/deprecated/_maps_old/tools] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/deprecated/_obsolete_files] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/docs] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/docs/source] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/docs/source/_static] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/docs/source/quickstart] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/BuildMPS] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/DependencyAnalyzer] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/NearestSymmetricPositiveDefinite] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/NearestSymmetricPositiveDefinite/html] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/Smith-Decomposition] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/Volume_MFE] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/gaimc] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/gaimc/demo] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/gaimc/demo/html] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/gaimc/graphs] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/gaimc/test] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/glpkmex] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/libSBML-5.13.0-matlab] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/lusol] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/lusolMex32bit] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/matlab_network_routines] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/mve10] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/pdco] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/styleGuide] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/tools] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/external/totallyUnimodular] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/papers] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/papers/Fleming_FR_2015] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/papers/Fleming_FR_2015/iMM904] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/cardOpt] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/cardOpt/algorithms] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/cardOpt/algorithms/sparseLP] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/cardOpt/fluxConsistency] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/cardOpt/fluxConsistency/fluxConsistent1LP_not_working_yet] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/cardOpt/relaxFBA] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/cardOpt/relaxFBA/example] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/cardOpt/sparseFBA] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/cardOpt/sparseLP] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/cardOpt/stoichConsistency] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/cardOpt/tangiCode] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/design] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/fluxomics] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/fluxomics/atomTransition] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/fluxomics/c13solver] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/gapFilling] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/gapFilling/KEGG] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/gapFilling/fastGapFill] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/gapFilling/fastGapFill/AuxillaryFiles] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/gapFilling/fastGapFill/examples] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/gapFilling/growthExpMatch] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/io] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/io/BiGG] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/io/cellDesigner] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/io/utilities] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/maps] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/maps/ReconMap] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/maps/ReconMap/json] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/metabotools] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/modelGeneration] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/modelGeneration/fluxConsistency] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/modelGeneration/fluxConsistency/FASTCORE] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/modelGeneration/massBalance] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/modelGeneration/massBalance/basicPhysicochemicalData] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/modelGeneration/stoichConsistency] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/print] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/rFBA] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/reconstruction] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/reconstruction/rBioNet] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/reconstruction/rBioNet/Examples] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/reconstruction/rBioNet/inc] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/sampling] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/solvers] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/subspaces] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/subspaces/lsqr] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/subspaces/nullspace] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/subspaces/nullspace/remote] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/subspaces/rank] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/subspaces/rowReduce] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/subspaces/subspaceProjection] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/thermo] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/thermo/ComponentContribution] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/thermo/ComponentContribution/cache] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/thermo/ComponentContribution/data] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/thermo/directionalityReport] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/thermo/transport] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/thermo/vonBertalanffy] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/tools] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/topology] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/topology/FR] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/topology/circuits] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/topology/conservedMoieties] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/topology/extremeRays] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/topology/extremeRays/lrs] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/topology/extremeRays/lrs/lrsInterface] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/topology/extremeRays/optimalRays] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/src/topology/graphHypergraphConversion] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/models] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testBuildMPS] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testC13Fitting] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testCorrespondingRowsCols] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testDeletionStudy] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testDependencyStructure] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testFASTCORE] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testFluxConsistency] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testGDLS] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testGrowthExpMatch] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testMOMA] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testMaps] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testModels] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testModels/testedModels] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testNullspace] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testOptKnock] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testRobustnessAnalysis] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testSampling] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testSolvers] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testSolvers/testNLPscripts] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testStoichiometricConsistency] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testTissueModel] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testTopology] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testVonBertalanffy] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testVonBertalanffy/iAF1260Molfiles] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/testpFBA] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests/testElementalBalance] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests/testFBA] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests/testFVA] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests/testFindBlockedReaction] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests/testMetaboTools] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests/testModelManipulation] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests/testOptimizeCbModel] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests/testRank] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests/testSBML] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests/testSubspaces] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests/testTools] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/test/verifiedTests/testXls2Model] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/cardOpt] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/cellDesigner] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/metabotools] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/metabotools/tutorial_I] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/metabotools/tutorial_II] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/moieties] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/moieties/Data] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/moieties/Data/AlternativeAtomMappingFiles] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/moieties/Data/AtomMappingFiles] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/moieties/Data/molfiles] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/moieties/Data/rxnfiles] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/opti] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/sampling] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/cobratoolbox/tutorials/thermo] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/AccessModel] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/AccessModel/Test] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/Convenience] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/Convenience/Test] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/AlgebraicRule] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/AssignmentRule] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Compartment] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/CompartmentType] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/CompartmentVolumeRule] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Constraint] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Delay] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Event] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/EventAssignment] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/FunctionDefinition] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/InitialAssignment] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/KineticLaw] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/LocalParameter] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Model] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/ModifierSpeciesReference] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Parameter] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/ParameterRule] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Priority] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/RateRule] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Reaction] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Rule] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Species] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/SpeciesConcentrationRule] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/SpeciesReference] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/SpeciesType] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/StoichiometryMath] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Test] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Trigger] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/Unit] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/UnitDefinition] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/MATLAB_SBML_Structure_Functions/structFieldnames] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/Simulation] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/Simulation/Test] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/Test] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/Test/test-data] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/Validate_MATLAB_SBML_Structures] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/Validate_MATLAB_SBML_Structures/Test] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package/MATLAB_SBML_Structures] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package/MATLAB_SBML_Structures/FBCModel] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package/MATLAB_SBML_Structures/FBCSpecies] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package/MATLAB_SBML_Structures/FluxBound] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package/MATLAB_SBML_Structures/FluxObjective] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package/MATLAB_SBML_Structures/Objective] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package/MATLAB_SBML_Structures/structFieldnames] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package/MATLAB_SBML_Structures/test] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package/Validate_MATLAB_SBML_Structures] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package/Validate_MATLAB_SBML_Structures/test] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package/test] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/SBMLToolbox-4.1.0/toolbox/fbc_package/test/test-data] 
+[Warning: Name is nonexistent or not a directory:
+/scratch/jcombar1/SBML/libSBML-5.13.0-matlab] 
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+
+	Academic License
+
+rf start
+Starting parallel pool (parpool) using the 'local' profile ... connected to 12 workers.
+[Warning: File:
+/scratch/groups/jvogels3/tyler/RandomerForest/Code/Classifiers/@rpclassificationforest/rpclassificationforest.m
+Line: 207 Column: 47
+The temporary variable ibidx will be cleared at the beginning of each iteration
+of the parfor loop.
+Any value assigned to it before the loop will be lost.  If ibidx is used before
+it is assigned in the parfor loop, a runtime error will occur.
+See Parallel for Loops in MATLAB, "Temporary Variables".] 
+[> In RerF_train (line 222)
+  In run_car_corrupted (line 99)] 
+Training complete
+rf complete
+rerf start
+Training complete
+rerf complete
+rerfr start
+Training complete
+rerfr complete
+rr_rf start
+Training complete
+rr_rf complete
+rr_rfr start
+Training complete
+rr_rfr complete
+Parallel pool using the 'local' profile is shutting down.
+job complete

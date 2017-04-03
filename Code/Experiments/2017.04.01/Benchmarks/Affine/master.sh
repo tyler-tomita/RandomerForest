@@ -2,7 +2,7 @@
 
 #SBATCH
 #SBATCH --job-name=run_benchmarks
-#SBATCH --array=2,3,8,10,19,26-29,34,39,47-50,53,55,56,58,85,86,87
+#SBATCH --array=1-121
 #SBATCH --time=2-0:0:0
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=12
