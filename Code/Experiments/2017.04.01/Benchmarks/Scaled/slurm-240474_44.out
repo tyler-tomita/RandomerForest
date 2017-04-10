@@ -496,3 +496,4 @@ rerf start
 Training complete
 rerf complete
 rerfr start
+slurmstepd: error: *** JOB 250461 ON compute0617 CANCELLED AT 2017-04-03T23:39:53 DUE TO TIME LIMIT ***

@@ -493,3 +493,7 @@ See Parallel for Loops in MATLAB, "Temporary Variables".]
 Training complete
 rf complete
 rerf start
+Training complete
+rerf complete
+rerfr start
+slurmstepd: error: *** JOB 251657 ON compute0277 CANCELLED AT 2017-04-04T00:37:15 DUE TO TIME LIMIT ***
