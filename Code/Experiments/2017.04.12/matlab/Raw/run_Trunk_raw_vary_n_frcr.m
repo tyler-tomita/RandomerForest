@@ -91,8 +91,8 @@ for j = 1:length(ps)
                     Depth{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     NumNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     NumSplitNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
-                    TreeStrength.(Classifiers{c}) = NaN(ntrials,length(Params.(Classifiers{c}).d)*length(Params.(Classifiers{c}).L));
-                    TreeDiversity.(Classifiers{c}) = NaN(ntrials,length(Params.(Classifiers{c}).d)*length(Params.(Classifiers{c}).L));
+                    TreeStrength{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params.(Classifiers{c}).d)*length(Params.(Classifiers{c}).L));
+                    TreeDiversity{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params.(Classifiers{c}).d)*length(Params.(Classifiers{c}).L));
                     Bias{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     Variance{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     MR{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
@@ -104,8 +104,8 @@ for j = 1:length(ps)
                     Depth{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
                     NumNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
                     NumSplitNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
-                    TreeStrength.(Classifiers{c}) = NaN(ntrials,length(Params.(Classifiers{c}).d)*length(Params.(Classifiers{c}).rho));
-                    TreeDiversity.(Classifiers{c}) = NaN(ntrials,length(Params.(Classifiers{c}).d)*length(Params.(Classifiers{c}).rho));                    
+                    TreeStrength{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params.(Classifiers{c}).d)*length(Params.(Classifiers{c}).rho));
+                    TreeDiversity{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params.(Classifiers{c}).d)*length(Params.(Classifiers{c}).rho));                    
                     Bias{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
                     Variance{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
                     MR{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
@@ -118,8 +118,8 @@ for j = 1:length(ps)
                 Depth{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
                 NumNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
                 NumSplitNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
-                TreeStrength.(Classifiers{c}) = NaN(ntrials,length(Params.(Classifiers{c}).d));
-                TreeDiversity.(Classifiers{c}) = NaN(ntrials,length(Params.(Classifiers{c}).d));                
+                TreeStrength{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params.(Classifiers{c}).d));
+                TreeDiversity{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params.(Classifiers{c}).d));                
                 Bias{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d));
                 Variance{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d));
                 MR{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d));
@@ -187,8 +187,8 @@ for j = 1:length(ps)
                         PredCell(:,kk) = predict_class(Scores(:,:,kk),Labels);
                     end
 
-                    TreeStrength.(Classifiers{c})(trial,k) = 1 - misclassification_rate(PredCell,Ytest,true);
-                    TreeDiversity.(Classifiers{c})(trial,k) = classifier_variance(PredCell);                    
+                    TreeStrength{i,j}.(Classifiers{c})(trial,k) = 1 - misclassification_rate(PredCell,Ytest,true);
+                    TreeDiversity{i,j}.(Classifiers{c})(trial,k) = classifier_variance(PredCell);                    
                     
                     if ~strcmp(Forest{k}.Rescale,'off')
                         Scores = rerf_classprob(Forest{k},Xtest,'last',Xtrain);
