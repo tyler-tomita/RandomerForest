@@ -34,10 +34,10 @@ for j = 1:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
     
-    Xtest = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Trunk/dat/Raw/Test/Trunk_test_set_p%d.dat',p));
+    Xtest = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Trunk/dat/Raw/Test/Trunk_raw_test_set_p%d.dat',p));
     Ytest = cellstr(num2str(Xtest(:,end)));
     Xtest(:,end) = [];
-    ClassPosteriors = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Trunk/dat/Raw/Test/Trunk_test_set_posteriors_p%d.dat',p));
+    ClassPosteriors = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Trunk/dat/Trunk_test_set_posteriors_p%d.dat',p));
     Noise(j) = 0.5*(1 - mean(sum(ClassPosteriors.^2,2)));   % noise from bias-variance-noise decomposition for 0-1 loss
     
     if p <= 10
@@ -133,7 +133,7 @@ for j = 1:length(ps)
             for trial = 1:ntrials
                 fprintf('Trial %d\n',trial)
                 
-                Xtrain = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Trunk/dat/Raw/Train/Trunk_train_set_n%d_p%d_trial%d.dat',ns{j}(i),p,trial));
+                Xtrain = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Trunk/dat/Raw/Train/Trunk_raw_train_set_n%d_p%d_trial%d.dat',ns{j}(i),p,trial));
                 Ytrain = cellstr(num2str(Xtrain(:,end)));
                 Xtrain(:,end) = [];
 
