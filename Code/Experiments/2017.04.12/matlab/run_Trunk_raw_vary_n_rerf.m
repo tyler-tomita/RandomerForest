@@ -12,7 +12,7 @@ ns = {[10,100,1000,10000], [10,100,1000,10000], [10,100,1000,10000]};
 ntrials = 10;
 ntest = 10e3;
 
-Classifiers = {'rf'};
+Classifiers = {'rerf'};
 
 OOBError = cell(length(ns{1}),length(ps));
 OOBAUC = cell(length(ns{1}),length(ps));
@@ -95,6 +95,7 @@ for j = 1:length(ps)
                     Variance{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     MR{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     TestPredictions = cell(ntest,ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
+                    TestError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));                    
                 else
                     OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho),Params{i,j}.(Classifiers{c}).nTrees);
                     OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho),Params{i,j}.(Classifiers{c}).nTrees);
@@ -106,6 +107,7 @@ for j = 1:length(ps)
                     Variance{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
                     MR{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
                     TestPredictions = cell(ntest,ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
+                    TestError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));                    
                 end
             else
                 OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d),Params{i,j}.(Classifiers{c}).nTrees);
@@ -118,8 +120,8 @@ for j = 1:length(ps)
                 Variance{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d));
                 MR{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d));
                 TestPredictions = cell(ntest,ntrials,length(Params{i,j}.(Classifiers{c}).d));
-            end
-            TestError{i,j}.(Classifiers{c}) = NaN(ntrials,1);                
+                TestError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
+            end              
             BestIdx{i,j}.(Classifiers{c}) = NaN(ntrials,1);
 
             for trial = 1:ntrials
@@ -176,19 +178,18 @@ for j = 1:length(ps)
                         Scores = rerf_classprob(Forest{k},Xtest,'last');
                     end
                     TestPredictions(:,trial,k) = predict_class(Scores,Forest{k}.classname);
+                    TestError{i,j}.(Classifiers{c})(trial,k) = ...
+                        misclassification_rate(TestPredictions(:,trial,k),Ytest,false);
                 end
                 
                 % select best model for test predictions
                 BI = hp_optimize(OOBError{i,j}.(Classifiers{c})(trial,:,end),...
                     OOBAUC{i,j}.(Classifiers{c})(trial,:,end));
                 BestIdx{i,j}.(Classifiers{c})(trial) = BI(end);
-                
-                TestError{i,j}.(Classifiers{c})(trial) = ...
-                    misclassification_rate(TestPredictions(:,trial,BestIdx{i,j}.(Classifiers{c})(trial)),Ytest,false);
 
                 clear Forest
             end
-            for k = 1:length(Params{i,j}.(Classifiers{c}).d)
+            for k = 1:size(TestPredictions,3)
                 Bias{i,j}.(Classifiers{c})(k) = classifier_bias(TestPredictions(:,:,k),ClassPosteriors);
                 Variance{i,j}.(Classifiers{c})(k) = classifier_variance(TestPredictions(:,:,k));
             end

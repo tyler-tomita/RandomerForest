@@ -44,10 +44,11 @@ ntrials = length(TestError{1}.rf);
 
 ax(k) = axes;
 hold on
+maxDepth = 0;
 for j = 1:3
     p = ps(j);
     
-    Classifiers = [fieldnames(TestError{1,j});'xgb'];
+    Classifiers = [fieldnames(TestError{1,j})];
     
     for i = 1:length(ns{j})
         n = ns{j}(i);
@@ -78,6 +79,7 @@ for j = 1:3
                 end
                 plot(D,E,'.','MarkerEdgeColor',Colors.(cl),...
                     'MarkerSize',MarkerSize,'LineWidth',0.5)
+                maxDepth = max([maxDepth,max(D)]);
             end
             
         end
@@ -100,7 +102,7 @@ end
 
 xlabel('Tree Depth')
 ylabel('Error Rate')
-title('Sparse Parity (n=1000)')
+title({'Sparse Parity';sprintf('n = %d',1000)})
 
 ax(k).LineWidth = LineWidth;
 ax(k).FontUnits = 'inches';
@@ -108,7 +110,7 @@ ax(k).FontSize = FontSize;
 ax(k).Units = 'inches';
 ax(k).Position = [axLeft(k) axBottom(k) axWidth axHeight];
 ax(k).Box = 'off';
-% ax(k).XLim = [10^(log10(min(ns{j}))-0.1) 10^(log10(max(ns{j}))+0.1)];
+ax(k).XLim = [10,maxDepth];
 % ax(k).XScale = 'log';
 % ax(k).XTick = ns{j};
 % ax(k).XTickLabel = cellstr(num2str(ns{j}'))';
@@ -128,10 +130,11 @@ Markers = {'o','x','+'};
 
 ax(k) = axes;
 hold on
+maxDepth = 0;
 for j = 1:3
     p = ps(j);
     
-    Classifiers = [fieldnames(TestError{1,j});'xgb'];
+    Classifiers = [fieldnames(TestError{1,j})];
     
     for i = 1:length(ns{j})
         n = ns{j}(i);
@@ -162,6 +165,7 @@ for j = 1:3
                 end
                 plot(D,E,'.','MarkerEdgeColor',Colors.(cl),...
                     'MarkerSize',MarkerSize,'LineWidth',0.5)
+                maxDepth = max([maxDepth,max(D)]);
             end
             
         end
@@ -184,7 +188,7 @@ end
 
 xlabel('Tree Depth')
 ylabel('Error Rate')
-title('Trunk (n=100)')
+title({'Trunk';sprintf('n = %d',100)})
 
 ax(k).LineWidth = LineWidth;
 ax(k).FontUnits = 'inches';
@@ -192,7 +196,7 @@ ax(k).FontSize = FontSize;
 ax(k).Units = 'inches';
 ax(k).Position = [axLeft(k) axBottom(k) axWidth axHeight];
 ax(k).Box = 'off';
-% ax(k).XLim = [10^(log10(min(ns{j}))-0.1) 10^(log10(max(ns{j}))+0.1)];
+ax(k).XLim = [0,10];
 % ax(k).XScale = 'log';
 % ax(k).XTick = ns{j};
 % ax(k).XTickLabel = cellstr(num2str(ns{j}'))';
@@ -200,7 +204,7 @@ ax(k).Box = 'off';
 % ax(k).YLim = [min(ErrorMatrix(:)) max(ErrorMatrix(:))];
 % ax(k).YScale = 'log';
 
-lh = legend('RF','RerF','RR-RF','XGBoost');
+lh = legend('RF','RerF','RR-RF');
 lh.Box = 'off';
 lh.Units = 'inches';
 lh.Position = [legLeft legBottom legWidth legHeight];
@@ -217,6 +221,7 @@ Markers = {'o','x','+'};
 
 ax(k) = axes;
 hold on
+maxDepth = 0;
 for j = 1:3
     p = ps(j);
     
@@ -252,6 +257,7 @@ for j = 1:3
                 end
                 plot(D,E,'.','MarkerEdgeColor',Colors.(cl),...
                     'MarkerSize',MarkerSize,'LineWidth',0.5)
+                maxDepth = max([maxDepth,max(D)]);            
             end
             
         end
@@ -274,7 +280,7 @@ end
 
 xlabel('Tree Depth')
 ylabel('Error Rate')
-title('Orthant (n=400)')
+title({'Orthant';sprintf('n = %d',400)})
 
 ax(k).LineWidth = LineWidth;
 ax(k).FontUnits = 'inches';
@@ -282,7 +288,7 @@ ax(k).FontSize = FontSize;
 ax(k).Units = 'inches';
 ax(k).Position = [axLeft(k) axBottom(k) axWidth axHeight];
 ax(k).Box = 'off';
-% ax(k).XLim = [10^(log10(min(ns{j}))-0.1) 10^(log10(max(ns{j}))+0.1)];
+ax(k).XLim = [0,20];
 % ax(k).XScale = 'log';
 % ax(k).XTick = ns{j};
 % ax(k).XTickLabel = cellstr(num2str(ns{j}'))';

@@ -273,7 +273,7 @@ ax((j-1)*3+k).YLim = [ymin ymax];
 xlabel('p')
 ylabel('Bias')
 if j == 1
-    title({'Trunk';sprintf('n = %d',1000)})
+    title({'Trunk';sprintf('n = %d',100)})
 end
 
 % variance
@@ -304,7 +304,7 @@ ax((j-1)*3+k).YLim = [ymin ymax];
 xlabel('p')
 ylabel('Variance')
 if j == 1
-    title({'Trunk';sprintf('n = %d',1000)})
+    title({'Trunk';sprintf('n = %d',100)})
 end
 
 lh = legend('RF','RerF','RR-RF','XGBoost');
@@ -344,7 +344,7 @@ ax((j-1)*3+k).YLim = [min(ymin) max(ymax)];
 xlabel('p')
 ylabel('Error Rate')
 if j == 1
-    title({'Trunk';sprintf('n = %d',1000)})
+    title({'Trunk';sprintf('n = %d',100)})
 end
 
 % Plot Orthant
@@ -432,7 +432,7 @@ ax((j-1)*3+k).YLim = [ymin ymax];
 xlabel('p')
 ylabel('Bias')
 if j == 1
-    title({'Orthant';sprintf('n = %d',1000)})
+    title({'Orthant';sprintf('n = %d',400)})
 end
 
 % variance
@@ -463,7 +463,7 @@ ax((j-1)*3+k).YLim = [ymin ymax];
 xlabel('p')
 ylabel('Variance')
 if j == 1
-    title({'Orthant';sprintf('n = %d',1000)})
+    title({'Orthant';sprintf('n = %d',400)})
 end
 
 % error rate
@@ -498,7 +498,7 @@ ax((j-1)*3+k).YLim = [min(ymin) max(ymax)];
 xlabel('p')
 ylabel('Error Rate')
 if j == 1
-    title({'Orthant';sprintf('n = %d',1000)})
+    title({'Orthant';sprintf('n = %d',400)})
 end
 
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/PAMI_fig6_bias_variance_synthetic_data'],{'fig','pdf','png'})

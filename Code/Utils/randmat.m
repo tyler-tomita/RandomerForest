@@ -1,8 +1,8 @@
 function M = srpmat(d,k,method,varargin)
     if strcmp(method,'binary')
-        s = varargin{1};
+        rho = varargin{1};
         M = zeros(d,k);
-        nnzs = round(k*d*s);
+        nnzs = round(k*d*rho);
         nzs=randperm(d*k,nnzs);
         npos = rand(nnzs,1) > 0.5;
         M(nzs(npos))=1;
@@ -11,19 +11,10 @@ function M = srpmat(d,k,method,varargin)
         OnlyNz = isnz & repmat(sum(isnz)==1,d,1);
         M(OnlyNz) = 1;
         M = sparse(unique(M(:,any(M))','rows','stable')');
-    elseif strcmp(method,'binary-raw')
-        s = varargin{1};
-        M = zeros(d,k);
-        nnzs = round(k*d*s);
-        nzs=randperm(d*k,nnzs);
-        npos = rand(nnzs,1) > 0.5;
-        M(nzs(npos))=1;
-        M(nzs(~npos))=-1;
-        M = sparse(M);
     elseif strcmp(method,'continuous')
-        s = varargin{1};
+        rho = varargin{1};
         M = zeros(d,k);
-        nnzs = round(k*d*s);
+        nnzs = round(k*d*rho);
         nzs=randperm(d*k,nnzs);
         M(nzs) = rand(1,nnzs)*2 - 1;
         isnz = M~=0;
@@ -31,10 +22,10 @@ function M = srpmat(d,k,method,varargin)
         M(OnlyNz) = 1;
         M = sparse(unique(M(:,any(M))','rows','stable')');
     elseif strcmp(method,'binary-adjusted')
-        s = varargin{1};
+        rho = varargin{1};
         kk = varargin{3};
         M = zeros(d,kk);
-        nnzs = round(kk*d*s);
+        nnzs = round(kk*d*rho);
         nzs=randperm(d*kk,nnzs);
         npos = rand(nnzs,1) > 0.5;
         M(nzs(npos))=1;
@@ -46,10 +37,10 @@ function M = srpmat(d,k,method,varargin)
         M = M(:,1:min(k,size(M,2)));
         M = sparse(M);
     elseif strcmp(method,'continuous-adjusted')
-        s = varargin{1};
+        rho = varargin{1};
         kk = varargin{3};
         M = zeros(d,kk);
-        nnzs = round(kk*d*s);
+        nnzs = round(kk*d*rho);
         nzs=randperm(d*kk,nnzs);
         M(nzs) = rand(1,nnzs)*2 - 1;
         isnz = M~=0;

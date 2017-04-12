@@ -23,7 +23,7 @@ axBottom = [FontSize*14+axHeight*4,FontSize*11+axHeight*3,...
     FontSize*2];
 cbLeft = axLeft + axWidth + FontSize/2;
 cbBottom = axBottom;
-figWidth = cbLeft(1) + cbWidth + FontSize*3;
+figWidth = cbLeft(1) + cbWidth + FontSize*5;
 figHeight = axBottom(1) + axHeight + FontSize*2;
 
 % % FontSize = .2;
@@ -58,11 +58,8 @@ Classifiers = {'rf','rerf','rerfr','rr_rf','rr_rfr','xgb'};
 BinEdges = [-1,-0.2,-0.1,-0.05:0.01:-0.01,-0.005,0,0,0.005,0.01:0.01:0.05,0.1,0.2,1];
 
 for t = 1:length(Transformations)
-    if t ==1
-        Classifiers = {'rf','rerf','rr_rf','xgb'};
-    else
-        Classifiers = {'rf','rerf','rerfr','rr_rf','rr_rfr','xgb'};
-    end
+    Classifiers = {'rf','rerf','rerfr','rr_rf','rr_rfr','xgb'};
+    
     fprintf('t = %d\n',t)
     
     inPath1 = [rerfPath 'RandomerForest/Results/2017.04.01/Benchmarks/' Transformations{t} '/'];
@@ -106,10 +103,7 @@ for t = 1:length(Transformations)
             for c = 1:length(Classifiers)
                 cl = Classifiers{c};
                 if ~strcmp(cl,'xgb')
-                    if t > 1
-                        TestError.(cl) = TestError.(cl)(BestIdx.(cl));
-                    end
-                    AbsoluteError(k,c) = TestError.(cl);
+                    AbsoluteError(k,c) = TestError.(cl)(BestIdx.(cl));
                 else
                     AbsoluteError(k,c) = dlmread([inPath2 Dataset '_testError.dat']);
                 end
@@ -136,11 +130,7 @@ for t = 1:length(Transformations)
     Fractions = Counts./repmat(sum(Counts),size(Counts,1),1);
 
     ax(t) = axes;
-    if t == 1
-        h = heatmap(flipud(Fractions),{'RerF','RR-RF','XGBoost'},cellstr(num2str(flipud(BinEdges'))),ColorMap,true);
-    else
-        h = heatmap(flipud(Fractions),{'RerF','RerF(r)','RR-RF','RR-RF(r)','XGBoost'},cellstr(num2str(flipud(BinEdges'))),ColorMap,true);
-    end
+    h = heatmap(flipud(Fractions),{'RerF','RerF(r)','RR-RF','RR-RF(r)','XGBoost'},cellstr(num2str(flipud(BinEdges'))),ColorMap,true);
     if t==1
         ylabel('Normalized Error Relative to RF')
         title('Raw','FontSize',8)
@@ -150,6 +140,9 @@ for t = 1:length(Transformations)
         title(Transformations{t},'FontSize',8)
     end
     cb = colorbar;
+    if t==1
+        ylabel(cb,'Fraction of Datasets','rot',-90)
+    end
     cb.Units = 'inches';
     cb.Position = [cbLeft(t) cbBottom(t) cbWidth cbHeight];
     cb.Box = 'off';

@@ -12,20 +12,19 @@ Colors.rf = ColorMap(2,:);
 Colors.rerf= ColorMap(10,:);
 Colors.rr_rf = ColorMap(4,:);
 Colors.xgb= ColorMap(8,:);
-
 LineWidth = 2;
 MarkerSize = 8;
-FontSize = .2;
-axWidth = 2;
-axHeight = 2;
-axLeft = FontSize*4;
-axBottom = FontSize*4;
-legWidth = axWidth/2;
+FontSize = 0.175;
+axWidth = 1.5;
+axHeight = 1.5;
+axLeft = [FontSize*4,FontSize*7+axWidth];
+axBottom = FontSize*4*ones(1,2);
+legWidth = axWidth*0.75;
 legHeight = axHeight;
-legLeft = axLeft + axWidth;
-legBottom = axBottom;
-figWidth = legLeft + legWidth + FontSize/2;
-figHeight = axBottom + axHeight + FontSize*2.5;
+legLeft = axLeft(end) + axWidth;
+legBottom = axBottom(end);
+figWidth = legLeft + legWidth;
+figHeight = axBottom(1) + axHeight + FontSize*2.5;
 
 fig = figure;
 fig.Units = 'inches';
@@ -41,9 +40,11 @@ inPath2 = '~/Benchmarks/Results/R/dat/Raw/';
 contents = dir([inPath1 '*.mat']);
 
 AbsoluteError = NaN(length(contents),length(Classifiers));
-NormError = NaN(length(contents),length(Classifiers));
+RelativeError = NaN(length(contents),length(Classifiers));
 ChanceProb = NaN(length(contents),1);
-MeanDepth = NaN(length(contents),length(Classifiers));
+p = NaN(length(contents),1);
+p_lowrank = NaN(length(contents),1);
+ntrain = NaN(length(contents),1);
 
 k = 1;
 
@@ -70,52 +71,42 @@ for i = 1:length(contents)
 
     if isComplete
         TrainSet = dlmread(['~/Benchmarks/Data/dat/Raw/' Dataset '_train.dat']);
-        [ntrain,p] = size(TrainSet(:,1:end-1));
-        nClasses = length(unique(TrainSet(:,end)));
-        ClassCounts = histcounts(TrainSet(:,end),nClasses);
+        TestSet = dlmread(['~/Benchmarks/Data/dat/Raw/' Dataset '_test.dat']);
+        [ntrain(k),p(k)] = size(TrainSet(:,1:end-1));
+        [coeff,score,lambda] = pca([TrainSet(:,1:end-1);TestSet(:,1:end-1)]);
+        VarCutoff = 0.9;
+        AboveCutoff = find(cumsum(lambda)/sum(lambda) >= 0.9);
+        p_lowrank(k) = AboveCutoff(1);
+        nClasses = length(unique(TestSet(:,end)));
+        ClassCounts = histcounts(TestSet(:,end),nClasses);
         ChanceProb(k) = 1 - max(ClassCounts)/sum(ClassCounts);
 
         for c = 1:length(Classifiers)
             cl = Classifiers{c};
             if ~strcmp(cl,'xgb')
                 AbsoluteError(k,c) = TestError.(cl)(BestIdx.(cl));
-                MeanDepth(k,c) = mean(Depth.(cl)(:,BestIdx.(cl)));
             else
                 AbsoluteError(k,c) = dlmread([inPath2 Dataset '_testError.dat']);
-                MeanDepth(k,c) = dlmread([inPath2 Dataset '_depth.dat']);
             end
-            NormError(k,c) = AbsoluteError(k,c)/ChanceProb(k);
+%             if c > 1
+                RelativeError(k,c) = AbsoluteError(k,c)/ChanceProb(k);
+%             end
         end
         k = k + 1;
     end
 end
 
-NormError(all(isnan(NormError),2),:) = [];
-MeanDepth(all(isnan(MeanDepth),2),:) = [];
+AbsoluteError(all(isnan(RelativeError),2),:) = [];
+RelativeError(all(isnan(RelativeError),2),:) = [];
+p(isnan(p)) = [];
+p_lowrank(isnan(p_lowrank)) = [];
+ntrain(isnan(ntrain)) = [];
 
-ax = axes;
+k = 1;
+ax(k) = axes;
 hold on
 for c = 1:length(Classifiers)
     cl = Classifiers{c};
-    plot(MeanDepth(:,c),NormError(:,c),'.','MarkerSize',MarkerSize,...
+    plot(p_lowrank./p,RelativeError(:,c),'.','MarkerSize',MarkerSize,...
         'Color',Colors.(cl))
 end
-
-xlabel('Mean Depth')
-ylabel('Error Rate')
-title('Raw Benchmarks')
-
-ax.LineWidth = LineWidth;
-ax.FontUnits = 'inches';
-ax.FontSize = FontSize;
-ax.Units = 'inches';
-ax.Position = [axLeft axBottom axWidth axHeight];
-ax.XScale = 'log';
-ax.YScale = 'log';
-
-lh = legend('RF','RerF','RR-RF','XGBoost');
-lh.Box = 'off';
-lh.Units = 'inches';
-lh.Position = [legLeft legBottom legWidth legHeight];
-        
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/PAMI_fig8_tree_size_benchmark'],{'fig','pdf','png'})
