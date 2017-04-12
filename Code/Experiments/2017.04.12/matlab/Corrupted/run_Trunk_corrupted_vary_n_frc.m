@@ -59,7 +59,7 @@ for j = 1:length(ps)
                 Params{i,j}.(Classifiers{c}).nTrees = 500;
             end
             Params{i,j}.(Classifiers{c}).Stratified = true;
-            Params{i,j}.(Classifiers{c}).NWorkers = 2;
+            Params{i,j}.(Classifiers{c}).NWorkers = 12;
             if strcmp(Classifiers{c},'rerfr') || strcmp(Classifiers{c},'frcr') || strcmp(Classifiers{c},'rr_rfr')
                 Params{i,j}.(Classifiers{c}).Rescale = 'rank';
             else
