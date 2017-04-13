@@ -30,7 +30,7 @@ BestIdx = cell(length(ns{1}),length(ps));
 Noise = zeros(1,length(ps));
 Labels = {'0';'1'};
 
-for j = 1:length(ps)
+for j = 1:2
     p = ps(j);
     fprintf('p = %d\n',p)
     
