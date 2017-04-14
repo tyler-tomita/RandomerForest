@@ -9,6 +9,7 @@ rng(1);
 
 ps = [2,4,6];
 ns = {[20,200,400], [80,400,4000], [400,2000,4000]};
+ntrials = 10;
 ntest = 10e3;
 
 Classifiers = {'rerfr'};
@@ -129,7 +130,7 @@ for j = 1:length(ps)
             for trial = 1:ntrials
                 fprintf('Trial %d\n',trial)
                 
-                Xtrain = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Orthant/dat/Raw/Train/Orthant_raw_train_set_n%d_p%d_trial%d.dat',ns{j}(i),p,trial));
+                Xtrain = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Orthant/dat/Raw/Train/Orthant_raw_train_set_p%d_n%d_trial%d.dat',p,ns{j}(i),trial));
                 Ytrain = cellstr(num2str(Xtrain(:,end)));
                 Xtrain(:,end) = [];
 
