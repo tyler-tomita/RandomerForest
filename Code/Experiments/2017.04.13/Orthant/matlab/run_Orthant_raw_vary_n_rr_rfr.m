@@ -27,7 +27,6 @@ Variance = cell(length(ns{1}),length(ps));
 TreeStrength = cell(length(ns{1}),length(ps));
 TreeDiversity = cell(length(ns{1}),length(ps));
 BestIdx = cell(length(ns{1}),length(ps));
-Labels = {'0';'1'};
 
 for j = 1:length(ps)
     p = ps(j);
@@ -46,12 +45,13 @@ for j = 1:length(ps)
     mtrys_rf = mtrys(mtrys<=p);
       
     for i = 1:length(ns{j})
-        fprintf('n = %d\n',ns{j}(i))
+        ntrain = ns{j}(i);
+        fprintf('n = %d\n',ntrain)
 
         for c = 1:length(Classifiers)
             fprintf('%s start\n',Classifiers{c})
             
-            if ns{j}(i) <= 1000
+            if ntrain <= 1000
                 Params{i,j}.(Classifiers{c}).nTrees = 1000;
             else
                 Params{i,j}.(Classifiers{c}).nTrees = 500;
@@ -130,7 +130,7 @@ for j = 1:length(ps)
             for trial = 1:ntrials
                 fprintf('Trial %d\n',trial)
                 
-                Xtrain = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Orthant/dat/Raw/Train/Orthant_raw_train_set_p%d_n%d_trial%d.dat',p,ns{j}(i),trial));
+                Xtrain = dlmread(sprintf('/scratch/groups/jvogels3/tyler/R/Data/Orthant/dat/Raw/Train/Orthant_raw_train_set_p%d_n%d_trial%d.dat',p,ntrain,trial));
                 Ytrain = cellstr(num2str(Xtrain(:,end)));
                 Xtrain(:,end) = [];
 
@@ -149,17 +149,19 @@ for j = 1:length(ps)
                 % compute oob auc, oob error, and tree stats
 
                 for k = 1:length(Forest)
+                    Labels = Forest{k}.classname;
+                    nClasses = length(Labels);
                     Scores = rerf_oob_classprob(Forest{k},...
                         Xtrain,'every');
                     for t = 1:Forest{k}.nTrees
-                        Predictions = predict_class(Scores(:,:,t),Forest{k}.classname);
+                        Predictions = predict_class(Scores(:,:,t),Labels);
                         OOBError{i,j}.(Classifiers{c})(trial,k,t) = ...
                             misclassification_rate(Predictions,Ytrain,...
                         false);
-                        if size(Scores,2) > 2
-                            Yb = binarize_labels(Ytrain,Forest{k}.classname);
+                        if nClasses > 2
+                            Yb = binarize_labels(Ytrain,Labels);
                             [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k,t)] = ... 
-                                perfcurve(Yb(:),Scores((t-1)*ns{j}(i)*Params{i,j}.(Classifiers{c}).d+(1:ns{j}(i)*Params{i,j}.(Classifiers{c}).d)),'1');
+                                perfcurve(Yb(:),Scores((t-1)*ntrain*nClasses+(1:ntrain*nClasses)),'1');
                         else
                             [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k,t)] = ...
                                 perfcurve(Ytrain,Scores(:,2,t),'1');
@@ -194,7 +196,7 @@ for j = 1:length(ps)
                     else
                         Scores = rerf_classprob(Forest{k},Xtest,'last');
                     end
-                    TestPredictions(:,trial,k) = predict_class(Scores,Forest{k}.classname);
+                    TestPredictions(:,trial,k) = predict_class(Scores,Labels);
                     TestError{i,j}.(Classifiers{c})(trial,k) = ...
                         misclassification_rate(TestPredictions(:,trial,k),Ytest,false);
                 end
