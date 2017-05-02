@@ -1,4 +1,4 @@
-function L = misclassification_rate(Predictions,Y,Weighted)
+function L = misclassification_rate(Predictions,Y,Weighted,Average)
 % MISCLASSIFICATION_RATE Proportion of predictions made by a set of
 % classifiers on a set of observations that do not match the true class
 % label
@@ -9,7 +9,7 @@ function L = misclassification_rate(Predictions,Y,Weighted)
 %   and columns correspond to classifiers. That is, PREDICTIONS(i,j) is the
 %   predicted class label made by the jth classifier on the ith
 %   observation. Y is an n-by-1 cell array of true class labels. L is a
-%   scalar value. ISWEIGHT is a logical value. Specifying true takes into
+%   scalar value if AVERAGE is true, else it's a N-vector. ISWEIGHT is a logical value. Specifying true takes into
 %   account whether classifiers have different numbers of predictions,
 %   which is often the case when the set of classifiers are trained with
 %   bagging.
@@ -22,16 +22,33 @@ else
     end
 end
 
-[n,N] = size(Predictions);
+if ~exist('Average')
+    Average = true;
+else
+    if ~islogical(Average)
+        Average = true;
+    end
+end
+
+[~,N] = size(Predictions);
 OOB = ~cellfun(@isempty,Predictions);
 Wrong = NaN(size(Predictions));
 
-for cl = 1:N
-    Wrong(OOB(:,cl),cl) = ~strcmp(Predictions(OOB(:,cl),cl),Y(OOB(:,cl)));
+parfor cl = 1:N
+    oobidx = OOB(:,cl);
+    Pred_cl = Predictions(:,cl);
+    Wrong_cl = Wrong(:,cl);
+    Wrong_cl(oobidx) = ~strcmp(Pred_cl(oobidx),Y(oobidx));
+    Wrong(:,cl) = Wrong_cl;
+%     Wrong(oobidx,cl) = ~strcmp(Predictions(OOB(:,cl),cl),Y(OOB(:,cl)));
 end
 
-if Weighted
-    L = nanmean(Wrong(:));
+if Average
+    if Weighted
+        L = nanmean(Wrong(:));
+    else
+        L = nanmean(nanmean(Wrong));
+    end
 else
-    L = nanmean(nanmean(Wrong));
+    L = nanmean(Wrong);
 end

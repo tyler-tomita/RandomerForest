@@ -11,9 +11,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 rng(1);
 
 
-Classifiers = {'rf' 'rerf'};
-
-Transformations = {'Affine'};
+Classifiers = {'rf' 'rerf' 'frc' 'rr_rf'};
 
 load Orthogonal_example_data
 
@@ -38,10 +36,19 @@ for i = 1:length(ns)
         if strcmp(Classifiers{c},'rf')
             Params.(Classifiers{c}).ForestMethod = 'rf';
             Params.(Classifiers{c}).d = mtrys_rf;
-        else
+        elseif strcmp(Classifiers{c},'rerf')
             Params.(Classifiers{c}).ForestMethod = 'rerf';
             Params.(Classifiers{c}).RandomMatrix = 'binary';
             Params.(Classifiers{c}).d = mtrys;
+        elseif strcmp(Classifiers{c},'frc')
+            Params.(Classifiers{c}).ForestMethod = 'rerf';
+            Params.(Classifiers{c}).RandomMatrix = 'frc';
+            Params.(Classifiers{c}).L = 2;
+            Params.(Classifiers{c}).d = mtrys;
+        elseif strcmp(Classifiers{c},'rr_rf')
+            Params.(Classifiers{c}).ForestMethod = 'rf';
+            Params.(Classifiers{c}).Rotate = true;
+            Params.(Classifiers{c}).d = mtrys_rf;
         end
 
         OOBError.(Classifiers{c}) = NaN(1,length(Params.(Classifiers{c}).d));

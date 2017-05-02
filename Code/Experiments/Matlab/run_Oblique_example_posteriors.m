@@ -10,10 +10,7 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 rng(1);
 
-
-Classifiers = {'rf' 'rerf'};
-
-Transformations = {'Affine'};
+Classifiers = {'rf' 'rerf' 'frc' 'rr_rf'};
 
 load Oblique_example_data
 
@@ -31,6 +28,7 @@ mtrys_rf = 1:p;
 
 for i = 1:length(ns)
     [ntrain,p] = size(Xtrain{i});
+    fprintf('n = %d\n',ntrain)
 
     for c = 1:length(Classifiers)
         fprintf('%s start\n',Classifiers{c})
@@ -38,10 +36,19 @@ for i = 1:length(ns)
         if strcmp(Classifiers{c},'rf')
             Params.(Classifiers{c}).ForestMethod = 'rf';
             Params.(Classifiers{c}).d = mtrys_rf;
-        else
+        elseif strcmp(Classifiers{c},'rerf')
             Params.(Classifiers{c}).ForestMethod = 'rerf';
             Params.(Classifiers{c}).RandomMatrix = 'binary';
             Params.(Classifiers{c}).d = mtrys;
+        elseif strcmp(Classifiers{c},'frc')
+            Params.(Classifiers{c}).ForestMethod = 'rerf';
+            Params.(Classifiers{c}).RandomMatrix = 'frc';
+            Params.(Classifiers{c}).L = 2;
+            Params.(Classifiers{c}).d = mtrys;
+        elseif strcmp(Classifiers{c},'rr_rf')
+            Params.(Classifiers{c}).ForestMethod = 'rf';
+            Params.(Classifiers{c}).Rotate = true;
+            Params.(Classifiers{c}).d = mtrys_rf;
         end
 
         OOBError.(Classifiers{c}) = NaN(1,length(Params.(Classifiers{c}).d));
@@ -75,7 +82,7 @@ for i = 1:length(ns)
         Phats{i}.(Classifiers{c}) = rerf_classprob(Forest{BestIdx},...
             [Xpost,Ypost],'last');
 
-        save([rerfPath 'RandomerForest/Results/Oblique_example_posteriors.mat'],...
+        save([rerfPath 'RandomerForest/Results/2017.02.15/Oblique_example_posteriors.mat'],...
             'Phats','Xpost','Ypost')
         fprintf('%s complete\n',Classifiers{c})
     end

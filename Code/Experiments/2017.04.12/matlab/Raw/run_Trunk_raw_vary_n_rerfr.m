@@ -30,7 +30,8 @@ BestIdx = cell(length(ns{1}),length(ps));
 Noise = zeros(1,length(ps));
 Labels = {'0';'1'};
 
-for j = 1:length(ps)
+for j = length(ps)
+% for j = 1:length(ps)
     p = ps(j);
     fprintf('p = %d\n',p)
     
@@ -47,7 +48,8 @@ for j = 1:length(ps)
     end
     mtrys_rf = mtrys(mtrys<=p);
       
-    for i = 1:length(ns{j})
+    for i = 3:length(ns{j})
+%     for i = 1:length(ns{j})
         fprintf('n = %d\n',ns{j}(i))
 
         for c = 1:length(Classifiers)
@@ -87,26 +89,26 @@ for j = 1:length(ps)
 
             if strcmp(Params{i,j}.(Classifiers{c}).ForestMethod,'rerf')
                 if strcmp(Params{i,j}.(Classifiers{c}).RandomMatrix,'frc')
-                    OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L),Params{i,j}.(Classifiers{c}).nTrees);
-                    OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L),Params{i,j}.(Classifiers{c}).nTrees);
+                    OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
+                    OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     TrainTime{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     Depth{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     NumNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     NumSplitNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
-                    TreeStrength{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
+                    TreeStrength{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     TreeDiversity{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     Bias{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     Variance{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     TestPredictions = cell(ntest,ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));
                     TestError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).L));                    
                 else
-                    OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho),Params{i,j}.(Classifiers{c}).nTrees);
-                    OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho),Params{i,j}.(Classifiers{c}).nTrees);
+                    OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
+                    OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
                     TrainTime{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
                     Depth{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
                     NumNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
                     NumSplitNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
-                    TreeStrength{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
+                    TreeStrength{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
                     TreeDiversity{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));                    
                     Bias{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
                     Variance{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));
@@ -114,13 +116,13 @@ for j = 1:length(ps)
                     TestError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d)*length(Params{i,j}.(Classifiers{c}).rho));                    
                 end
             else
-                OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d),Params{i,j}.(Classifiers{c}).nTrees);
-                OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d),Params{i,j}.(Classifiers{c}).nTrees);
+                OOBError{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
+                OOBAUC{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
                 TrainTime{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
                 Depth{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
                 NumNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
                 NumSplitNodes{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
-                TreeStrength{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));
+                TreeStrength{i,j}.(Classifiers{c}) = NaN(ntrials,Params{i,j}.(Classifiers{c}).nTrees,length(Params{i,j}.(Classifiers{c}).d));
                 TreeDiversity{i,j}.(Classifiers{c}) = NaN(ntrials,length(Params{i,j}.(Classifiers{c}).d));                
                 Bias{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d));
                 Variance{i,j}.(Classifiers{c}) = NaN(1,length(Params{i,j}.(Classifiers{c}).d));
@@ -150,23 +152,24 @@ for j = 1:length(ps)
 
                 % compute oob auc, oob error, and tree stats
 
-                for k = 1:length(Forest)
+               for k = 1:length(Forest)
+                    fprintf('Forest %d\n',k)
+                    Labels = Forest{k}.classname;
+                    nClasses = length(Labels);
                     Scores = rerf_oob_classprob(Forest{k},...
-                        Xtrain,'every');
-                    for t = 1:Forest{k}.nTrees
-                        Predictions = predict_class(Scores(:,:,t),Forest{k}.classname);
-                        OOBError{i,j}.(Classifiers{c})(trial,k,t) = ...
-                            misclassification_rate(Predictions,Ytrain,...
-                        false);
-                        if size(Scores,2) > 2
-                            Yb = binarize_labels(Ytrain,Forest{k}.classname);
-                            [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k,t)] = ... 
-                                perfcurve(Yb(:),Scores((t-1)*ns{j}(i)*Params{i,j}.(Classifiers{c}).d+(1:ns{j}(i)*Params{i,j}.(Classifiers{c}).d)),'1');
-                        else
-                            [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k,t)] = ...
-                                perfcurve(Ytrain,Scores(:,2,t),'1');
-                        end
-                    end
+                        Xtrain,'last');
+                    Predictions = predict_class(Scores,Labels);
+                    OOBError{i,j}.(Classifiers{c})(trial,k) = ...
+                        misclassification_rate(Predictions,Ytrain,...
+                    false);
+                    if nClasses > 2
+                        Yb = binarize_labels(Ytrain,Labels);
+                        [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k)] = ... 
+                            perfcurve(Yb(:),Scores(:),'1');
+                    else
+                        [~,~,~,OOBAUC{i,j}.(Classifiers{c})(trial,k)] = ...
+                            perfcurve(Ytrain,Scores(:,2),'1');
+                    end                    
                     Depth{i,j}.(Classifiers{c})(trial,:,k) = forest_depth(Forest{k})';
                     NN = NaN(1,Forest{k}.nTrees);
                     NS = NaN(1,Forest{k}.nTrees);
@@ -188,7 +191,7 @@ for j = 1:length(ps)
                         PredCell(:,kk) = predict_class(Scores(:,:,kk),Labels);
                     end
 
-                    TreeStrength{i,j}.(Classifiers{c})(trial,k) = 1 - misclassification_rate(PredCell,Ytest,true);
+                    TreeStrength{i,j}.(Classifiers{c})(trial,:,k) = 1 - misclassification_rate(PredCell,Ytest,true,false);
                     TreeDiversity{i,j}.(Classifiers{c})(trial,k) = classifier_variance(PredCell);                    
                     
                     if ~strcmp(Forest{k}.Rescale,'off')
@@ -196,14 +199,14 @@ for j = 1:length(ps)
                     else
                         Scores = rerf_classprob(Forest{k},Xtest,'last');
                     end
-                    TestPredictions(:,trial,k) = predict_class(Scores,Forest{k}.classname);
+                    TestPredictions(:,trial,k) = predict_class(Scores,Labels);
                     TestError{i,j}.(Classifiers{c})(trial,k) = ...
                         misclassification_rate(TestPredictions(:,trial,k),Ytest,false);
                 end
                 
                 % select best model for test predictions
-                BI = hp_optimize(OOBError{i,j}.(Classifiers{c})(trial,:,end),...
-                    OOBAUC{i,j}.(Classifiers{c})(trial,:,end));
+                BI = hp_optimize(OOBError{i,j}.(Classifiers{c})(trial,:),...
+                    OOBAUC{i,j}.(Classifiers{c})(trial,:));
                 BestIdx{i,j}.(Classifiers{c})(trial) = BI(end);
 
                 clear Forest
