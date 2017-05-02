@@ -123,8 +123,8 @@ ax(k).FontUnits = 'inches';
 ax(k).FontSize = FontSize;
 ax(k).Units = 'inches';
 ax(k).Position = [axLeft(k) axBottom(k) axWidth axHeight];
-ax(k).XLim = [min(RelativeStrength(:)) max(RelativeStrength(:))];
-ax(k).YLim = [min(RelativeError(:)) max(RelativeError(:))];
+ax(k).XLim = [min(RelativeStrength(:)) max(RelativeStrength(:))+0.02];
+ax(k).YLim = [min(RelativeError(:))-0.04 max(RelativeError(:))+0.02];
 % ax(k).XScale = 'log';
 % ax(k).YScale = 'log';
 

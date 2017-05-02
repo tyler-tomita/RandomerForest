@@ -2,8 +2,8 @@
 
 #SBATCH
 #SBATCH --job-name=run_Sparse_parity_raw
-#SBATCH --array=0-6
-#SBATCH --time=2-0:0:0
+#SBATCH --array=1-4
+#SBATCH --time=4-0:0:0
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=12
 #SBATCH --mem=120000

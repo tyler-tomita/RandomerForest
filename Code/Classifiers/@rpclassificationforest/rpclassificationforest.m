@@ -13,6 +13,7 @@ classdef rpclassificationforest
         rotmat = [];
         RotVars = logical([]);
         rpm = [];
+        rho = [];
     end
     
     methods
@@ -132,10 +133,20 @@ classdef rpclassificationforest
             [n,d] = size(X);
             
             %Check sparsity
-            if rho < 1/d
-                rho = 1/d;
-            elseif rho > 1
-                rho = 1;
+            if ischar(rho)
+                if ~strcmp(rho,'random')
+                    error('Parameter rho must either be ''random'' or type numeric');
+                else
+                    rho = randi(3,1,nTrees)/d;
+                end
+            else
+                if rho < 1/d
+                    rho = repmat(1/d,1,nTrees);
+                elseif rho > 1
+                    rho = ones(1,nTrees);
+                else
+                    rho = repmat(rho,1,nTrees);
+                end
             end
             
             nclasses = length(forest.classname);
@@ -229,11 +240,11 @@ classdef rpclassificationforest
                         categ,'prune',Prune,'method',Method,'qetoler',...
                         qetoler,'names',names,'weights',W,'surrogate',...
                         surrogate,'skipchecks',skipchecks,'stream',Stream,...
-                        'rho',rho,'mdiff',mdiff,'RandomMatrix',RandomMatrix,...
+                        'rho',rho(i),'mdiff',mdiff,'RandomMatrix',RandomMatrix,...
                         'nmix',nmix,'p',p,'dprime',dprime,'DownsampleNode',...
                         DownsampleNode,'MaxNodeSize',MaxNodeSize);
                 elseif strcmp(ForestMethod,'rerf2')
-                    RM{i} = randmat(d,dx,RandomMatrix,rho,nmix,...
+                    RM{i} = randmat(d,dx,RandomMatrix,rho(i),nmix,...
                         ceil(dx^(1/interp1(AdjustmentFactors.dims,AdjustmentFactors.slope,d))));
                     Tree{i} = classregtree2(Xtree(ibidx,:)*RM{i},Y(ibidx,:),...
                         'priorprob',Prior,'cost',Cost,'splitcriterion',...
@@ -283,6 +294,7 @@ classdef rpclassificationforest
             forest.RandomMatrix = RandomMatrix;
 %             forest.NumVars = NumVars;
             forest.priors = priors;
+            forest.rho = rho;
             if rotate
                 forest.rotmat = RR;
                 if d>500

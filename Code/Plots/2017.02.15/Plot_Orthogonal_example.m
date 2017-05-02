@@ -1,3 +1,4 @@
+% Plot orthogonal example
 close all
 clear
 clc
@@ -7,15 +8,17 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 LineWidth = 2;
 MarkerSize = 12;
-FontSize = .2;
+FontSize = .4;
 axWidth = 1.5;
 axHeight = 1.5;
-axLeft = [mean([FontSize*5,FontSize*9+axWidth]),...
-    repmat([FontSize*5,FontSize*9+axWidth],1,2)];
-axBottom = [FontSize*9+axHeight*2,(FontSize*6+axHeight)*ones(1,2),FontSize*3*ones(1,2)];
-
-figWidth = axLeft(end) + axWidth + FontSize;
-figHeight = axBottom(1) + axHeight + FontSize*1.5;
+axLeft = repmat(FontSize*4,1,3);
+axBottom = [FontSize*10+axHeight*2,FontSize*6.5+axHeight,FontSize*3];
+cbHeight = axHeight;
+cbWidth = axWidth/8;
+cbLeft = axLeft(end) + axWidth + FontSize/2;
+cbBottom = axBottom(1);
+figWidth = cbLeft(end) + cbWidth + FontSize*3;
+figHeight = axBottom(1) + axHeight + FontSize*2;
 
 fig = figure;
 fig.Units = 'inches';
@@ -45,8 +48,7 @@ ax = axes;
 posterior_map(Xpost,Ypost,Posteriors,false,ColorMap2);
 
 xlabel('X_1')
-ylabel('X_2')
-title('Posterior')
+ylabel({'\bf{Posteriors}';'\rm{X_2}'})
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -54,17 +56,27 @@ ax.Units = 'inches';
 ax.Position = [axLeft(1) axBottom(1) axWidth axHeight];
 ax.Box = 'off';
 
+cb = colorbar;
+cb.Units = 'inches';
+cb.Position = [cbLeft cbBottom cbWidth cbHeight];
+cb.Box = 'off';
+% cb.FontSize = FontSize;
+ylh = ylabel(cb,'P(Y = 1 | X)','Rotation',-90);
+ylh.Position = [6.5637,0.5000,0];
+
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Orthogonal_example_posteriors_1'],...
+    {'fig','pdf','png'})
+
 ax = axes;
 
-posterior_map(Xpost,Ypost,Phats{1}.rf,false,ColorMap2);
+posterior_map(Xpost,Ypost,Phats{2}.rf,true,ColorMap2);
 
 % hold on;
 % plot(x0(:,1),x0(:,2),'.','MarkerEdgeColor',ColorMap(2,:),'MarkerSize',MarkerSize)
 % plot(x1(:,1),x1(:,2),'.','MarkerEdgeColor',ColorMap(end-1,:),'MarkerSize',MarkerSize)
 
 xlabel('X_1')
-ylabel({['\bf{n = ' num2str(size(Xtrain{1},1)) '}'];'\rm{X_2}'})
-title('RF')
+ylabel({'\bf{RF}';'\rm{X_2}'})
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -72,17 +84,20 @@ ax.Units = 'inches';
 ax.Position = [axLeft(2) axBottom(2) axWidth axHeight];
 ax.Box = 'off';
 
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Orthogonal_example_posteriors_2'],...
+    {'fig','pdf','png'})
+
 ax = axes;
 
-posterior_map(Xpost,Ypost,Phats{1}.rerf,false,ColorMap2);
+% posterior_map(Xpost,Ypost,Phats{2}.rerf,false,ColorMap2);
+posterior_map(Xpost,Ypost,Phats{2}.frc,true,ColorMap2);
 
 % hold on;
 % plot(x0(:,1),x0(:,2),'.','MarkerEdgeColor',ColorMap(2,:),'MarkerSize',MarkerSize)
 % plot(x1(:,1),x1(:,2),'.','MarkerEdgeColor',ColorMap(end-1,:),'MarkerSize',MarkerSize)
 
 xlabel('X_1')
-ylabel('X_2')
-title('RerF')
+ylabel({'\bf{F-RC}';'\rm{X_2}'})
 ax.LineWidth = LineWidth;
 ax.FontUnits = 'inches';
 ax.FontSize = FontSize;
@@ -90,39 +105,5 @@ ax.Units = 'inches';
 ax.Position = [axLeft(3) axBottom(3) axWidth axHeight];
 ax.Box = 'off';
 
-ax = axes;
-
-posterior_map(Xpost,Ypost,Phats{2}.rf,false,ColorMap2);
-
-% hold on;
-% plot(x0(:,1),x0(:,2),'.','MarkerEdgeColor',ColorMap(2,:),'MarkerSize',MarkerSize)
-% plot(x1(:,1),x1(:,2),'.','MarkerEdgeColor',ColorMap(end-1,:),'MarkerSize',MarkerSize)
-
-xlabel('X_1')
-ylabel({['\bf{n = ' num2str(size(Xtrain{2},1)) '}'];'\rm{X_2}'})
-ax.LineWidth = LineWidth;
-ax.FontUnits = 'inches';
-ax.FontSize = FontSize;
-ax.Units = 'inches';
-ax.Position = [axLeft(4) axBottom(4) axWidth axHeight];
-ax.Box = 'off';
-
-ax = axes;
-
-posterior_map(Xpost,Ypost,Phats{2}.rerf,false,ColorMap2);
-
-% hold on;
-% plot(x0(:,1),x0(:,2),'.','MarkerEdgeColor',ColorMap(2,:),'MarkerSize',MarkerSize)
-% plot(x1(:,1),x1(:,2),'.','MarkerEdgeColor',ColorMap(end-1,:),'MarkerSize',MarkerSize)
-
-xlabel('X_1')
-ylabel('X_2')
-ax.LineWidth = LineWidth;
-ax.FontUnits = 'inches';
-ax.FontSize = FontSize;
-ax.Units = 'inches';
-ax.Position = [axLeft(5) axBottom(5) axWidth axHeight];
-ax.Box = 'off';
-
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/2017.02.15/Orthogonal_example_posteriors'],...
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/Orthogonal_example_posteriors_3'],...
     {'fig','pdf','png'})

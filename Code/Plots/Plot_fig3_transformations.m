@@ -182,7 +182,7 @@ for i = 1:length(Transformations)
     ax(2*i).YLim = [0.01 .15];
     
     if i==length(Transformations)
-        [lh,objh] = legend('RF','RF(r)','F-RC','F-RC(r)','RR-RF','RR-RF(r)');
+        [lh,objh] = legend('RF','RF(r)','F-RC','Frank','RR-RF','RR-RF(r)');
         lh.Box = 'off';
         lh.FontSize = 10;
         lh.Units = 'inches';
