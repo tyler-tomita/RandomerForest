@@ -1,0 +1,8 @@
+Suppose the name of a dataset is "DATASET"
+
+Key:
+
+DATASET.train.features.csv: ntrain rows (instances) and p columns (features) indicating the feature values of each instance in the training set
+DATASET.train.labels.csv:  a single column with ntrain rows indicating the class labels of each instance in the training set
+DATASET.test.features.csv: ntest rows (instances) and p columns (features) indicating feature values of each instance in the test set
+DATASET.test.labels.csv: a single column with ntest rows indicating the class labels of each instance in the test set
