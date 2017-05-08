@@ -1,0 +1,18 @@
+My SLURM_ARRAY_TASK_ID:  2
+{Error using parpool (line 103)
+Failed to start a parallel pool. (For information in addition to the causing
+error, validate the profile 'local' in the Cluster Profile Manager.)
+
+Error in run_Orthant_raw_vary_n_rerfr (line 140)
+                    parpool('local',Params{i,j}.(Classifiers{c}).NWorkers,...
+
+Caused by:
+    Error using parallel.internal.pool.InteractiveClient>iThrowWithCause (line
+    667)
+    Failed to start pool.
+        Error using parallel.Cluster/createCommunicatingJob (line 92)
+        Unable to write to MAT-file
+        /home-4/ttomita2@jhu.edu/.matlab/local_cluster_jobs/R2015a/Job58.in.mat
+
+        File may be corrupt.
+} 

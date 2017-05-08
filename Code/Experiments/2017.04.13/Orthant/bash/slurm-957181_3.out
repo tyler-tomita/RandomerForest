@@ -1,0 +1,17 @@
+My SLURM_ARRAY_TASK_ID:  3
+{Error using parpool (line 103)
+Failed to start a parallel pool. (For information in addition to the causing
+error, validate the profile 'local' in the Cluster Profile Manager.)
+
+Error in run_Orthant_raw_vary_n_frc (line 140)
+                    parpool('local',Params{i,j}.(Classifiers{c}).NWorkers,...
+
+Caused by:
+    Error using parallel.internal.pool.InteractiveClient>iThrowWithCause (line
+    667)
+    Failed to initialize the interactive session.
+        Error using
+        parallel.internal.pool.InteractiveClient>iThrowIfBadParallelJobStatus
+        (line 768)
+        The interactive communicating job failed with no message.
+} 

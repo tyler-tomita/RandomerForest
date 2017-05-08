@@ -2,7 +2,7 @@
 
 #SBATCH
 #SBATCH --job-name=run_Trunk_raw
-#SBATCH --array=1-4
+#SBATCH --array=2,4
 #SBATCH --time=4-0:0:0
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=12
