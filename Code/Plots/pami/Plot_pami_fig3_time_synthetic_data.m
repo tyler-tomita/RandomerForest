@@ -8,7 +8,8 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 load('purple2green')
 
 Colors.rf = ColorMap(2,:);
-Colors.rerf= ColorMap(10,:);
+Colors.rerf = 'k';
+Colors.frc= ColorMap(10,:);
 Colors.rr_rf = ColorMap(4,:);
 Colors.xgb= ColorMap(8,:);
 LineWidth = 2;
@@ -38,14 +39,15 @@ fig.PaperSize = [figWidth figHeight];
 
 k = 1;
 
-load([rerfPath 'RandomerForest/Results/pami/Sparse_parity/mat/Sparse_parity_vary_n.mat'])
+% load([rerfPath 'RandomerForest/Results/pami/Sparse_parity/mat/Sparse_parity_vary_n.mat'])
+load([rerfPath 'RandomerForest/Results/2017.04.13/Sparse_parity/Sparse_parity_raw_vary_n_aggregated.mat'])
 
 ntrials = length(TestError{1}.rf);
+Classifiers = {'rf','rerf','frc','rr_rf','xgb'};
 
 for j = 1:3
     p = ps(j);
     
-    Classifiers = fieldnames(TestError{1,j});
 %     Classifiers = [fieldnames(TestError{1,j});'xgb'];
     
     TimeMatrix = NaN(ntrials,length(ns),length(Classifiers));
@@ -56,8 +58,18 @@ for j = 1:3
         for c = 1:length(Classifiers)
             cl = Classifiers{c};
             if ~strcmp(cl,'xgb')
-                if ~isempty(TestError{i,j}.(cl))
-                    TimeMatrix(:,i,c) = TrainTime{i,j}.(cl)(sub2ind(size(TrainTime{i,j}.(cl)),(1:ntrials)',BestIdx{i,j}.(cl)));
+                if ~isempty(TrainTime{i,j}.(cl))
+                    OE = OOBError{i,j}.(cl);
+                    OA = OOBAUC{i,j}.(cl);
+                    ntrials = size(OE,1);
+                    T = NaN(ntrials,1);
+                    for trial = 1:ntrials
+                        BI = hp_optimize(OE(trial,1:length(Params{i,j}.(cl).d)),OA(trial,1:length(Params{i,j}.(cl).d)));
+                        T(trial) = TrainTime{i,j}.(cl)(trial,BI(end));
+                    end
+%                     TimeMatrix(:,i,c) = T;
+                    TimeMatrix(:,i,c) = sum(TrainTime{i,j}.(cl),2);
+%                     TimeMatrix(:,i,c) = TrainTime{i,j}.(cl)';
                 else
                     TimeMatrix(:,i,c) = NaN;
                 end
@@ -80,7 +92,7 @@ for j = 1:3
     for c = 1:length(Classifiers)
         mn = mean(TimeMatrix(:,:,c));
         sem = std(TimeMatrix(:,:,c))/sqrt(ntrials);
-        errorbar(ns{j},mean(TimeMatrix(:,:,c)),std(TimeMatrix(:,:,c))/sqrt(ntrials),...
+        errorbar(ns{j},mn,sem,...
             'LineWidth',LineWidth,'Color',Colors.(Classifiers{c}))
         ymax(c) = mn(end)+2*sem(end);
         ymin(c) = mn(1)-2*sem(1);
@@ -122,14 +134,14 @@ end
 
 k = 2;
 
-load([rerfPath 'RandomerForest/Results/pami/Trunk/mat/Trunk_vary_n.mat'])
+% load([rerfPath 'RandomerForest/Results/pami/Trunk/mat/Trunk_vary_n.mat'])
+load([rerfPath 'RandomerForest/Results/2017.04.12/Trunk/Trunk_raw_vary_n_aggregated.mat'])
 
 ntrials = length(TestError{1}.rf);
 
 for j = 1:3
     p = ps(j);
     
-    Classifiers = fieldnames(TestError{1,j});
 %     Classifiers = [fieldnames(TestError{1,j});'xgb'];
     
     TimeMatrix = NaN(ntrials,length(ns),length(Classifiers));
@@ -140,8 +152,18 @@ for j = 1:3
         for c = 1:length(Classifiers)
             cl = Classifiers{c};
             if ~strcmp(cl,'xgb')
-                if ~isempty(TestError{i,j}.(cl))
-                    TimeMatrix(:,i,c) = TrainTime{i,j}.(cl)(sub2ind(size(TrainTime{i,j}.(cl)),(1:ntrials)',BestIdx{i,j}.(cl)));
+                if ~isempty(TrainTime{i,j}.(cl))
+                    OE = OOBError{i,j}.(cl);
+                    OA = OOBAUC{i,j}.(cl);
+                    ntrials = size(OE,1);
+                    T = NaN(ntrials,1);
+                    for trial = 1:ntrials
+                        BI = hp_optimize(OE(trial,1:length(Params{i,j}.(cl).d)),OA(trial,1:length(Params{i,j}.(cl).d)));
+                        T(trial) = TrainTime{i,j}.(cl)(trial,BI(end));
+                    end
+%                     TimeMatrix(:,i,c) = T;
+                    TimeMatrix(:,i,c) = sum(TrainTime{i,j}.(cl),2);
+%                     TimeMatrix(:,i,c) = TrainTime{i,j}.(cl)';
                 else
                     TimeMatrix(:,i,c) = NaN;
                 end
@@ -164,7 +186,7 @@ for j = 1:3
     for c = 1:length(Classifiers)
         mn = mean(TimeMatrix(:,:,c));
         sem = std(TimeMatrix(:,:,c))/sqrt(ntrials);
-        errorbar(ns{j},mean(TimeMatrix(:,:,c)),std(TimeMatrix(:,:,c))/sqrt(ntrials),...
+        errorbar(ns{j},mn,sem,...
             'LineWidth',LineWidth,'Color',Colors.(Classifiers{c}))
         ymax(c) = mn(end)+2*sem(end);
         ymin(c) = mn(1)-2*sem(1);
@@ -199,7 +221,7 @@ for j = 1:3
     end
     
     if j == 2
-        lh = legend('RF','RerF','RR-RF','XGBoost');
+        lh = legend('RF','RerF','F-RC','RR-RF','XGBoost');
         lh.Box = 'off';
         lh.Units = 'inches';
         lh.Position = [legLeft legBottom legWidth legHeight];
@@ -211,14 +233,15 @@ end
 
 k = 3;
 
-load([rerfPath 'RandomerForest/Results/pami/Orthant/mat/Orthant_vary_n.mat'])
+% load([rerfPath 'RandomerForest/Results/pami/Orthant/mat/Orthant_vary_n.mat'])
+load([rerfPath 'RandomerForest/Results/2017.04.13/Orthant/Orthant_raw_vary_n_aggregated.mat'])
 
 ntrials = length(TestError{1}.rf);
 
 for j = 1:3
     p = ps(j);
     
-    Classifiers = fieldnames(TestError{1,j});
+%     Classifiers = fieldnames(TestError{1,j});
     
     TimeMatrix = NaN(ntrials,length(ns),length(Classifiers));
 
@@ -228,8 +251,18 @@ for j = 1:3
         for c = 1:length(Classifiers)
             cl = Classifiers{c};
             if ~strcmp(cl,'xgb')
-                if ~isempty(TestError{i,j}.(cl))
-                    TimeMatrix(:,i,c) = TrainTime{i,j}.(cl)(sub2ind(size(TrainTime{i,j}.(cl)),(1:ntrials)',BestIdx{i,j}.(cl)));
+                if ~isempty(TrainTime{i,j}.(cl))
+                    OE = OOBError{i,j}.(cl);
+                    OA = OOBAUC{i,j}.(cl);
+                    ntrials = size(OE,1);
+                    T = NaN(ntrials,1);
+                    for trial = 1:ntrials
+                        BI = hp_optimize(OE(trial,1:length(Params{i,j}.(cl).d)),OA(trial,1:length(Params{i,j}.(cl).d)));
+                        T(trial) = TrainTime{i,j}.(cl)(trial,BI(end));
+                    end
+%                     TimeMatrix(:,i,c) = T;
+                    TimeMatrix(:,i,c) = sum(TrainTime{i,j}.(cl),2);
+%                     TimeMatrix(:,i,c) = TrainTime{i,j}.(cl)';
                 else
                     TimeMatrix(:,i,c) = NaN;
                 end

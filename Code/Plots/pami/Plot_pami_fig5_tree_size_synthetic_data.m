@@ -8,7 +8,8 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 load('purple2green')
 
 Colors.rf = ColorMap(2,:);
-Colors.rerf= ColorMap(10,:);
+Colors.rerf = 'k';
+Colors.frc= ColorMap(10,:);
 Colors.rr_rf = ColorMap(4,:);
 Colors.xgb= ColorMap(8,:);
 LineWidth = 2;
@@ -36,19 +37,22 @@ fig.PaperSize = [figWidth figHeight];
 
 k = 1;
 
-load([rerfPath 'RandomerForest/Results/pami/Sparse_parity/mat/Sparse_parity_vary_n.mat'])
+% load([rerfPath 'RandomerForest/Results/pami/Sparse_parity/mat/Sparse_parity_vary_n.mat'])
+load([rerfPath 'RandomerForest/Results/2017.04.13/Sparse_parity/Sparse_parity_raw_vary_n_aggregated.mat'])
 
 ntrials = length(TestError{1}.rf);
+
+Classifiers = {'rf','rerf','frc','rr_rf'};
 
 % Markers = {'o','x','+'};
 
 ax(k) = axes;
 hold on
 maxDepth = 0;
-for j = 1:3
+for j = 2
     p = ps(j);
     
-    Classifiers = [fieldnames(TestError{1,j})];
+    %Classifiers = [fieldnames(TestError{1,j})];
     
     for i = 1:length(ns{j})
         n = ns{j}(i);
@@ -59,9 +63,19 @@ for j = 1:3
                 cl = Classifiers{c};
                 if ~strcmp(cl,'xgb')
                     if ~isempty(TestError{i,j}.(cl))
-                        E = TestError{i,j}.(cl);
-                        D = reshape(mean(Depth{i,j}.(cl),2),ntrials,length(Params{i,j}.(cl).d));
-                        D = D(sub2ind(size(D),(1:ntrials)',BestIdx{i,j}.(cl)));
+                        OE = OOBError{i,j}.(cl);
+                        OA = OOBAUC{i,j}.(cl);
+                        ntrials = size(OE,1);
+                        E = NaN(1,ntrials);
+                        BI = NaN(ntrials,1);
+                        for trial = 1:ntrials
+                            B = hp_optimize(OE(trial,1:length(Params{i,j}.(cl).d)),OA(trial,1:length(Params{i,j}.(cl).d)));
+                            BI(trial) = B(end);
+                            E(trial) = TestError{i,j}.(cl)(trial,BI(trial));
+                        end
+%                         E = TestError{i,j}.(cl);
+                        D = reshape(mean(Depth{i,j}.(cl),2),ntrials,size(Depth{i,j}.(cl),3));
+                        D = D(sub2ind(size(D),(1:ntrials)',BI));
                     else
                         E = NaN;
                         D = NaN;
@@ -122,7 +136,8 @@ ax(k).XLim = [10,maxDepth];
 
 k = 2;
 
-load([rerfPath 'RandomerForest/Results/pami/Trunk/mat/Trunk_vary_n.mat'])
+% load([rerfPath 'RandomerForest/Results/pami/Trunk/mat/Trunk_vary_n.mat'])
+load([rerfPath 'RandomerForest/Results/2017.04.12/Trunk/Trunk_raw_vary_n_aggregated.mat'])
 
 ntrials = length(TestError{1}.rf);
 
@@ -131,10 +146,10 @@ Markers = {'o','x','+'};
 ax(k) = axes;
 hold on
 maxDepth = 0;
-for j = 1:3
+for j = 1
     p = ps(j);
     
-    Classifiers = [fieldnames(TestError{1,j})];
+    %Classifiers = [fieldnames(TestError{1,j})];
     
     for i = 1:length(ns{j})
         n = ns{j}(i);
@@ -145,9 +160,19 @@ for j = 1:3
                 cl = Classifiers{c};
                 if ~strcmp(cl,'xgb')
                     if ~isempty(TestError{i,j}.(cl))
-                        E = TestError{i,j}.(cl);
-                        D = reshape(mean(Depth{i,j}.(cl),2),ntrials,length(Params{i,j}.(cl).d));
-                        D = D(sub2ind(size(D),(1:ntrials)',BestIdx{i,j}.(cl)));
+                        OE = OOBError{i,j}.(cl);
+                        OA = OOBAUC{i,j}.(cl);
+                        ntrials = size(OE,1);
+                        E = NaN(1,ntrials);
+                        BI = NaN(ntrials,1);
+                        for trial = 1:ntrials
+                            B = hp_optimize(OE(trial,1:length(Params{i,j}.(cl).d)),OA(trial,1:length(Params{i,j}.(cl).d)));
+                            BI(trial) = B(end);
+                            E(trial) = TestError{i,j}.(cl)(trial,BI(trial));
+                        end
+%                         E = TestError{i,j}.(cl);
+                        D = reshape(mean(Depth{i,j}.(cl),2),ntrials,size(Depth{i,j}.(cl),3));
+                        D = D(sub2ind(size(D),(1:ntrials)',BI));
                     else
                         E = NaN;
                         D = NaN;
@@ -204,7 +229,7 @@ ax(k).XLim = [0,10];
 % ax(k).YLim = [min(ErrorMatrix(:)) max(ErrorMatrix(:))];
 % ax(k).YScale = 'log';
 
-lh = legend('RF','RerF','RR-RF');
+lh = legend('RF','RerF','F-RC','RR-RF');
 lh.Box = 'off';
 lh.Units = 'inches';
 lh.Position = [legLeft legBottom legWidth legHeight];
@@ -213,7 +238,8 @@ lh.Position = [legLeft legBottom legWidth legHeight];
 
 k = 3;
 
-load([rerfPath 'RandomerForest/Results/pami/Orthant/mat/Orthant_vary_n.mat'])
+% load([rerfPath 'RandomerForest/Results/pami/Orthant/mat/Orthant_vary_n.mat'])
+load([rerfPath 'RandomerForest/Results/2017.04.13/Orthant/Orthant_raw_vary_n_aggregated.mat'])
 
 ntrials = length(TestError{1}.rf);
 
@@ -222,10 +248,10 @@ Markers = {'o','x','+'};
 ax(k) = axes;
 hold on
 maxDepth = 0;
-for j = 1:3
+for j = 1
     p = ps(j);
     
-    Classifiers = fieldnames(TestError{1,j});
+%     Classifiers = fieldnames(TestError{1,j});
 %     Classifiers = [fieldnames(TestError{1,j});'xgb'];
     
     for i = 1:length(ns{j})
@@ -237,9 +263,19 @@ for j = 1:3
                 cl = Classifiers{c};
                 if ~strcmp(cl,'xgb')
                     if ~isempty(TestError{i,j}.(cl))
-                        E = TestError{i,j}.(cl);
+                        OE = OOBError{i,j}.(cl);
+                        OA = OOBAUC{i,j}.(cl);
+                        ntrials = size(OE,1);
+                        E = NaN(1,ntrials);
+                        BI = NaN(ntrials,1);
+                        for trial = 1:ntrials
+                            B = hp_optimize(OE(trial,1:length(Params{i,j}.(cl).d)),OA(trial,1:length(Params{i,j}.(cl).d)));
+                            BI(trial) = B(end);
+                            E(trial) = TestError{i,j}.(cl)(trial,BI(trial));
+                        end
+%                         E = TestError{i,j}.(cl);
                         D = reshape(mean(Depth{i,j}.(cl),2),ntrials,size(Depth{i,j}.(cl),3));
-                        D = D(sub2ind(size(D),(1:ntrials)',BestIdx{i,j}.(cl)));
+                        D = D(sub2ind(size(D),(1:ntrials)',BI));
                     else
                         E = NaN;
                         D = NaN;
@@ -259,7 +295,6 @@ for j = 1:3
                     'MarkerSize',MarkerSize,'LineWidth',0.5)
                 maxDepth = max([maxDepth,max(D)]);            
             end
-            
         end
     end
 

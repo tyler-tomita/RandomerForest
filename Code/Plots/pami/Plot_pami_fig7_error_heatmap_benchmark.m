@@ -11,19 +11,20 @@ load('purple2green')
 ColorMap = interpolate_colormap(ColorMap(round(size(ColorMap,1)/2):end,:),64,false);
 % ColorMap = flipud(interpolate_colormap(ColorMap(3:end-2,:),64,true));
 
-LineWidth = 1.5;
-FontSize = 0.1;
-axWidth = 2.4;
-axHeight = 1.6;
-cbWidth = .1;
-cbHeight = axHeight;
-axLeft = FontSize*5.5*ones(1,5);
-axBottom = [FontSize*14+axHeight*4,FontSize*11+axHeight*3,...
-    FontSize*8+axHeight*2,FontSize*5+axHeight,...
-    FontSize*2];
-cbLeft = axLeft + axWidth + FontSize/2;
-cbBottom = axBottom;
-figWidth = cbLeft(1) + cbWidth + FontSize*5;
+LineWidth = 2;
+FontSize = .2;
+axWidth = 2;
+axHeight = 2;
+cbWidth = axWidth;
+cbHeight = 0.15;
+axBottom = FontSize*5*ones(1,5);
+axLeft = fliplr([FontSize*9+axHeight*4,FontSize*8+axHeight*3,...
+    FontSize*7+axHeight*2,FontSize*6+axHeight,...
+    FontSize*5]);
+cbLeft = axLeft;
+cbBottom = FontSize*2*ones(1,5);
+% figWidth = cbLeft(1) + cbWidth + FontSize*2;
+figWidth = axLeft(end) + axWidth + FontSize;
 figHeight = axBottom(1) + axHeight + FontSize*2;
 
 % % FontSize = .2;
@@ -57,8 +58,18 @@ Classifiers = {'rf','rerf','rerfr','rr_rf','rr_rfr','xgb'};
 
 BinEdges = [-1,-0.2,-0.1,-0.05:0.01:-0.01,-0.005,0,0,0.005,0.01:0.01:0.05,0.1,0.2,1];
 
+DatasetNames = importdata('~/Benchmarks/Data/Names.txt');
+
 for t = 1:length(Transformations)
-    Classifiers = {'rf','rerf','rerfr','rr_rf','rr_rfr','xgb'};
+    Classifiers = {'rf','rerf','rerfr','frc','frcr','rr_rf','rr_rfr','xgb'};
+    
+    if strcmp(Transformations{t},'Raw')
+        S = load(['~/Benchmarks/Results/Benchmark_untransformed.mat']);
+    elseif strcmp(Transformations{t},'Corrupted')
+        S = load(['~/Benchmarks/Results/Benchmark_outlier.mat']);
+    else
+        S = load(['~/Benchmarks/Results/Benchmark_' lower(Transformations{t}) '.mat']);
+    end
     
     fprintf('t = %d\n',t)
     
@@ -75,6 +86,7 @@ for t = 1:length(Transformations)
     for i = 1:length(contents)
         Dataset = strsplit(contents(i).name,'.');
         Dataset = Dataset{1};
+        DatasetIdx = find(strcmp(Dataset,DatasetNames));
         
         load([inPath1 contents(i).name])
         
@@ -82,8 +94,12 @@ for t = 1:length(Transformations)
         
         for c = 1:length(Classifiers)
             cl = Classifiers{c};
-            if ~strcmp(cl,'xgb')
+            if ~strcmp(cl,'xgb') && ~strcmp(cl,'frc') && ~strcmp(cl,'frcr')
                 if ~isfield(TestError,cl)
+                    isComplete = false;
+                end
+            elseif strcmp(cl,'frc') || strcmp(cl,'frcr')
+                if isempty(S.TestError{DatasetIdx})
                     isComplete = false;
                 end
             else
@@ -102,8 +118,13 @@ for t = 1:length(Transformations)
             
             for c = 1:length(Classifiers)
                 cl = Classifiers{c};
-                if ~strcmp(cl,'xgb')
-                    AbsoluteError(k,c) = TestError.(cl)(BestIdx.(cl));
+                if ~strcmp(cl,'xgb') && ~strcmp(cl,'frc') && ~strcmp(cl,'frcr')
+                    BI = hp_optimize(OOBError.(cl)(end,1:length(Params.(cl).d)),...
+                        OOBAUC.(cl)(end,1:length(Params.(cl).d)));
+                    BI = BI(end);
+                    AbsoluteError(k,c) = TestError.(cl)(BI);
+                elseif strcmp(cl,'frc') || strcmp(cl,'frcr')
+                    AbsoluteError(k,c) = S.TestError{DatasetIdx}.(cl);
                 else
                     AbsoluteError(k,c) = dlmread([inPath2 Dataset '_testError.dat']);
                 end
@@ -130,28 +151,43 @@ for t = 1:length(Transformations)
     Fractions = Counts./repmat(sum(Counts),size(Counts,1),1);
 
     ax(t) = axes;
-    h = heatmap(flipud(Fractions),{'RerF','RerF(r)','RR-RF','RR-RF(r)','XGBoost'},cellstr(num2str(flipud(BinEdges'))),ColorMap,true);
-    if t==1
-        ylabel('Normalized Error Relative to RF')
-        title('Raw','FontSize',8)
-    elseif t==5
-        title('Corrupted','FontSize',8)
+    if t == 1
+        YTLabel = {'RerF','RerF(r)','F-RC','Frank','RR-RF','RR-RF(r)','XGBoost'};
     else
-        title(Transformations{t},'FontSize',8)
+        YTLabel = {''};
     end
-    cb = colorbar;
+    
+    h = heatmap(Fractions',cellstr(num2str(BinEdges')),YTLabel,ColorMap,...
+        true,'horizontal');
     if t==1
-        ylabel(cb,'Fraction of Datasets','rot',-90)
+        xlabel({'Normalized Error';'Relative to RF'})
+        title('Raw')
+    elseif t==5
+        title('Corrupted')
+    else
+        title(Transformations{t})
     end
-    cb.Units = 'inches';
-    cb.Position = [cbLeft(t) cbBottom(t) cbWidth cbHeight];
-    cb.Box = 'off';
-    cb.FontSize = 8;
+
+    if t == 3
+        cb = colorbar;
+        cb.Location = 'southoutside';
+        xlh = xlabel(cb,'Fraction of Datasets');
+        cb.Ticks = [];
+        cb.Units = 'inches';
+        cb.Position = [cbLeft(t) cbBottom(t) cbWidth cbHeight];
+        cb.Box = 'off';
+        cb.FontSize = 16;
+        xlh.Position = [0.2237 -0.5 0];
+    end
     h.FontSize = FontSize;
     hold on
     for c = 2:length(Classifiers)-1
-        plot([c-0.5,c-0.5],h.YLim,'-k','LineWidth',LineWidth+1)
+        plot(h.XLim,[c-0.5,c-0.5],'-k','LineWidth',LineWidth)
     end
+    ax(t).XTick = [0.5,10,19.5];
+    ax(t).XTickLabel = {'-1';'0';'1'};
+    ax(t).XTickLabelRotation = 0;
+    ax(t).TickLength = [0 0];
     ax(t).LineWidth = LineWidth;
     ax(t).FontUnits = 'inches';
     ax(t).FontSize = FontSize;

@@ -68,26 +68,30 @@ function M = srpmat(d,k,method,varargin)
         idx = (ndgrid(1:k,1:nmix)'-1)*d + idx;
         M(idx) = rand(1,nmix*k)*2 - 1;
         M = sparse(M);
-    elseif strcmp(method,'uniform-nnzs')
+    elseif strcmp(method,'uniform-nnzs-binary')
         nmix = varargin{2};
         min_nmix = min(nmix);
         max_nmix = max(nmix);
         M = zeros(d,k);
-%         p = 1;
-%         for i = 1:max_nmix-1
-%             p = p*(d-i)/d;
-%         end
-%         kk = round(4*k/p);
-%         go = true;
-%         while go
-%             idx = randi(d,max_nmix,kk);
-%             idx = idx(:,all(diff(sort(idx)),1));
-%             go = size(idx,2) < k;
-%         end
-%         idx = idx(:,1:k);
         idx = randperms(d,max_nmix,k);
         idx = (ndgrid(1:k,1:max_nmix)'-1)*d + idx;
-%         nnzs = round(rand(1,k)*(max_nmix-min_nmix)+min_nmix);
+        nnzs = nmix(randi(length(nmix),1,k));
+        for i = 1:length(nmix)
+            idx(nmix(i)+1:end,nnzs==nmix(i)) = NaN;
+        end
+        idx(isnan(idx(:))) = [];
+        ln = length(idx(:));
+        ispos = rand(ln,1) > 0.5;
+        M(idx(ispos)) = 1;
+        M(idx(~ispos)) = -1;
+        M = sparse(M);
+    elseif strcmp(method,'uniform-nnzs-continuous')
+        nmix = varargin{2};
+        min_nmix = min(nmix);
+        max_nmix = max(nmix);
+        M = zeros(d,k);
+        idx = randperms(d,max_nmix,k);
+        idx = (ndgrid(1:k,1:max_nmix)'-1)*d + idx;
         nnzs = nmix(randi(length(nmix),1,k));
         for i = 1:length(nmix)
             idx(nmix(i)+1:end,nnzs==nmix(i)) = NaN;

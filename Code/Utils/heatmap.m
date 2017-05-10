@@ -8,7 +8,7 @@ function h = heatmap(Z,XTickLabel,YTickLabel,ColorMap,IsBinned,varargin)
     else
         Orientation = 'vertical';
     end
-    if strcmp(varargin(1),'horizontal')
+    if strcmp(Orientation,'horizontal')
         if IsBinned
             h.XTick = 0.5:size(Z,2)+1;
             h.XTickLabelRotation = 90;

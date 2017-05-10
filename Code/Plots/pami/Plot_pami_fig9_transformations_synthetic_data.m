@@ -10,8 +10,10 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 load('purple2green')
 Colors.rf = ColorMap(2,:);
 Colors.rfr = ColorMap(2,:);
-Colors.rerf= ColorMap(10,:);
-Colors.rerfr = ColorMap(10,:);
+Colors.rerf = 'k';
+Colors.rerfr = 'k';
+Colors.frc= ColorMap(10,:);
+Colors.frcr = ColorMap(10,:);
 Colors.rr_rf = ColorMap(4,:);
 Colors.rr_rfr = ColorMap(4,:);
 LineStyles.rf = '-';
@@ -62,7 +64,7 @@ ntrials = size(TestError{1}.rf.Untransformed,1);
 
 for i = 1:length(dims)
     Classifiers = fieldnames(TestError{i});
-    Classifiers(~ismember(Classifiers,{'rf','rerf','rerfr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'rf','rerf','rerfr','frc','frcr','rr_rf','rr_rfr'})) = [];
     for j = 1:length(Classifiers)
         Transformations = fieldnames(TestError{i}.(Classifiers{j}));
         for k = 1:length(Transformations)
@@ -132,7 +134,7 @@ ntrials = size(TestError{1}.rf.Untransformed,1);
 
 for i = 1:length(dims)
     Classifiers = fieldnames(TestError{i});
-    Classifiers(~ismember(Classifiers,{'rf','rerf','rerfr','rr_rf','rr_rfr'})) = [];
+    Classifiers(~ismember(Classifiers,{'rf','rerf','rerfr','frc','frcr','rr_rf','rr_rfr'})) = [];
     for j = 1:length(Classifiers)
         Transformations = fieldnames(TestError{i}.(Classifiers{j}));
         for k = 1:length(Transformations)
@@ -174,7 +176,7 @@ for i = 1:length(Transformations)
     ax(2*i).YLim = [0.01 .15];
     
     if i==length(Transformations)
-        [lh,objh] = legend('RF','RerF','RerF(r)','RR-RF','RR-RF(r)');
+        [lh,objh] = legend('RF','RerF','RerF(r)','F-RC','Frank','RR-RF','RR-RF(r)');
         lh.Box = 'off';
         lh.FontSize = 10;
         lh.Units = 'inches';
