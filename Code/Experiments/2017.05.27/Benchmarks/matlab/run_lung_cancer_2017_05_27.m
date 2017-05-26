@@ -216,7 +216,7 @@ for c = 1:length(Classifiers)
     
     save(OutFile,'Params','OOBError','OOBAUC','TestError',...
         'TrainTime','Depth','NumNodes','NumSplitNodes','TreeStrength',...
-        'TreeDiversity','BestIdx','TestScores','Forest')
+        'TreeDiversity','BestIdx','TestScores','Forest','-v7.3')
     
     clear Forest
 end  
