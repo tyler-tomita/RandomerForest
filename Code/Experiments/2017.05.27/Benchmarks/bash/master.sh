@@ -3,11 +3,11 @@
 #SBATCH
 #SBATCH --job-name=run_benchmarks
 #SBATCH --array=1-106
-#SBATCH --time=4-0:0:0
+#SBATCH --time=2-0:0:0
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=16
 #SBATCH --mem=120000
-#SBATCH --partition=parallel
+#SBATCH --partition=bw-parallel
 #SBATCH --exclusive
 #SBATCH --mail-type=end
 #SBATCH --mail-user=tmtomita87@gmail.com
