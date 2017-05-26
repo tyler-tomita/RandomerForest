@@ -145,165 +145,247 @@ TraceNorm(isnan(TraceNorm)) = [];
 lambda(isnan(p_lowrank)) = [];
 nClasses(isnan(nClasses)) = [];
 
-[~,srtidx] = sort(NormalizedRelativeError(:,1));
-Top15 = srtidx(1:15);
-threshold = 0;
-RerFIsBetter = NormalizedRelativeError(:,1)<threshold;
+% [~,srtidx] = sort(NormalizedRelativeError(:,1));
+% Top15 = srtidx(1:15);
+% threshold = 1;
+% RerFIsBetter = NormalizedRelativeError(:,1)<threshold;
 
-% scree plots for top 15 RerF-favored datasets
+% scree plots
+
+ran=range(NormalizedRelativeError(:,1)); %finding range of data
+min_val=min(NormalizedRelativeError(:,1));%finding maximum value of data
+max_val=max(NormalizedRelativeError(:,1));%finding minimum value of data
+y=floor(((NormalizedRelativeError(:,1)-min_val)/ran)*63)+1; 
+plotColor=zeros(size(NormalizedRelativeError,1),3);
+pp=cool(64);
+for i=1:size(NormalizedRelativeError,1)
+  a=y(i);
+  plotColor(i,:)=pp(a,:);
+end
 
 % figure;
-% for i = 1:length(Top15)
-%     axh(i) = subplot(5,3,i);
-%     csum = cumsum(lambda{Top15(i)});
-%     plot(csum/csum(end))
-%     xlabel('no. PCs retained')
-%     ylabel('explained variance')
-%     axis square
-%     axh(i).FontSize = 6;
+% hold on
+% for i = 1:size(NormalizedRelativeError,1)
+% %     axh(i) = subplot(5,3,i);
+%     csum = cumsum(lambda{i});
+% %     if NormalizedRelativeError(i,1) < 0
+% %         plotColor = ColorMap(9,:);
+% %     elseif NormalizedRelativeError(i,1) == 0
+% %         plotColor = 'k';
+% %     else
+% %         plotColor = ColorMap(3,:);
+% %     end
+%     plot((1:length(lambda{i}))/length(lambda{i}),csum/csum(end),...
+%         'LineWidth',1.5,'Color',plotColor(i,:))
+%     xlabel('no. PCs retained (normalized)')
+%     ylabel('fraction of explained variance')
+% %     axis square
+% %     axh(i).FontSize = 6;
 % end
+% cb = colorbar('colormap',pp);
+% cb.Limits = [min(NormalizedRelativeError(:,1)) max(NormalizedRelativeError(:,1))];
+% caxis([min(NormalizedRelativeError(:,1)) max(NormalizedRelativeError(:,1))])
+% t = ylabel(cb,'Normalized Relative Error of RerF');
+% t.Rotation = -90;
+% t.Position(1) = t.Position(1)*1.2;
 % save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/benchmark_scree_plots'],{'fig','pdf','png'})
 
-% figure;
-% k = 1;
-% ax(k) = axes;
-% hold on
-% for c = 2:length(Classifiers)
-%     cl = Classifiers{c};
-%     plot(p(RerFIsBetter),NormalizedRelativeError(RerFIsBetter,c-1),'.','MarkerSize',MarkerSize,...
-%         'Color',Colors.(cl),'MarkerSize',14)
-% end
+figure;
+k = 1;
+ax(k) = axes;
+hold on
+for c = 2:length(Classifiers)-1
+    cl = Classifiers{c};
+    plot(log10(p),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+        'Color',Colors.(cl),'MarkerSize',14)
+end
+logx = log10(p);
+linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
+beta = linmod.Coefficients.Estimate;
+yfit = beta(1) + beta(2)*logx;
+hold on
+plot(logx,yfit,'k','LineWidth',2)
+
 % ax(k).XScale = 'log';
-% ax(k).Box = 'off';
-% xlabel('p')
-% ylabel('Normalized Error Relative to RF')
-% title('Datasets for Which RerF Wins')
-% l = legend('RerF','F-RC','RR-RF');
-% % l.Box = 'off';
-% save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_p_vs_error'],{'fig','pdf','png'})
-% 
-% figure;
-% k = 2;
-% ax(k) = axes;
-% hold on
-% for c = 2:length(Classifiers)
-%     cl = Classifiers{c};
-%     plot(d(RerFIsBetter,c)./p(RerFIsBetter),NormalizedRelativeError(RerFIsBetter,c-1),'.','MarkerSize',MarkerSize,...
-%         'Color',Colors.(cl),'MarkerSize',14)
-% end
+ax(k).Box = 'off';
+xlabel('log_{10}p')
+ylabel('Normalized Error Relative to RF')
+title('All Benchmark Datasets')
+l = legend('RerF','F-RC',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
+% l.Box = 'off';
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_p_vs_error'],{'fig','pdf','png'})
+
+figure;
+k = 2;
+ax(k) = axes;
+hold on
+for c = 2:length(Classifiers)-1
+    cl = Classifiers{c};
+    plot(log10(d(:,c)./p),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+        'Color',Colors.(cl),'MarkerSize',14)
+end
+logx = log10(d(:,2)./p);
+linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
+beta = linmod.Coefficients.Estimate;
+yfit = beta(1) + beta(2)*logx;
+hold on
+plot(logx,yfit,'k','LineWidth',2)
+
 % ax(k).XScale = 'log';
-% ax(k).Box = 'off';
-% xlabel('d/p')
-% ylabel('Normalized Error Relative to RF')
-% l = legend('RerF','F-RC','RR-RF');
-% % l.Box = 'off';
-% title('Datasets for Which RerF Wins')
-% save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_d_over_p_vs_error'],{'fig','pdf','png'})
-% 
-% figure;
-% k = 3;
-% ax(k) = axes;
-% hold on
-% for c = 2:length(Classifiers)
-%     cl = Classifiers{c};
-%     plot(ntrain(RerFIsBetter),NormalizedRelativeError(RerFIsBetter,c-1),'.','MarkerSize',MarkerSize,...
-%         'Color',Colors.(cl),'MarkerSize',14)
-% end
+ax(k).Box = 'off';
+xlabel('log_{10}(d/p)')
+ylabel('Normalized Error Relative to RF')
+l = legend('RerF','F-RC',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
+% l.Box = 'off';
+title('All Benchmark Datasets')
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_d_over_p_vs_error'],{'fig','pdf','png'})
+
+figure;
+k = 3;
+ax(k) = axes;
+hold on
+for c = 2:length(Classifiers)-1
+    cl = Classifiers{c};
+    plot(log10(ntrain),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+        'Color',Colors.(cl),'MarkerSize',14)
+end
+logx = log10(ntrain);
+linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
+beta = linmod.Coefficients.Estimate;
+yfit = beta(1) + beta(2)*logx;
+hold on
+plot(logx,yfit,'k','LineWidth',2)
+
 % ax(k).XScale = 'log';
-% ax(k).Box = 'off';
-% xlabel('n_{train}')
-% ylabel('Normalized Error Relative to RF')
-% l = legend('RerF','F-RC','RR-RF');
-% % l.Box = 'off';
-% title('Datasets for Which RerF Wins')
-% save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_ntrain_vs_error'],{'fig','pdf','png'})
-% 
-% figure;
-% k = 4;
-% ax(k) = axes;
-% hold on
-% for c = 2:length(Classifiers)
-%     cl = Classifiers{c};
-%     plot(p(RerFIsBetter)./ntrain(RerFIsBetter),NormalizedRelativeError(RerFIsBetter,c-1),'.','MarkerSize',MarkerSize,...
-%         'Color',Colors.(cl),'MarkerSize',14)
-% end
+ax(k).Box = 'off';
+xlabel('log_{10}(n_{train})')
+ylabel('Normalized Error Relative to RF')
+l = legend('RerF','F-RC',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
+% l.Box = 'off';
+title('All Benchmark Datasets')
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_ntrain_vs_error'],{'fig','pdf','png'})
+
+figure;
+k = 4;
+ax(k) = axes;
+hold on
+for c = 2:length(Classifiers)-1
+    cl = Classifiers{c};
+    plot(log10(p./ntrain),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+        'Color',Colors.(cl),'MarkerSize',14)
+end
+logx = log10(p./ntrain);
+linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
+beta = linmod.Coefficients.Estimate;
+yfit = beta(1) + beta(2)*logx;
+hold on
+plot(logx,yfit,'k','LineWidth',2)
+
 % ax(k).XScale = 'log';
-% ax(k).Box = 'off';
-% xlabel('p/n_{train}')
-% ylabel('Normalized Error Relative to RF')
-% l = legend('RerF','F-RC','RR-RF');
-% % l.Box = 'off';
-% title('Datasets for Which RerF Wins')
-% save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_p_over_ntrain_vs_error'],{'fig','pdf','png'})
-% 
-% figure;
-% k = 5;
-% ax(k) = axes;
-% hold on
-% for c = 2:length(Classifiers)
-%     cl = Classifiers{c};
-%     plot(p_lowrank(RerFIsBetter),NormalizedRelativeError(RerFIsBetter,c-1),'.','MarkerSize',MarkerSize,...
-%         'Color',Colors.(cl),'MarkerSize',14)
-% end
+ax(k).Box = 'off';
+xlabel('log_{10}(p/n_{train})')
+ylabel('Normalized Error Relative to RF')
+l = legend('RerF','F-RC',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
+% l.Box = 'off';
+title('All Benchmark Datasets')
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_p_over_ntrain_vs_error'],{'fig','pdf','png'})
+
+figure;
+k = 5;
+ax(k) = axes;
+hold on
+for c = 2:length(Classifiers)-1
+    cl = Classifiers{c};
+    plot(log10(p_lowrank),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+        'Color',Colors.(cl),'MarkerSize',14)
+end
+logx = log10(p_lowrank);
+linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
+beta = linmod.Coefficients.Estimate;
+yfit = beta(1) + beta(2)*logx;
+hold on
+plot(logx,yfit,'k','LineWidth',2)
+
 % ax(k).XScale = 'log';
-% ax(k).Box = 'off';
-% xlabel('p^*')
-% ylabel('Normalized Error Relative to RF')
-% l = legend('RerF','F-RC','RR-RF');
-% % l.Box = 'off';
-% title('Datasets for Which RerF Wins')
-% save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_pstar_vs_error'],{'fig','pdf','png'})
-% 
-% figure;
-% k = 6;
-% ax(k) = axes;
-% hold on
-% for c = 2:length(Classifiers)
-%     cl = Classifiers{c};
-%     plot(p_lowrank(RerFIsBetter)./p(RerFIsBetter),NormalizedRelativeError(RerFIsBetter,c-1),'.','MarkerSize',MarkerSize,...
-%         'Color',Colors.(cl),'MarkerSize',14)
-% end
+ax(k).Box = 'off';
+xlabel('log_{10}p^*')
+ylabel('Normalized Error Relative to RF')
+l = legend('RerF','F-RC',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
+% l.Box = 'off';
+title('All Benchmark Datasets')
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_pstar_vs_error'],{'fig','pdf','png'})
+
+figure;
+k = 6;
+ax(k) = axes;
+hold on
+for c = 2:length(Classifiers)-1
+    cl = Classifiers{c};
+    plot(log10(p_lowrank./p),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+        'Color',Colors.(cl),'MarkerSize',14)
+end
+logx = log10(p_lowrank./p);
+linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
+beta = linmod.Coefficients.Estimate;
+yfit = beta(1) + beta(2)*logx;
+hold on
+plot(logx,yfit,'k','LineWidth',2)
+
 % ax(k).XScale = 'log';
-% ax(k).Box = 'off';
-% xlabel('p^*/p')
-% ylabel('Normalized Error Relative to RF')
-% l = legend('RerF','F-RC','RR-RF');
-% % l.Box = 'off';
-% title('Datasets for Which RerF Wins')
-% save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_pstar_over_p_vs_error'],{'fig','pdf','png'})
-% 
-% figure;
-% k = 7;
-% ax(k) = axes;
-% hold on
-% for c = 2:length(Classifiers)
-%     cl = Classifiers{c};
-%     plot(TraceNorm(RerFIsBetter),NormalizedRelativeError(RerFIsBetter,c-1),'.','MarkerSize',MarkerSize,...
-%         'Color',Colors.(cl),'MarkerSize',14)
-% end
+ax(k).Box = 'off';
+xlabel('log_{10}(p^*/p)')
+ylabel('Normalized Error Relative to RF')
+l = legend('RerF','F-RC',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
+% l.Box = 'off';
+title('All Benchmark Datasets')
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_pstar_over_p_vs_error'],{'fig','pdf','png'})
+
+figure;
+k = 7;
+ax(k) = axes;
+hold on
+for c = 2:length(Classifiers)-1
+    cl = Classifiers{c};
+    plot(log10(TraceNorm),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+        'Color',Colors.(cl),'MarkerSize',14)
+end
+logx = log10(TraceNorm);
+linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
+beta = linmod.Coefficients.Estimate;
+yfit = beta(1) + beta(2)*logx;
+hold on
+plot(logx,yfit,'k','LineWidth',2)
+
 % ax(k).XScale = 'log';
-% ax(k).Box = 'off';
-% xlabel('Trace-norm')
-% ylabel('Normalized Error Relative to RF')
-% l = legend('RerF','F-RC','RR-RF');
-% % l.Box = 'off';
-% title('Datasets for Which RerF Wins')
-% save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_trace_norm_vs_error'],{'fig','pdf','png'})
+ax(k).Box = 'off';
+xlabel('log_{10}(Trace-norm)')
+ylabel('Normalized Error Relative to RF')
+l = legend('RerF','F-RC',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
+% l.Box = 'off';
+title('All Benchmark Datasets')
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_trace_norm_vs_error'],{'fig','pdf','png'})
 
 figure;
 k = 8;
 ax(k) = axes;
 hold on
-for c = 2:length(Classifiers)
+for c = 2:length(Classifiers)-1
     cl = Classifiers{c};
-    plot(nClasses,NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+    plot(log10(nClasses),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
         'Color',Colors.(cl),'MarkerSize',14)
 end
-ax(k).XScale = 'log';
+logx = log10(nClasses);
+linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
+beta = linmod.Coefficients.Estimate;
+yfit = beta(1) + beta(2)*logx;
+hold on
+plot(logx,yfit,'k','LineWidth',2)
+
+% ax(k).XScale = 'log';
 ax(k).Box = 'off';
-xlabel('Number of Classes')
+xlabel('log_{10}(Number of Classes)')
 ylabel('Normalized Error Relative to RF')
-l = legend('RerF','F-RC','RR-RF');
+l = legend('RerF','F-RC',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
 % l.Box = 'off';
-title('Datasets for Which RerF Wins')
-% save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_nclasses_vs_error'],{'fig','pdf','png'})
+title('All Benchmark Datasets')
+save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_nclasses_vs_error'],{'fig','pdf','png'})

@@ -96,7 +96,7 @@ classdef rpclassificationforest
                         'skipchecks'    'stream'    'fboot'...
                         'SampleWithReplacement' 'rho' 'mdiff' 'ForestMethod'...
                         'RandomMatrix'  'Rescale'   'NWorkers'  'Stratified'...
-                        'nmix'  'rotate'    'p' 'dprime'    'nTrees'    'dx'...
+                        'nnzs'  'rotate'    'p' 'dprime'    'nTrees'    'dx'...
                         'AdjustmentFactors'     'DownsampleNode'    'MaxNodeSize'};
             defaults = {[]  []  'gdi'   []  2  1   ceil(size(X,2)^(2/3))...
                         'off'    []  'off'    'classification'  1e-6    {}...
@@ -107,13 +107,13 @@ classdef rpclassificationforest
                 nvartosample,Merge,categ,Prune,Method,qetoler,names,W,...
                 surrogate,skipchecks,Stream,fboot,...
                 SampleWithReplacement,rho,mdiff,ForestMethod,RandomMatrix,...
-                Rescale,NWorkers,Stratified,nmix,rotate,p,dprime,nTrees,dx,...
+                Rescale,NWorkers,Stratified,nnzs,rotate,p,dprime,nTrees,dx,...
                 AdjustmentFactors,DownsampleNode,MaxNodeSize,~,extra] = internal.stats.parseArgs(okargs,defaults,varargin{:});
             
-            % If ForestMethod is F-RC and nmix = 1, then just do RF instead
+            % If ForestMethod is F-RC and nnzs = 1, then just do RF instead
             % since it's the same and faster
             if strcmp(ForestMethod,'rerf') && strcmp(RandomMatrix,'frc')
-                if nmix==1
+                if nnzs==1
                     ForestMethod = 'rf';
                 end
             end
@@ -241,10 +241,10 @@ classdef rpclassificationforest
                         qetoler,'names',names,'weights',W,'surrogate',...
                         surrogate,'skipchecks',skipchecks,'stream',Stream,...
                         'rho',rho(i),'mdiff',mdiff,'RandomMatrix',RandomMatrix,...
-                        'nmix',nmix,'p',p,'dprime',dprime,'DownsampleNode',...
+                        'nnzs',nnzs,'p',p,'dprime',dprime,'DownsampleNode',...
                         DownsampleNode,'MaxNodeSize',MaxNodeSize);
                 elseif strcmp(ForestMethod,'rerf2')
-                    RM{i} = randmat(d,dx,RandomMatrix,rho(i),nmix,...
+                    RM{i} = randmat(d,dx,RandomMatrix,rho(i),nnzs,...
                         ceil(dx^(1/interp1(AdjustmentFactors.dims,AdjustmentFactors.slope,d))));
                     Tree{i} = classregtree2(Xtree(ibidx,:)*RM{i},Y(ibidx,:),...
                         'priorprob',Prior,'cost',Cost,'splitcriterion',...
@@ -360,9 +360,27 @@ classdef rpclassificationforest
 %             end
 %         end     %function oobpredict
         
-        function scores = rerf_oob_classprob(forest,Xtrain,treenum)
+        function scores = rerf_oob_classprob(forest,Xtrain,varargin)
             if nargin == 2
                 treenum = 'last';
+                PET = true;
+                projection_imp = [];    % importance feature
+                X_imp = []; % permuted values for importance feature
+            elseif nargin == 3
+                treenum = varargin{1};
+                PET = true;
+                projection_imp = [];    % importance feature
+                X_imp = []; % permuted values for importance feature
+            elseif nargin == 4
+                treenum = varargin{1};
+                PET = varargin{2};
+                projection_imp = [];    % importance feature
+                X_imp = []; % permuted values for importance feature
+            else
+                treenum = varargin{1};
+                PET = varargin{2};
+                projection_imp = varargin{3};    % importance feature
+                X_imp = varargin{4}; % permuted values for importance feature                
             end
             
             %Convert to double if not already
@@ -389,7 +407,15 @@ classdef rpclassificationforest
                 parfor i = 1:forest.nTrees
                     Xtree = Xtrain(OOBIndices{i},:);
                     score_i = NaN(nrows,nclasses);
-                    score_i(OOBIndices{i},:) = rpclassprob(trees{i},Xtree)
+                    if ~isempty(projection_imp)
+                        score_i(OOBIndices{i},:) = rpclassprob(trees{i},Xtree,projection_imp,X_imp);
+                    else
+                        score_i(OOBIndices{i},:) = rpclassprob(trees{i},Xtree);
+                    end
+                    % Probability Estimation Tree or Classification Tree?
+                    if ~PET
+                        score_i(OOBIndices{i},:) = double(score_i(OOBIndices{i},:) == repmat(max(score_i(OOBIndices{i},:),[],2),1,nclasses));
+                    end
                     scoremat(:,:,i) = score_i;
                 end
             elseif strcmp(forest.ForestMethod,'rerf2')
@@ -397,6 +423,9 @@ classdef rpclassificationforest
                     Xtree = Xtrain(OOBIndices{i},:)*RM{i};
                     score_i = NaN(nrows,nclasses);
                     score_i(OOBIndices{i},:) = rfclassprob(trees{i},Xtree)
+                    if ~PET
+                        score_i(OOBIndices{i},:) = double(score_i(OOBIndices{i},:) == repmat(max(score_i(OOBIndices{i},:),[],2),1,nclasses));
+                    end
                     scoremat(:,:,i) = score_i;
                 end
             else
@@ -406,6 +435,9 @@ classdef rpclassificationforest
                             Xtree = Xtrain(OOBIndices{i},:)*RR(:,:,i);
                             score_i = NaN(nrows,nclasses);
                             score_i(OOBIndices{i},:) = rfclassprob(trees{i},Xtree);
+                            if ~PET
+                                score_i(OOBIndices{i},:) = double(score_i(OOBIndices{i},:) == repmat(max(score_i(OOBIndices{i},:),[],2),1,nclasses));
+                            end
                             scoremat(:,:,i) = score_i;
                         end
                     else
@@ -414,6 +446,9 @@ classdef rpclassificationforest
                             Xtree(:,RotVars(i,:)) = Xtree(:,RotVars(i,:))*RR(:,:,i);   
                             score_i = NaN(nrows,nclasses);
                             score_i(OOBIndices{i},:) = rfclassprob(trees{i},Xtree);
+                            if ~PET
+                                score_i(OOBIndices{i},:) = double(score_i(OOBIndices{i},:) == repmat(max(score_i(OOBIndices{i},:),[],2),1,nclasses));
+                            end                            
                             scoremat(:,:,i) = score_i;
                         end
                     end
@@ -422,6 +457,9 @@ classdef rpclassificationforest
                         Xtree = Xtrain(OOBIndices{i},:);
                         score_i = NaN(nrows,nclasses);
                         score_i(OOBIndices{i},:) = rfclassprob(trees{i},Xtree);
+                        if ~PET
+                            score_i(OOBIndices{i},:) = double(score_i(OOBIndices{i},:) == repmat(max(score_i(OOBIndices{i},:),[],2),1,nclasses));
+                        end                        
                         scoremat(:,:,i) = score_i;
                     end
                 end
@@ -443,20 +481,27 @@ classdef rpclassificationforest
             end
         end     %function rerf_oob_classprob
         
-        function scores = rerf_classprob(forest,Xtest,treenum,varargin)
+        function scores = rerf_classprob(forest,Xtest,varargin)
             if nargin == 2
                 treenum = 'last';
+                PET = true;
+            elseif nargin == 3
+                treenum = varargin{1};
+                PET = true;
+            else
+                treenum = varargin{1};
+                PET = varargin{2};
             end
             
-            if nargin == 4;
-                Xtrain = varargin{1};
+            if nargin == 5;
+                Xtrain = varargin{3};
                 if ~isa(Xtrain,'double')
                     Xtrain = double(Xtrain);
                 end
             end
             
             if ~strcmp(forest.Rescale,'off')
-                if nargin < 4
+                if nargin < 5
                     error('Training data is required as third input argument for predicting')
                 end
                 Xtest = rescale(Xtrain,Xtest,forest.Rescale);
@@ -480,12 +525,19 @@ classdef rpclassificationforest
             if ~strcmp(forest.ForestMethod,'rf') && ~strcmp(forest.ForestMethod,'rerf2')
                 parfor i = 1:forest.nTrees
                     score_i = rpclassprob(trees{i},Xtest)
+                    % Probability Estimation Tree or Classification Tree?
+                    if ~PET
+                        score_i = double(score_i == repmat(max(score_i,[],2),1,nclasses));
+                    end                
                     scoremat(:,:,i) = score_i;
                 end
             elseif strcmp(forest.ForestMethod,'rerf2')
                 parfor i = 1:forest.nTrees
                     Xtree = Xtest*RM{i};
                     score_i = rfclassprob(trees{i},Xtree);
+                    if ~PET
+                        score_i = double(score_i == repmat(max(score_i,[],2),1,nclasses));
+                    end                         
                     scoremat(:,:,i) = score_i;
                 end
             else
@@ -494,6 +546,9 @@ classdef rpclassificationforest
                         parfor i = 1:forest.nTrees
                             Xtree = Xtest*RR(:,:,i);
                             score_i = rfclassprob(trees{i},Xtree);
+                            if ~PET
+                                score_i = double(score_i == repmat(max(score_i,[],2),1,nclasses));
+                            end                                 
                             scoremat(:,:,i) = score_i;
                         end
                     else
@@ -501,6 +556,9 @@ classdef rpclassificationforest
                             Xtree = Xtest;
                             Xtree(:,RotVars(i,:)) = Xtree(:,RotVars(i,:))*RR(:,:,i);       
                             score_i = rfclassprob(trees{i},Xtree);
+                            if ~PET
+                                score_i = double(score_i == repmat(max(score_i,[],2),1,nclasses));
+                            end     
                             scoremat(:,:,i) = score_i;
                         end
                     end
@@ -508,6 +566,9 @@ classdef rpclassificationforest
                     parfor i = 1:forest.nTrees
                         Xtree = Xtest;
                         score_i = rfclassprob(trees{i},Xtree);
+                        if ~PET
+                            score_i = double(score_i == repmat(max(score_i,[],2),1,nclasses));
+                        end                             
                         scoremat(:,:,i) = score_i;
                     end
                 end

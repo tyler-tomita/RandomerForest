@@ -121,8 +121,7 @@ if ~isfield(Params,'L')
 end
 
 if ~isfield(Params,'lambda')
-    Params.lambda = 1;
-end
+    Params.
 
 if ~isfield(Params,'Rescale')
     Params.Rescale = 'off';

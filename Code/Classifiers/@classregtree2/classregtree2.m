@@ -28,7 +28,7 @@ classdef classregtree2
 %                   sequence of pruned subtrees, or 'off' for the full tree
 %                   without pruning.
 %      'minparent'  A number K such that impure nodes must have K or more
-%                   observations to be split (default 10).
+%                   observations to be split (default 2).
 %      'minleaf'    A minimal number of observations per tree leaf
 %                   (default=1). If both 'minparent' and 'minleaf' are
 %                   supplied, the setting which results in larger leaves is
@@ -617,7 +617,7 @@ if ~isempty(minparent) && (~isnumeric(minparent) || ~isscalar(minparent))
     error(message('stats:classregtree2:BadMinparent'));
 end
 if isempty(minparent)
-    minparent = 10;
+    minparent = 2;
 end
 if ~isempty(minleaf) && (~isnumeric(minleaf) || ~isscalar(minleaf))
     error(message('stats:classregtree2:BadMinleaf'));

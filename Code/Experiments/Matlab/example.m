@@ -43,9 +43,10 @@ end
 
 Params.nTrees = 50;
 Params.ForestMethod = 'rerf';
-Params.RandomMatrix = 'binary';
+Params.RandomMatrix = 'poisson';
 Params.d = [1:p ceil(p.^[1.5 2])];  % one model will be fit for each value of d
-Params.rho = (1:4)/p;
+% Params.rho = (1:4)/p;
+Params.lambda = 2;
 Params.NWorkers = 2;
 Params.Stratified = true;
 
@@ -76,7 +77,7 @@ for i = 1:length(Forest)
     % compute one set of scores using the whole forest.
     
     Scores = rerf_oob_classprob(Forest{i},...
-        Xtrain,'last');
+        Xtrain,'last',false);
     
     % Next make OOB predictions by choosing the class with the largest
     % score as the predicted class
@@ -112,7 +113,7 @@ end
 % of trees. Use 'every' only when you want to see how the error converges
 % as a function of the number of trees used in the forest
 
-Scores = rerf_classprob(Forest{BestIdx},Xtest,'every');
+Scores = rerf_classprob(Forest{BestIdx},Xtest,'every',false);
 
 for t = 1:Forest{BestIdx}.nTrees
     
@@ -129,3 +130,7 @@ figure;
 plot(1:Params.nTrees,TestError)
 xlabel('# of trees used')
 ylabel('misclassification rate')
+
+% Compute feature importance
+
+[importance,features] = feature_importance(Forest{BestIdx},Xtrain,Ytrain,OOBError(BestIdx));

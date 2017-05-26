@@ -38,7 +38,7 @@ splitcriterion = '';
        surrcut = {};
       surrflip = {};
       catsplit = []; % for backwards compatibility with version prior to 9a
-           rpm = {};
+           rpm = [];
        isdelta = [];
     end
     
@@ -63,7 +63,7 @@ splitcriterion = '';
             leafnodes = leafnodes';
             for node = internalnodes
                 cut = Tree.cut{node};
-                projection = Tree.rpm{node};
+                projection = Tree.rpm(:,node);
                 Xpro = X(noderows{node},:)*projection;
                 ch = Tree.children(node,:);
                 noderows{ch(1)} = noderows{node}(Xpro < cut);
@@ -74,7 +74,14 @@ splitcriterion = '';
             end
         end     %function rptreepredict
         
-        function classprob = rpclassprob(Tree,X)
+        function classprob = rpclassprob(Tree,X,varargin)
+            % feature for which importance is desired to be computed along
+            % with permuted values for that feature can be passed in as
+            % optional third and fourth arguments
+            if nargin == 4
+                projection_imp = varargin{1};   % importance feature
+                X_imp = varargin{2};    % permuted values for this feature
+            end
             classprob = NaN(size(X,1),length(Tree.classname));
             noderows = cell(0,length(Tree.node));
             noderows{1} = 1:size(X,1);
@@ -82,13 +89,28 @@ splitcriterion = '';
             internalnodes = internalnodes';
             leafnodes = Tree.node(Tree.var == 0);
             leafnodes = leafnodes';
-            for node = internalnodes
-                cut = Tree.cut{node};
-                projection = Tree.rpm{node};
-                Xpro = X(noderows{node},:)*projection;
-                ch = Tree.children(node,:);
-                noderows{ch(1)} = noderows{node}(Xpro < cut);
-                noderows{ch(2)} = noderows{node}(Xpro >= cut);
+            if nargin == 4
+                for node = internalnodes
+                    cut = Tree.cut{node};
+                    projection = Tree.rpm(:,node);
+                    if isequal(projection,projection_imp)
+                        Xpro = X_imp(noderows{node});
+                    else
+                        Xpro = X(noderows{node},:)*projection;
+                    end
+                    ch = Tree.children(node,:);
+                    noderows{ch(1)} = noderows{node}(Xpro < cut);
+                    noderows{ch(2)} = noderows{node}(Xpro >= cut);
+                end
+            else
+                for node = internalnodes
+                    cut = Tree.cut{node};
+                    projection = Tree.rpm(:,node);
+                    Xpro = X(noderows{node},:)*projection;
+                    ch = Tree.children(node,:);
+                    noderows{ch(1)} = noderows{node}(Xpro < cut);
+                    noderows{ch(2)} = noderows{node}(Xpro >= cut);
+                end
             end
             for node = leafnodes
                 classprob(noderows{node},:) = repmat(Tree.classprob(node,:),length(noderows{node}),1);            
@@ -416,7 +438,7 @@ okargs =   {'priorprob'   'cost'  'splitcriterion' ...
             'splitmin' 'minparent' 'minleaf' ...
             'nvartosample' 'mergeleaves' 'categorical' 'prune' 'method' ...
             'qetoler' 'names' 'weights' 'surrogate' 'skipchecks' ...
-            'stream' 'rho'    'mdiff' 'RandomMatrix'  'nmix'  'p' 'dprime',...
+            'stream' 'rho'    'mdiff' 'RandomMatrix'  'nnzs'  'p' 'dprime',...
             'DownsampleNode'    'MaxNodeSize'};
 defaults = {[]            []      'gdi'                        ...
             []         2          1                          ...
@@ -426,7 +448,7 @@ defaults = {[]            []      'gdi'                        ...
 
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
-    skipchecks,Stream,rho,mdiff,RandomMatrix,nmix,p,dprime,DownsampleNode,...
+    skipchecks,Stream,rho,mdiff,RandomMatrix,nnzs,p,dprime,DownsampleNode,...
     MaxNodeSize,~,extra] = internal.stats.parseArgs(okargs,defaults,varargin{:});
 
 % For backwards compatibility. 'catidx' is a synonym for 'categorical'
@@ -561,7 +583,7 @@ if ~isempty(minparent) && (~isnumeric(minparent) || ~isscalar(minparent))
     error(message('stats:classregtree:BadMinparent'));
 end
 if isempty(minparent)
-    minparent = 10;
+    minparent = 2;
 end
 if ~isempty(minleaf) && (~isnumeric(minleaf) || ~isscalar(minleaf))
     error(message('stats:classregtree:BadMinleaf'));
@@ -651,7 +673,7 @@ children = zeros(M,2);
 nodeprob = zeros(M,1);
 resuberr = zeros(M,1);
 nodesize = zeros(M,1);
-rpm = cell(M,1);    %initialize cell array for storing proj matrices
+rpm = sparse(nvars,M);    %initialize cell array for storing proj matrices
 isdelta = false(M,1);
 if doclass
    classprob = zeros(M,nClasses);
@@ -775,7 +797,7 @@ while(tnode < nextunusednode)
             end
         end
       if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
-          promat = srpmat(nvars,nusevars,RandomMatrix,rho,nmix,dprime);    %random projection matrix
+          promat = srpmat(nvars,nusevars,RandomMatrix,rho,nnzs,dprime);    %random projection matrix
           md_ind = rand(size(mu_diff,2),1) <= p;
           promat = [mu_diff(:,md_ind) promat];
           md_idx = 1:sum(md_ind);   %Indices of where the mean difference vectors are in the matrix
@@ -783,7 +805,7 @@ while(tnode < nextunusednode)
           %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
           nvarsplit = cat(2,zeros(1,sum(md_ind)),nvarsplit);
       else
-          promat = srpmat(nvars,nusevars,RandomMatrix,rho,nmix,dprime);    %random projection matrix
+          promat = srpmat(nvars,nusevars,RandomMatrix,rho,nnzs,dprime);    %random projection matrix
           iscat2 = iscat;
           %nvarsplit2 = nvarsplit;
       end
@@ -875,7 +897,7 @@ while(tnode < nextunusednode)
          children(tnode,:) = nextunusednode + (0:1);
          nodenumber(nextunusednode+(0:1)) = nextunusednode+(0:1)';
          parent(nextunusednode+(0:1)) = tnode;
-         rpm{tnode} = promat(:,bestvar);
+         rpm(:,tnode) = promat(:,bestvar);
          if strcmp(mdiff,'all') || strcmp(mdiff,'node') && K > 1
              if ~isempty(md_idx)
                 isdelta(tnode) = bestvar <= max(md_idx);
@@ -991,7 +1013,7 @@ Tree.minparent = minparent;
 Tree.mergeleaves = Merge;
 %Tree.nvarsplit = nvarsplit2;
 %Tree.nvarsplit = nvarsplit;
-Tree.rpm = rpm(1:topnode);  %Store proj matrices in a structure field
+Tree.rpm = rpm(:,1:topnode);  %Store proj matrices in a structure field
 Tree.isdelta = isdelta(1:topnode);
 
 if doclass
@@ -1135,6 +1157,35 @@ function M = srpmat(d,k,method,varargin)
         idx(isnan(idx(:))) = [];
         M(idx(:)) = rand(1,length(idx(:)))*2 - 1;
         M = sparse(M);
+    elseif strcmp(method,'poisson')
+        lambda = varargin{2};
+        M = zeros(d,k);
+        go = true;
+        while go
+            nnzsPerCol = poissrnd(lambda,1,k);
+            go = ~any(nnzsPerCol);
+        end
+        nnzsPerCol(nnzsPerCol > d) = d;
+        nmix = unique(nnzsPerCol);
+        max_nmix = nmix(end);
+        idx = randperms(d,max_nmix,k);
+        idx = repmat(0:k-1,max_nmix,1)*d + idx;
+        for i = 1:length(nmix)
+            idx(nmix(i)+1:end,nnzsPerCol==nmix(i)) = NaN;
+        end
+        one_nnz_idx = idx(:,nnzsPerCol==1);
+        if isempty(one_nnz_idx)
+            one_nnz_idx = [];
+        else
+            one_nnz_idx(isnan(one_nnz_idx)) = [];
+        end
+        idx(isnan(idx(:))) = [];
+        nnzsTotal = length(idx(:));
+        ispos = rand(nnzsTotal,1) > 0.5;
+        M(idx(~ispos)) = -1;        
+        M([idx(ispos),one_nnz_idx]) = 1;
+%         M = sparse(M);
+        M = sparse(unique(M(:,any(M))','rows','stable')');
     end
 end
 
