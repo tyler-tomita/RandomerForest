@@ -49,7 +49,7 @@ for c = 1:length(Classifiers)
         Params.(cl).nTrees = 500;
     end
     Params.(cl).Stratified = true;
-    Params.(cl).NWorkers = 12;
+    Params.(cl).NWorkers = 16;
     if strcmp(cl,'rerfr') || strcmp(cl,'rerfpr') || strcmp(cl,'frcr') || ...
             strcmp(cl,'rr_rfr')
         Params.(cl).Rescale = 'rank';
