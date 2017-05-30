@@ -1,14 +1,14 @@
-% train and test classifiers on iris dataset
+% train and test classifiers on connect_4 dataset
 
 close all
 clear
 clc
 
-Classifiers = {'rf','rerf','rerfr','rerfz','rerfp','rerfpr','rerfpz','frc','frcr','frcz','rr_rf','rr_rfr','rr_rfz'};
+Classifiers = {'frc','frcr','frcz'};
 
-TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/uci/processed/iris.train.csv';
-TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/uci/processed/iris.test.csv';
-OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.05.27/Benchmarks/iris_2017_05_27.mat';
+TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/uci/processed/connect_4.train.csv';
+TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/uci/processed/connect_4.test.csv';
+OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/2017.05.27/Benchmarks/connect_4_frc_2017_05_27.mat';
 
 rng(1);
 

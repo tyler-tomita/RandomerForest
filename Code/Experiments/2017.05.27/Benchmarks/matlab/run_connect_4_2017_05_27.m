@@ -4,7 +4,7 @@ close all
 clear
 clc
 
-Classifiers = {'rf','rerf','rerfr','rerfp','rerfpr','frc','frcr','rr_rf','rr_rfr'};
+Classifiers = {'rf','rerf','rerfr','rerfz','rr_rf','rr_rfr','rr_rfz'};
 
 TrainFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/uci/processed/connect_4.train.csv';
 TestFile = '/scratch/groups/jvogels3/tyler/Benchmarks/Data/uci/processed/connect_4.test.csv';
@@ -28,11 +28,11 @@ nClasses = length(Labels);
 
 if p <= 5
     mtrys = [1:p p.^[2 3]];
-elseif p <= 10 && ntrain <= 10000
+elseif (p > 5 && p <= 10) && ntrain <= 10000
     mtrys = ceil(p.^[1/4 1/2 3/4 1 2 3]);
 elseif p <= 100 && ntrain <= 2000
     mtrys = ceil(p.^[1/4 1/2 3/4 1 2 2.5]);
-elseif p <= 100 && ntrain <= 10000
+elseif p <= 100 && (ntrain > 2000 && ntrain <= 10000)
     mtrys = ceil(p.^[1/4 1/2 3/4 1 2]);
 else
     mtrys = [ceil(p.^[1/4 1/2 3/4 1]) 20*p];
@@ -53,6 +53,9 @@ for c = 1:length(Classifiers)
     if strcmp(cl,'rerfr') || strcmp(cl,'rerfpr') || strcmp(cl,'frcr') || ...
             strcmp(cl,'rr_rfr')
         Params.(cl).Rescale = 'rank';
+    elseif strcmp(cl,'rerfz') || strcmp(cl,'rerfpz') || strcmp(cl,'frcz') || ...
+            strcmp(cl,'rr_rfz')
+        Params.(cl).Rescale = 'zscore';
     else
         Params.(cl).Rescale = 'off';
     end
@@ -60,7 +63,7 @@ for c = 1:length(Classifiers)
     if strcmp(cl,'rf')
         Params.(cl).ForestMethod = 'rf';
         Params.(cl).d = mtrys_rf;
-    elseif strcmp(cl,'rerf') || strcmp(cl,'rerfr')
+    elseif strcmp(cl,'rerf') || strcmp(cl,'rerfr') || strcmp(cl,'rerfz')
         Params.(cl).ForestMethod = 'rerf';
         Params.(cl).RandomMatrix = 'binary';
         Params.(cl).d = mtrys;
@@ -77,17 +80,17 @@ for c = 1:length(Classifiers)
 %         Params.(cl).d = mtrys;
 %         Params.(cl).nmix = 1:5;
 %         Params.(cl).rho = 1/p;
-    elseif strcmp(cl,'rerfp') || strcmp(cl,'rerfpr')
+    elseif strcmp(cl,'rerfp') || strcmp(cl,'rerfpr') || strcmp(cl,'rerfpz')
         Params.(cl).ForestMethod = 'rerf';
         Params.(cl).RandomMatrix = 'poisson';
         Params.(cl).d = mtrys;
-        Params.(cl).lambda = 2:5;            
-    elseif strcmp(cl,'frc') || strcmp(cl,'frcr')
+        Params.(cl).lambda = 2:min(5,p);            
+    elseif strcmp(cl,'frc') || strcmp(cl,'frcr') || strcmp(cl,'frcz')
         Params.(cl).ForestMethod = 'rerf';
         Params.(cl).RandomMatrix = 'frc';
         Params.(cl).d = mtrys;
-        Params.(cl).L = 2:5;       
-    elseif strcmp(cl,'rr_rf') || strcmp(cl,'rr_rfr')
+        Params.(cl).L = 2:min(5,p);       
+    elseif strcmp(cl,'rr_rf') || strcmp(cl,'rr_rfr') || strcmp(cl,'rr_rfz')
         Params.(cl).ForestMethod = 'rf';   
         Params.(cl).Rotate = true;
         Params.(cl).d = mtrys_rf;
@@ -212,11 +215,11 @@ for c = 1:length(Classifiers)
         OOBAUC.(cl)(end,:));
     BestIdx.(cl) = BI(randperm(length(BI),1));
 
-    Forest = Forest{BestIdx.(cl)};
+    BestForest.(cl) = Forest{BestIdx.(cl)};
     
     save(OutFile,'Params','OOBError','OOBAUC','TestError',...
         'TrainTime','Depth','NumNodes','NumSplitNodes','TreeStrength',...
-        'TreeDiversity','BestIdx','TestScores','Forest','-v7.3')
+        'TreeDiversity','BestIdx','TestScores','BestForest','-v7.3')
     
     clear Forest
 end  

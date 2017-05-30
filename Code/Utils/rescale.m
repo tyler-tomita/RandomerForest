@@ -2,7 +2,6 @@ function Xscale = rescale(Xtrain,Xtest,Method)
     if strcmp(Method,'normalize')
         Mn = min(Xtrain);
         Mx = max(Xtrain);
-
         if isempty(Xtest)
             [n,~] = size(Xtrain);
             Xscale = (Xtrain - repmat(Mn,n,1))./(repmat(Mx,n,1) - repmat(Mn,n,1));
