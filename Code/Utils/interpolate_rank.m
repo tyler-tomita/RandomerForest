@@ -17,20 +17,38 @@ function Xtest_rank = interpolate_rank(Xtrain,Xtest)
     Xtrain_rank = tiedrank(Xtrain_sort);
     for i = 1:ntest
         for j = 1:d
-            Xtest_idx = quickfind(Xtest(i,j),Xtrain_sort(:,j));
-            if Xtest_idx == 0 || Xtest_idx == ntrain + 1;
-                Xtest_rank(i,j) = Xtest_idx;
+            if Xtest(i,j) < Xtrain_sort(1,j)
+                Xtest_rank(i,j) = 0;
+            elseif Xtest(i,j) > Xtrain_sort(end,j)
+                Xtest_rank(i,j) = ntrain + 1;
             else
-                if rem(Xtest_idx,1) == 0
+                Xtest_idx = find(Xtrain_sort(:,j)>=Xtest(i,j),1);
+%                 Xtest_idx = find(Xtest(i,j)==Xtrain_sort(:,j));
+                if Xtrain_sort(Xtest_idx,j)==Xtest(i,j)
                     Xtest_rank(i,j) = Xtrain_rank(Xtest_idx,j);
                 else
-                    idx_below = floor(Xtest_idx);
-                    idx_above = ceil(Xtest_idx);
+                    idx_below = Xtest_idx - 1;
+                    idx_above = Xtest_idx;
                     X_below = Xtrain_rank(idx_below,j);
                     X_above = Xtrain_rank(idx_above,j);
-                    Xtest_rank(i,j) = (Xtest_idx - idx_below)/(idx_above - idx_below)*(X_above - X_below) + X_below;
+                    Xtest_rank(i,j) = (Xtest(i,j) - Xtrain_sort(idx_below,j))/(Xtrain_sort(idx_above,j) - Xtrain_sort(idx_below,j))*(X_above - X_below) + X_below;
                 end
             end
+%             %%% DEPRECATED: QUICKFIND HANGS SOMETIMES %%%
+%             Xtest_idx = quickfind(Xtest(i,j),Xtrain_sort(:,j));
+%             if Xtest_idx == 0 || Xtest_idx == ntrain + 1;
+%                 Xtest_rank(i,j) = Xtest_idx;
+%             else
+%                 if rem(Xtest_idx,1) == 0
+%                     Xtest_rank(i,j) = Xtrain_rank(Xtest_idx,j);
+%                 else
+%                     idx_below = floor(Xtest_idx);
+%                     idx_above = ceil(Xtest_idx);
+%                     X_below = Xtrain_rank(idx_below,j);
+%                     X_above = Xtrain_rank(idx_above,j);
+%                     Xtest_rank(i,j) = (Xtest_idx - idx_below)/(idx_above - idx_below)*(X_above - X_below) + X_below;
+%                 end
+%             end
         end   
     end
 end
