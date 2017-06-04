@@ -154,7 +154,7 @@ nClasses(isnan(nClasses)) = [];
 
 % Compute area under scree plots
 
-AUC = zeros(size(NormalizedRelativeError,1),1);
+AUC = zeros(size(NormalizedRelativeError));
 for i = 1:size(NormalizedRelativeError,1)
 %     axh(i) = subplot(5,3,i);
     csum = cumsum(lambda{i});
@@ -196,14 +196,13 @@ beta = linmod.Coefficients.Estimate;
 yfit = beta(1) + beta(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}p')
 ylabel('Normalized Error Relative to RF')
-title('Updated Benchmark Datasets')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+title('All Benchmark Datasets')
+l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
 % l.Box = 'off';
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_p_vs_error'],{'fig','pdf','png'})
 
@@ -222,15 +221,14 @@ beta = linmod.Coefficients.Estimate;
 yfit = beta(1) + beta(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}(d/p)')
 ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
 % l.Box = 'off';
-title('Updated Benchmark Datasets')
+title('All Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_d_over_p_vs_error'],{'fig','pdf','png'})
 
 figure;
@@ -248,15 +246,14 @@ beta = linmod.Coefficients.Estimate;
 yfit = beta(1) + beta(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}(n_{train})')
 ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
 % l.Box = 'off';
-title('Updated Benchmark Datasets')
+title('All Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_ntrain_vs_error'],{'fig','pdf','png'})
 
 figure;
@@ -274,15 +271,14 @@ beta = linmod.Coefficients.Estimate;
 yfit = beta(1) + beta(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}(p/n_{train})')
 ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
 % l.Box = 'off';
-title('Updated Benchmark Datasets')
+title('All Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_p_over_ntrain_vs_error'],{'fig','pdf','png'})
 
 figure;
@@ -300,15 +296,14 @@ beta = linmod.Coefficients.Estimate;
 yfit = beta(1) + beta(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}p^*')
 ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
 % l.Box = 'off';
-title('Updated Benchmark Datasets')
+title('All Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_pstar_vs_error'],{'fig','pdf','png'})
 
 figure;
@@ -326,15 +321,14 @@ beta = linmod.Coefficients.Estimate;
 yfit = beta(1) + beta(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}(p^*/p)')
 ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
 % l.Box = 'off';
-title('Updated Benchmark Datasets')
+title('All Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_pstar_over_p_vs_error'],{'fig','pdf','png'})
 
 figure;
@@ -352,15 +346,14 @@ beta = linmod.Coefficients.Estimate;
 yfit = beta(1) + beta(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}(Trace-norm)')
 ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
 % l.Box = 'off';
-title('Updated Benchmark Datasets')
+title('All Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_trace_norm_vs_error'],{'fig','pdf','png'})
 
 figure;
@@ -378,15 +371,14 @@ beta = linmod.Coefficients.Estimate;
 yfit = beta(1) + beta(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}(Number of Classes)')
 ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
 % l.Box = 'off';
-title('Updated Benchmark Datasets')
+title('All Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_nclasses_vs_error'],{'fig','pdf','png'})
 
 figure;
@@ -404,13 +396,12 @@ beta = linmod.Coefficients.Estimate;
 yfit = beta(1) + beta(2)*AUC;
 hold on
 plot(AUC,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('Area under scree')
 ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary));
 % l.Box = 'off';
-title('Updated Benchmark Datasets')
+title('All Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_scree_vs_error'],{'fig','pdf','png'})

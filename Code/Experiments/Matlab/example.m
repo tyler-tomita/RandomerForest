@@ -47,6 +47,7 @@ Params.RandomMatrix = 'poisson';
 Params.d = [1:p ceil(p.^[1.5 2])];  % one model will be fit for each value of d
 % Params.rho = (1:4)/p;
 Params.lambda = 2;
+Params.Rescale = 'off';
 Params.NWorkers = 2;
 Params.Stratified = true;
 
@@ -113,7 +114,11 @@ end
 % of trees. Use 'every' only when you want to see how the error converges
 % as a function of the number of trees used in the forest
 
-Scores = rerf_classprob(Forest{BestIdx},Xtest,'every',false);
+if strcmp(Params.Rescale,'off')
+    Scores = rerf_classprob(Forest{BestIdx},Xtest,'every',false);
+else
+    Scores = rerf_classprob(Forest{BestIdx},Xtest,'every',false,Xtrain);
+end
 
 for t = 1:Forest{BestIdx}.nTrees
     
@@ -133,4 +138,4 @@ ylabel('misclassification rate')
 
 % Compute feature importance
 
-[importance,features] = feature_importance(Forest{BestIdx},Xtrain,Ytrain,OOBError(BestIdx));
+% [importance,features] = feature_importance(Forest{BestIdx},Xtrain,Ytrain,OOBError(BestIdx));
