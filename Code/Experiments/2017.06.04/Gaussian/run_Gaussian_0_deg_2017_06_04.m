@@ -10,10 +10,8 @@ rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 rng(1);
 
 ps = 2;
-ns = 10;
-ntrials = 5;
-% ns = [10,50,100,500,1000];
-% ntrials = 50;
+ns = [10,50,100,500,1000];
+ntrials = 50;
 ntest = 10e3;
 
 Classifiers = {'rf','rerf','frc','rr_rf'};
