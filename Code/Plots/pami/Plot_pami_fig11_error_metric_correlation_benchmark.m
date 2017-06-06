@@ -8,13 +8,10 @@ fpath = mfilename('fullpath');
 rerfPath = fpath(1:strfind(fpath,'RandomerForest')-1);
 
 load('purple2green')
-Colors.rf = ColorMap(2,:);
-Colors.rerf = 'k';
-Colors.frc= ColorMap(10,:);
-Colors.rr_rf = ColorMap(4,:);
-Colors.xgb= ColorMap(8,:);
+Colors.cat = ColorMap(3,:);
+Colors.cont= ColorMap(9,:);
 LineWidth = 2;
-MarkerSize = 8;
+MarkerSize = 10;
 FontSize = .2;
 axWidth = 2;
 axHeight = 2;
@@ -54,6 +51,8 @@ p_lowrank = NaN(length(contents),1);
 lambda = cell(length(contents),1);   % eigenvalues of data matrix
 ntrain = NaN(length(contents),1);
 TraceNorm = NaN(length(contents),1);
+PlotColor = NaN(length(contents),3);
+iscont = NaN(length(contents),1);
 
 DatasetNames = importdata('~/Benchmarks/Data/uci/Names.txt');
 
@@ -66,6 +65,28 @@ for i = 1:length(contents)
     Dataset = strsplit(contents(i).name,'_2017_05_27');
     Dataset = Dataset{1};
     DatasetIdx = find(strcmp(Dataset,DatasetNames));
+    
+    Name = strsplit(Dataset,'_task');
+    Name = Name{1};
+    Name = strrep(Name,'_','-');
+    if ~isempty(strfind(Name,'frc')) || ~isempty(strfind(Name,'rerfp'))
+        continue
+    end
+    
+    % contains binary features?
+    fid = fopen(['~/Benchmarks/Data/uci/binary/' Name '.bin']);
+    hasbin = ~isnumeric(fgetl(fid));
+    fclose(fid);
+    
+    % contains categorical features?
+    fid = fopen(['~/Benchmarks/Data/uci/categorical/' Name '.cat']);
+    hascat = ~isnumeric(fgetl(fid));
+    fclose(fid);
+
+    % contains ordinal features?
+    fid = fopen(['~/Benchmarks/Data/uci/ordinal/' Name '.ord']);
+    hasord = ~isnumeric(fgetl(fid));
+    fclose(fid);
 
     load([inPath1 contents(i).name])
 
@@ -96,6 +117,13 @@ for i = 1:length(contents)
         nClasses(k) = length(unique(TestSet(:,end)));
         ClassCounts = histcounts(TestSet(:,end),nClasses(k));
         ChanceProb(k) = 1 - max(ClassCounts)/sum(ClassCounts);
+        if hasbin || hascat || hasord
+            PlotColor(k,:) = Colors.cat;
+            iscont(k) = 0;
+        else
+            PlotColor(k,:) = Colors.cont;
+            iscont(k) = 1;
+        end
 
         for c = 1:length(Classifiers)
             cl = Classifiers{c};
@@ -135,6 +163,9 @@ ntrain(isnan(ntrain)) = [];
 TraceNorm(isnan(TraceNorm)) = [];
 lambda(isnan(p_lowrank)) = [];
 nClasses(isnan(nClasses)) = [];
+PlotColor(all(isnan(PlotColor),2),:) = [];
+iscont(isnan(iscont)) = [];
+iscont = logical(iscont);
 
 % [~,srtidx] = sort(NormalizedRelativeError(:,1));
 % Top15 = srtidx(1:15);
@@ -173,37 +204,47 @@ for i = 1:size(NormalizedRelativeError,1)
 %     axh(i).FontSize = 6;
     AUC(i) = trapz((1:length(lambda{i}))/length(lambda{i}),csum/csum(end));
 end
-% cb = colorbar('colormap',pp);
-% cb.Limits = [min(NormalizedRelativeError(:,1)) max(NormalizedRelativeError(:,1))];
-% caxis([min(NormalizedRelativeError(:,1)) max(NormalizedRelativeError(:,1))])
-% t = ylabel(cb,'Normalized Relative Error of RerF');
-% t.Rotation = -90;
-% t.Position(1) = t.Position(1)*1.2;
-save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/benchmark_scree_plots'],{'fig','pdf','png'})
 
 figure;
 k = 1;
 ax(k) = axes;
 hold on
-for c = 2
-    cl = Classifiers{c};
-    plot(log10(p),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
-        'Color',Colors.(cl),'MarkerSize',14)
-end
+% for c = 2
+%     cl = Classifiers{c};
+%     plot(log10(p),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+%         'Color',Colors.(cl),'MarkerSize',14)
+% end
+
+% plot continuous
+plot(log10(p(iscont)),NormalizedRelativeError(iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cont)
 logx = log10(p);
-linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
-beta = linmod.Coefficients.Estimate;
-yfit = beta(1) + beta(2)*logx;
+linmod = fitlm(logx(iscont),NormalizedRelativeError(iscont,1),'linear');
+beta.cont = linmod.Coefficients.Estimate;
+Rsq.cont = linmod.Rsquared.Ordinary;
+yfit = beta.cont(1) + beta.cont(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
+
+% plot categorical
+plot(log10(p(~iscont)),NormalizedRelativeError(~iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cat)
+linmod = fitlm(logx(~iscont),NormalizedRelativeError(~iscont,1),'linear');
+beta.cat = linmod.Coefficients.Estimate;
+Rsq.cat = linmod.Rsquared.Ordinary;
+yfit = beta.cat(1) + beta.cat(2)*logx;
+hold on
+plot(logx,yfit,'m','LineWidth',2);
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}p')
-ylabel('Normalized Error Relative to RF')
+ylabel('Normalized Error of RerF Relative to RF')
 title('Updated Benchmark Datasets')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+l = legend('Numeric',sprintf('Fit on numeric (R^2 = %0.3f)',Rsq.cont),sprintf('Slope = %0.3f',beta.cont(2)),'Nominal',sprintf('Fit on nominal (R^2 = %0.3f)',Rsq.cat),sprintf('Slope = %0.3f',beta.cat(2)));
+l.Location = 'southwest';
 % l.Box = 'off';
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_p_vs_error'],{'fig','pdf','png'})
 
@@ -211,24 +252,41 @@ figure;
 k = 2;
 ax(k) = axes;
 hold on
-for c = 2
-    cl = Classifiers{c};
-    plot(log10(d(:,c)./p),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
-        'Color',Colors.(cl),'MarkerSize',14)
-end
+% for c = 2
+%     cl = Classifiers{c};
+%     plot(log10(d(:,c)./p),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+%         'Color',Colors.(cl),'MarkerSize',14)
+% end
+
+% plot continuous
+plot(log10(d(iscont,2)./p(iscont)),NormalizedRelativeError(iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cont)
 logx = log10(d(:,2)./p);
-linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
-beta = linmod.Coefficients.Estimate;
-yfit = beta(1) + beta(2)*logx;
+linmod = fitlm(logx(iscont),NormalizedRelativeError(iscont,1),'linear');
+beta.cont = linmod.Coefficients.Estimate;
+Rsq.cont = linmod.Rsquared.Ordinary;
+yfit = beta.cont(1) + beta.cont(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
+
+% plot categorical
+plot(log10(d(~iscont,2)./p(~iscont)),NormalizedRelativeError(~iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cat)
+linmod = fitlm(logx(~iscont),NormalizedRelativeError(~iscont,1),'linear');
+beta.cat = linmod.Coefficients.Estimate;
+Rsq.cat = linmod.Rsquared.Ordinary;
+yfit = beta.cat(1) + beta.cat(2)*logx;
+hold on
+plot(logx,yfit,'m','LineWidth',2);
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}(d/p)')
-ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+ylabel('Normalized Error of RerF Relative to RF')
+l = legend('Numeric',sprintf('Fit on numeric (R^2 = %0.3f)',Rsq.cont),sprintf('Slope = %0.3f',beta.cont(2)),'Nominal',sprintf('Fit on nominal (R^2 = %0.3f)',Rsq.cat),sprintf('Slope = %0.3f',beta.cat(2)));
+l.Location = 'southwest';
 % l.Box = 'off';
 title('Updated Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_d_over_p_vs_error'],{'fig','pdf','png'})
@@ -237,24 +295,41 @@ figure;
 k = 3;
 ax(k) = axes;
 hold on
-for c = 2
-    cl = Classifiers{c};
-    plot(log10(ntrain),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
-        'Color',Colors.(cl),'MarkerSize',14)
-end
+% for c = 2
+%     cl = Classifiers{c};
+%     plot(log10(ntrain),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+%         'Color',Colors.(cl),'MarkerSize',14)
+% end
+
+% plot continuous
+plot(log10(ntrain(iscont)),NormalizedRelativeError(iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cont)
 logx = log10(ntrain);
-linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
-beta = linmod.Coefficients.Estimate;
-yfit = beta(1) + beta(2)*logx;
+linmod = fitlm(logx(iscont),NormalizedRelativeError(iscont,1),'linear');
+beta.cont = linmod.Coefficients.Estimate;
+Rsq.cont = linmod.Rsquared.Ordinary;
+yfit = beta.cont(1) + beta.cont(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
+
+% plot categorical
+plot(log10(ntrain(~iscont)),NormalizedRelativeError(~iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cat)
+linmod = fitlm(logx(~iscont),NormalizedRelativeError(~iscont,1),'linear');
+beta.cat = linmod.Coefficients.Estimate;
+Rsq.cat = linmod.Rsquared.Ordinary;
+yfit = beta.cat(1) + beta.cat(2)*logx;
+hold on
+plot(logx,yfit,'m','LineWidth',2);
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}(n_{train})')
-ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+ylabel('Normalized Error of RerF Relative to RF')
+l = legend('Numeric',sprintf('Fit on numeric (R^2 = %0.3f)',Rsq.cont),sprintf('Slope = %0.3f',beta.cont(2)),'Nominal',sprintf('Fit on nominal (R^2 = %0.3f)',Rsq.cat),sprintf('Slope = %0.3f',beta.cat(2)));
+l.Location = 'southwest';
 % l.Box = 'off';
 title('Updated Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_ntrain_vs_error'],{'fig','pdf','png'})
@@ -263,24 +338,41 @@ figure;
 k = 4;
 ax(k) = axes;
 hold on
-for c = 2
-    cl = Classifiers{c};
-    plot(log10(p./ntrain),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
-        'Color',Colors.(cl),'MarkerSize',14)
-end
+% for c = 2
+%     cl = Classifiers{c};
+%     plot(log10(p./ntrain),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+%         'Color',Colors.(cl),'MarkerSize',14)
+% end
+
+% plot continuous
+plot(log10(p(iscont)./ntrain(iscont)),NormalizedRelativeError(iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cont)
 logx = log10(p./ntrain);
-linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
-beta = linmod.Coefficients.Estimate;
-yfit = beta(1) + beta(2)*logx;
+linmod = fitlm(logx(iscont),NormalizedRelativeError(iscont,1),'linear');
+beta.cont = linmod.Coefficients.Estimate;
+Rsq.cont = linmod.Rsquared.Ordinary;
+yfit = beta.cont(1) + beta.cont(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
+
+% plot categorical
+plot(log10(p(~iscont)./ntrain(~iscont)),NormalizedRelativeError(~iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cat)
+linmod = fitlm(logx(~iscont),NormalizedRelativeError(~iscont,1),'linear');
+beta.cat = linmod.Coefficients.Estimate;
+Rsq.cat = linmod.Rsquared.Ordinary;
+yfit = beta.cat(1) + beta.cat(2)*logx;
+hold on
+plot(logx,yfit,'m','LineWidth',2);
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}(p/n_{train})')
-ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+ylabel('Normalized Error of RerF Relative to RF')
+l = legend('Numeric',sprintf('Fit on numeric (R^2 = %0.3f)',Rsq.cont),sprintf('Slope = %0.3f',beta.cont(2)),'Nominal',sprintf('Fit on nominal (R^2 = %0.3f)',Rsq.cat),sprintf('Slope = %0.3f',beta.cat(2)));
+l.Location = 'southwest';
 % l.Box = 'off';
 title('Updated Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_p_over_ntrain_vs_error'],{'fig','pdf','png'})
@@ -289,24 +381,41 @@ figure;
 k = 5;
 ax(k) = axes;
 hold on
-for c = 2
-    cl = Classifiers{c};
-    plot(log10(p_lowrank),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
-        'Color',Colors.(cl),'MarkerSize',14)
-end
+% for c = 2
+%     cl = Classifiers{c};
+%     plot(log10(p_lowrank),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+%         'Color',Colors.(cl),'MarkerSize',14)
+% end
+
+% plot continuous
+plot(log10(p_lowrank(iscont)),NormalizedRelativeError(iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cont)
 logx = log10(p_lowrank);
-linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
-beta = linmod.Coefficients.Estimate;
-yfit = beta(1) + beta(2)*logx;
+linmod = fitlm(logx(iscont),NormalizedRelativeError(iscont,1),'linear');
+beta.cont = linmod.Coefficients.Estimate;
+Rsq.cont = linmod.Rsquared.Ordinary;
+yfit = beta.cont(1) + beta.cont(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
+
+% plot categorical
+plot(log10(p_lowrank(~iscont)),NormalizedRelativeError(~iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cat)
+linmod = fitlm(logx(~iscont),NormalizedRelativeError(~iscont,1),'linear');
+beta.cat = linmod.Coefficients.Estimate;
+Rsq.cat = linmod.Rsquared.Ordinary;
+yfit = beta.cat(1) + beta.cat(2)*logx;
+hold on
+plot(logx,yfit,'m','LineWidth',2);
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}p^*')
-ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+ylabel('Normalized Error of RerF Relative to RF')
+l = legend('Numeric',sprintf('Fit on numeric (R^2 = %0.3f)',Rsq.cont),sprintf('Slope = %0.3f',beta.cont(2)),'Nominal',sprintf('Fit on nominal (R^2 = %0.3f)',Rsq.cat),sprintf('Slope = %0.3f',beta.cat(2)));
+l.Location = 'southwest';
 % l.Box = 'off';
 title('Updated Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_pstar_vs_error'],{'fig','pdf','png'})
@@ -315,24 +424,41 @@ figure;
 k = 6;
 ax(k) = axes;
 hold on
-for c = 2
-    cl = Classifiers{c};
-    plot(log10(p_lowrank./p),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
-        'Color',Colors.(cl),'MarkerSize',14)
-end
+% for c = 2
+%     cl = Classifiers{c};
+%     plot(log10(p_lowrank./p),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+%         'Color',Colors.(cl),'MarkerSize',14)
+% end
+
+% plot continuous
+plot(log10(p_lowrank(iscont)./p(iscont)),NormalizedRelativeError(iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cont)
 logx = log10(p_lowrank./p);
-linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
-beta = linmod.Coefficients.Estimate;
-yfit = beta(1) + beta(2)*logx;
+linmod = fitlm(logx(iscont),NormalizedRelativeError(iscont,1),'linear');
+beta.cont = linmod.Coefficients.Estimate;
+Rsq.cont = linmod.Rsquared.Ordinary;
+yfit = beta.cont(1) + beta.cont(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
+
+% plot categorical
+plot(log10(p_lowrank(~iscont)./p(~iscont)),NormalizedRelativeError(~iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cat)
+linmod = fitlm(logx(~iscont),NormalizedRelativeError(~iscont,1),'linear');
+beta.cat = linmod.Coefficients.Estimate;
+Rsq.cat = linmod.Rsquared.Ordinary;
+yfit = beta.cat(1) + beta.cat(2)*logx;
+hold on
+plot(logx,yfit,'m','LineWidth',2);
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}(p^*/p)')
-ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+ylabel('Normalized Error of RerF Relative to RF')
+l = legend('Numeric',sprintf('Fit on numeric (R^2 = %0.3f)',Rsq.cont),sprintf('Slope = %0.3f',beta.cont(2)),'Nominal',sprintf('Fit on nominal (R^2 = %0.3f)',Rsq.cat),sprintf('Slope = %0.3f',beta.cat(2)));
+l.Location = 'southwest';
 % l.Box = 'off';
 title('Updated Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_pstar_over_p_vs_error'],{'fig','pdf','png'})
@@ -341,24 +467,41 @@ figure;
 k = 7;
 ax(k) = axes;
 hold on
-for c = 2
-    cl = Classifiers{c};
-    plot(log10(TraceNorm),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
-        'Color',Colors.(cl),'MarkerSize',14)
-end
+% for c = 2
+%     cl = Classifiers{c};
+%     plot(log10(TraceNorm),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+%         'Color',Colors.(cl),'MarkerSize',14)
+% end
+
+% plot continuous
+plot(log10(TraceNorm(iscont)),NormalizedRelativeError(iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cont)
 logx = log10(TraceNorm);
-linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
-beta = linmod.Coefficients.Estimate;
-yfit = beta(1) + beta(2)*logx;
+linmod = fitlm(logx(iscont),NormalizedRelativeError(iscont,1),'linear');
+beta.cont = linmod.Coefficients.Estimate;
+Rsq.cont = linmod.Rsquared.Ordinary;
+yfit = beta.cont(1) + beta.cont(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
+
+% plot categorical
+plot(log10(TraceNorm(~iscont)),NormalizedRelativeError(~iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cat)
+linmod = fitlm(logx(~iscont),NormalizedRelativeError(~iscont,1),'linear');
+beta.cat = linmod.Coefficients.Estimate;
+Rsq.cat = linmod.Rsquared.Ordinary;
+yfit = beta.cat(1) + beta.cat(2)*logx;
+hold on
+plot(logx,yfit,'m','LineWidth',2);
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}(Trace-norm)')
-ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+ylabel('Normalized Error of RerF Relative to RF')
+l = legend('Numeric',sprintf('Fit on numeric (R^2 = %0.3f)',Rsq.cont),sprintf('Slope = %0.3f',beta.cont(2)),'Nominal',sprintf('Fit on nominal (R^2 = %0.3f)',Rsq.cat),sprintf('Slope = %0.3f',beta.cat(2)));
+l.Location = 'southwest';
 % l.Box = 'off';
 title('Updated Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_trace_norm_vs_error'],{'fig','pdf','png'})
@@ -367,24 +510,41 @@ figure;
 k = 8;
 ax(k) = axes;
 hold on
-for c = 2
-    cl = Classifiers{c};
-    plot(log10(nClasses),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
-        'Color',Colors.(cl),'MarkerSize',14)
-end
+% for c = 2
+%     cl = Classifiers{c};
+%     plot(log10(nClasses),NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+%         'Color',Colors.(cl),'MarkerSize',14)
+% end
+
+% plot continuous
+plot(log10(nClasses(iscont)),NormalizedRelativeError(iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cont)
 logx = log10(nClasses);
-linmod = fitlm(logx,NormalizedRelativeError(:,1),'linear');
-beta = linmod.Coefficients.Estimate;
-yfit = beta(1) + beta(2)*logx;
+linmod = fitlm(logx(iscont),NormalizedRelativeError(iscont,1),'linear');
+beta.cont = linmod.Coefficients.Estimate;
+Rsq.cont = linmod.Rsquared.Ordinary;
+yfit = beta.cont(1) + beta.cont(2)*logx;
 hold on
 plot(logx,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
+
+% plot categorical
+plot(log10(nClasses(~iscont)),NormalizedRelativeError(~iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cat)
+linmod = fitlm(logx(~iscont),NormalizedRelativeError(~iscont,1),'linear');
+beta.cat = linmod.Coefficients.Estimate;
+Rsq.cat = linmod.Rsquared.Ordinary;
+yfit = beta.cat(1) + beta.cat(2)*logx;
+hold on
+plot(logx,yfit,'m','LineWidth',2);
+plot(logx,yfit,'LineStyle','none','Marker','none','Visible','off');
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('log_{10}(Number of Classes)')
-ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+ylabel('Normalized Error of RerF Relative to RF')
+l = legend('Numeric',sprintf('Fit on numeric (R^2 = %0.3f)',Rsq.cont),sprintf('Slope = %0.3f',beta.cont(2)),'Nominal',sprintf('Fit on nominal (R^2 = %0.3f)',Rsq.cat),sprintf('Slope = %0.3f',beta.cat(2)));
+l.Location = 'southwest';
 % l.Box = 'off';
 title('Updated Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_nclasses_vs_error'],{'fig','pdf','png'})
@@ -393,24 +553,40 @@ figure;
 k = 9;
 ax(k) = axes;
 hold on
-for c = 2
-    cl = Classifiers{c};
-    plot(AUC,NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
-        'Color',Colors.(cl),'MarkerSize',14)
-end
-% logx = log10(AUC);
-linmod = fitlm(AUC,NormalizedRelativeError(:,1),'linear');
-beta = linmod.Coefficients.Estimate;
-yfit = beta(1) + beta(2)*AUC;
+% for c = 2
+%     cl = Classifiers{c};
+%     plot(AUC,NormalizedRelativeError(:,c-1),'.','MarkerSize',MarkerSize,...
+%         'Color',Colors.(cl),'MarkerSize',14)
+% end
+
+% plot continuous
+plot(AUC(iscont),NormalizedRelativeError(iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cont)
+linmod = fitlm(AUC(iscont),NormalizedRelativeError(iscont,1),'linear');
+beta.cont = linmod.Coefficients.Estimate;
+Rsq.cont = linmod.Rsquared.Ordinary;
+yfit = beta.cont(1) + beta.cont(2)*AUC;
 hold on
 plot(AUC,yfit,'k','LineWidth',2)
-plot(logx,yfit,'LineStyle','none','Marker','none')
+plot(AUC,yfit,'LineStyle','none','Marker','none','Visible','off');
+
+% plot categorical
+plot(AUC(~iscont),NormalizedRelativeError(~iscont,1),'.','MarkerSize',MarkerSize,...
+    'Color',Colors.cat)
+linmod = fitlm(AUC(~iscont),NormalizedRelativeError(~iscont,1),'linear');
+beta.cat = linmod.Coefficients.Estimate;
+Rsq.cat = linmod.Rsquared.Ordinary;
+yfit = beta.cat(1) + beta.cat(2)*AUC;
+hold on
+plot(AUC,yfit,'m','LineWidth',2);
+plot(AUC,yfit,'LineStyle','none','Marker','none','Visible','off');
 
 % ax(k).XScale = 'log';
 ax(k).Box = 'off';
 xlabel('Area under scree')
-ylabel('Normalized Error Relative to RF')
-l = legend('RerF',sprintf('Fit on RerF (R^2 = %0.3f)',linmod.Rsquared.Ordinary),sprintf('Slope = %0.3f',beta(2)));
+ylabel('Normalized Error of RerF Relative to RF')
+l = legend('Numeric',sprintf('Fit on numeric (R^2 = %0.3f)',Rsq.cont),sprintf('Slope = %0.3f',beta.cont(2)),'Nominal',sprintf('Fit on nominal (R^2 = %0.3f)',Rsq.cat),sprintf('Slope = %0.3f',beta.cat(2)));
+l.Location = 'southwest';
 % l.Box = 'off';
 title('Updated Benchmark Datasets')
 save_fig(gcf,[rerfPath 'RandomerForest/Figures/pami/pami_benchmark_scree_vs_error'],{'fig','pdf','png'})
