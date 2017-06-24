@@ -41,28 +41,30 @@ end
 % sample d candidate projections at each split node, specify stratified
 % bootstrap sampling, and connect to two parallel workers
 
-Params.nTrees = 50;
+Params.nTrees = 500;
 Params.ForestMethod = 'rerf';
-Params.RandomMatrix = 'poisson';
-Params.d = [1:p ceil(p.^[1.5 2])];  % one model will be fit for each value of d
+Params.RandomMatrix = 'binary';
+% Params.d = [1:p ceil(p.^[1.5 2])];  % one model will be fit for each value of d
+Params.d = p^2;
 % Params.rho = (1:4)/p;
-Params.lambda = 2;
+% Params.lambda = 2;
 Params.Rescale = 'off';
 Params.NWorkers = 2;
 Params.Stratified = true;
 
 % Partition into train and test set
 
-trainIdx = [1:40 51:90 101:140];
+% trainIdx = [1:40 51:90 101:140];
+trainIdx = 1:150;
 testIdx = setdiff(1:150,trainIdx);
 Xtrain = X(trainIdx,:);
 Ytrain = Y(trainIdx);
-Xtest = X(testIdx,:);
-Ytest = Y(testIdx);
+% Xtest = X(testIdx,:);
+% Ytest = Y(testIdx);
 
 % Train a RerF for each value of Params.d
 
-Forest = RerF_train(Xtrain,Ytrain,Params);
+[Forest,~,TrainTime] = RerF_train(Xtrain,Ytrain,Params);
 
 % Compute out-of-bag-error and AUC for each forest model corresponding to 
 % the values of Params.d. The best model will be chosen as the one having

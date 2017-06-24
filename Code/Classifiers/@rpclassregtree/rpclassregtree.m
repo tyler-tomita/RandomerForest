@@ -439,17 +439,17 @@ okargs =   {'priorprob'   'cost'  'splitcriterion' ...
             'nvartosample' 'mergeleaves' 'categorical' 'prune' 'method' ...
             'qetoler' 'names' 'weights' 'surrogate' 'skipchecks' ...
             'stream' 'rho'    'mdiff' 'RandomMatrix'  'nnzs'  'p' 'dprime',...
-            'DownsampleNode'    'MaxNodeSize'};
+            'DownsampleNode'    'MaxNodeSize'   'ImHeight'  'ImWidth'};
 defaults = {[]            []      'gdi'                        ...
             []         2          1                          ...
             'all'          'on'          []            'off'    Method      ...
             1e-6      {}       []        'off'      false ...
-            []  1/size(X,2)   'off'   'sparse' 2   [] []  false   100};
+            []  1/size(X,2)   'off'   'sparse' 2   [] []  false   100   []  []};
 
 [Prior,Cost,Criterion,splitmin,minparent,minleaf,...
     nvartosample,Merge,categ,Prune,Method,qetoler,names,W,surrogate,...
     skipchecks,Stream,rho,mdiff,RandomMatrix,nnzs,p,dprime,DownsampleNode,...
-    MaxNodeSize,~,extra] = internal.stats.parseArgs(okargs,defaults,varargin{:});
+    MaxNodeSize,ImHeight,ImWidth,~,extra] = internal.stats.parseArgs(okargs,defaults,varargin{:});
 
 % For backwards compatibility. 'catidx' is a synonym for 'categorical'
 for j=1:2:length(extra)
@@ -796,197 +796,203 @@ while(tnode < nextunusednode)
                 %mu_diff(:,i) = mu_diff(:,i)./transpose(mean(cat(1,std(X(Y==Labels(pairs(i,1)),:)),std(X(Y==Labels(pairs(i,2)),:)))));
             end
         end
-      if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
-          promat = srpmat(nvars,nusevars,RandomMatrix,rho,nnzs,dprime);    %random projection matrix
-          md_ind = rand(size(mu_diff,2),1) <= p;
-          promat = [mu_diff(:,md_ind) promat];
-          md_idx = 1:sum(md_ind);   %Indices of where the mean difference vectors are in the matrix
-          iscat2 = cat(1,false(sum(md_ind),1),iscat);
-          %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
-          nvarsplit = cat(2,zeros(1,sum(md_ind)),nvarsplit);
-      else
-          promat = srpmat(nvars,nusevars,RandomMatrix,rho,nnzs,dprime);    %random projection matrix
-          iscat2 = iscat;
-          %nvarsplit2 = nvarsplit;
-      end
-      Xnode = Xnode*promat; %project Xnode onto random bases of promat
-      Xsub = Xnode(NodeSample,:);
+        
+        if strcmp(RandomMatrix,'image')
+            promat = structured_rp(ImHeight,ImWidth,[],[],nusevars,[],false);
+        elseif strcmp(RandomMatrix,'image-control')
+            promat = structured_rp(ImHeight,ImWidth,[],[],nusevars,[],true);
+        else        
+            if (strcmp(mdiff,'all') || strcmp(mdiff,'node')) && K > 1
+                promat = srpmat(nvars,nusevars,RandomMatrix,rho,nnzs,dprime);    %random projection matrix
+                md_ind = rand(size(mu_diff,2),1) <= p;
+                promat = [mu_diff(:,md_ind) promat];
+                md_idx = 1:sum(md_ind);   %Indices of where the mean difference vectors are in the matrix
+                iscat2 = cat(1,false(sum(md_ind),1),iscat);
+                %nvarsplit2 = cat(2,zeros(1,sum(md_ind)),nvarsplit);
+                nvarsplit = cat(2,zeros(1,sum(md_ind)),nvarsplit);
+            else
+                promat = srpmat(nvars,nusevars,RandomMatrix,rho,nnzs,dprime);    %random projection matrix
+                iscat2 = iscat;
+                %nvarsplit2 = nvarsplit;
+            end
+        end
+        
+        Xnode = Xnode*promat; %project Xnode onto random bases of promat
+        Xsub = Xnode(NodeSample,:);
       
-      bestvar = 0;
-      bestcut = 0;
+        bestvar = 0;
+        bestcut = 0;
       
       % Find the best of all possible splits
 %       for jvar=1:size(Xnode,2)
-      for jvar = 1:size(Xsub,2)
+        for jvar = 1:size(Xsub,2)
 
-         % Categorical variable?
-         %xcat = iscat2(jvar);
-         xcat = false;
+            % Categorical variable?
+            %xcat = iscat2(jvar);
+            xcat = false;
 
-         % Get rid of missing values and sort this variable
-%          idxnan = isnan(Xnode(:,jvar));
-         idxnan = isnan(Xsub(:,jvar));
-         idxnotnan = find(~idxnan);
-         if isempty(idxnotnan)
+            % Get rid of missing values and sort this variable
+            %          idxnan = isnan(Xnode(:,jvar));
+            idxnan = isnan(Xsub(:,jvar));
+            idxnotnan = find(~idxnan);
+            if isempty(idxnotnan)
              continue;
-         end
-         
-%          [x,idxsort] = sort(Xnode(idxnotnan,jvar));
-         [x,idxsort] = sort(Xsub(idxnotnan,jvar));
-         idx = idxnotnan(idxsort);
-%          c = Cnode(idx,:);
-%          w = Wnode(idx);
-         c = Csub(idx,:);
-         w = Wsub(idx,:);
-         
-         % Downweight the impurity (for classification) or node mse (for
-         % regression) by the fraction of observations that are being
-         % split. Twoing already penalizes splits with low pL and pR.
-         crit0U = 0;
-         crit0  = 0;
-         if doclass 
-             if isimpurity % twoing crit does not need to be offset
+            end
+
+            %          [x,idxsort] = sort(Xnode(idxnotnan,jvar));
+            [x,idxsort] = sort(Xsub(idxnotnan,jvar));
+            idx = idxnotnan(idxsort);
+            %          c = Cnode(idx,:);
+            %          w = Wnode(idx);
+            c = Csub(idx,:);
+            w = Wsub(idx,:);
+
+            % Downweight the impurity (for classification) or node mse (for
+            % regression) by the fraction of observations that are being
+            % split. Twoing already penalizes splits with low pL and pR.
+            crit0U = 0;
+            crit0  = 0;
+            if doclass 
+                if isimpurity % twoing crit does not need to be offset
                  % crit0U = P(t0-tU)*i(t0)
                  % crit0  = P(t0)*i(t0)
-%                  Pmis = sum(Wnode(idxnan));
+                %                  Pmis = sum(Wnode(idxnan));
                  Pmis = sum(Wsub(idxnan));
                  crit0U = impurity(tnode)*(nodeprob(tnode)-Pmis);
                  crit0 = impurity(tnode)*nodeprob(tnode);
-             end
-         else
-             % crit0U = P(t0-tU)*mse(t0)
-             % crit0  = P(t0)*mse(t0)
-%              Pmis = sum(Wnode(idxnan));
-             Pmis = sum(Wsub(idxnan));
-             crit0U = resuberr(tnode)*(nodeprob(tnode)-Pmis);
-             crit0 = resuberr(tnode)*nodeprob(tnode);
-         end
+                end
+            else
+                % crit0U = P(t0-tU)*mse(t0)
+                % crit0  = P(t0)*mse(t0)
+                %              Pmis = sum(Wnode(idxnan));
+                Pmis = sum(Wsub(idxnan));
+                crit0U = resuberr(tnode)*(nodeprob(tnode)-Pmis);
+                crit0 = resuberr(tnode)*nodeprob(tnode);
+            end
 
-         % Find optimal split for this variable
-         [critval,cutval] = classregtreeRCcritval(full(x),doclass,c,w,pratio,...
+            % Find optimal split for this variable
+            [critval,cutval] = classregtreeRCcritval(full(x),doclass,c,w,pratio,...
              xcat,Criterion,bestcrit,double(crit0U),minleaf);
-         
-         % Change best split if this one is best so far
-         if critval>bestcrit
-            bestcrit = critval;
-            bestvar = jvar;
-            bestcut = cutval;
-         end
-      end
 
-      % Split this node using the best rule found
-      % Note: we have leftside==~rightside in the absence of NaN's
-      if bestvar~=0
-         %nvarsplit2(bestvar) = nvarsplit2(bestvar)+1;
-         %nvarsplit(bestvar) = nvarsplit(bestvar)+1;
-         x = Xnode(:,bestvar);
-         
-         % Send observations left or right
-         %if ~iscat2(bestvar)
+            % Change best split if this one is best so far
+            if critval>bestcrit
+                bestcrit = critval;
+                bestvar = jvar;
+                bestcut = cutval;
+            end
+        end
+
+        % Split this node using the best rule found
+        % Note: we have leftside==~rightside in the absence of NaN's
+        if bestvar~=0
+            %nvarsplit2(bestvar) = nvarsplit2(bestvar)+1;
+            %nvarsplit(bestvar) = nvarsplit(bestvar)+1;
+            x = Xnode(:,bestvar);
+
+            % Send observations left or right
+            %if ~iscat2(bestvar)
             cutvar(tnode) = bestvar;
             leftside = x<bestcut;
             rightside = x>=bestcut;
-         %else
-         %   cutvar(tnode) = -bestvar;          % negative indicates cat. var. split
-         %   leftside = ismember(x,bestcut{1});
-         %   rightside = ismember(x,bestcut{2});
-         %end
+            %else
+            %   cutvar(tnode) = -bestvar;          % negative indicates cat. var. split
+            %   leftside = ismember(x,bestcut{1});
+            %   rightside = ismember(x,bestcut{2});
+            %end
+
+            % Store split position, children, parent, and node number
+            cutpoint{tnode} = bestcut;
+            children(tnode,:) = nextunusednode + (0:1);
+            nodenumber(nextunusednode+(0:1)) = nextunusednode+(0:1)';
+            parent(nextunusednode+(0:1)) = tnode;
+            rpm(:,tnode) = promat(:,bestvar);
+            if strcmp(mdiff,'all') || strcmp(mdiff,'node') && K > 1
+                if ~isempty(md_idx)
+                    isdelta(tnode) = bestvar <= max(md_idx);
+                end
+            end
          
-         % Store split position, children, parent, and node number
-         cutpoint{tnode} = bestcut;
-         children(tnode,:) = nextunusednode + (0:1);
-         nodenumber(nextunusednode+(0:1)) = nextunusednode+(0:1)';
-         parent(nextunusednode+(0:1)) = tnode;
-         rpm(:,tnode) = promat(:,bestvar);
-         if strcmp(mdiff,'all') || strcmp(mdiff,'node') && K > 1
-             if ~isempty(md_idx)
-                isdelta(tnode) = bestvar <= max(md_idx);
-             end
-         end
-         
-         %
-         % Find surrogate splits
-         %
-         if surrogate
-             % tsurrvar is an array with indices of
-             %   surrogate vars (association with best var above zero)
-             %   found for this split, excluding the best variable itself.
-             %   These indices are the original var indices in input data.
-             %
-             % tvarassoc and tvarimp are numeric arrays with var
-             %   associations (must be positive) and var importance values
-             %   for these surrogate splits.
-             %
-             % tsurrcut is a cell array with surrogate split cuts, same
-             %   convention as for cutpoint.
-             %
-             % tsurrflip is a numeric array with 0's for categorical
-             %   surrogate splits and either -1 or +1 for numeric surrogate
-             %   splits. -1 for a numeric splits means that left and right
-             %   must be swapped, that is, leftside=x>=cut and
-             %   rightside=x<cut for this surrogate split.
-             %
-             % tvarassoc, tsurrcut, and tsurflip have length
-             %   numel(tsurrvar).
-             %
-             % tvarimp has length numel(varmap). These are variable
-             % importance contributions from this branch node for *all*
-             % predictors, not only surrogate predictors with positive
-             % measure of association.
-             %
-             % tleftORright is a 2D array of size Nt-by-numel(tsurrvar)
-             %   with surrogate split indices for observations: -1 if the
-             %   surrogate split sends an observation left, +1 if it sends
-             %   an observation right, and 0 if uncertain.
-             [tvarassoc,tvarimp,tsurrvar,tsurrcut,tsurrflip,tleftORright] = ...
+            % Find surrogate splits
+            if surrogate
+                % tsurrvar is an array with indices of
+                %   surrogate vars (association with best var above zero)
+                %   found for this split, excluding the best variable itself.
+                %   These indices are the original var indices in input data.
+                %
+                % tvarassoc and tvarimp are numeric arrays with var
+                %   associations (must be positive) and var importance values
+                %   for these surrogate splits.
+                %
+                % tsurrcut is a cell array with surrogate split cuts, same
+                %   convention as for cutpoint.
+                %
+                % tsurrflip is a numeric array with 0's for categorical
+                %   surrogate splits and either -1 or +1 for numeric surrogate
+                %   splits. -1 for a numeric splits means that left and right
+                %   must be swapped, that is, leftside=x>=cut and
+                %   rightside=x<cut for this surrogate split.
+                %
+                % tvarassoc, tsurrcut, and tsurflip have length
+                %   numel(tsurrvar).
+                %
+                % tvarimp has length numel(varmap). These are variable
+                % importance contributions from this branch node for *all*
+                % predictors, not only surrogate predictors with positive
+                % measure of association.
+                %
+                % tleftORright is a 2D array of size Nt-by-numel(tsurrvar)
+                %   with surrogate split indices for observations: -1 if the
+                %   surrogate split sends an observation left, +1 if it sends
+                %   an observation right, and 0 if uncertain.
+                [tvarassoc,tvarimp,tsurrvar,tsurrcut,tsurrflip,tleftORright] = ...
                  findsurrogate(Xnode,Cnode,Wnode,Wtot,doclass,isimpurity,critfun,...
                  varmap,iscat,bestvar,Cost,resuberr(tnode),pratio,crit0,...
                  leftside,rightside);
-             
-             % Update variable importance for cuts on best variable
-             varimp(varmap) = varimp(varmap) + tvarimp;
 
-             % Sort vars by their associations with the best var.
-             [~,idxvarsort] = sort(tvarassoc,'descend');
-             
-             % Store surrogate cuts and if they need to be flipped
-             surrcut(tnode) = {tsurrcut(idxvarsort)};
-             surrflip(tnode) = {tsurrflip(idxvarsort)};
-             
-             % Store variables for surrogate splits.
-             % For categorical vars, store negative indices.
-             tsurrvar = tsurrvar(idxvarsort);
-             tiscat = iscat(tsurrvar);
-             tsurrvar(tiscat) = -tsurrvar(tiscat);
-             surrvar(tnode) = {tsurrvar};
-             
-             % Store variable associations
-             varassoc(tnode) = {tvarassoc(idxvarsort)};
+                % Update variable importance for cuts on best variable
+                varimp(varmap) = varimp(varmap) + tvarimp;
 
-             % Append lists of observations to be assigned to left and
-             % right children
-             for jmis=1:length(idxvarsort)
-                 idxmissing = (1:Nt)';
-                 idxmissing = idxmissing(~(leftside | rightside));
-                 if isempty(idxmissing)
-                     break;
-                 else
-                     surrmissing = tleftORright(idxmissing,idxvarsort(jmis));
-                     leftside(idxmissing(surrmissing<0)) = true;
-                     rightside(idxmissing(surrmissing>0)) = true;
-                 end
-             end             
-         end
+                % Sort vars by their associations with the best var.
+                [~,idxvarsort] = sort(tvarassoc,'descend');
+
+                % Store surrogate cuts and if they need to be flipped
+                surrcut(tnode) = {tsurrcut(idxvarsort)};
+                surrflip(tnode) = {tsurrflip(idxvarsort)};
+
+                % Store variables for surrogate splits.
+                % For categorical vars, store negative indices.
+                tsurrvar = tsurrvar(idxvarsort);
+                tiscat = iscat(tsurrvar);
+                tsurrvar(tiscat) = -tsurrvar(tiscat);
+                surrvar(tnode) = {tsurrvar};
+
+                % Store variable associations
+                varassoc(tnode) = {tvarassoc(idxvarsort)};
+
+                % Append lists of observations to be assigned to left and
+                % right children
+                for jmis=1:length(idxvarsort)
+                    idxmissing = (1:Nt)';
+                    idxmissing = idxmissing(~(leftside | rightside));
+                    if isempty(idxmissing)
+                        break;
+                    else
+                        surrmissing = tleftORright(idxmissing,idxvarsort(jmis));
+                        leftside(idxmissing(surrmissing<0)) = true;
+                        rightside(idxmissing(surrmissing>0)) = true;
+                    end
+                end             
+            end
          
-         % Assign observations for the next node
-         assignednode{nextunusednode} = noderows(leftside);
-         assignednode{nextunusednode+1} = noderows(rightside);
+            % Assign observations for the next node
+            assignednode{nextunusednode} = noderows(leftside);
+            assignednode{nextunusednode+1} = noderows(rightside);
          
-         % Update next node index
-         nextunusednode = nextunusednode+2;
-      end
-   end
-   tnode = tnode + 1;
+            % Update next node index
+            nextunusednode = nextunusednode+2;
+        end
+    end
+    tnode = tnode + 1;
 end
 
 topnode        = nextunusednode - 1;
@@ -1017,16 +1023,16 @@ Tree.rpm = rpm(:,1:topnode);  %Store proj matrices in a structure field
 Tree.isdelta = isdelta(1:topnode);
 
 if doclass
-   Tree.prior     = Prior;
-   Tree.nclasses  = nClasses;
-   Tree.cost      = Cost;
-   Tree.classprob = classprob(1:topnode,:);
-   Tree.classcount= classcount(1:topnode,:);
-   Tree.classname = cnames;
-   if isimpurity
-       Tree.impurity = impurity(1:topnode);
-   end
-   Tree.splitcriterion = Criterion;
+    Tree.prior     = Prior;
+    Tree.nclasses  = nClasses;
+    Tree.cost      = Cost;
+    Tree.classprob = classprob(1:topnode,:);
+    Tree.classcount= classcount(1:topnode,:);
+    Tree.classname = cnames;
+    if isimpurity
+        Tree.impurity = impurity(1:topnode);
+    end
+    Tree.splitcriterion = Criterion;
 else
     Tree.qetoler = qetoler;
 end
@@ -1051,7 +1057,7 @@ if strcmpi(Merge,'on')
 end
 
 if strcmpi(Prune,'on')        % compute optimal pruning sequence if requested
-   Tree = prune(Tree);
+    Tree = prune(Tree);
 end
 end
 
