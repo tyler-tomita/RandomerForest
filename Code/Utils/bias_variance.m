@@ -29,7 +29,7 @@ Yhat = Labels(PredictionIdx);
 Ybayes = Labels(BayesIdx);
 B = mean(~strcmp(Yhat,Ybayes));
 V = mean(1 - MaxPhat);
-SE = mean(MaxPosterior - Posteriors(sub2ind(size(Posteriors),1:n,PredictionIdx)));
-VE = mean(Posteriors(sub2ind(size(Posteriors),1:n,PredictionIdx)) - sum(Posteriors.*Phats,2));
+SE = mean(MaxPosterior - Posteriors(sub2ind(size(Posteriors),(1:n)',PredictionIdx)));
+VE = mean(Posteriors(sub2ind(size(Posteriors),(1:n)',PredictionIdx)) - sum(Posteriors.*Phats,2));
 BE = mean(1 - MaxPosterior);    % estimate of Bayes error
 end

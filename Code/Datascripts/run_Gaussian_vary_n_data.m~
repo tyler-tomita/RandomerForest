@@ -73,7 +73,7 @@ for j = 1:length(ps)
                 while go
                     [Xtrain,idx] = random(obj,ntrain);
                     Ytrain = Class(idx);
-                    if mean(Ytrain) >= 0.4 && mean(Ytrain) <= 0.6
+                    if mean(Ytrain) == 0.5
                         go = false;
                     end
                 end
