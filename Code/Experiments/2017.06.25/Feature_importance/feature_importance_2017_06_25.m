@@ -12,7 +12,7 @@ end
 
 rng(1);
 
-Classifiers = {'rerfr'};
+Classifiers = {'rerfr','rerfpr'};
 
 TrainFile = '/scratch/groups/jvogels3/tyler/Data/Table_S8_clean.csv';
 OutFile = [rerfPath 'RandomerForest/Results/2017.06.25/Feature_importance/Cancer_feature_importance_gini_2017_06_25.mat'];
@@ -158,8 +158,7 @@ for c = 1:length(Classifiers)
     end
 
     % select best model based on OOB errors and AUCs
-    BI = hp_optimize(OOBError.(cl)(end,:),...
-        OOBAUC.(cl)(end,:));
+    BI = hp_optimize([],OOBAUC.(cl)(end,:));
     BestIdx.(cl) = BI(randperm(length(BI),1));
 
     tic;
