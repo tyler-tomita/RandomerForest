@@ -6,7 +6,9 @@ clc
 
 nTrials = 10;
 
-FilePath = '/scratch/groups/jvogels3/tyler/Data/tests/';
+% FilePath = '/scratch/groups/jvogels3/tyler/Data/tests/';
+OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/test/test_results_2017_08_01.mat';
+FilePath = '~/tests/';
 
 Datasets = {'Sparse_parity';'Trunk';'Orthant';'mnist'};
 
@@ -14,8 +16,7 @@ for d = 1:length(Datasets)
     D = Datasets{d};
 
     TrainFile = [FilePath D '_train.csv'];
-    TrainFile = [FilePath D '_test.csv'];
-    OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/test/test_results_2017_08_01.mat';
+    TestFile = [FilePath D '_test.csv'];
 
     Xtrain = dlmread(TrainFile);
     Ytrain = cellstr(num2str(Xtrain(:,end)));
@@ -31,11 +32,11 @@ for d = 1:length(Datasets)
     Labels = unique([Ytrain;Ytest]);
     nClasses = length(Labels);
 
-    mtrys = ceiling(p.^[1/2 2]);
+    mtrys = ceil(p.^[1/2 2]);
 
     Params.(D).nTrees = 500;
     Params.(D).Stratified = true;
-    Params.(D).NWorkers = 12;
+    Params.(D).NWorkers = 2;
     Params.(D).Rescale = 'off';
     Params.(D).ForestMethod = 'rerf';
     Params.(D).RandomMatrix = 'binary-redundant';
@@ -58,7 +59,7 @@ for d = 1:length(Datasets)
         end
 
         [Forest,~,Train_Time(trial,:)] = ...
-            RerF_train(Xtrain,Ytrain,Params);
+            RerF_train(Xtrain,Ytrain,Params.(D));
 
         fprintf('Training complete\n')
 
@@ -110,6 +111,6 @@ for d = 1:length(Datasets)
     NumNodes.(D).std = std(Num_Nodes);
 end
 
-save(OutFile,'Params','TrainTime','OOBError','TestError','NumNodes')
+% save(OutFile,'Params','TrainTime','OOBError','TestError','NumNodes')
 
 delete(gcp);
