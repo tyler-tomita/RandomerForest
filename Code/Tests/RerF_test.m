@@ -7,7 +7,7 @@ clc
 nTrials = 20;
 
 FilePath = '/scratch/groups/jvogels3/tyler/Data/tests/';
-OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/test/test_results_2017_08_01.mat';
+OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/Tests/test_results_2017_08_01.mat';
 
 Datasets = {'Sparse_parity';'Trunk';'Orthant';'mnist'};
 
