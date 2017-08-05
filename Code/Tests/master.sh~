@@ -4,7 +4,7 @@
 #SBATCH --job-name=run_benchmarks
 #SBATCH --time=4-0:0:0
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=16
+#SBATCH --ntasks-per-node=12
 #SBATCH --mem=120G
 #SBATCH --partition=parallel
 #SBATCH --exclusive

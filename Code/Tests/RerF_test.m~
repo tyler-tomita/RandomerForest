@@ -1,4 +1,4 @@
-% train and test clas
+% train and test classifiers on abalone dataset
 
 clear
 close all
@@ -6,8 +6,9 @@ clc
 
 nTrials = 20;
 
-FilePath = '/scratch/groups/jvogels3/tyler/Data/tests/';
+% FilePath = '/scratch/groups/jvogels3/tyler/Data/tests/';
 OutFile = '/scratch/groups/jvogels3/tyler/RandomerForest/Results/test/test_results_2017_08_01.mat';
+FilePath = '/scratch/groups/jvogels3/tyler/Data/tests/';
 
 Datasets = {'Sparse_parity';'Trunk';'Orthant';'mnist'};
 
