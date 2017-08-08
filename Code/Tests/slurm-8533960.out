@@ -1,0 +1,431 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2015 The MathWorks, Inc.
+                   R2015a (8.5.0.197613) 64-bit (glnxa64)
+                             February 12, 2015
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+    ----------------------------------------------------
+	Your MATLAB license will expire in 25 days.
+	Please contact your system administrator or
+	MathWorks to renew this license.
+    ----------------------------------------------------
+
+	Academic License
+
+Starting parallel pool (parpool) using the 'local' profile ... connected to 16 workers.
+Training forest 1 of 2
+[Warning: File:
+/scratch/groups/jvogels3/tyler/RandomerForest/Code/Classifiers/@rpclassificationforest/rpclassificationforest.m
+Line: 226 Column: 47
+The temporary variable ibidx will be cleared at the beginning of each iteration
+of the parfor loop.
+Any value assigned to it before the loop will be lost.  If ibidx is used before
+it is assigned in the parfor loop, a runtime error will occur.
+See Parallel for Loops in MATLAB, "Temporary Variables".] 
+[> In RerF_train (line 265)
+  In RerF_test (line 64)] 
+Elapsed time: 5.35640 s
+Training forest 2 of 2
+Elapsed time: 15.95257 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.79393 s
+Training forest 2 of 2
+Elapsed time: 15.79655 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.59850 s
+Training forest 2 of 2
+Elapsed time: 14.98023 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.59608 s
+Training forest 2 of 2
+Elapsed time: 15.70908 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.62665 s
+Training forest 2 of 2
+Elapsed time: 15.82043 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.79431 s
+Training forest 2 of 2
+Elapsed time: 15.98302 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.70041 s
+Training forest 2 of 2
+Elapsed time: 16.06136 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.82465 s
+Training forest 2 of 2
+Elapsed time: 15.95544 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.72314 s
+Training forest 2 of 2
+Elapsed time: 15.86253 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.57161 s
+Training forest 2 of 2
+Elapsed time: 15.69302 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.88569 s
+Training forest 2 of 2
+Elapsed time: 15.48551 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.69204 s
+Training forest 2 of 2
+Elapsed time: 15.93920 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.79094 s
+Training forest 2 of 2
+Elapsed time: 15.99809 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.69325 s
+Training forest 2 of 2
+Elapsed time: 15.94800 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.82342 s
+Training forest 2 of 2
+Elapsed time: 15.81417 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.72576 s
+Training forest 2 of 2
+Elapsed time: 16.16550 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.79935 s
+Training forest 2 of 2
+Elapsed time: 15.77750 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.71355 s
+Training forest 2 of 2
+Elapsed time: 15.80682 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.80309 s
+Training forest 2 of 2
+Elapsed time: 15.86136 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 3.65649 s
+Training forest 2 of 2
+Elapsed time: 16.10284 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.06284 s
+Training forest 2 of 2
+Elapsed time: 46.79960 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.11948 s
+Training forest 2 of 2
+Elapsed time: 45.30788 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.09531 s
+Training forest 2 of 2
+Elapsed time: 45.76057 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.13465 s
+Training forest 2 of 2
+Elapsed time: 46.01898 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.09785 s
+Training forest 2 of 2
+Elapsed time: 45.71628 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.12560 s
+Training forest 2 of 2
+Elapsed time: 46.61493 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.10455 s
+Training forest 2 of 2
+Elapsed time: 45.01913 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.09835 s
+Training forest 2 of 2
+Elapsed time: 45.08906 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.10702 s
+Training forest 2 of 2
+Elapsed time: 45.71402 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.10238 s
+Training forest 2 of 2
+Elapsed time: 45.16220 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.09961 s
+Training forest 2 of 2
+Elapsed time: 46.36726 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.09660 s
+Training forest 2 of 2
+Elapsed time: 47.23097 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.12826 s
+Training forest 2 of 2
+Elapsed time: 45.49100 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.11947 s
+Training forest 2 of 2
+Elapsed time: 46.13446 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.14151 s
+Training forest 2 of 2
+Elapsed time: 47.15312 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.09795 s
+Training forest 2 of 2
+Elapsed time: 45.86933 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.10173 s
+Training forest 2 of 2
+Elapsed time: 45.08311 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.14524 s
+Training forest 2 of 2
+Elapsed time: 45.49831 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.10324 s
+Training forest 2 of 2
+Elapsed time: 45.68717 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 1.11308 s
+Training forest 2 of 2
+Elapsed time: 45.99554 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 6.84563 s
+Training forest 2 of 2
+Elapsed time: 13.47883 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 6.96634 s
+Training forest 2 of 2
+Elapsed time: 13.50455 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.05975 s
+Training forest 2 of 2
+Elapsed time: 13.46165 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 6.86021 s
+Training forest 2 of 2
+Elapsed time: 13.40991 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.15834 s
+Training forest 2 of 2
+Elapsed time: 13.83911 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 6.91287 s
+Training forest 2 of 2
+Elapsed time: 13.35262 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.08653 s
+Training forest 2 of 2
+Elapsed time: 13.39742 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.24765 s
+Training forest 2 of 2
+Elapsed time: 13.46675 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.14032 s
+Training forest 2 of 2
+Elapsed time: 13.42334 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.05648 s
+Training forest 2 of 2
+Elapsed time: 13.58015 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.13013 s
+Training forest 2 of 2
+Elapsed time: 13.76203 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 6.82955 s
+Training forest 2 of 2
+Elapsed time: 13.39443 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.22797 s
+Training forest 2 of 2
+Elapsed time: 13.51638 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.03137 s
+Training forest 2 of 2
+Elapsed time: 13.47211 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.07280 s
+Training forest 2 of 2
+Elapsed time: 13.56934 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.10620 s
+Training forest 2 of 2
+Elapsed time: 13.38925 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 6.91683 s
+Training forest 2 of 2
+Elapsed time: 13.47427 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.07613 s
+Training forest 2 of 2
+Elapsed time: 13.64402 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.32949 s
+Training forest 2 of 2
+Elapsed time: 13.45128 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 7.23383 s
+Training forest 2 of 2
+Elapsed time: 13.40610 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 66.15995 s
+Training forest 2 of 2
+Elapsed time: 6783.94470 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 64.69845 s
+Training forest 2 of 2
+Elapsed time: 6799.11438 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.07764 s
+Training forest 2 of 2
+Elapsed time: 6598.83968 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 64.96938 s
+Training forest 2 of 2
+Elapsed time: 6801.96581 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.12816 s
+Training forest 2 of 2
+Elapsed time: 6539.34845 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 64.90845 s
+Training forest 2 of 2
+Elapsed time: 6667.09810 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.36721 s
+Training forest 2 of 2
+Elapsed time: 6630.19867 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.31910 s
+Training forest 2 of 2
+Elapsed time: 6659.72437 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.82002 s
+Training forest 2 of 2
+Elapsed time: 6682.48909 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.21756 s
+Training forest 2 of 2
+Elapsed time: 6630.15164 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.03211 s
+Training forest 2 of 2
+Elapsed time: 6605.62853 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.12679 s
+Training forest 2 of 2
+Elapsed time: 6631.85747 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.36488 s
+Training forest 2 of 2
+Elapsed time: 6638.73714 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.23303 s
+Training forest 2 of 2
+Elapsed time: 6576.27279 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.02000 s
+Training forest 2 of 2
+Elapsed time: 6613.77415 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.09212 s
+Training forest 2 of 2
+Elapsed time: 6554.39066 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 64.79668 s
+Training forest 2 of 2
+Elapsed time: 6621.50593 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.33796 s
+Training forest 2 of 2
+Elapsed time: 6725.71272 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.30026 s
+Training forest 2 of 2
+Elapsed time: 6906.76030 s
+Training complete
+Training forest 1 of 2
+Elapsed time: 65.44196 s
+Training forest 2 of 2
+Elapsed time: 6584.46391 s
+Training complete
+Parallel pool using the 'local' profile is shutting down.
+job complete
