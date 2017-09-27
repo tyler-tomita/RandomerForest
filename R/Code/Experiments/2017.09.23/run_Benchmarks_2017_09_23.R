@@ -11,9 +11,9 @@ library(rerf)
 # source(paste0(rerfPath, "R-RerF/utils/RerFEval.R"))
 # source(paste0(rerfPath, "R-RerF/utils/GetCatMap.R"))
 # source(paste0(rerfPath, "R-RerF/utils/GetFolds.R"))
-source(paste0(rerfPath, "RandomerForest/Code/Utils/RerFEval.R"))
-source(paste0(rerfPath, "RandomerForest/Code/Utils/GetCatMap.R"))
-source(paste0(rerfPath, "RandomerForest/Code/Utils/GetFolds.R"))
+source(paste0(rerfPath, "RandomerForest/R/Code/Utils/RerFEval.R"))
+source(paste0(rerfPath, "RandomerForest/R/Code/Utils/GetCatMap.R"))
+source(paste0(rerfPath, "RandomerForest/R/Code/Utils/GetFolds.R"))
 
 # classifiers <- c("rf", "rerf", "rerfr", "rerfp", "rerfpr", "frc", "frank", "rr-rf", "rr-rfr")
 classifiers <- "rf"
@@ -208,6 +208,6 @@ for (m in classifiers) {
     numNodes[[dataSet]][[m]][k, ] <- res$numNodes
     bestIdx[[dataSet]][[m]][k] <- res$best.idx
     
-    # save(testError, OOBError, OOBAUC, trainTime, OOBTime, testTime, treeStrength, treeCorr, numNodes, bestIdx, params, file = paste0(rerfPath, "RandomerForest/Results/2017.09.23/Benchmarks_2017_09_23.RData"))
+    # save(testError, OOBError, OOBAUC, trainTime, OOBTime, testTime, treeStrength, treeCorr, numNodes, bestIdx, params, file = paste0(rerfPath, "RandomerForest/R/Results/2017.09.23/Benchmarks_2017_09_23.RData"))
   }
 }
