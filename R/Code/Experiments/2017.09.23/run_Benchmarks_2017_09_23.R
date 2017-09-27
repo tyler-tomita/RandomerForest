@@ -6,14 +6,14 @@ options(scipen = 999)
 # rerfPath <- "~/work/tyler/"
 # dataPath <- "~/work/tyler/Data/uci/processed/"
 rerfPath <- "~/"
-dataPath <- "~/tmp/uci/processed/"
+dataPath <- "~/Data/uci/processed/"
 library(rerf)
 # source(paste0(rerfPath, "R-RerF/utils/RerFEval.R"))
 # source(paste0(rerfPath, "R-RerF/utils/GetCatMap.R"))
 # source(paste0(rerfPath, "R-RerF/utils/GetFolds.R"))
-source(paste0(rerfPath, "RerF/Code/Utils/RerFEval.R"))
-source(paste0(rerfPath, "RerF/Code/Utils/GetCatMap.R"))
-source(paste0(rerfPath, "RerF/Code/Utils/GetFolds.R"))
+source(paste0(rerfPath, "RandomerForest/Code/Utils/RerFEval.R"))
+source(paste0(rerfPath, "RandomerForest/Code/Utils/GetCatMap.R"))
+source(paste0(rerfPath, "RandomerForest/Code/Utils/GetFolds.R"))
 
 # classifiers <- c("rf", "rerf", "rerfr", "rerfp", "rerfpr", "frc", "frank", "rr-rf", "rr-rfr")
 classifiers <- "rf"
@@ -22,7 +22,7 @@ nCl <- length(classifiers)
 nTrees <- 500L
 min.parent <- 2L
 max.depth <- 0L
-num.cores <- 4L
+num.cores <- 40L
 seed <- 09232017L
 
 testError <- list()
@@ -208,6 +208,6 @@ for (m in classifiers) {
     numNodes[[dataSet]][[m]][k, ] <- res$numNodes
     bestIdx[[dataSet]][[m]][k] <- res$best.idx
     
-    # save(testError, OOBError, OOBAUC, trainTime, OOBTime, testTime, treeStrength, treeCorr, numNodes, bestIdx, params, file = paste0(rerfPath, "RerF/Results/2017.09.23/Benchmarks_2017_09_23.RData"))
+    # save(testError, OOBError, OOBAUC, trainTime, OOBTime, testTime, treeStrength, treeCorr, numNodes, bestIdx, params, file = paste0(rerfPath, "RandomerForest/Results/2017.09.23/Benchmarks_2017_09_23.RData"))
   }
 }
