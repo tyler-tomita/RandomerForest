@@ -211,7 +211,7 @@ RerFEval <-
                 # train
                 print("training")
                 start.time <- proc.time()
-                forest <<- RerF(Xtrain, Ytrain, trees = params$trees, mat.options = mat.options, rank.transform = params$rank.transform,
+                forest <- RerF(Xtrain, Ytrain, trees = params$trees, mat.options = mat.options, rank.transform = params$rank.transform,
                                min.parent = params$min.parent, max.depth = params$max.depth, bagging = params$bagging, store.oob = params$store.oob,
                                store.ns = params$store.ns, replacement = params$replacement, stratify = params$stratify, num.cores = params$num.cores,
                                seed = params$seed, cat.map = params$cat.map, rotate = params$rotate)
