@@ -144,11 +144,11 @@ RerFEval <-
                     # compute out-of-bag metrics
                     print("computing out-of-bag predictions")
                     start.time <- proc.time()
-                    oobScores <- OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T)
+                    oobScores <<- OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T)
                     oobTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                     print("out-of-bag predictions complete")
                     print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
-                    oobError[forest.idx] <- mean(max.col(oobScores) != Ytrain)
+                    oobError[forest.idx] <- mean(forest$labels[max.col(oobScores)] != Ytrain)
                     if (nClasses > 2L) {
                         Ybin <- as.factor(as.vector(dummies::dummy(Ytrain)))
                         oobAUC[forest.idx] <- AUC::auc(AUC::roc(as.vector(oobScores), Ybin))
@@ -226,7 +226,7 @@ RerFEval <-
                 oobTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                 print("out-of-bag predictions complete")
                 print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
-                oobError[forest.idx] <- mean(max.col(oobScores) != Ytrain)
+                oobError[forest.idx] <- mean(forest$labels[max.col(oobScores)] != Ytrain)
                 if (nClasses > 2L) {
                     Ybin <- as.factor(as.vector(dummies::dummy(Ytrain)))
                     oobAUC[forest.idx] <- AUC::auc(AUC::roc(as.vector(oobScores), Ybin))
