@@ -22,7 +22,11 @@ RerFEval <-
 
         params.names <- names(params)
         
-        nClasses <- length(unique(Ytrain))
+        labels.train <- unique(Ytrain)
+        labels.test <- unique(Ytest)
+        labels.all <- unique(c(labels.train, labels.test))
+        
+        nClasses <- length(labels.all)
         
         if (!("rotate" %in% params.names)) {
           params$rotate <- F
@@ -115,6 +119,7 @@ RerFEval <-
             oobTime <- vector(mode = "numeric", length = nforest)
             testTime <- vector(mode = "numeric", length = nforest)
             testError <- vector(mode = "numeric", length = nforest)
+            testAUC <- vector(mode = "numeric", length = nforest)
             oobError <- vector(mode = "numeric", length = nforest)
             oobAUC <- vector(mode = "numeric", length = nforest)
             treeStrength <- vector(mode = "numeric", length = nforest)
@@ -144,17 +149,17 @@ RerFEval <-
                     # compute out-of-bag metrics
                     print("computing out-of-bag predictions")
                     start.time <- proc.time()
-                    oobScores <<- OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T)
+                    oobScores <- OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T)
                     oobTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                     print("out-of-bag predictions complete")
                     print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
                     oobError[forest.idx] <- mean(forest$labels[max.col(oobScores)] != Ytrain)
                     if (nClasses > 2L) {
-                        Ybin <- as.factor(as.vector(dummies::dummy(Ytrain)))
+                        Ybin <- as.factor(as.vector(dummies::dummy(factor(Ytrain, levels = forest$labels))))
                         oobAUC[forest.idx] <- AUC::auc(AUC::roc(as.vector(oobScores), Ybin))
                     } else {
                         # Ytrain starts from 1, but here we need it to start from 0
-                        oobAUC[forest.idx] <- AUC::auc(AUC::roc(oobScores[, 2L], as.factor(Ytrain - 1L)))
+                        oobAUC[forest.idx] <- AUC::auc(AUC::roc(oobScores[, 2L], as.factor(as.integer(factor(Ytrain, levels = forest$labels)) - 1L)))
                     }
 
                     numNodes[forest.idx] <- mean(sapply(forest$trees, FUN = function(tree) length(tree$treeMap)))
@@ -162,18 +167,38 @@ RerFEval <-
                     # make predictions on test set
                     print("computing predictions on test set")
                     start.time <- proc.time()
+                    testScores <- Predict(Xtest, forest, num.cores = params$num.cores, Xtrain = Xtrain, output.scores = T)
                     if (store.predictions) {
-                      Yhat[, forest.idx] <- Predict(Xtest, forest, num.cores = params$num.cores, Xtrain = Xtrain)
+                      Yhat[, forest.idx] <- forest$labels[max.col(testScores)]
                       testTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                       print("test set predictions complete")
                       print(paste("elapsed time: ", testTime[forest.idx], sep = ""))
                       testError[forest.idx] <- mean(Yhat[, forest.idx] != Ytest)
                     } else {
-                      Yhat <- Predict(Xtest, forest, num.cores = params$num.cores, Xtrain = Xtrain)
+                      Yhat <- forest$labels[max.col(testScores)]
                       testTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                       print("test set predictions complete")
                       print(paste("elapsed time: ", testTime[forest.idx], sep = ""))
                       testError[forest.idx] <- mean(Yhat != Ytest)
+                    }
+                    if (nClasses > 2L) {
+                      if (!all(labels.test %in% forest$labels)) {
+                        levs <- c(forest$labels, labels.test[!(labels.test %in% forest$labels)]) 
+                        testScores <- cbind(testScores, matrix(0, nrow = nrow(testScores), ncol = length(levs) - length(forest$labels)))
+                      } else {
+                        levs <- forest$labels
+                      }
+                      Ybin <- as.factor(as.vector(dummies::dummy(factor(Ytest, levels = levs))))
+                      testAUC[forest.idx] <- AUC::auc(AUC::roc(as.vector(testScores), Ybin))
+                    } else {
+                      if (!all(labels.test %in% forest$labels)) {
+                        levs <- c(forest$labels, labels.test[!(labels.test %in% forest$labels)]) 
+                        testScores <- cbind(testScores, matrix(0, nrow = nrow(testScores), ncol = length(levs) - length(forest$labels)))
+                      } else {
+                        levs <- forest$labels
+                      }
+                      # Ytrain starts from 1, but here we need it to start from 0
+                      testAUC[forest.idx] <- AUC::auc(AUC::roc(testScores[, 2L], as.factor(as.integer(factor(Ytest, levels = levs)) - 1L)))
                     }
 
                     # compute strength and correlation
@@ -195,6 +220,7 @@ RerFEval <-
             oobTime <- vector(mode = "numeric", length = nforest)
             testTime <- vector(mode = "numeric", length = nforest)
             testError <- vector(mode = "numeric", length = nforest)
+            testAUC <- vector(mode = "numeric", length = nforest)
             oobError <- vector(mode = "numeric", length = nforest)
             oobAUC <- vector(mode = "numeric", length = nforest)
             treeStrength <- vector(mode = "numeric", length = nforest)
@@ -228,11 +254,11 @@ RerFEval <-
                 print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
                 oobError[forest.idx] <- mean(forest$labels[max.col(oobScores)] != Ytrain)
                 if (nClasses > 2L) {
-                    Ybin <- as.factor(as.vector(dummies::dummy(Ytrain)))
-                    oobAUC[forest.idx] <- AUC::auc(AUC::roc(as.vector(oobScores), Ybin))
+                  Ybin <- as.factor(as.vector(dummies::dummy(factor(Ytrain, levels = forest$labels))))
+                  oobAUC[forest.idx] <- AUC::auc(AUC::roc(as.vector(oobScores), Ybin))
                 } else {
-                    # Ytrain starts from 1, but here we need it to start from 0
-                    oobAUC[forest.idx] <- AUC::auc(AUC::roc(oobScores[, 2L], as.factor(Ytrain - 1L)))
+                  # Ytrain starts from 1, but here we need it to start from 0
+                  oobAUC[forest.idx] <- AUC::auc(AUC::roc(oobScores[, 2L], as.factor(as.integer(factor(Ytrain, levels = forest$labels)) - 1L)))
                 }
 
                 numNodes[forest.idx] <- mean(sapply(forest$trees, FUN = function(tree) length(tree$treeMap)))
@@ -240,8 +266,9 @@ RerFEval <-
                 # make predictions on test set
                 print("computing predictions on test set")
                 start.time <- proc.time()
+                testScores <- Predict(Xtest, forest, num.cores = params$num.cores, Xtrain = Xtrain, output.scores = T)
                 if (store.predictions) {
-                  Yhat[, forest.idx] <- Predict(Xtest, forest, num.cores = params$num.cores, Xtrain = Xtrain)
+                  Yhat[, forest.idx] <- forest$labels[testScores]
                   testTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                   print("test set predictions complete")
                   print(paste("elapsed time: ", testTime[forest.idx], sep = ""))
@@ -252,6 +279,26 @@ RerFEval <-
                   print("test set predictions complete")
                   print(paste("elapsed time: ", testTime[forest.idx], sep = ""))
                   testError[forest.idx] <- mean(Yhat != Ytest)
+                }
+                
+                if (nClasses > 2L) {
+                  if (!all(labels.test %in% forest$labels)) {
+                    levs <- c(forest$labels, labels.test[!(labels.test %in% forest$labels)]) 
+                    testScores <- cbind(testScores, matrix(0, nrow = nrow(testScores), ncol = length(levs) - length(forest$labels)))
+                  } else {
+                    levs <- forest$labels
+                  }
+                  Ybin <- as.factor(as.vector(dummies::dummy(factor(Ytest, levels = levs))))
+                  testAUC[forest.idx] <- AUC::auc(AUC::roc(as.vector(testScores), Ybin))
+                } else {
+                  if (!all(labels.test %in% forest$labels)) {
+                    levs <- c(forest$labels, labels.test[!(labels.test %in% forest$labels)]) 
+                    testScores <- cbind(testScores, matrix(0, nrow = nrow(testScores), ncol = length(levs) - length(forest$labels)))
+                  } else {
+                    levs <- forest$labels
+                  }
+                  # Ytrain starts from 1, but here we need it to start from 0
+                  testAUC[forest.idx] <- AUC::auc(AUC::roc(testScores[, 2L], as.factor(as.integer(factor(Ytest, levels = levs)) - 1L)))
                 }
 
                 # compute strength and correlation
@@ -279,8 +326,8 @@ RerFEval <-
         }
 
         if (store.predictions) {
-            return(list(Yhat = Yhat[, best.idx], testError = testError, trainTime = trainTime, oobTime = oobTime, testTime = testTime, oobError = oobError, oobAUC = oobAUC, treeStrength = treeStrength, treeCorrelation = treeCorrelation, numNodes = numNodes, best.idx = best.idx, params = params))
+            return(list(Yhat = Yhat[, best.idx], testError = testError, testAUC = testAUC, trainTime = trainTime, oobTime = oobTime, testTime = testTime, oobError = oobError, oobAUC = oobAUC, treeStrength = treeStrength, treeCorrelation = treeCorrelation, numNodes = numNodes, best.idx = best.idx, params = params))
         } else {
-            return(list(testError = testError, trainTime = trainTime, oobTime = oobTime, testTime = testTime, oobError = oobError, oobAUC = oobAUC, treeStrength = treeStrength, treeCorrelation = treeCorrelation, numNodes = numNodes, best.idx = best.idx, params = params))
+            return(list(testError = testError, testAUC = testAUC, trainTime = trainTime, oobTime = oobTime, testTime = testTime, oobError = oobError, oobAUC = oobAUC, treeStrength = treeStrength, treeCorrelation = treeCorrelation, numNodes = numNodes, best.idx = best.idx, params = params))
         }
     }
