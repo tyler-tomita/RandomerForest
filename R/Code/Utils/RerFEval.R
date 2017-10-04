@@ -155,7 +155,7 @@ RerFEval <-
                     print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
                     oobError[forest.idx] <- mean(forest$labels[max.col(oobScores)] != Ytrain)
                     if (nClasses > 2L) {
-                        Ybin <- as.factor(as.vector(dummies::dummy(factor(Ytrain, levels = forest$labels))))
+                        Ybin <- as.factor(as.vector(dummies::dummy(factor(Ytrain, levels = forest$labels), drop = F)))
                         oobAUC[forest.idx] <- AUC::auc(AUC::roc(as.vector(oobScores), Ybin))
                     } else {
                         # Ytrain starts from 1, but here we need it to start from 0
@@ -188,7 +188,7 @@ RerFEval <-
                       } else {
                         levs <- forest$labels
                       }
-                      Ybin <- as.factor(as.vector(dummies::dummy(factor(Ytest, levels = levs))))
+                      Ybin <- as.factor(as.vector(dummies::dummy(factor(Ytest, levels = levs), drop = F)))
                       testAUC[forest.idx] <- AUC::auc(AUC::roc(as.vector(testScores), Ybin))
                     } else {
                       if (!all(labels.test %in% forest$labels)) {
@@ -254,7 +254,7 @@ RerFEval <-
                 print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
                 oobError[forest.idx] <- mean(forest$labels[max.col(oobScores)] != Ytrain)
                 if (nClasses > 2L) {
-                  Ybin <- as.factor(as.vector(dummies::dummy(factor(Ytrain, levels = forest$labels))))
+                  Ybin <- as.factor(as.vector(dummies::dummy(factor(Ytrain, levels = forest$labels), drop = F)))
                   oobAUC[forest.idx] <- AUC::auc(AUC::roc(as.vector(oobScores), Ybin))
                 } else {
                   # Ytrain starts from 1, but here we need it to start from 0
@@ -288,7 +288,12 @@ RerFEval <-
                   } else {
                     levs <- forest$labels
                   }
-                  Ybin <- as.factor(as.vector(dummies::dummy(factor(Ytest, levels = levs))))
+                  # Yd <- dummies::dummy(factor(Ytest, levels = levs), drop = F)
+                  # print(paste0("nrow(Yd) = ", nrow(Yd)))
+                  # print(paste0("ncol(Yd) = ", ncol(Yd)))
+                  # print(paste0("nrow(testScores) = ", nrow(testScores)))
+                  # print(paste0("ncol(testScores) = ", ncol(testScores)))
+                  Ybin <- as.factor(as.vector(dummies::dummy(factor(Ytest, levels = levs), drop = F)))
                   testAUC[forest.idx] <- AUC::auc(AUC::roc(as.vector(testScores), Ybin))
                 } else {
                   if (!all(labels.test %in% forest$labels)) {
