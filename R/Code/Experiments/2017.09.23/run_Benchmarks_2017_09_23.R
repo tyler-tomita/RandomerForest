@@ -16,7 +16,7 @@ source(paste0(rerfPath, "RandomerForest/R/Code/Utils/GetCatMap.R"))
 source(paste0(rerfPath, "RandomerForest/R/Code/Utils/GetFolds.R"))
 
 # classifiers <- c("rf", "rerf", "rerfr", "rerfp", "rerfpr", "frc", "frank", "rr-rf", "rr-rfr")
-classifiers <- "rf"
+classifiers <- c("rr-rf", "rr-rfr")
 nCl <- length(classifiers)
 
 nTrees <- 500L
@@ -38,7 +38,7 @@ bestIdx <- list()
 params <- list()
 
 catFiles <- list.files(paste0(dataPath, "categorical_map/"))
-dataSet <- "balloons"
+dataSet <- "arrhythmia"
 fold <- GetFolds(paste0(dataPath, "cv_partitions/", dataSet, "_partitions.txt"))
 nFolds <- length(fold)
 X <- as.matrix(read.table(paste0(dataPath, "data/", dataSet, ".csv"), header = F, sep = ",", quote = "", row.names = NULL))
