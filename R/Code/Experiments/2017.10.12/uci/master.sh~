@@ -1,0 +1,7 @@
+#!/bin/bash
+
+run_rf.sh
+run_rerf.sh
+run_rerfp.sh
+run_rerfc.sh
+run_frc.sh
