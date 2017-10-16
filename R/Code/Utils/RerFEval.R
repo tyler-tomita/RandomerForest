@@ -18,7 +18,7 @@
 #'
 
 RerFEval <-
-    function(Xtrain, Ytrain, Xtest, Ytest, params = list(trees = 500L, random.matrix = "binary", d = round(sqrt(ncol(Xtrain))), sparsity = 1/ncol(Xtrain), rotate = F, rank.transform = F, min.parent = 2L, max.depth = 0L, bagging = 1/exp(1), store.oob = T, store.ns = F, replacement = T, stratify = T, num.cores = 1L, seed = 1L, cat.map = NULL), store.predictions = F) {
+    function(Xtrain, Ytrain, Xtest, Ytest, params = list(trees = 500L, random.matrix = "binary", d = round(sqrt(ncol(Xtrain))), sparsity = 1/ncol(Xtrain), rotate = F, rank.transform = F, min.parent = 2L, max.depth = 0L, bagging = 1/exp(1), store.oob = T, store.impurity = F, replacement = T, stratify = T, num.cores = 1L, seed = 1L, cat.map = NULL), store.predictions = F) {
 
         params.names <- names(params)
         
@@ -91,8 +91,8 @@ RerFEval <-
             params$store.oob <- T
         }
 
-        if (!("store.ns" %in% params.names)) {
-            params$store.ns <- F
+        if (!("store.impurity" %in% params.names)) {
+            params$store.impurity <- F
         }
 
         if (!("replacement" %in% params.names)) {
@@ -126,7 +126,7 @@ RerFEval <-
             treeCorrelation <- vector(mode = "numeric", length = nforest)
             numNodes <- vector(mode = "numeric", length = nforest)
             if (store.predictions) {
-                Yhat <- matrix(0, nrow = Xtest, ncol = nforest)
+                Yhat <- matrix(0L, nrow = nrow(Xtest), ncol = nforest)
             }
             for (i in 1:length(params$sparsity)) {
                 for (j in 1:length(params$d)) {
@@ -140,7 +140,7 @@ RerFEval <-
                     start.time <- proc.time()
                     forest <- RerF(Xtrain, Ytrain, trees = params$trees, mat.options = mat.options, rank.transform = params$rank.transform,
                                    min.parent = params$min.parent, max.depth = params$max.depth, bagging = params$bagging, store.oob = params$store.oob,
-                                   store.ns = params$store.ns, replacement = params$replacement, stratify = params$stratify, num.cores = params$num.cores,
+                                   store.impurity = params$store.impurity, replacement = params$replacement, stratify = params$stratify, num.cores = params$num.cores,
                                    seed = params$seed, cat.map = params$cat.map, rotate = params$rotate)
                     trainTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                     print("training complete")
@@ -227,7 +227,7 @@ RerFEval <-
             treeCorrelation <- vector(mode = "numeric", length = nforest)
             numNodes <- vector(mode = "numeric", length = nforest)
             if (store.predictions) {
-                Yhat <- matrix(0, nrow = Xtest, ncol = nforest)
+                Yhat <- matrix(0L, nrow = nrow(Xtest), ncol = nforest)
             }
             for (forest.idx in 1:nforest) {
                 mat.options <- list(p, params$d[forest.idx], params$random.matrix, NULL, params$cat.map)
@@ -239,7 +239,7 @@ RerFEval <-
                 start.time <- proc.time()
                 forest <- RerF(Xtrain, Ytrain, trees = params$trees, mat.options = mat.options, rank.transform = params$rank.transform,
                                min.parent = params$min.parent, max.depth = params$max.depth, bagging = params$bagging, store.oob = params$store.oob,
-                               store.ns = params$store.ns, replacement = params$replacement, stratify = params$stratify, num.cores = params$num.cores,
+                               store.impurity = params$store.impurity, replacement = params$replacement, stratify = params$stratify, num.cores = params$num.cores,
                                seed = params$seed, cat.map = params$cat.map, rotate = params$rotate)
                 trainTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                 print("training complete")
@@ -268,13 +268,13 @@ RerFEval <-
                 start.time <- proc.time()
                 testScores <- Predict(Xtest, forest, num.cores = params$num.cores, Xtrain = Xtrain, output.scores = T)
                 if (store.predictions) {
-                  Yhat[, forest.idx] <- forest$labels[testScores]
+                  Yhat[, forest.idx] <- forest$labels[max.col(testScores)]
                   testTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                   print("test set predictions complete")
                   print(paste("elapsed time: ", testTime[forest.idx], sep = ""))
                   testError[forest.idx] <- mean(Yhat[, forest.idx] != Ytest)
                 } else {
-                  Yhat <- Predict(Xtest, forest, num.cores = params$num.cores, Xtrain = Xtrain)
+                  Yhat <- forest$labels[max.col(testScores)]
                   testTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                   print("test set predictions complete")
                   print(paste("elapsed time: ", testTime[forest.idx], sep = ""))
