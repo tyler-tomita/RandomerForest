@@ -70,6 +70,7 @@ for (m in classifiers) {
   p <- ncol(D) - 1L
   Xtest <- as.matrix(D[, 1:p])
   Ytest <- as.integer(D[, p + 1L]) + 1L
+  ntest <- length(Ytest)
   
   if (m == "rf" || m == "rr-rf" || m == "rr-rfr") {
     random.matrix <- "rf"
