@@ -69,8 +69,8 @@ for (m in classifiers) {
   D <- read.table(paste0(dataPath, "Test/Sparse_parity_bias_variance_test.csv"), sep = ",")
   p <- ncol(D) - 1L
   Xtest <- as.matrix(D[, 1:p])
-  Ytest <- as.integer(D[, p + 1L]) + 1L
-  ntest <- length(Ytest)
+  Ytest <- as.integer(D[, p + 1L])
+  ntest <- length(Ytest) 
   
   if (m == "rf" || m == "rr-rf" || m == "rr-rfr") {
     random.matrix <- "rf"
@@ -149,7 +149,7 @@ for (m in classifiers) {
       # read in the nth trial of training data
       D <- read.table(paste0(dataPath, "Train/Sparse_parity_bias_variance_train_n", ntrain, "_trial", trial, ".csv"), sep = ",")
       Xtrain <- as.matrix(D[, 1:p])
-      Ytrain <- as.integer(D[, p + 1L]) + 1L
+      Ytrain <- as.integer(D[, p + 1L])
       
       # evaluate models
       res <- RerFEval(Xtrain, Ytrain, Xtest, Ytest, params[[m]][[i]], store.predictions = T)
@@ -172,7 +172,7 @@ for (m in classifiers) {
     SE[[m]][i] <- bv.decomp$SE
     VE[[m]][i] <- bv.decomp$VE
     BE[[m]][i] <- bv.decomp$BE
-    save(testError, OOBError, OOBAUC, trainTime, OOBTime, testTime, treeStrength, treeCorr, numNodes, bestIdx, params,
+    save(B, V, SE, VE, BE, testError, OOBError, OOBAUC, trainTime, OOBTime, testTime, treeStrength, treeCorr, numNodes, bestIdx, params,
          file = paste(rerfPath, "RandomerForest/R/Results/2017.10.31/Sparse_parity_bias_variance_2017_10_31.RData", sep = ""))
   }
 }
