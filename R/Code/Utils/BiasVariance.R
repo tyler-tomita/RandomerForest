@@ -18,8 +18,8 @@ BiasVariance <- compiler::cmpfun(function(predictions, posteriors) {
   Ybayes <- labels[bayes.idx]
   B <- mean(Yhat != Ybayes)
   V <- mean(1 - phat.max)
-  SE <- mean(posterior.max - sapply(1:n, function(x) posteriors[prediction.idx[x]]))
-  VE <- mean(sapply(1:n, function(x) posteriors[prediction.idx[x]]) - apply(posteriors*phats, 1L, sum))
+  SE <- mean(posterior.max - sapply(1:n, function(x) posteriors[x, prediction.idx[x]]))
+  VE <- mean(sapply(1:n, function(x) posteriors[x, prediction.idx[x]]) - apply(posteriors*phats, 1L, sum))
   BE <- mean(1 - posterior.max)
   
   return(bv.decomp <- list(B = B, V = V, SE = SE, VE = VE, BE = BE))
