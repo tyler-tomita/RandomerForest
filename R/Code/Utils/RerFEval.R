@@ -18,7 +18,7 @@
 #'
 
 RerFEval <-
-    function(Xtrain, Ytrain, Xtest, Ytest, params = list(trees = 500L, random.matrix = "binary", d = round(sqrt(ncol(Xtrain))), sparsity = 1/ncol(Xtrain), rotate = F, rank.transform = F, min.parent = 2L, max.depth = 0L, bagging = 1/exp(1), store.oob = T, store.impurity = F, replacement = T, stratify = T, num.cores = 1L, seed = 1L, cat.map = NULL), store.predictions = F) {
+    function(Xtrain, Ytrain, Xtest, Ytest, params = list(trees = 500L, random.matrix = "binary", d = round(sqrt(ncol(Xtrain))), sparsity = 1/ncol(Xtrain), rotate = F, rank.transform = F, min.parent = 2L, max.depth = 0L, bagging = 1/exp(1), store.oob = T, store.impurity = F, replacement = T, stratify = T, num.cores = 1L, seed = 1L, cat.map = NULL, supervised = 0), store.predictions = F) {
 
         params.names <- names(params)
         
@@ -111,6 +111,10 @@ RerFEval <-
             params$seed <- 1L
         }
         set.seed(params$seed)
+        
+        if (!("supervised" %in% params.names)) {
+          params$supervised <- 0
+        }
 
         if (params$random.matrix == "binary" || params$random.matrix == "continuous" || params$random.matrix == "poisson" ||
             params$random.matrix == "frc" || params$random.matrix == "frcn") {
@@ -141,7 +145,7 @@ RerFEval <-
                     forest <- RerF(Xtrain, Ytrain, trees = params$trees, mat.options = mat.options, rank.transform = params$rank.transform,
                                    min.parent = params$min.parent, max.depth = params$max.depth, bagging = params$bagging, store.oob = params$store.oob,
                                    store.impurity = params$store.impurity, replacement = params$replacement, stratify = params$stratify, num.cores = params$num.cores,
-                                   seed = params$seed, cat.map = params$cat.map, rotate = params$rotate)
+                                   seed = params$seed, cat.map = params$cat.map, rotate = params$rotate, supervised = params$supervised)
                     trainTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                     print("training complete")
                     print(paste("elapsed time: ", trainTime[forest.idx], sep = ""))
@@ -240,7 +244,7 @@ RerFEval <-
                 forest <- RerF(Xtrain, Ytrain, trees = params$trees, mat.options = mat.options, rank.transform = params$rank.transform,
                                min.parent = params$min.parent, max.depth = params$max.depth, bagging = params$bagging, store.oob = params$store.oob,
                                store.impurity = params$store.impurity, replacement = params$replacement, stratify = params$stratify, num.cores = params$num.cores,
-                               seed = params$seed, cat.map = params$cat.map, rotate = params$rotate)
+                               seed = params$seed, cat.map = params$cat.map, rotate = params$rotate, supervised = params$supervised)
                 trainTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                 print("training complete")
                 print(paste("elapsed time: ", trainTime[forest.idx], sep = ""))
