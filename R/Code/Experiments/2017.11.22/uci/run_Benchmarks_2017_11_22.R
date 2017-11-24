@@ -18,7 +18,7 @@ nCl <- length(classifiers)
 nTrees <- 500L
 min.parent <- 2L
 max.depth <- 0L
-supervised = c(0, 0.2)
+supervised = c(0, 0.2, 0.5)
 num.cores <- 24L
 seed <- 11222017L
 
@@ -211,6 +211,6 @@ for (m in classifiers) {
     numNodes[[dataSet]][[m]][k, ] <- res$numNodes
     bestIdx[[dataSet]][[m]][k] <- res$best.idx
     
-    save(testError, testAUC, OOBError, OOBAUC, trainTime, OOBTime, testTime, treeStrength, treeCorr, numNodes, bestIdx, params, file = paste0(rerfPath, "RandomerForest/R/Results/2017.11.15/", dataSet, "_2017_11_15.RData"))
+    save(testError, testAUC, OOBError, OOBAUC, trainTime, OOBTime, testTime, treeStrength, treeCorr, numNodes, bestIdx, params, file = paste0(rerfPath, "RandomerForest/R/Results/2017.11.22/", dataSet, "_2017_11_22.RData"))
   }
 }
