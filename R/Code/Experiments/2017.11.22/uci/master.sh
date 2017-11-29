@@ -2,8 +2,8 @@
 
 #SBATCH
 #SBATCH --job-name=run_uci
-#SBATCH --array=1-23,25-106
-#SBATCH --time=1-0:0:0
+#SBATCH --array=5,7,11,13,18,32-34,40,57,59
+#SBATCH --time=2-0:0:0
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=24
 #SBATCH --mem=120G
