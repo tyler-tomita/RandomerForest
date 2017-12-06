@@ -25,6 +25,7 @@ nTrees <- 200L
 num.cores <- 40L
 
 for (m in classifiers) {
+  print(m)
   
   testError[[m]] <- matrix(as.double(NA), nTrials*nTrees, length(ns))
   B[[m]] <- rep(as.double(NA), length(ns))
