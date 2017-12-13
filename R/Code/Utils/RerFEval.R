@@ -246,7 +246,7 @@ RerFEval <-
               if (params$random.matrix != "image-patch") {
                 mat.options <- list(p, params$d[forest.idx], params$random.matrix, NULL, params$cat.map)
               } else {
-                mat.options <- list(p, params$d[j], params$random.matrix, params$iw, params$ih, params$patch.min, params$patch.max)
+                mat.options <- list(p, params$d[forest.idx], params$random.matrix, params$iw, params$ih, params$patch.min, params$patch.max)
               }
 
                 print(paste("Evaluating forest ", as.character(forest.idx), " of ", as.character(nforest), sep = ""))
