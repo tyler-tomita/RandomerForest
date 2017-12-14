@@ -18,7 +18,7 @@
 #'
 
 RerFEval <-
-    function(Xtrain, Ytrain, Xtest, Ytest, params = list(trees = 500L, random.matrix = "binary", d = round(sqrt(ncol(Xtrain))), sparsity = 1/ncol(Xtrain), rotate = F, rank.transform = F, min.parent = 2L, max.depth = 0L, bagging = 1/exp(1), store.oob = T, store.impurity = F, replacement = T, stratify = T, num.cores = 1L, seed = 1L, cat.map = NULL), store.predictions = F) {
+    function(Xtrain, Ytrain, Xtest, Ytest, params = list(trees = 500L, random.matrix = "binary", d = round(sqrt(ncol(Xtrain))), sparsity = 1/ncol(Xtrain), rotate = F, rank.transform = F, min.parent = 2L, max.depth = 0L, bagging = 1/exp(1), store.oob = T, store.impurity = F, replacement = T, stratify = T, num.cores = 1L, seed = 1L, cat.map = NULL, iw = NULL, ih = NULL, patch.min = NULL, patch.max = NULL), store.predictions = F) {
 
         params.names <- names(params)
         
@@ -111,7 +111,20 @@ RerFEval <-
             params$seed <- 1L
         }
         set.seed(params$seed)
-
+        
+        if (!("iw" %in% params.names)) {
+          params$iw <- NULL
+        }
+        if (!("ih" %in% params.names)) {
+          params$ih <- NULL
+        }
+        if (!("patch.min" %in% params.names)) {
+          params$patch.min <- NULL
+        }
+        if (!("patch.max" %in% params.names)) {
+          params$patch.max <- NULL
+        }
+        
         if (params$random.matrix == "binary" || params$random.matrix == "continuous" || params$random.matrix == "poisson" ||
             params$random.matrix == "frc" || params$random.matrix == "frcn") {
             nforest <- length(params$d)*length(params$sparsity)
@@ -230,7 +243,11 @@ RerFEval <-
                 Yhat <- matrix(0L, nrow = nrow(Xtest), ncol = nforest)
             }
             for (forest.idx in 1:nforest) {
+              if (params$random.matrix != "image-patch") {
                 mat.options <- list(p, params$d[forest.idx], params$random.matrix, NULL, params$cat.map)
+              } else {
+                mat.options <- list(p, params$d[forest.idx], params$random.matrix, params$iw, params$ih, params$patch.min, params$patch.max)
+              }
 
                 print(paste("Evaluating forest ", as.character(forest.idx), " of ", as.character(nforest), sep = ""))
 
