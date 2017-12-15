@@ -243,8 +243,7 @@ RerFEval <-
           }
           for (forest.idx in 1:nforest) {
             mat.options <- list(p, params$d[forest.idx], params$random.matrix, params$iw, params$ih, params$patch.min, params$patch.max)
-            print(mat.options)
-            
+
             print(paste("Evaluating forest ", as.character(forest.idx), " of ", as.character(nforest), sep = ""))
             
             # train
