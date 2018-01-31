@@ -20,6 +20,7 @@ X <- as.matrix(read.table(paste0(dataPath, "data/", dataSet, ".csv"), header = F
 catMap <- NULL
 p <- ncol(X) - 1L
 Y <- as.integer(X[, p + 1L]) + 1L
+Y <- paste0("Y",as.character(Y))
 X <- X[, -(p + 1L)]
 
 testError[[dataSet]] <- numeric(nFolds)
