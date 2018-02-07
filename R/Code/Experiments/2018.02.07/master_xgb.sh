@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH
-#SBATCH --job-name=run_uci
+#SBATCH --job-name=xgb_uci
 #SBATCH --array=1-23,25-106
 #SBATCH --time=3-0:0:0
 #SBATCH --nodes=1
@@ -18,10 +18,10 @@ echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 NAME_FILE=~/work/tyler/Data/uci/processed/names.txt
 DATASET=$(sed "${SLURM_ARRAY_TASK_ID}q;d" $NAME_FILE)
 
-sed "s/abalone/${DATASET}/g" run_Benchmarks_xgb_2018_02_07.R > task${SLURM_ARRAY_TASK_ID}.R
+sed "s/abalone/${DATASET}/g" run_Benchmarks_xgb_2018_02_07.R > task${SLURM_ARRAY_TASK_ID}_xgb.R
 
 Rscript task${SLURM_ARRAY_TASK_ID}.R
 
-rm task${SLURM_ARRAY_TASK_ID}.R
+rm task${SLURM_ARRAY_TASK_ID}_xgb.R
 
 echo "job complete"
