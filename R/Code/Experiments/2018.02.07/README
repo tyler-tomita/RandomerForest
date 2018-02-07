@@ -1,0 +1,1 @@
+Benchmark experiments from 11.28.2017 and 01.31.2018 are repeated, this time removing zero-variance columns from the data matrix and handling the one-hot-encoded features "naively" for RF, F-RC, and RerF 
