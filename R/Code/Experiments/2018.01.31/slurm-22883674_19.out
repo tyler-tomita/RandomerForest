@@ -1,0 +1,7 @@
+My SLURM_ARRAY_TASK_ID:  19
+Loading required package: lattice
+Loading required package: ggplot2
+[1] "fold 1"
+[1] "fold 2"
+[1] "fold 3"
+[1] "fold 4"

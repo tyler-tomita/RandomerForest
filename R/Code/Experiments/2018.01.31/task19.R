@@ -13,7 +13,7 @@ source(paste0(rerfPath, "RandomerForest/R/Code/Utils/GetFolds.R"))
 testError <- list()
 colSample <- list()
 
-dataSet <- "abalone"
+dataSet <- "chess_krvk"
 fold <- GetFolds(paste0(dataPath, "cv_partitions/", dataSet, "_partitions.txt"))
 nFolds <- length(fold)
 X <- as.matrix(read.table(paste0(dataPath, "data/", dataSet, ".csv"), header = F, sep = ",", quote = "", row.names = NULL))
