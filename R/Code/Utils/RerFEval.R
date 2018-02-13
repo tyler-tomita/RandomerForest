@@ -171,7 +171,7 @@ RerFEval <-
                 # compute out-of-bag metrics
                 print("computing out-of-bag predictions")
                 start.time <- proc.time()
-                oobScores <- withTimeout(expr = OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T), timeout = timeout)
+                oobScores <- withTimeout(expr = OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T), timeout = timeout, onTimeout = "error")
                 oobTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                 print("out-of-bag predictions complete")
                 print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
@@ -274,7 +274,7 @@ RerFEval <-
                     # compute out-of-bag metrics
                     print("computing out-of-bag predictions")
                     start.time <- proc.time()
-                    oobScores <- withTimeout(expr = OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T), timeout = timeout)
+                    oobScores <- withTimeout(expr = OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T), timeout = timeout, onTimeout = "error")
                     oobTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                     print("out-of-bag predictions complete")
                     print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
@@ -371,7 +371,7 @@ RerFEval <-
             # compute out-of-bag metrics
             print("computing out-of-bag predictions")
             start.time <- proc.time()
-            oobScores <- withTimeout(expr = OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T), timeout = timeout)
+            oobScores <- withTimeout(expr = OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T), timeout = timeout, onTimeout = "error")
             oobTime[forest.idx] <- (proc.time() - start.time)[[3L]]
             print("out-of-bag predictions complete")
             print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
@@ -474,7 +474,7 @@ RerFEval <-
                 # compute out-of-bag metrics
                 print("computing out-of-bag predictions")
                 start.time <- proc.time()
-                oobScores <- withTimeout(expr = OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T), timeout = timeout)
+                oobScores <- withTimeout(expr = OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T), timeout = timeout, onTimeout = "error")
                 oobTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                 print("out-of-bag predictions complete")
                 print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
