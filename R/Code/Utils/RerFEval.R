@@ -8,6 +8,7 @@
 #' @param Ytest an n length vector of class labels
 #' @param params a list of parameters used in the various rerf functions
 #' @param store.predictions ????? (store.predictions=FALSE)
+#' @param timeout specify max amount of time to run OOBPredict before timing out. This is needed because OOBPredict sometimes hangs and can't be killed. (timeout = Inf)
 #'
 #' @return something ?????
 #'
@@ -15,10 +16,11 @@
 #' 
 #' @importFrom AUC auc roc
 #' @importFrom compiler setCompilerOptions cmpfun
+#' @importFrom R.utils withTimeout
 #'
 
 RerFEval <-
-    function(Xtrain, Ytrain, Xtest, Ytest, params = list(trees = 500L, random.matrix = "binary", d = round(sqrt(ncol(Xtrain))), sparsity = 1/ncol(Xtrain), prob = 0.5, rotate = F, rank.transform = F, min.parent = 2L, max.depth = 0L, bagging = 1/exp(1), store.oob = T, store.impurity = F, replacement = T, stratify = T, num.cores = 1L, seed = 1L, cat.map = NULL, iw = NULL, ih = NULL, patch.min = NULL, patch.max = NULL), store.predictions = F) {
+    function(Xtrain, Ytrain, Xtest, Ytest, params = list(trees = 500L, random.matrix = "binary", d = round(sqrt(ncol(Xtrain))), sparsity = 1/ncol(Xtrain), prob = 0.5, rotate = F, rank.transform = F, min.parent = 2L, max.depth = 0L, bagging = 1/exp(1), store.oob = T, store.impurity = F, replacement = T, stratify = T, num.cores = 1L, seed = 1L, cat.map = NULL, iw = NULL, ih = NULL, patch.min = NULL, patch.max = NULL), store.predictions = F, timeout = Inf) {
 
         params.names <- names(params)
         
@@ -169,7 +171,7 @@ RerFEval <-
                 # compute out-of-bag metrics
                 print("computing out-of-bag predictions")
                 start.time <- proc.time()
-                oobScores <- OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T)
+                oobScores <- withTimeout(expr = OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T), timeout = timeout)
                 oobTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                 print("out-of-bag predictions complete")
                 print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
@@ -272,7 +274,7 @@ RerFEval <-
                     # compute out-of-bag metrics
                     print("computing out-of-bag predictions")
                     start.time <- proc.time()
-                    oobScores <- OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T)
+                    oobScores <- withTimeout(expr = OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T), timeout = timeout)
                     oobTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                     print("out-of-bag predictions complete")
                     print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
@@ -369,7 +371,7 @@ RerFEval <-
             # compute out-of-bag metrics
             print("computing out-of-bag predictions")
             start.time <- proc.time()
-            oobScores <- OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T)
+            oobScores <- withTimeout(expr = OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T), timeout = timeout)
             oobTime[forest.idx] <- (proc.time() - start.time)[[3L]]
             print("out-of-bag predictions complete")
             print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
@@ -472,7 +474,7 @@ RerFEval <-
                 # compute out-of-bag metrics
                 print("computing out-of-bag predictions")
                 start.time <- proc.time()
-                oobScores <- OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T)
+                oobScores <- withTimeout(expr = OOBPredict(Xtrain, forest, num.cores = params$num.cores, output.scores = T), timeout = timeout)
                 oobTime[forest.idx] <- (proc.time() - start.time)[[3L]]
                 print("out-of-bag predictions complete")
                 print(paste("elapsed time: ", oobTime[forest.idx], sep = ""))
