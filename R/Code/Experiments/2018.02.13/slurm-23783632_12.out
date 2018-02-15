@@ -1,0 +1,35 @@
+My SLURM_ARRAY_TASK_ID:  12
+AUC 0.3.0
+Type AUCNews() to see the change log and ?AUC to get an overview.
+dummies-1.5.6 provided by Decision Patterns
+
+Loading required package: R.oo
+Loading required package: R.methodsS3
+R.methodsS3 v1.7.1 (2016-02-15) successfully loaded. See ?R.methodsS3 for help.
+R.oo v1.21.0 (2016-10-30) successfully loaded. See ?R.oo for help.
+
+Attaching package: ‘R.oo’
+
+The following objects are masked from ‘package:base’:
+
+    attach, detach, gc, load, save
+
+R.utils v2.6.0 (2017-11-04) successfully loaded. See ?R.utils for help.
+
+Attaching package: ‘R.utils’
+
+The following object is masked from ‘package:utils’:
+
+    timestamp
+
+The following objects are masked from ‘package:base’:
+
+    cat, commandArgs, getOption, inherits, isOpen, parse, warnings
+
+[1] "fold 1"
+[1] "Evaluating forest 1 of 25"
+[1] "training"
+[1] "training complete"
+[1] "elapsed time: 0.201"
+[1] "computing out-of-bag predictions"
+slurmstepd: error: *** JOB 23893772 ON compute0480 CANCELLED AT 2018-02-14T15:42:14 ***

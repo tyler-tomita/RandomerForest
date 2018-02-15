@@ -1,0 +1,12 @@
+My SLURM_ARRAY_TASK_ID:  62
+AUC 0.3.0
+Type AUCNews() to see the change log and ?AUC to get an overview.
+dummies-1.5.6 provided by Decision Patterns
+
+[1] "fold 1"
+[1] "Evaluating forest 1 of 3"
+[1] "training"
+[1] "training complete"
+[1] "elapsed time: 2.827"
+[1] "computing out-of-bag predictions"
+slurmstepd: error: *** JOB 23625319 ON compute0330 CANCELLED AT 2018-02-10T03:56:07 DUE TO TIME LIMIT ***

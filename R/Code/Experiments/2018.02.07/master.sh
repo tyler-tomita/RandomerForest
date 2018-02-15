@@ -2,8 +2,8 @@
 
 #SBATCH
 #SBATCH --job-name=rerf_uci
-#SBATCH --array=1-23,25-106
-#SBATCH --time=3-0:0:0
+#SBATCH --array=70
+#SBATCH --time=4-0:0:0
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=24
 #SBATCH --mem=120G

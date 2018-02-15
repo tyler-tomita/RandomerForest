@@ -3,7 +3,7 @@
 #SBATCH
 #SBATCH --job-name=xgb_uci
 #SBATCH --array=1-23,25-106
-#SBATCH --time=3-0:0:0
+#SBATCH --time=4-0:0:0
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=24
 #SBATCH --mem=120G
@@ -20,7 +20,7 @@ DATASET=$(sed "${SLURM_ARRAY_TASK_ID}q;d" $NAME_FILE)
 
 sed "s/abalone/${DATASET}/g" run_Benchmarks_xgb_2018_02_07.R > task${SLURM_ARRAY_TASK_ID}_xgb.R
 
-Rscript task${SLURM_ARRAY_TASK_ID}.R
+Rscript task${SLURM_ARRAY_TASK_ID}_xgb.R
 
 rm task${SLURM_ARRAY_TASK_ID}_xgb.R
 

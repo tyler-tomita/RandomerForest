@@ -1,0 +1,49 @@
+My SLURM_ARRAY_TASK_ID:  70
+AUC 0.3.0
+Type AUCNews() to see the change log and ?AUC to get an overview.
+dummies-1.5.6 provided by Decision Patterns
+
+[1] "fold 1"
+[1] "Evaluating forest 1 of 3"
+[1] "training"
+[1] "training complete"
+[1] "elapsed time: 0.227"
+[1] "computing out-of-bag predictions"
+[1] "out-of-bag predictions complete"
+[1] "elapsed time: 3.337"
+[1] "computing predictions on test set"
+[1] "test set predictions complete"
+[1] "elapsed time: 2.92"
+[1] "computing tree strength and correlation"
+[1] "strength and correlation complete"
+[1] "elapsed time: 3.154"
+[1] "Evaluating forest 2 of 3"
+[1] "training"
+[1] "training complete"
+[1] "elapsed time: 0.248999999999999"
+[1] "computing out-of-bag predictions"
+[1] "out-of-bag predictions complete"
+[1] "elapsed time: 2.68"
+[1] "computing predictions on test set"
+[1] "test set predictions complete"
+[1] "elapsed time: 2.643"
+[1] "computing tree strength and correlation"
+[1] "strength and correlation complete"
+[1] "elapsed time: 2.853"
+[1] "Evaluating forest 3 of 3"
+[1] "training"
+[1] "training complete"
+[1] "elapsed time: 0.334000000000003"
+[1] "computing out-of-bag predictions"
+[1] "out-of-bag predictions complete"
+[1] "elapsed time: 2.675"
+[1] "computing predictions on test set"
+[1] "test set predictions complete"
+[1] "elapsed time: 2.657"
+[1] "computing tree strength and correlation"
+[1] "strength and correlation complete"
+[1] "elapsed time: 2.888"
+Error in testError[[dataSet]][[m]][k, ] <- res$testError : 
+  number of items to replace is not a multiple of replacement length
+Execution halted
+job complete
