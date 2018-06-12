@@ -69,6 +69,7 @@ for k = 1:nFolds
     
     yhats = CCFPredict(X(trainIdx,:),Y(trainIdx),X(testIdx,:),nTrees,options,iFeatureNum);
     testError(k) = mean(~strcmp(yhats,Y(testIdx)));
+    save([rerfPath 'RandomerForest/Results/2018.06.12/' dataSet '_ccf_naive_cat_2018_06_12.mat'],'testError')
 end
 
 save([rerfPath 'RandomerForest/Results/2018.06.12/' dataSet '_ccf_naive_cat_2018_06_12.mat'],'testError')
