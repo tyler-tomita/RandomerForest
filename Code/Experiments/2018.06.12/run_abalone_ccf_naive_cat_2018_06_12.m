@@ -17,11 +17,7 @@ Y = cellstr(num2str(X(:,end)));
 X(:,end) = [];
 X = zscore(X); % standardize columns
 [n,p] = size(X);
-if exist([datapath,'categorical_map/',dataSet,'_catmap.txt'],'file')
-    iFeatureNum = getCatMap([datapath,'categorical_map/',dataSet,'_catmap.txt'],X);
-else
-    iFeatureNum = [];
-end
+iFeatureNum = []; % treat all datasets with naivety towards categorical features
 
 
 % set up parameters
@@ -75,5 +71,5 @@ for k = 1:nFolds
     testError(k) = mean(~strcmp(yhats,Y(testIdx)));
 end
 
-save([rerfPath 'RandomerForest/Results/2018.06.12/' dataSet '_ccf_2018_06_12.mat'],'testError')
+save([rerfPath 'RandomerForest/Results/2018.06.12/' dataSet '_ccf_naive_cat_2018_06_12.mat'],'testError')
 delete(gcp);
