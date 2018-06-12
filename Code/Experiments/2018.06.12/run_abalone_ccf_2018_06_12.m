@@ -76,5 +76,4 @@ for k = 1:nFolds
     save([rerfPath 'RandomerForest/Results/2018.06.12/' dataSet '_ccf_2018_06_12.mat'],'testError')
 end
 
-save([rerfPath 'RandomerForest/Results/2018.06.12/' dataSet '_ccf_2018_06_12.mat'],'testError')
 delete(gcp);
