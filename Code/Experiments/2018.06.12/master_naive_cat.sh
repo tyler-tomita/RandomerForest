@@ -20,7 +20,7 @@ DATASET=$(sed "${SLURM_ARRAY_TASK_ID}q;d" $NAME_FILE)
 
 sed "s/abalone/${DATASET}/g" run_abalone_ccf_naive_cat_2018_06_12.m > task_naive_${SLURM_ARRAY_TASK_ID}.m
 
-matlab -nosplash -nodisplay -singleCompThread -r "task_naive_${SLURM_ARRAY_TASK_ID}.m"
+matlab -nosplash -nodisplay -singleCompThread -r "task_naive_${SLURM_ARRAY_TASK_ID}"
 
 rm task_naive_${SLURM_ARRAY_TASK_ID}.m
 
