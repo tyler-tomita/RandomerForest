@@ -38,6 +38,12 @@ nModels = length(lambdas);
 
 testError = NaN(1,nFolds);
 
+% initialize parallel pool
+poolobj = gcp('nocreate');
+if isempty(poolobj)
+    parpool('local',24,'IdleTimeout',360);
+end
+
 % iterate over partitions
 for k = 1:nFolds
     fprintf('fold %d\n',k)
