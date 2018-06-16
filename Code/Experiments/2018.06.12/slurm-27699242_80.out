@@ -1,0 +1,20 @@
+My SLURM_ARRAY_TASK_ID:  80
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2018 The MathWorks, Inc.
+                   R2018a (9.4.0.813654) 64-bit (glnxa64)
+                             February 23, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+Starting parallel pool (parpool) using the 'local' profile ...
+connected to 20 workers.
+fold 1
+fold 2
+fold 3
+fold 4
+fold 5
+Parallel pool using the 'local' profile is shutting down.
+job complete

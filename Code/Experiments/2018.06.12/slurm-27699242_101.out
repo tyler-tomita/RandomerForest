@@ -1,0 +1,28 @@
+My SLURM_ARRAY_TASK_ID:  101
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2018 The MathWorks, Inc.
+                   R2018a (9.4.0.813654) 64-bit (glnxa64)
+                             February 23, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+Starting parallel pool (parpool) using the 'local' profile ...
+
+{Error using parpool (line 113)
+Parallel pool failed to start with the following error. For more detailed
+information, validate the profile 'local' in the Cluster Profile Manager.
+
+Error in task_naive_101 (line 40)
+    parpool('local',20,'IdleTimeout',360);
+
+Caused by:
+    Error using parallel.internal.pool.InteractiveClient>iThrowWithCause (line
+    676)
+    Failed to start pool.
+        Error using parallel.Job/submit (line 351)
+        A communicating job must have a single task defined before submission.
+} 
+job complete

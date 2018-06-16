@@ -1,0 +1,50 @@
+My SLURM_ARRAY_TASK_ID:  103
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2018 The MathWorks, Inc.
+                   R2018a (9.4.0.813654) 64-bit (glnxa64)
+                             February 23, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+Starting parallel pool (parpool) using the 'local' profile ...
+connected to 20 workers.
+fold 1
+[Warning: One or more folds do not contain points from all the groups.] 
+[> In internal.stats.cvpartitionImpl>stra_kfoldcv (line 364)
+  In internal.stats.cvpartitionImpl/rerandom (line 315)
+  In internal.stats.cvpartitionInMemoryImpl (line 166)
+  In cvpartition (line 175)
+  In task_naive_103 (line 55)] 
+fold 2
+[Warning: One or more folds do not contain points from all the groups.] 
+[> In internal.stats.cvpartitionImpl>stra_kfoldcv (line 364)
+  In internal.stats.cvpartitionImpl/rerandom (line 315)
+  In internal.stats.cvpartitionInMemoryImpl (line 166)
+  In cvpartition (line 175)
+  In task_naive_103 (line 55)] 
+fold 3
+[Warning: One or more folds do not contain points from all the groups.] 
+[> In internal.stats.cvpartitionImpl>stra_kfoldcv (line 364)
+  In internal.stats.cvpartitionImpl/rerandom (line 315)
+  In internal.stats.cvpartitionInMemoryImpl (line 166)
+  In cvpartition (line 175)
+  In task_naive_103 (line 55)] 
+fold 4
+[Warning: One or more folds do not contain points from all the groups.] 
+[> In internal.stats.cvpartitionImpl>stra_kfoldcv (line 364)
+  In internal.stats.cvpartitionImpl/rerandom (line 315)
+  In internal.stats.cvpartitionInMemoryImpl (line 166)
+  In cvpartition (line 175)
+  In task_naive_103 (line 55)] 
+fold 5
+[Warning: One or more folds do not contain points from all the groups.] 
+[> In internal.stats.cvpartitionImpl>stra_kfoldcv (line 364)
+  In internal.stats.cvpartitionImpl/rerandom (line 315)
+  In internal.stats.cvpartitionInMemoryImpl (line 166)
+  In cvpartition (line 175)
+  In task_naive_103 (line 55)] 
+Parallel pool using the 'local' profile is shutting down.
+job complete

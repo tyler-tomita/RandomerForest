@@ -1,0 +1,34 @@
+My SLURM_ARRAY_TASK_ID:  84
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2018 The MathWorks, Inc.
+                   R2018a (9.4.0.813654) 64-bit (glnxa64)
+                             February 23, 2018
+
+[Warning: Unable to load Toolbox Path Cache
+/home-4/ttomita2@jhu.edu/.matlab/R2018a/toolbox_cache-9.4.0-549809143-glnxa64.xml.
+The cache file is not in the correct format. It will be regenerated upon
+quitting MATLAB.] 
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+Starting parallel pool (parpool) using the 'local' profile ...
+
+{Error using parpool (line 113)
+Parallel pool failed to start with the following error. For more detailed
+information, validate the profile 'local' in the Cluster Profile Manager.
+
+Error in task84 (line 44)
+    parpool('local',20,'IdleTimeout',360);
+
+Caused by:
+    Error using parallel.internal.pool.InteractiveClient>iThrowWithCause (line
+    676)
+    Failed to start pool.
+        Error using parallel.Job/preSubmit (line 581)
+        Unable to read MAT-file
+        /home-4/ttomita2@jhu.edu/.matlab/local_cluster_jobs/R2018a/Job158.in.mat.
+        File might be corrupt.
+} 
+job complete

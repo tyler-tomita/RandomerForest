@@ -1,0 +1,50 @@
+My SLURM_ARRAY_TASK_ID:  10
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2018 The MathWorks, Inc.
+                   R2018a (9.4.0.813654) 64-bit (glnxa64)
+                             February 23, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+Starting parallel pool (parpool) using the 'local' profile ...
+[Warning: The cluster failed to cancel the job execution. The error was: Unable
+to read file
+'/home-4/ttomita2@jhu.edu/.matlab/local_cluster_jobs/R2018a/Job58.in.mat'. No
+such file or directory.] 
+[> In parallel.internal.cluster.CJSJobMethods.cancelOneJob (line 53)
+  In parallel.job.CJSConcurrentJob/cancelOneJob (line 57)
+  In parallel.Job/cancel (line 1348)
+  In parallel.Cluster/hDeleteOneJob (line 911)
+  In parallel.internal.pool.InteractiveClient>iDeleteJobs (line 873)
+  In parallel.internal.pool.InteractiveClient/pRemoveOldJobs (line 481)
+  In parallel.internal.pool.InteractiveClient/start (line 315)
+  In parallel.Pool>iStartClient (line 791)
+  In parallel.Pool.hBuildPool (line 585)
+  In parallel.internal.pool.doParpool (line 18)
+  In parpool (line 98)
+  In task_naive_10 (line 40)] 
+[Warning: The cluster reported an error while deleting an unavailable job.  This
+job may already have been deleted.] 
+[> In parallel.internal.cluster.CJSJobMethods.destroyOneJob (line 77)
+  In parallel.job.CJSConcurrentJob/destroyOneJob (line 52)
+  In parallel.Job/delete (line 1279)
+  In parallel.Cluster/hDeleteOneJob (line 926)
+  In parallel.internal.pool.InteractiveClient>iDeleteJobs (line 873)
+  In parallel.internal.pool.InteractiveClient/pRemoveOldJobs (line 481)
+  In parallel.internal.pool.InteractiveClient/start (line 315)
+  In parallel.Pool>iStartClient (line 791)
+  In parallel.Pool.hBuildPool (line 585)
+  In parallel.internal.pool.doParpool (line 18)
+  In parpool (line 98)
+  In task_naive_10 (line 40)] 
+connected to 20 workers.
+fold 1
+fold 2
+fold 3
+fold 4
+fold 5
+Parallel pool using the 'local' profile is shutting down.
+job complete

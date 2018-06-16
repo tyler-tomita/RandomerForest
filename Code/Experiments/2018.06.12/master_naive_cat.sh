@@ -3,9 +3,9 @@
 #SBATCH
 #SBATCH --job-name=ccf_naive_uci
 #SBATCH --array=1-23,25-106
-#SBATCH --time=4-0:0:0
+#SBATCH --time=3-0:0:0
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=24
+#SBATCH --ntasks-per-node=20
 #SBATCH --mem=120G
 #SBATCH --partition=parallel
 #SBATCH --exclusive
@@ -20,7 +20,7 @@ DATASET=$(sed "${SLURM_ARRAY_TASK_ID}q;d" $NAME_FILE)
 
 sed "s/abalone/${DATASET}/g" run_abalone_ccf_naive_cat_2018_06_12.m > task_naive_${SLURM_ARRAY_TASK_ID}.m
 
-matlab -nosplash -nodisplay -singleCompThread -r "task_naive_${SLURM_ARRAY_TASK_ID}"
+/cm/shared/apps/MATLAB/R2018a-1/bin/matlab -nosplash -nodisplay -singleCompThread -r "task_naive_${SLURM_ARRAY_TASK_ID}"
 
 rm task_naive_${SLURM_ARRAY_TASK_ID}.m
 

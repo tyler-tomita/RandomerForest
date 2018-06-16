@@ -1,0 +1,47 @@
+My SLURM_ARRAY_TASK_ID:  53
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2018 The MathWorks, Inc.
+                   R2018a (9.4.0.813654) 64-bit (glnxa64)
+                             February 23, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+Starting parallel pool (parpool) using the 'local' profile ...
+[Warning: The cluster failed to cancel the job execution. The error was: Unable
+to read file
+'/home-4/ttomita2@jhu.edu/.matlab/local_cluster_jobs/R2018a/Job220.in.mat'. No
+such file or directory.] 
+[> In parallel.internal.cluster.CJSJobMethods.cancelOneJob (line 53)
+  In parallel.job.CJSConcurrentJob/cancelOneJob (line 57)
+  In parallel.Job/cancel (line 1348)
+  In parallel.Cluster/hDeleteOneJob (line 911)
+  In parallel.internal.pool.InteractiveClient>iDeleteJobs (line 873)
+  In parallel.internal.pool.InteractiveClient/pStopLabsAndDisconnect (line 593)
+  In parallel.internal.pool.InteractiveClient>iCleanupIfStartupFailed (line 949)
+  In parallel.internal.pool.InteractiveClient>@()iCleanupIfStartupFailed(obj) (line 287)
+  In onCleanup/delete (line 60)
+  In parallel.internal.pool.InteractiveClient/start (line 222)
+  In parallel.Pool>iStartClient (line 791)
+  In parallel.Pool.hBuildPool (line 585)
+  In parallel.internal.pool.doParpool (line 18)
+  In parpool (line 98)
+  In task_naive_53 (line 40)] 
+
+{Error using parpool (line 113)
+Parallel pool failed to start with the following error. For more detailed
+information, validate the profile 'local' in the Cluster Profile Manager.
+
+Error in task_naive_53 (line 40)
+    parpool('local',20,'IdleTimeout',360);
+
+Caused by:
+    Error using parallel.internal.pool.InteractiveClient>iThrowWithCause (line
+    676)
+    Failed to start pool.
+        Error using parallel.Job/createTask (line 320)
+        Tasks can only be added to jobs which are in state 'pending'.
+} 
+job complete

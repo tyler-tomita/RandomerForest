@@ -9,7 +9,7 @@ rng(1);
 
 % load data
 dataSet = 'abalone';
-datapath = '~/tmp/uci/processed/';
+datapath= '~/work/tyler/Data/uci/processed/';
 fold = getFolds([datapath,'cv_partitions/',dataSet,'_partitions.txt']);
 nFolds = length(fold);
 X = dlmread([datapath,'data/',dataSet,'.csv'],',');
@@ -41,7 +41,7 @@ testError = NaN(1,nFolds);
 % initialize parallel pool
 poolobj = gcp('nocreate');
 if isempty(poolobj)
-    parpool('local',24,'IdleTimeout',360);
+    parpool('local',20,'IdleTimeout',360);
 end
 
 % iterate over partitions
