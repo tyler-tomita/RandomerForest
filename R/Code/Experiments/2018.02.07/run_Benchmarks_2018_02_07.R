@@ -12,7 +12,7 @@ source(paste0(rerfPath, "RandomerForest/R/Code/Utils/RerFEval.R"))
 source(paste0(rerfPath, "RandomerForest/R/Code/Utils/GetCatMap.R"))
 source(paste0(rerfPath, "RandomerForest/R/Code/Utils/GetFolds.R"))
 
-classifiers <- c("rf", "rerf", "frc")
+classifiers <- c("rf", "rerf", "frc", "rr-rf")
 nCl <- length(classifiers)
 
 nTrees <- 500L
