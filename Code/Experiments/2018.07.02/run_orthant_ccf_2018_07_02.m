@@ -65,7 +65,7 @@ for j = 1:length(ps)
                 options.lambda = lambdas(k);
                 cvfun = @(xtrain,ytrain,xtest,ytest)...
                     (mean(~strcmp(CCFPredict(xtrain,ytrain,xtest,nTrees,options,iFeatureNum),ytest)));
-                cvError(k) = mean(crossval(cvfun,X(trainIdx,:),Y(trainIdx),'partition',c));
+                cvError(k) = mean(crossval(cvfun,Xtrain,Ytrain,'partition',c));
             end
     
             minError = min(cvError);
