@@ -24,7 +24,7 @@ for j = 1:length(ps)
     
     p = ps(j);
     
-    Xtest = dlmread([datapath 'Test/Sparse_parity_raw_test_set_p' p '.dat']);
+    Xtest = dlmread([datapath 'Test/Sparse_parity_raw_test_set_p' num2str(p) '.dat']);
     Ytest = cellstr(num2str(Xtest(:,end)));
     Xtest(:,end) = [];
 
@@ -41,7 +41,7 @@ for j = 1:length(ps)
         
         for trial = 1:nTrials
             
-            Xtrain = dlmread([datapath 'Train/Sparse_parity_raw_train_set_n' ntrain '_p' p '_trial' trial '.dat']);
+            Xtrain = dlmread([datapath 'Train/Sparse_parity_raw_train_set_n' num2str(ntrain) '_p' num2str(p) '_trial' num2str(trial) '.dat']);
             Ytrain = cellstr(num2str(Xtrain(:,end)));
             Xtrain(:,end) = [];
 
