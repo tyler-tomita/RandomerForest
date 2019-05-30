@@ -27,6 +27,7 @@ X <- X[, -(p + 1L)]
 X <- X[, apply(X, 2, function(x) any(as.logical(diff(x))))]
 # mean-center and scale by sd
 X <- scale(X)
+n <- nrow(X)
 
 # read in noisy features and append to X
 Xnoise <- as.matrix(read.table(datapath2, header = F, sep = ",", quote = "", row.names = NULL, nrows = n))
