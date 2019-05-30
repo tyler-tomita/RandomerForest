@@ -30,7 +30,7 @@ X <- scale(X)
 n <- nrow(X)
 
 # read in noisy features and append to X
-Xnoise <- as.matrix(read.table(datapath2, header = F, sep = ",", quote = "", row.names = NULL, nrows = n))
+Xnoise <- as.matrix(read.table(dataPath2, header = F, sep = ",", quote = "", row.names = NULL, nrows = n))
 X <- cbind(X, Xnoise)
 p <- ncol(X)
 
