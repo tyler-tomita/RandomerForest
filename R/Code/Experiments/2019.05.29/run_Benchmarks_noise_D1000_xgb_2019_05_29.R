@@ -130,5 +130,5 @@ for (k in seq.int(nFolds)) {
   predictions <- xgb_train$levels[max.col(scores)]
   testError[[dataSet]][k] <- sum(predictions != Y[testIdx])/length(testIdx)
   colSample[[dataSet]][k] <- xgb_train$finalModel$tuneValue$colsample_bytree
-  save(testError, colSample, file = paste0(rerfPath, "RandomerForest/R/Results/2018.05.29/", dataSet, "_noise_D1000_xgb_2019_05_29.RData"))
+  save(testError, colSample, file = paste0(rerfPath, "RandomerForest/R/Results/2019.05.29/", dataSet, "_noise_D1000_xgb_2019_05_29.RData"))
 }
