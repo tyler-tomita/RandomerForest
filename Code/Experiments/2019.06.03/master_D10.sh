@@ -2,8 +2,8 @@
 
 #SBATCH
 #SBATCH --job-name=ccf_naive_uci
-#SBATCH --array=1-23,25-106
-#SBATCH --time=3-0:0:0
+#SBATCH --array=44
+#SBATCH --time=0-2:0:0
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=20
 #SBATCH --mem=120G
@@ -22,6 +22,6 @@ sed "s/abalone/${DATASET}/g" run_abalone_noise_D10_ccf_naive_cat_2019_06_03.m > 
 
 matlab -nosplash -nodisplay -singleCompThread -r "task_D10_${SLURM_ARRAY_TASK_ID}"
 
-rm task_naive_${SLURM_ARRAY_TASK_ID}.m
+rm task_D10_${SLURM_ARRAY_TASK_ID}.m
 
 echo "job complete"

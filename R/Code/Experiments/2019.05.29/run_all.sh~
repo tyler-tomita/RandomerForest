@@ -1,0 +1,8 @@
+#!/bin/bash
+
+master_D10.sh
+master_D100.sh
+master_D1000.sh
+master_xgb_D10.sh
+master_xgb_D100.sh
+master_xgb_D1000.sh

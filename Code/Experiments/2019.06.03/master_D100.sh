@@ -22,6 +22,6 @@ sed "s/abalone/${DATASET}/g" run_abalone_noise_D100_ccf_naive_cat_2019_06_03.m >
 
 matlab -nosplash -nodisplay -singleCompThread -r "task_D100_${SLURM_ARRAY_TASK_ID}"
 
-rm task_naive_${SLURM_ARRAY_TASK_ID}.m
+rm task_D100_${SLURM_ARRAY_TASK_ID}.m
 
 echo "job complete"
