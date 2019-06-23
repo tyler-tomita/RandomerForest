@@ -1,0 +1,280 @@
+---
+title: "Consistency of Random Forest/Randomer Forest"
+author: "Jaewon Chung"
+output: 
+  html_document:
+    code_folding: hide
+    fig_caption: yes
+    fig_height: 8
+    fig_width: 8
+    highlight: pygments
+    number_sections: yes
+    theme: cerulean
+    toc: yes
+    toc_depth: 2
+  keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE)
+```
+
+```{r, eval = FALSE, include = FALSE, echo = FALSE}
+require(devtools)
+rmarkdown::render("plot_biau2008_consistency.Rmd")
+system('open Consistency.html')
+```
+
+```{r packages, include = FALSE, echo = FALSE}
+library('ggplot2')
+library('rerf')
+library('cowplot')
+library('gridExtra')
+library('grid')
+```
+
+# Consistency of Random Forest/Randomer Forest
+
+[Biau et al](http://www.jmlr.org/papers/volume9/biau08a/biau08a.pdf) (2016) proposed a distribution for which Breiman's RF is inconsistent. The joint distribution of $(X, Y)$ is as follows:
+$X$ has a uniform distribution on $[0,1] \times [0,1] \cup [1,2] \times [1,2] \cup [2,3] \times [2, 3]$. $Y$ is deterministic function of $X$, that is $f(X) \in \{0, 1\}$. The $[0,1] \times [0, 1]$ square is divided into countably infinite vertical stripes, and $[2, 3] \times [2,3]$ square is similarly divided into countably infinite horizontal stripes. In both squares, the stripes with $f(X) = 0$ and $f(X) = 1$ alternate. The $[1, 2] \times [1, 2]$ square is a $2 \times 2$ checker board. The joint distribution is shown below.
+
+## Joint Distribution of $(X, Y)$
+```{r, fig.width = 6, fig.height = 6}
+getY <- function(n) {
+  sequence <- 1/(2^seq(1, n))
+  sequence <- c(0, cumsum(rep(sequence / 2, each = 2)))
+  
+  return(sequence)
+}
+
+getYFlip <- function(n) {
+  sequence <- 1/(2^seq(1, n))
+  sequence <- c(0, cumsum(rev(rep(sequence / 2, each = 2))))
+  
+  return(sequence)
+}
+
+drawDistribution <- function(n) {
+  sequence <- getY(n)
+  sequence.flip <- getYFlip(n)
+  colors <- rep(c('white', 'gray'), (length(sequence) - 1) / 2)
+  
+  len <- length(sequence)
+  
+  # Df for lower left square
+  df <- data.frame(xmin = sequence[1:len - 1], 
+                 xmax = sequence[2:len], 
+                 ymin = rep(0, (len - 1)),
+                 ymax = rep(1, (len - 1)),
+                 fill = colors
+  )
+  
+  # Df for middle square
+  df2 <- data.frame(xmin = c(1, 1, 1.5, 1.5), 
+                    xmax = c(1.5, 1.5, 2, 2), 
+                    ymin = c(1, 1.5, 1, 1.5), 
+                    ymax = c(1.5, 2, 1.5, 2),
+                    fill = c('white', 'gray', 'gray', 'white'))
+  
+  # Df for top right square
+  df3 <- data.frame(xmin = rep(2, (len - 1)),
+                    xmax = rep(3, (len - 1)),
+                    ymin = sequence.flip[1:len - 1] + 2,
+                    ymax = sequence.flip[2:len] + 2,
+                    fill = rev(colors))
+  
+  df <- rbind(df, df2, df3)
+
+  fig <- ggplot(df) + 
+    geom_rect(aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = fill))
+
+  fig <- fig + geom_rect(aes(xmin = 1, xmax = 2, ymin = 1, ymax = 2), alpha = 0, color = 'black') +
+        geom_rect(aes(xmin = 0, xmax = 1, ymin = 0, ymax = 1), alpha = 0, color = 'black') +
+        geom_rect(aes(xmin = 2, xmax = 3, ymin = 2, ymax = 3), alpha = 0, color = 'black')
+
+  fig <- fig + scale_fill_identity() + coord_equal() + theme_gray(base_size = 20) +
+    #theme(panel.background = element_blank()) + 
+    #labs(title = "Distribution of Y") +
+    scale_y_continuous(expand = c(0,0)) + scale_x_continuous(expand = c(0,0)) + 
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+    panel.background = element_blank(), axis.line = element_line(colour = "black", size = 1)) + 
+    labs(x = expression(X[1]), y = expression(X[2]))
+
+  return(fig)
+}
+
+joint.distribution <- drawDistribution(10)
+joint.distribution
+```
+
+## Sample Draw (n=1000)
+```{r, fig.width = 6, fig.height = 6}
+createData <- function(n, seed = NULL) {
+  if (!is.null(seed)) {
+    set.seed(seed)
+  }
+
+  # Generate distribution of Y
+  sequence <- getY(50)
+  sequence.flip <- getYFlip(50)
+  df <- data.frame(min = sequence[1:length(sequence) - 1], 
+                   max = sequence[2:length(sequence)], 
+                   label = rep(c(0, 1), (length(sequence) - 1) / 2))
+  
+  df2 <- data.frame(min = sequence.flip[1:length(sequence.flip) - 1] + 2, 
+                    max = sequence.flip[2:length(sequence.flip)] + 2, 
+                    label = rep(c(1, 0), (length(sequence.flip) - 1) / 2))
+  
+  df <- rbind(df, df2)
+  
+  squares <- sample(c(1, 2, 3), n, replace = TRUE)
+  Y <- integer(n)
+  X <- matrix(0, nrow = n, ncol = 2)
+  
+  for (i in 1:n) {
+    square <- squares[i]
+    point <- runif(2, min = square - 1, max = square)
+    
+    X[i, ] <- point
+    if (square == 2) {
+      if ((point[1] <= 1.5 & point[2] > 1.5) | (point[1] > 1.5 & point[2] <= 1.5)) {
+        Y[i] <- 1
+      }
+    } else if (square == 1) {
+      Y[i] <- df$label[(point[1] >= df$min) & (point[1] < df$max)]
+    } else if (square == 3) {
+      Y[i] <- df$label[(point[2] >= df$min) & (point[2] < df$max)]
+    }
+  }
+  return(list(X = X, Y = factor(Y)))
+}
+
+visualizeData <- function(n) {
+  out <- createData(n, seed = NULL)
+  X <- out$X
+  Y <- out$Y
+  
+  qplot(X[, 1], X[, 2], color = Y) + labs(x = expression(X[1]), y = expression(X[2]),  title = paste0("Visualization of sample data (n=", n, ")"))
+}
+
+visualizeData(1000)
+```
+
+# Running Experiment
+Error rates are estimated by taking a random sample of size $n$, training the classifiers (RF/RerF), and computing the fraction misclassified in a test set of 10,000 samples. This is repeated ten times for each value of $n$. The reported error rate is the mean over the ten repeated experiments.
+
+```{r, echo=TRUE, eval=TRUE, results='hide'}
+runExperiment <- function(n.samples, seed = NULL) {
+  errors.rerf <- integer(length(n.samples))
+  errors.rf <- integer(length(n.samples))
+  
+  for (i in 1:length(n.samples)) {
+    res <- createData(n.samples[i], seed = seed)
+    X <- res$X
+    Y <- res$Y
+    
+    res2 <- createData(10000, seed = seed)
+    X.test <- res2$X
+    Y.test <- res2$Y
+    
+    p <- ncol(X)
+    d <- ceiling(sqrt(p))
+    rho <- 1 / p
+    prob <- 0.5
+    
+    # param.list <- list(p = p, d = d, sparsity = rho, prob = prob)
+    mat.options <- list(p = p, d = d, random.matrix = 'binary', sparsity = rho, prob = prob)
+    
+    print(paste("Running forest with rerf", '(n =', n.samples[i], "samples)"))
+  
+    forest <- RerF(X, Y, trees = 500L, mat.options = mat.options, store.oob = F, seed = seed, num.cores = 1)
+    Yhat <- Predict(X.test, forest, num.cores = 1)
+    errors.rerf[i] <- sum(Y.test != Yhat) / length(Yhat)
+    
+    # param.list <- list(p = p, d = d, random.matrix = 'rf', rho = rho, prob = prob)
+    mat.options <- list(p = p, d = d, random.matrix = 'rf', sparsity = rho, prob = prob)
+    
+    print(paste("Running forest with rf", '(n =', n.samples[i], "samples)"))
+  
+    forest <- RerF(X, Y, trees = 500L, mat.options = mat.options, store.oob = F, seed = seed, num.cores = 1)
+    Yhat <- Predict(X.test, forest, num.cores = 1)
+    errors.rf[i] <- sum(Y.test != Yhat) / length(Yhat)
+  }
+
+  return(list(errors.rerf = errors.rerf, errors.rf = errors.rf))
+}
+
+errors <- vector('list', 10)
+n.samples <- c(100, 1000, 5000, 10000)
+
+for (i in 1:10) {
+  print(paste0('Run ', i))
+  errors[[i]] <- runExperiment(n.samples = n.samples, seed = 20181 + i)
+}
+```
+
+```{r, echo=TRUE}
+# Data wrangling for plotting
+errors.rerf <- matrix(NA, ncol = 4, nrow = 10)
+errors.rf <- matrix(NA, ncol = 4, nrow = 10)
+
+for (i in 1:10) {
+  tmp <- errors[[i]]
+  errors.rerf[i, ] <- tmp$errors.rerf
+  errors.rf[i, ] <- tmp$errors.rf
+}
+
+errors.rerf.se <- apply(errors.rerf, 2, sd)
+errors.rf.se <- apply(errors.rf, 2, sd)
+
+errors.rerf.se <- errors.rerf.se / sqrt(length(errors.rerf.se))
+errors.rf.se <- errors.rf.se / sqrt(length(errors.rf.se))
+
+
+errors.rf <- colMeans(errors.rf)
+errors.rerf <- colMeans(errors.rerf)
+
+df <- data.frame(rep(n.samples, 2), c(errors.rerf, errors.rf), c(errors.rerf.se, errors.rf.se), c(rep('RerF', length(n.samples)), rep('RF', length(n.samples))))
+colnames(df) <- c('n.samples', 'errors', 'se', 'Algorithm')
+```
+
+## Plotting Results
+Results show that RF cannot achieve an error rate lower than 1/6. This is because RF will always choose to split either in the lower left square or top right square and never in the center square. On the otherhand, RerF achieves close to zero error.
+
+```{r, echo=TRUE, fig.height=6, fig.width=8}
+err.plot <- ggplot(data = df, aes(x = n.samples, y = errors, color = Algorithm)) + 
+  geom_line(size=1) +  
+  geom_errorbar(aes(ymin=errors-se, ymax=errors+se), size = .9) +
+  geom_hline(aes(yintercept = 1/6, linetype='g'), color = 'black', show.legend=FALSE, alpha = .8) +
+  scale_linetype_manual(values = 2) +
+  scale_x_continuous(trans='log10', breaks = c(100, 1000, 5000, 10000), labels = c(.1, 1, 5, 10)) + 
+  scale_y_continuous(expand = c(0,0)) +
+  scale_color_manual(values=c("red", "black"), labels=c("RerF","RF")) +
+  labs(x = "n (in thousands)", y = "Error Rate")
+
+err.plot <- err.plot +
+  theme_gray(base_size = 20) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+    panel.background = element_blank(), axis.line = element_line(colour = "black", size = 1), aspect.ratio=1)
+
+# Get legend
+g_legend<-function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)}
+
+legend <- g_legend(err.plot)
+
+out <- plot_grid(joint.distribution, err.plot + theme(legend.position = 'none'), legend, labels = c("(A)", "(B)"), ncol = 3, rel_widths = c(3.7, 4, 1.5), label_size = 20)
+
+out
+```
+
+```{r, echo=TRUE, eval=FALSE}
+ggsave('~/RandomerForest/Draft/PAMI/Figures/error_rate_consistency_tmt.pdf', plot = out, width = 9, height = 4)
+```
+
+```{r}
+print(errors)
+```

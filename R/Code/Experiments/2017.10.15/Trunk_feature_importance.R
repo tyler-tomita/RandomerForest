@@ -16,8 +16,8 @@ min.parent <- 2L
 max.depth <- 0L
 num.cores <- 4L
 seed <- 10152017L
-ntrain <- 1000L
-p <- 100L
+ntrain <- 100L
+p <- 10L
 trial <- 1L
 params <- vector("list", length(classifiers))
 names(params) <- classifiers

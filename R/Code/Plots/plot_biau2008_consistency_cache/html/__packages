@@ -1,0 +1,9 @@
+base
+rmarkdown
+ggplot2
+rerf
+devtools
+cowplot
+gridExtra
+Rcpp
+usethis
